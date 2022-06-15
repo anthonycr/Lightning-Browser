@@ -21,10 +21,7 @@
         position: relative;
         display: block;
         margin: 0px;
-        padding-left: 14px;
-        padding-right: 14px;
-        padding-top: 9px;
-        padding-bottom: 9px;
+        padding: 9px 14px;
         background-color: #fff;
         border-bottom: 1px solid #d2d2d2;
         font-family: Arial;
@@ -63,12 +60,22 @@
         -o-text-overflow: ellipsis;
         -ms-text-overflow: ellipsis;
     }
-
+    .header--text {
+      position: sticky;
+      display: block;
+      padding: 20px 0 5px 14px;
+      border-bottom: 1px solid #d2d2d2;
+    }
+    .header--text h2 {
+      font-weight: 300;
+    }
 </style>
 
 <body>
     <div id="content">
-
+        <div class="header--text">
+          <h2>History</h2>
+        </div>
         <div id=repeated class=box>
             <a href='${URL}'></a>
             <p id='title' class='black'>${TITLE}</p>

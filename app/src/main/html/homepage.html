@@ -9,9 +9,10 @@
 </head>
 <style>
     body {
-        background: #f5f5f5;
-        text-align: center;
+        background: #F5F5F5;
+        padding: 0px;
         margin: 0px;
+        box-sizing: border-box;
     }
     
     #search_input {
@@ -31,19 +32,19 @@
     }
     
     .search_bar {
-        display: table;
-        vertical-align: middle;
-        width: 90%;
+        display: block;
+        width: 80%;
         height: 35px;
+        padding: 2px 10px 5px 10px;
         max-width: 500px;
         margin: 0 auto;
         background-color: #fff;
         box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.25);
         font-family: Arial;
         color: #444;
-        -moz-border-radius: 2px;
-        -webkit-border-radius: 2px;
-        border-radius: 2px;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
     }
     
     #search_submit {
@@ -57,68 +58,51 @@
         background-color: transparent;
     }
     
-    .outer {
-        display: table;
-        position: absolute;
-        height: 100%;
-        width: 100%;
-    }
-    
-    .middle {
-        display: table-cell;
-        vertical-align: middle;
-    }
-    
     .inner {
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 10%;
-        width: 100%;
+      display: flex;
+      height: 100vh;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     
     img.smaller {
-        width: 50%;
-        max-width: 300px;
+      display: block;
+      width: 50%;
+      max-width: 300px;
+      justify-items: center;
     }
     
     .box {
-        vertical-align: middle;
-        position: relative;
-        display: block;
-        margin: 10px;
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        background-color: #fff;
-        box-shadow: 0px 3px rgba(0, 0, 0, 0.1);
-        font-family: Arial;
-        color: #444;
-        font-size: 12px;
-        -moz-border-radius: 2px;
-        -webkit-border-radius: 2px;
-        border-radius: 2px;
+      vertical-align: middle;
+      position: relative;
+      display: block;
+      margin: 10px;
+      padding: 5px 10px;
+      background-color: #fff;
+      box-shadow: 0px 3px rgba(0, 0, 0, 0.1);
+      font-family: Arial;
+      color: #444;
+      font-size: 12px;
+      -moz-border-radius: 2px;
+      -webkit-border-radius: 2px;
+      border-radius: 2px;
     }
 
 </style>
 
 <body>
-    <div class="outer">
-        <div class="middle">
-            <div class="inner">
-                <img id="image_url" class="smaller" src="${IMAGE}">
-                </br>
-                </br>
-                <form onsubmit="return search()" class="search_bar" autocomplete="off">
-                    <input type="submit" id="search_submit" value="Search">
-                    <span>
-                        <input class="search" type="text" value="" id="search_input" />
-                    </span>
-                </form>
-                </br>
-                </br>
-            </div>
-        </div>
+    <div class="inner">
+      <img id="image_url" class="smaller" src="${IMAGE}">
+      </br>
+      </br>
+      <form onsubmit="return search()" class="search_bar" autocomplete="off">
+        <input type="submit" id="search_submit" value="Search">
+        <span>
+        <input class="search" type="text" value="" id="search_input" />
+        </span>
+      </form>
     </div>
     <script type="text/javascript">
         function search() {
