@@ -2,13 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.ben-manes.versions'
 
 android {
     compileSdkVersion project.targetSdkVersion
-    buildToolsVersion project.buildToolsVersion
 
     defaultConfig {
         minSdkVersion project.minSdkVersion
@@ -74,30 +72,24 @@ android {
             versionCode 102
         }
     }
-
-    lintOptions {
-        abortOnError true
-    }
-
     packagingOptions {
-        exclude '.readme'
+        resources {
+            excludes += ['.readme']
+        }
     }
+
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    lint {
+        abortOnError true
     }
 }
 
 jacoco {
     toolVersion = '0.7.9' // See http://www.eclemma.org/jacoco/
-}
-
-dexcount {
-    includeClasses = false
-    includeFieldCount = false
-    format = "tree"
-    orderByMethodCount = true
-    verbose = false
 }
 
 dependencies {
