@@ -68,6 +68,7 @@ class WebViewFactory @Inject constructor(
 
         isScrollbarFadingEnabled = true
         isSaveEnabled = true
+        overScrollMode = View.OVER_SCROLL_NEVER
         setNetworkAvailable(true)
 
         settings.apply {
