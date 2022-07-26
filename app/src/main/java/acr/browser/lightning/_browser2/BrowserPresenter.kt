@@ -857,7 +857,8 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onReadingModeClick() {
-
+        currentTab?.url?.takeIf { !it.isSpecialUrl() }
+            ?.let(navigator::openReaderMode)
     }
 
     /**
