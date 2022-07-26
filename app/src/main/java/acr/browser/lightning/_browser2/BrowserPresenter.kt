@@ -135,7 +135,7 @@ class BrowserPresenter @Inject constructor(
         view = null
 
         compositeDisposable.dispose()
-        tabDisposable?.dispose()
+        tabDisposable.dispose()
     }
 
     /**
@@ -934,10 +934,9 @@ class BrowserPresenter @Inject constructor(
                 .flatMapCompletable { model.deleteTab(it.id) }
                 .subscribeOn(mainScheduler)
                 .subscribe()
-            BrowserContract.CloseTabEvent.CLOSE_ALL -> {
-                model.deleteAllTabs().subscribeOn(mainScheduler)
+            BrowserContract.CloseTabEvent.CLOSE_ALL ->
+                compositeDisposable += model.deleteAllTabs().subscribeOn(mainScheduler)
                     .subscribeBy(onComplete = navigator::closeBrowser)
-            }
         }
     }
 
