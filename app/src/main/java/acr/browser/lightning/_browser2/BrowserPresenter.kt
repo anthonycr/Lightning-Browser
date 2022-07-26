@@ -381,6 +381,9 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onTabClose(index: Int) {
+        if (index == -1) {
+            return
+        }
         val nextTab = viewState.tabs.nextSelected(index)
 
         val needToSelectNextTab = viewState.tabs[index].id == currentTab?.id
