@@ -30,6 +30,8 @@ interface TabModel {
 
     fun canGoForwardChanges(): Observable<Boolean>
 
+    fun toggleDesktopAgent()
+
     fun reload()
 
     fun stopLoading()

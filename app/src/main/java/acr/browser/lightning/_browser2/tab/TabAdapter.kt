@@ -1,6 +1,9 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning._browser2.download.PendingDownload
+import acr.browser.lightning.constant.DESKTOP_USER_AGENT
+import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.userAgent
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.view.FreezableBundleInitializer
@@ -19,12 +22,15 @@ class TabAdapter(
     private val webView: WebView,
     private val requestHeaders: Map<String, String>,
     private val tabWebViewClient: TabWebViewClient,
-    private val tabWebChromeClient: TabWebChromeClient
+    private val tabWebChromeClient: TabWebChromeClient,
+    private val userPreferences: UserPreferences,
+    private val defaultUserAgent: String
 ) : TabModel {
 
     private var latentInitializer: FreezableBundleInitializer? = null
 
     private var findInPageQuery: String? = null
+    private var toggleDesktop: Boolean = false
     private val downloadsSubject = PublishSubject.create<PendingDownload>()
 
     init {
@@ -74,6 +80,17 @@ class TabAdapter(
 
     override fun canGoForwardChanges(): Observable<Boolean> =
         tabWebViewClient.goForwardObservable.hide()
+
+    override fun toggleDesktopAgent() {
+        if (!toggleDesktop) {
+            webView.settings.userAgentString = DESKTOP_USER_AGENT
+        } else {
+            webView.settings.userAgentString = userPreferences.userAgent(defaultUserAgent)
+
+        }
+
+        toggleDesktop = !toggleDesktop
+    }
 
     override fun reload() {
         webView.reload()

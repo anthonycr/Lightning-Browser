@@ -24,8 +24,12 @@ import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
+import acr.browser.lightning.extensions.color
+import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
+import acr.browser.lightning.utils.isSpecialUrl
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -467,6 +471,30 @@ class BrowserActivity : ThemableBrowserActivity() {
 
     fun closeTabDrawer() {
         binding.drawerLayout.closeDrawer(binding.tabDrawer)
+    }
+
+    fun showToolsDialog(areAdsAllowed: Boolean, shouldShowAdBlockOption: Boolean) {
+        val whitelistString = if (areAdsAllowed) {
+            R.string.dialog_adblock_enable_for_site
+        } else {
+            R.string.dialog_adblock_disable_for_site
+        }
+
+        BrowserDialog.showWithIcons(
+            this, getString(R.string.dialog_tools_title),
+            DialogItem(
+                icon = drawable(R.drawable.ic_action_desktop),
+                title = R.string.dialog_toggle_desktop,
+                onClick = presenter::onToggleDesktopAgent
+            ),
+            DialogItem(
+                icon = drawable(R.drawable.ic_block),
+                colorTint = color(R.color.error_red).takeIf { areAdsAllowed },
+                title = whitelistString,
+                isConditionMet = shouldShowAdBlockOption,
+                onClick = presenter::onToggleAdBlocking
+            )
+        )
     }
 
     private fun ImageView.updateVisibilityForDrawable() {

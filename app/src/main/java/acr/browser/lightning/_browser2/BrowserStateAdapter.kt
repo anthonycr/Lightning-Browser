@@ -119,4 +119,8 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.closeTabDrawer()
     }
 
+    override fun showToolsDialog(areAdsAllowed: Boolean, shouldShowAdBlockOption: Boolean) {
+        browserActivity.showToolsDialog(areAdsAllowed, shouldShowAdBlockOption)
+    }
+
 }

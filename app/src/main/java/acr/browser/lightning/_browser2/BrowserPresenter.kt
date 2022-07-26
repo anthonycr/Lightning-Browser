@@ -10,6 +10,7 @@ import acr.browser.lightning._browser2.tab.TabModel
 import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning._browser2.ui.TabConfiguration
 import acr.browser.lightning._browser2.ui.UiConfiguration
+import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.database.*
 import acr.browser.lightning.database.bookmark.BookmarkRepository
@@ -62,7 +63,8 @@ class BrowserPresenter @Inject constructor(
     private val searchEngineProvider: SearchEngineProvider,
     @InitialUrl private val initialUrl: String?,
     private val uiConfiguration: UiConfiguration,
-    private val historyPageFactory: HistoryPageFactory
+    private val historyPageFactory: HistoryPageFactory,
+    private val allowListModel: AllowListModel
 ) {
 
     private var view: BrowserContract.View? = null
@@ -610,6 +612,7 @@ class BrowserPresenter @Inject constructor(
         when (val item = viewState.bookmarks[index]) {
             is Bookmark.Entry -> view?.showBookmarkOptionsDialog(item)
             is Bookmark.Folder.Entry -> view?.showFolderOptionsDialog(item)
+            Bookmark.Folder.Root -> Unit // Root is not clickable
         }
     }
 
@@ -617,7 +620,26 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onToolsClick() {
+        val currentUrl = currentTab?.url ?: return
+        view?.showToolsDialog(
+            areAdsAllowed = allowListModel.isUrlAllowedAds(currentUrl),
+            shouldShowAdBlockOption = !currentUrl.isSpecialUrl()
+        )
+    }
 
+    fun onToggleDesktopAgent() {
+        currentTab?.toggleDesktopAgent()
+        currentTab?.reload()
+    }
+
+    fun onToggleAdBlocking() {
+        val currentUrl = currentTab?.url ?: return
+        if (allowListModel.isUrlAllowedAds(currentUrl)) {
+            allowListModel.removeUrlFromAllowList(currentUrl)
+        } else {
+            allowListModel.addUrlToAllowList(currentUrl)
+        }
+        currentTab?.reload()
     }
 
     /**

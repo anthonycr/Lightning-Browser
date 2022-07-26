@@ -61,6 +61,8 @@ interface BrowserContract {
         fun openTabDrawer()
 
         fun closeTabDrawer()
+
+        fun showToolsDialog(areAdsAllowed: Boolean, shouldShowAdBlockOption: Boolean)
     }
 
     interface Model {

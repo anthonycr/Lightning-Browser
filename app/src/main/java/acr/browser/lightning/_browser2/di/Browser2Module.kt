@@ -2,6 +2,8 @@ package acr.browser.lightning._browser2.di
 
 import acr.browser.lightning._browser2.BrowserContract
 import acr.browser.lightning._browser2.search.IntentExtractor
+import acr.browser.lightning._browser2.tab.DefaultUserAgent
+import acr.browser.lightning._browser2.tab.WebViewFactory
 import acr.browser.lightning._browser2.ui.BookmarkConfiguration
 import acr.browser.lightning._browser2.ui.TabConfiguration
 import acr.browser.lightning._browser2.ui.UiConfiguration
@@ -12,7 +14,9 @@ import acr.browser.lightning.browser.BrowserView
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.IntentUtils
 import android.app.Activity
+import android.app.Application
 import android.content.Intent
+import android.webkit.WebSettings
 import dagger.Module
 import dagger.Provides
 import javax.inject.Provider
@@ -40,7 +44,8 @@ class Browser2Module {
     fun providesInitialUrl(
         @InitialIntent initialIntent: Intent,
         intentExtractor: IntentExtractor
-    ): String? = (intentExtractor.extractUrlFromIntent(initialIntent) as? BrowserContract.Action.LoadUrl)?.url
+    ): String? =
+        (intentExtractor.extractUrlFromIntent(initialIntent) as? BrowserContract.Action.LoadUrl)?.url
 
     // TODO: auto inject intent utils
     @Provides
@@ -61,5 +66,10 @@ class Browser2Module {
             BookmarkConfiguration.RIGHT
         }
     )
+
+    @DefaultUserAgent
+    @Provides
+    fun providesDefaultUserAgent(application: Application): String =
+        WebSettings.getDefaultUserAgent(application)
 
 }

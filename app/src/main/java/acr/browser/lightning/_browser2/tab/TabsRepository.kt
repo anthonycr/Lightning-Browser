@@ -6,6 +6,7 @@ import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.*
 import io.reactivex.*
 import io.reactivex.subjects.PublishSubject
@@ -22,7 +23,9 @@ class TabsRepository @Inject constructor(
     @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler,
     private val bundleStore: BundleStore,
-    private val urlHandler: UrlHandler
+    private val urlHandler: UrlHandler,
+    private val userPreferences: UserPreferences,
+    @DefaultUserAgent private val defaultUserAgent: String
 ) : BrowserContract.Model {
 
     private var selectedTab: TabModel? = null
@@ -48,24 +51,27 @@ class TabsRepository @Inject constructor(
         tabsListObservable.onNext(tabsList)
     }
 
-    override fun createTab(tabInitializer: TabInitializer): Single<TabModel> = Single.fromCallable<TabModel> {
-        val webView = webViewFactory.createWebView(isIncognito = false)
-        val headers = webViewFactory.createRequestHeaders()
-        tabPager.addTab(webView)
-        val tabAdapter = TabAdapter(
-            tabInitializer,
-            webView,
-            headers,
-            TabWebViewClient(adBlocker, allowListModel, urlHandler, headers),
-            TabWebChromeClient()
-        )
+    override fun createTab(tabInitializer: TabInitializer): Single<TabModel> =
+        Single.fromCallable<TabModel> {
+            val webView = webViewFactory.createWebView(isIncognito = false)
+            val headers = webViewFactory.createRequestHeaders()
+            tabPager.addTab(webView)
+            val tabAdapter = TabAdapter(
+                tabInitializer,
+                webView,
+                headers,
+                TabWebViewClient(adBlocker, allowListModel, urlHandler, headers),
+                TabWebChromeClient(),
+                userPreferences,
+                defaultUserAgent
+            )
 
-        tabsList = tabsList + tabAdapter
+            tabsList = tabsList + tabAdapter
 
-        return@fromCallable tabAdapter
-    }.doOnSuccess {
-        tabsListObservable.onNext(tabsList)
-    }
+            return@fromCallable tabAdapter
+        }.doOnSuccess {
+            tabsListObservable.onNext(tabsList)
+        }
 
     override fun selectTab(id: Int): TabModel {
         val selected = tabsList.forId(id)
@@ -80,13 +86,14 @@ class TabsRepository @Inject constructor(
 
     override fun tabsListChanges(): Observable<List<TabModel>> = tabsListObservable.hide()
 
-    override fun initializeTabs(): Maybe<List<TabModel>> = Single.fromCallable(bundleStore::retrieve)
-        .flatMapObservable { Observable.fromIterable(it) }
-        .subscribeOn(diskScheduler)
-        .observeOn(mainScheduler)
-        .flatMapSingle(::createTab)
-        .toList()
-        .filter(MutableList<TabModel>::isNotEmpty)
+    override fun initializeTabs(): Maybe<List<TabModel>> =
+        Single.fromCallable(bundleStore::retrieve)
+            .flatMapObservable { Observable.fromIterable(it) }
+            .subscribeOn(diskScheduler)
+            .observeOn(mainScheduler)
+            .flatMapSingle(::createTab)
+            .toList()
+            .filter(MutableList<TabModel>::isNotEmpty)
 
     override fun freeze() {
         bundleStore.save(tabsList)
