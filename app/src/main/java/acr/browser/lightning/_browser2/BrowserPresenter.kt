@@ -125,7 +125,7 @@ class BrowserPresenter @Inject constructor(
 
         compositeDisposable += model.initializeTabs()
             .observeOn(mainScheduler)
-            .mergeWith(
+            .concatWith(
                 Maybe.fromCallable { initialUrl }
                     .flatMapSingleElement { model.createTab(UrlInitializer(it)) }
                     .map(::listOf)
