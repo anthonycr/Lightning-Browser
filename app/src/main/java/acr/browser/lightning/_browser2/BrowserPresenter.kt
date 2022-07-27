@@ -2,7 +2,6 @@ package acr.browser.lightning._browser2
 
 import acr.browser.lightning._browser2.data.CookieAdministrator
 import acr.browser.lightning._browser2.di.Browser2Scope
-import acr.browser.lightning._browser2.di.IncognitoMode
 import acr.browser.lightning._browser2.di.InitialUrl
 import acr.browser.lightning._browser2.download.PendingDownload
 import acr.browser.lightning._browser2.history.HistoryRecord
@@ -921,7 +920,7 @@ class BrowserPresenter @Inject constructor(
         if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
             view?.openTabDrawer()
         } else {
-            // TODO: GO HOME
+            currentTab?.loadFromInitializer(homePageInitializer)
         }
     }
 
