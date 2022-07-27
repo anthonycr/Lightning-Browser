@@ -70,6 +70,10 @@ class BrowserNavigator @Inject constructor(
         activity.moveTaskToBack(true)
     }
 
+    override fun launchIncognito(url: String?) {
+        IncognitoBrowserActivity.launch(activity, url)
+    }
+
     companion object {
         private const val TAG = "BrowserNavigator"
     }

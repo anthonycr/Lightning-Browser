@@ -53,7 +53,7 @@ class TabsRepository @Inject constructor(
 
     override fun createTab(tabInitializer: TabInitializer): Single<TabModel> =
         Single.fromCallable<TabModel> {
-            val webView = webViewFactory.createWebView(isIncognito = false)
+            val webView = webViewFactory.createWebView()
             val headers = webViewFactory.createRequestHeaders()
             tabPager.addTab(webView)
             val tabAdapter = TabAdapter(

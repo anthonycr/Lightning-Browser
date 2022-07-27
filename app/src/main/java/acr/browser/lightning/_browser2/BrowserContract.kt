@@ -104,6 +104,8 @@ interface BrowserContract {
         fun download(pendingDownload: PendingDownload)
 
         fun backgroundBrowser()
+
+        fun launchIncognito(url: String?)
     }
 
     enum class CloseTabEvent {

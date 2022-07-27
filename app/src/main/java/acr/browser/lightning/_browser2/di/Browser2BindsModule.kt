@@ -20,9 +20,6 @@ interface Browser2BindsModule {
     fun bindsBrowserModel(tabsRepository: TabsRepository): BrowserContract.Model
 
     @Binds
-    fun bindsHistoryRecord(defaultHistoryRecord: DefaultHistoryRecord): HistoryRecord
-
-    @Binds
     fun bindsFaviconImageLoader(faviconImageLoader: FaviconImageLoader): ImageLoader
 
     @Binds

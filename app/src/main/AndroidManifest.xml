@@ -48,12 +48,11 @@
             android:value="2.1"/>
 
         <activity
-            android:name="._browser2.BrowserActivity"
+            android:name="._browser2.DefaultBrowserActivity"
             android:alwaysRetainTaskState="true"
             android:clearTaskOnLaunch="false"
             android:colorMode="wideColorGamut"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
-            android:label="@string/app_name"
             android:launchMode="singleTask"
             android:theme="@style/Theme.LightTheme"
             android:windowSoftInputMode="stateHidden|adjustResize">
@@ -139,14 +138,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".IncognitoActivity"
+            android:name="._browser2.IncognitoBrowserActivity"
             android:alwaysRetainTaskState="true"
             android:colorMode="wideColorGamut"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
-            android:label="@string/app_name"
             android:launchMode="singleInstance"
             android:process=":incognito"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="._browser2.DefaultBrowserActivity"
             android:theme="@style/Theme.DarkTheme"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>

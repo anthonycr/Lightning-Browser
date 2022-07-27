@@ -2,6 +2,7 @@ package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
+import acr.browser.lightning._browser2.di.IncognitoMode
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.log.Logger
@@ -27,7 +28,8 @@ import javax.inject.Inject
 class UrlHandler @Inject constructor(
     private val activity: Activity,
     private val logger: Logger,
-    private val intentUtils: IntentUtils
+    private val intentUtils: IntentUtils,
+    @IncognitoMode private val incognitoMode: Boolean
 ) {
 
     fun shouldOverrideLoading(
@@ -42,11 +44,10 @@ class UrlHandler @Inject constructor(
 //            return true
 //        }
 
-        // TODO: handle incognito
-//        if (lightningView.isIncognito) {
-//            // If we are in incognito, immediately load, we don't want the url to leave the app
-//            return continueLoadingUrl(view, url, headers)
-//        }
+        if (incognitoMode) {
+            // If we are in incognito, immediately load, we don't want the url to leave the app
+            return continueLoadingUrl(view, url, headers)
+        }
         if (URLUtil.isAboutUrl(url)) {
             // If this is an about page, immediately load, we don't need to leave the app
             return continueLoadingUrl(view, url, headers)
@@ -61,12 +62,17 @@ class UrlHandler @Inject constructor(
         }
     }
 
-    private fun continueLoadingUrl(webView: WebView, url: String, headers: Map<String, String>): Boolean {
+    private fun continueLoadingUrl(
+        webView: WebView,
+        url: String,
+        headers: Map<String, String>
+    ): Boolean {
         if (!URLUtil.isNetworkUrl(url)
             && !URLUtil.isFileUrl(url)
             && !URLUtil.isAboutUrl(url)
             && !URLUtil.isDataUrl(url)
-            && !URLUtil.isJavaScriptUrl(url)) {
+            && !URLUtil.isJavaScriptUrl(url)
+        ) {
             webView.stopLoading()
             return true
         }
@@ -114,7 +120,11 @@ class UrlHandler @Inject constructor(
 
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                val contentUri = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".fileprovider", file)
+                val contentUri = FileProvider.getUriForFile(
+                    activity,
+                    BuildConfig.APPLICATION_ID + ".fileprovider",
+                    file
+                )
                 intent.setDataAndType(contentUri, newMimeType)
 
                 try {

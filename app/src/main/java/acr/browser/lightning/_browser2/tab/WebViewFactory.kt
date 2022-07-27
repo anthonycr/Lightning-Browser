@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning.Capabilities
+import acr.browser.lightning._browser2.di.IncognitoMode
 import acr.browser.lightning._browser2.view.CompositeTouchListener
 import acr.browser.lightning.isSupported
 import acr.browser.lightning.log.Logger
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class WebViewFactory @Inject constructor(
     private val activity: Activity,
     private val logger: Logger,
-    private val userPreferences: UserPreferences
+    private val userPreferences: UserPreferences,
+    @IncognitoMode private val incognitoMode: Boolean
 ) {
 
     fun createRequestHeaders(): Map<String, String> {
@@ -51,7 +53,7 @@ class WebViewFactory @Inject constructor(
         return requestHeaders
     }
 
-    fun createWebView(isIncognito: Boolean): WebView = WebView(activity).apply {
+    fun createWebView(): WebView = WebView(activity).apply {
         id = View.generateViewId()
         tag = CompositeTouchListener().also(::setOnTouchListener)
         isFocusableInTouchMode = true
@@ -74,13 +76,13 @@ class WebViewFactory @Inject constructor(
         settings.apply {
             mediaPlaybackRequiresUserGesture = true
 
-            if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP && !isIncognito) {
+            if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP && !incognitoMode) {
                 mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
             } else if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
                 mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
             }
 
-            if (!isIncognito || Capabilities.FULL_INCOGNITO.isSupported) {
+            if (!incognitoMode || Capabilities.FULL_INCOGNITO.isSupported) {
                 domStorageEnabled = true
                 setAppCacheEnabled(true)
                 databaseEnabled = true
@@ -105,7 +107,7 @@ class WebViewFactory @Inject constructor(
             setGeolocationDatabasePath(activity.getDir("geolocation", 0).path)
         }
 
-        updateForPreferences(userPreferences, isIncognito)
+        updateForPreferences(userPreferences, incognitoMode)
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -171,8 +173,10 @@ class WebViewFactory @Inject constructor(
         }
 
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            CookieManager.getInstance().setAcceptThirdPartyCookies(this,
-                !userPreferences.blockThirdPartyCookiesEnabled)
+            CookieManager.getInstance().setAcceptThirdPartyCookies(
+                this,
+                !userPreferences.blockThirdPartyCookiesEnabled
+            )
         }
     }
 

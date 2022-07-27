@@ -1,99 +1,19 @@
 package acr.browser.lightning._browser2.tab.bundle
 
-import acr.browser.lightning.R
 import acr.browser.lightning._browser2.tab.TabModel
-import acr.browser.lightning.browser.TabsManager
-import acr.browser.lightning.di.DiskScheduler
-import acr.browser.lightning.utils.*
-import acr.browser.lightning.view.*
-import android.app.Application
-import android.os.Bundle
-import io.reactivex.Scheduler
-import javax.inject.Inject
+import acr.browser.lightning.view.TabInitializer
 
 /**
- * Created by anthonycr on 9/20/20.
+ * Created by anthonycr on 7/27/22.
  */
-class BundleStore @Inject constructor(
-    private val application: Application,
-    private val bookmarkPageInitializer: BookmarkPageInitializer,
-    private val homePageInitializer: HomePageInitializer,
-    private val downloadPageInitializer: DownloadPageInitializer,
-    private val historyPageInitializer: HistoryPageInitializer,
-    @DiskScheduler private val diskScheduler: Scheduler
-) {
+interface BundleStore {
 
-    /**
-     * TODO
-     */
-    fun save(tabs: List<TabModel>) {
-        val outState = Bundle(ClassLoader.getSystemClassLoader())
+    fun save(tabs: List<TabModel>)
 
-        tabs.withIndex().forEach { (index, tab) ->
-            if (!tab.url.isSpecialUrl()) {
-                outState.putBundle(BUNDLE_KEY + index, tab.freeze())
-                outState.putString(TAB_TITLE_KEY + index, tab.title)
-            } else {
-                outState.putBundle(BUNDLE_KEY + index, Bundle().apply {
-                    putString(URL_KEY, tab.url)
-                })
-            }
-        }
-
-        FileUtils.writeBundleToStorage(application, outState, BUNDLE_STORAGE)
-            .subscribeOn(diskScheduler)
-            .subscribe()
-    }
-
-    /**
-     * TODO
-     */
-    fun retrieve(): List<TabInitializer> =
-        FileUtils.readBundleFromStorage(application, BUNDLE_STORAGE)?.let { bundle ->
-            bundle.keySet()
-                .filter { it.startsWith(BUNDLE_KEY) }
-                .mapNotNull { bundleKey ->
-                    bundle.getBundle(bundleKey)?.let {
-                        Pair(
-                            it,
-                            bundle.getString(TAB_TITLE_KEY + bundleKey.extractNumberFromEnd())
-                        )
-                    }
-                }
-        }?.map { (bundle, title) ->
-            return@map bundle.getString(URL_KEY)?.let { url ->
-                when {
-                    url.isBookmarkUrl() -> bookmarkPageInitializer
-                    url.isDownloadsUrl() -> downloadPageInitializer
-                    url.isStartPageUrl() -> homePageInitializer
-                    url.isHistoryUrl() -> historyPageInitializer
-                    else -> homePageInitializer
-                }
-            } ?: FreezableBundleInitializer(bundle, title
-                ?: application.getString(R.string.tab_frozen))
-        } ?: emptyList()
+    fun retrieve(): List<TabInitializer>
 
     /**
      * Synchronously delete all stored tabs.
      */
-    fun deleteAll() {
-        FileUtils.deleteBundleInStorage(application, BUNDLE_STORAGE)
-    }
-
-    private fun String.extractNumberFromEnd(): String {
-        val underScore = lastIndexOf('_')
-        return if (underScore in 0 until length) {
-            substring(underScore + 1)
-        } else {
-            ""
-        }
-    }
-
-    companion object {
-        private const val TAG = "TabsRepository"
-        private const val BUNDLE_KEY = "WEBVIEW_"
-        private const val TAB_TITLE_KEY = "TITLE_"
-        private const val URL_KEY = "URL_KEY"
-        private const val BUNDLE_STORAGE = "SAVED_TABS.parcel"
-    }
+    fun deleteAll()
 }

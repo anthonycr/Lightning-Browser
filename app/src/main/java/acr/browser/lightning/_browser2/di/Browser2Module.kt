@@ -1,9 +1,20 @@
 package acr.browser.lightning._browser2.di
 
 import acr.browser.lightning._browser2.BrowserContract
+import acr.browser.lightning._browser2.data.CookieAdministrator
+import acr.browser.lightning._browser2.data.DefaultCookieAdministrator
+import acr.browser.lightning._browser2.history.DefaultHistoryRecord
+import acr.browser.lightning._browser2.history.HistoryRecord
+import acr.browser.lightning._browser2.history.NoOpHistoryRecord
+import acr.browser.lightning._browser2.notification.DefaultTabCountNotifier
+import acr.browser.lightning._browser2.notification.IncognitoTabCountNotifier
+import acr.browser.lightning._browser2.notification.TabCountNotifier
 import acr.browser.lightning._browser2.search.IntentExtractor
 import acr.browser.lightning._browser2.tab.DefaultUserAgent
 import acr.browser.lightning._browser2.tab.WebViewFactory
+import acr.browser.lightning._browser2.tab.bundle.BundleStore
+import acr.browser.lightning._browser2.tab.bundle.DefaultBundleStore
+import acr.browser.lightning._browser2.tab.bundle.IncognitoBundleStore
 import acr.browser.lightning._browser2.ui.BookmarkConfiguration
 import acr.browser.lightning._browser2.ui.TabConfiguration
 import acr.browser.lightning._browser2.ui.UiConfiguration
@@ -17,6 +28,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.webkit.WebSettings
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Provider
@@ -71,5 +83,47 @@ class Browser2Module {
     @Provides
     fun providesDefaultUserAgent(application: Application): String =
         WebSettings.getDefaultUserAgent(application)
+
+
+    @Provides
+    fun providesHistoryRecord(
+        @IncognitoMode incognitoMode: Boolean,
+        defaultHistoryRecord: DefaultHistoryRecord
+    ): HistoryRecord = if (incognitoMode) {
+        NoOpHistoryRecord
+    } else {
+        defaultHistoryRecord
+    }
+
+    @Provides
+    fun providesCookieAdministrator(
+        @IncognitoMode incognitoMode: Boolean,
+        defaultCookieAdministrator: DefaultCookieAdministrator,
+        incognitoCookieAdministrator: DefaultCookieAdministrator
+    ): CookieAdministrator = if (incognitoMode) {
+        incognitoCookieAdministrator
+    } else {
+        defaultCookieAdministrator
+    }
+
+    @Provides
+    fun providesTabCountNotifier(
+        @IncognitoMode incognitoMode: Boolean,
+        incognitoTabCountNotifier: IncognitoTabCountNotifier
+    ): TabCountNotifier = if (incognitoMode) {
+        incognitoTabCountNotifier
+    } else {
+        DefaultTabCountNotifier
+    }
+
+    @Provides
+    fun providesBundleStore(
+        @IncognitoMode incognitoMode: Boolean,
+        defaultBundleStore: DefaultBundleStore
+    ): BundleStore = if (incognitoMode) {
+        IncognitoBundleStore
+    } else {
+        defaultBundleStore
+    }
 
 }

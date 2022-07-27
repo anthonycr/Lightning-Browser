@@ -1,23 +1,24 @@
 package acr.browser.lightning.notifications
 
-import acr.browser.lightning.IncognitoActivity
 import acr.browser.lightning.R
+import acr.browser.lightning._browser2.IncognitoBrowserActivity
 import acr.browser.lightning.utils.ThemeUtils
 import android.annotation.TargetApi
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import javax.inject.Inject
 
 
 /**
  * A notification helper that displays the current number of tabs open in a notification as a
  * warning. When the notification is pressed, the incognito browser will open.
  */
-class IncognitoNotification(
-    private val context: Context,
+class IncognitoNotification @Inject constructor(
+    private val activity: Activity,
     private val notificationManager: NotificationManager
 ) {
 
@@ -32,8 +33,9 @@ class IncognitoNotification(
 
     @TargetApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
-        val channelName = context.getString(R.string.notification_incognito_running_description)
-        val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+        val channelName = activity.getString(R.string.notification_incognito_running_description)
+        val channel =
+            NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
         channel.enableVibration(false)
         notificationManager.createNotificationChannel(channel)
     }
@@ -46,15 +48,21 @@ class IncognitoNotification(
      */
     fun show(number: Int) {
         require(number > 0)
-        val incognitoIntent = IncognitoActivity.createIntent(context)
+        val incognitoIntent = IncognitoBrowserActivity.intent(activity)
 
-        val incognitoNotification = NotificationCompat.Builder(context, channelId)
+        val incognitoNotification = NotificationCompat.Builder(activity, channelId)
             .setSmallIcon(R.drawable.ic_notification_incognito)
-            .setContentTitle(context.resources.getQuantityString(R.plurals.notification_incognito_running_title, number, number))
-            .setContentIntent(PendingIntent.getActivity(context, 0, incognitoIntent, 0))
-            .setContentText(context.getString(R.string.notification_incognito_running_message))
+            .setContentTitle(
+                activity.resources.getQuantityString(
+                    R.plurals.notification_incognito_running_title,
+                    number,
+                    number
+                )
+            )
+            .setContentIntent(PendingIntent.getActivity(activity, 0, incognitoIntent, 0))
+            .setContentText(activity.getString(R.string.notification_incognito_running_message))
             .setAutoCancel(false)
-            .setColor(ThemeUtils.getAccentColor(context))
+            .setColor(ThemeUtils.getAccentColor(activity))
             .setOngoing(true)
             .build()
 

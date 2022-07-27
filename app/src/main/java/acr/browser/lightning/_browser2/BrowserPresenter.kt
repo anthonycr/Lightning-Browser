@@ -1,11 +1,14 @@
 package acr.browser.lightning._browser2
 
+import acr.browser.lightning._browser2.data.CookieAdministrator
 import acr.browser.lightning._browser2.di.Browser2Scope
+import acr.browser.lightning._browser2.di.IncognitoMode
 import acr.browser.lightning._browser2.di.InitialUrl
 import acr.browser.lightning._browser2.download.PendingDownload
 import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.keys.KeyCombo
 import acr.browser.lightning._browser2.menu.MenuSelection
+import acr.browser.lightning._browser2.notification.TabCountNotifier
 import acr.browser.lightning._browser2.tab.TabModel
 import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning._browser2.ui.TabConfiguration
@@ -32,7 +35,6 @@ import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -64,7 +66,10 @@ class BrowserPresenter @Inject constructor(
     @InitialUrl private val initialUrl: String?,
     private val uiConfiguration: UiConfiguration,
     private val historyPageFactory: HistoryPageFactory,
-    private val allowListModel: AllowListModel
+    private val allowListModel: AllowListModel,
+    @IncognitoMode private val incognitoMode: Boolean,
+    private val cookieAdministrator: CookieAdministrator,
+    private val tabCountNotifier: TabCountNotifier
 ) {
 
     private var view: BrowserContract.View? = null
@@ -97,6 +102,8 @@ class BrowserPresenter @Inject constructor(
         this.view = view
         view.updateState(viewState)
 
+        cookieAdministrator.adjustCookieSettings()
+
         currentFolder = Bookmark.Folder.Root
         compositeDisposable += bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
             .subscribeOn(databaseScheduler)
@@ -112,6 +119,8 @@ class BrowserPresenter @Inject constructor(
 
                 allTabsDisposable.clear()
                 list.subscribeToUpdates(allTabsDisposable)
+
+                tabCountNotifier.notifyTabCountChange(list.size)
             }
 
         compositeDisposable += model.initializeTabs()
@@ -281,7 +290,7 @@ class BrowserPresenter @Inject constructor(
     fun onMenuClick(menuSelection: MenuSelection) {
         when (menuSelection) {
             MenuSelection.NEW_TAB -> onNewTabClick()
-            MenuSelection.NEW_INCOGNITO_TAB -> TODO()
+            MenuSelection.NEW_INCOGNITO_TAB -> navigator.launchIncognito(url = null)
             MenuSelection.SHARE -> currentTab?.url?.takeIf { !it.isSpecialUrl() }?.let {
                 navigator.sharePage(url = it, title = currentTab?.title)
             }
@@ -409,7 +418,11 @@ class BrowserPresenter @Inject constructor(
             currentFolder != Bookmark.Folder.Root -> onBookmarkMenuClick()
             currentTab?.canGoBack() == true -> currentTab?.goBack()
             currentTab == null -> navigator.closeBrowser()
-            else -> navigator.backgroundBrowser()
+            else -> if (incognitoMode) {
+                navigator.closeBrowser()
+            } else {
+                navigator.backgroundBrowser()
+            }
         }
     }
 
@@ -754,7 +767,7 @@ class BrowserPresenter @Inject constructor(
                 createNewTabAndSelect(UrlInitializer(bookmark.url), shouldSelect = true)
             BrowserContract.BookmarkOptionEvent.BACKGROUND_TAB ->
                 createNewTabAndSelect(UrlInitializer(bookmark.url), shouldSelect = false)
-            BrowserContract.BookmarkOptionEvent.INCOGNITO_TAB -> TODO()
+            BrowserContract.BookmarkOptionEvent.INCOGNITO_TAB -> navigator.launchIncognito(bookmark.url)
             BrowserContract.BookmarkOptionEvent.SHARE ->
                 navigator.sharePage(url = bookmark.url, title = bookmark.title)
             BrowserContract.BookmarkOptionEvent.COPY_LINK ->
@@ -837,7 +850,8 @@ class BrowserPresenter @Inject constructor(
                 createNewTabAndSelect(UrlInitializer(historyEntry.url), shouldSelect = true)
             BrowserContract.HistoryOptionEvent.BACKGROUND_TAB ->
                 createNewTabAndSelect(UrlInitializer(historyEntry.url), shouldSelect = false)
-            BrowserContract.HistoryOptionEvent.INCOGNITO_TAB -> TODO()
+            BrowserContract.HistoryOptionEvent.INCOGNITO_TAB ->
+                navigator.launchIncognito(historyEntry.url)
             BrowserContract.HistoryOptionEvent.SHARE ->
                 navigator.sharePage(url = historyEntry.url, title = historyEntry.title)
             BrowserContract.HistoryOptionEvent.COPY_LINK -> navigator.copyPageLink(historyEntry.url)
@@ -982,7 +996,7 @@ class BrowserPresenter @Inject constructor(
                         shouldSelect = false
                     )
                 }
-            BrowserContract.LinkLongPressEvent.INCOGNITO_TAB -> TODO()
+            BrowserContract.LinkLongPressEvent.INCOGNITO_TAB -> longPress.targetUrl?.let(navigator::launchIncognito)
             BrowserContract.LinkLongPressEvent.SHARE ->
                 longPress.targetUrl?.let { navigator.sharePage(url = it, title = null) }
             BrowserContract.LinkLongPressEvent.COPY_LINK ->
@@ -1009,7 +1023,7 @@ class BrowserPresenter @Inject constructor(
                         shouldSelect = false
                     )
                 }
-            BrowserContract.ImageLongPressEvent.INCOGNITO_TAB -> TODO()
+            BrowserContract.ImageLongPressEvent.INCOGNITO_TAB -> longPress.targetUrl?.let(navigator::launchIncognito)
             BrowserContract.ImageLongPressEvent.SHARE ->
                 longPress.targetUrl?.let { navigator.sharePage(url = it, title = null) }
             BrowserContract.ImageLongPressEvent.COPY_LINK ->

@@ -28,14 +28,14 @@ import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
-import acr.browser.lightning.utils.isSpecialUrl
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ImageView
+import androidx.annotation.DrawableRes
+import androidx.annotation.MenuRes
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,7 +47,7 @@ import javax.inject.Inject
 /**
  * Created by anthonycr on 9/11/20.
  */
-class BrowserActivity : ThemableBrowserActivity() {
+abstract class BrowserActivity : ThemableBrowserActivity() {
 
     private lateinit var binding: BrowserActivityBinding
     private lateinit var tabsAdapter: ListAdapter<TabViewState, TabViewHolder>
@@ -80,6 +80,23 @@ class BrowserActivity : ThemableBrowserActivity() {
     @Inject
     internal lateinit var uiConfiguration: UiConfiguration
 
+    /**
+     * True if the activity is operating in incognito mode, false otherwise.
+     */
+    abstract fun isIncognito(): Boolean
+
+    /**
+     * Provide the menu used by the browser instance.
+     */
+    @MenuRes
+    abstract fun menu(): Int
+
+    /**
+     * Provide the home icon used by the browser instance.
+     */
+    @DrawableRes
+    abstract fun homeIcon(): Int
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = BrowserActivityBinding.inflate(LayoutInflater.from(this))
@@ -93,6 +110,7 @@ class BrowserActivity : ThemableBrowserActivity() {
             .toolbarRoot(binding.uiLayout)
             .toolbar(binding.toolbarLayout)
             .initialIntent(intent)
+            .incognitoMode(isIncognito())
             .build()
             .inject(this)
 
@@ -113,8 +131,10 @@ class BrowserActivity : ThemableBrowserActivity() {
             }
 
         binding.homeImageView.isVisible =
-            uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP
-        binding.tabCountView.isVisible = uiConfiguration.tabConfiguration == TabConfiguration.DRAWER
+            uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP || isIncognito()
+        binding.homeImageView.setImageResource(homeIcon())
+        binding.tabCountView.isVisible =
+            uiConfiguration.tabConfiguration == TabConfiguration.DRAWER && !isIncognito()
 
         if (uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP) {
             binding.drawerLayout.setDrawerLockMode(
@@ -157,7 +177,7 @@ class BrowserActivity : ThemableBrowserActivity() {
 
         presenter.onViewAttached(BrowserStateAdapter(this))
 
-        val suggestionsAdapter = SuggestionsAdapter(this, isIncognito = false).apply {
+        val suggestionsAdapter = SuggestionsAdapter(this, isIncognito = isIncognito()).apply {
             onSuggestionInsertClick = {
                 if (it is SearchSuggestion) {
                     binding.search.setText(it.title)
@@ -229,7 +249,7 @@ class BrowserActivity : ThemableBrowserActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
+        menuInflater.inflate(menu(), menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -379,7 +399,7 @@ class BrowserActivity : ThemableBrowserActivity() {
             },
             DialogItem(
                 title = R.string.dialog_open_incognito_tab,
-                isConditionMet = this is BrowserActivity // TODO: Change for incognito
+                isConditionMet = !isIncognito()
             ) {
                 presenter.onLinkLongPressEvent(
                     longPress,
@@ -413,7 +433,7 @@ class BrowserActivity : ThemableBrowserActivity() {
             },
             DialogItem(
                 title = R.string.dialog_open_incognito_tab,
-                isConditionMet = this is BrowserActivity // TODO: Change for incognito
+                isConditionMet = !isIncognito()
             ) {
                 presenter.onImageLongPressEvent(
                     longPress,
