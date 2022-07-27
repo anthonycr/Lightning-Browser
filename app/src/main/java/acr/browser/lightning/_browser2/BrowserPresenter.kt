@@ -203,6 +203,8 @@ class BrowserPresenter @Inject constructor(
             )
         )
 
+        view?.closeTabDrawer()
+
         tabDisposable.dispose()
         tabDisposable = CompositeDisposable()
         tabDisposable += Observables.combineLatest(
@@ -376,7 +378,6 @@ class BrowserPresenter @Inject constructor(
      */
     fun onTabClick(index: Int) {
         selectTab(model.selectTab(viewState.tabs[index].id))
-        view?.closeTabDrawer()
     }
 
     /**
