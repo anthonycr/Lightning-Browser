@@ -881,6 +881,8 @@ class BrowserPresenter @Inject constructor(
     fun onTabCountViewClick() {
         if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
             view?.openTabDrawer()
+        } else {
+            // TODO: GO HOME
         }
     }
 
