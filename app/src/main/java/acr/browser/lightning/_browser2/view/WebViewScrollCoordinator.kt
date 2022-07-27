@@ -60,7 +60,10 @@ class WebViewScrollCoordinator @Inject constructor(
                 val height = toolbar.height
                 if (toolbar.translationY > -0.01f) {
                     val hideAnimation = object : Animation() {
-                        override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
+                        override fun applyTransformation(
+                            interpolatedTime: Float,
+                            t: Transformation
+                        ) {
                             val trans = interpolatedTime * height
                             toolbar.translationY = -trans
                             webView.translationY = height - trans
@@ -82,7 +85,10 @@ class WebViewScrollCoordinator @Inject constructor(
                 val totalHeight = height
                 if (toolbar.translationY < -(height - 0.01f)) {
                     val show = object : Animation() {
-                        override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
+                        override fun applyTransformation(
+                            interpolatedTime: Float,
+                            t: Transformation
+                        ) {
                             val trans = interpolatedTime * totalHeight
                             toolbar.translationY = trans - totalHeight
                             webView.translationY = trans
@@ -153,7 +159,12 @@ class WebViewScrollCoordinator @Inject constructor(
 
         var toggleListener: ToggleListener? = null
 
-        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+        override fun onFling(
+            e1: MotionEvent,
+            e2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
             val power = (velocityY * 100 / maxFling).toInt()
             if (power < -10) {
                 toggleListener?.hideToolbar()

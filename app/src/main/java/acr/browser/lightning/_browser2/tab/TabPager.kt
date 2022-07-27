@@ -6,6 +6,7 @@ import acr.browser.lightning._browser2.view.WebViewScrollCoordinator
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.FrameLayout
+import androidx.core.view.children
 import targetUrl.LongPress
 import javax.inject.Inject
 
@@ -24,7 +25,7 @@ class TabPager @Inject constructor(
     var longPressListener: ((id: Int, longPress: LongPress) -> Unit)? = null
 
     fun selectTab(id: Int) {
-        container.removeAllViews()
+        container.removeWebViews()
         val webView = webViews.forId(id)
         container.addView(
             webView,
@@ -32,7 +33,6 @@ class TabPager @Inject constructor(
             ViewGroup.LayoutParams.MATCH_PARENT
         )
 
-        // TODO: coordinator adds views to the container, which can result in UI flashes.
         webViewScrollCoordinator.configure(webView)
         webViewLongPressHandler.configure(webView, onLongClick = {
             longPressListener?.invoke(id, it)
@@ -40,11 +40,15 @@ class TabPager @Inject constructor(
     }
 
     fun clearTab() {
-        container.removeAllViews()
+        container.removeWebViews()
     }
 
     fun addTab(webView: WebView) {
         webViews.add(webView)
+    }
+
+    private fun FrameLayout.removeWebViews() {
+        children.filterIsInstance<WebView>().forEach(container::removeView)
     }
 
     private fun List<WebView>.forId(id: Int): WebView = requireNotNull(find { it.id == id })
