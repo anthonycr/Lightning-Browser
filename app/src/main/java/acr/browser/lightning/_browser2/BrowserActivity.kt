@@ -210,6 +210,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         binding.search.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             binding.search.clearFocus()
             presenter.onSearchSuggestionClicked(suggestionsAdapter.getItem(position) as WebPage)
+            inputMethodManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
         }
         binding.search.setAdapter(suggestionsAdapter)
         val searchListener = SearchListener(
