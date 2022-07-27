@@ -114,6 +114,25 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             .build()
             .inject(this)
 
+        binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+
+            override fun onDrawerOpened(drawerView: View) {
+                if (drawerView == binding.tabDrawer) {
+                    presenter.onTabDrawerMoved(isOpen = true)
+                } else if (drawerView == binding.bookmarkDrawer) {
+                    presenter.onBookmarkDrawerMoved(isOpen = true)
+                }
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                if (drawerView == binding.tabDrawer) {
+                    presenter.onTabDrawerMoved(isOpen = false)
+                } else if (drawerView == binding.bookmarkDrawer) {
+                    presenter.onBookmarkDrawerMoved(isOpen = false)
+                }
+            }
+        })
+
         binding.bookmarkDrawer.layoutParams =
             (binding.bookmarkDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
                 gravity = when (uiConfiguration.bookmarkConfiguration) {
@@ -245,7 +264,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     }
 
     override fun onBackPressed() {
-        presenter.onBackClick()
+        presenter.onNavigateBack()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -67,7 +67,6 @@ class BrowserPresenter @Inject constructor(
     private val uiConfiguration: UiConfiguration,
     private val historyPageFactory: HistoryPageFactory,
     private val allowListModel: AllowListModel,
-    @IncognitoMode private val incognitoMode: Boolean,
     private val cookieAdministrator: CookieAdministrator,
     private val tabCountNotifier: TabCountNotifier
 ) {
@@ -89,7 +88,10 @@ class BrowserPresenter @Inject constructor(
     )
     private var currentTab: TabModel? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
+    private var isTabDrawerOpen = false
+    private var isBookmarkDrawerOpen = false
     private var isSearchViewFocused = false
+    private var tabIdOpenedFromAction = -1
 
     private val compositeDisposable = CompositeDisposable()
     private val allTabsDisposable = CompositeDisposable()
@@ -154,6 +156,7 @@ class BrowserPresenter @Inject constructor(
      */
     fun onViewHidden() {
         model.freeze()
+        tabIdOpenedFromAction = -1
     }
 
     private fun TabModel.asViewState(): TabViewState = TabViewState(
@@ -264,7 +267,8 @@ class BrowserPresenter @Inject constructor(
         when (action) {
             is BrowserContract.Action.LoadUrl -> createNewTabAndSelect(
                 tabInitializer = UrlInitializer(action.url),
-                shouldSelect = true
+                shouldSelect = true,
+                markAsOpenedFromAction = true
             )
             BrowserContract.Action.Panic -> panicClean()
         }
@@ -324,12 +328,19 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun createNewTabAndSelect(tabInitializer: TabInitializer, shouldSelect: Boolean) {
+    private fun createNewTabAndSelect(
+        tabInitializer: TabInitializer,
+        shouldSelect: Boolean,
+        markAsOpenedFromAction: Boolean = false
+    ) {
         compositeDisposable += model.createTab(tabInitializer)
             .observeOn(mainScheduler)
             .subscribe { tab ->
                 if (shouldSelect) {
                     selectTab(model.selectTab(tab.id))
+                    if (markAsOpenedFromAction) {
+                        tabIdOpenedFromAction = tab.id
+                    }
                 }
             }
     }
@@ -397,7 +408,8 @@ class BrowserPresenter @Inject constructor(
         }
         val nextTab = viewState.tabs.nextSelected(index)
 
-        val needToSelectNextTab = viewState.tabs[index].id == currentTab?.id
+        val currentTabId = currentTab?.id
+        val needToSelectNextTab = viewState.tabs[index].id == currentTabId
 
         compositeDisposable += model.deleteTab(viewState.tabs[index].id)
             .observeOn(mainScheduler)
@@ -405,29 +417,55 @@ class BrowserPresenter @Inject constructor(
                 if (needToSelectNextTab) {
                     nextTab?.id?.let {
                         selectTab(model.selectTab(it))
-                    } ?: selectTab(tabModel = null)
+                        if (tabIdOpenedFromAction == currentTabId) {
+                            tabIdOpenedFromAction = -1
+                            navigator.backgroundBrowser()
+                        }
+                    } ?: run {
+                        selectTab(tabModel = null)
+                        navigator.closeBrowser()
+                    }
+
                 }
             }
     }
 
+    fun onTabDrawerMoved(isOpen: Boolean) {
+        isTabDrawerOpen = isOpen
+    }
+
+    fun onBookmarkDrawerMoved(isOpen: Boolean) {
+        isBookmarkDrawerOpen = isOpen
+    }
+
     /**
-     * TODO
+     * Called when the user clicks on the device back button or swipes to go back. Differentiated
+     * from [onBackClick] which is called when the user presses the browser's back button.
      */
-    fun onBackClick() {
+    fun onNavigateBack() {
         when {
-            currentFolder != Bookmark.Folder.Root -> onBookmarkMenuClick()
-            currentTab?.canGoBack() == true -> currentTab?.goBack()
-            currentTab == null -> navigator.closeBrowser()
-            else -> if (incognitoMode) {
-                navigator.closeBrowser()
+            isTabDrawerOpen -> view?.closeTabDrawer()
+            isBookmarkDrawerOpen -> if (currentFolder != Bookmark.Folder.Root) {
+                onBookmarkMenuClick()
             } else {
-                navigator.backgroundBrowser()
+                view?.closeBookmarkDrawer()
             }
+            currentTab?.canGoBack() == true -> currentTab?.goBack()
+            currentTab?.canGoBack() == false -> onTabClose(viewState.tabs.indexOfFirst { it.id == currentTab?.id })
         }
     }
 
     /**
-     * TODO
+     * Called when the user presses the browser's back button.
+     */
+    fun onBackClick() {
+        if (currentTab?.canGoBack() == true) {
+            currentTab?.goBack()
+        }
+    }
+
+    /**
+     * Called when the user presses the browser's forward button.
      */
     fun onForwardClick() {
         if (currentTab?.canGoForward() == true) {
