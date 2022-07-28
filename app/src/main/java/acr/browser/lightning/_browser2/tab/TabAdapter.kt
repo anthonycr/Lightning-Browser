@@ -6,6 +6,8 @@ import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.userAgent
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.utils.Option
+import acr.browser.lightning.utils.value
 import acr.browser.lightning.view.FreezableBundleInitializer
 import acr.browser.lightning.view.TabInitializer
 import android.graphics.Bitmap
@@ -122,9 +124,9 @@ class TabAdapter(
         get() = findInPageQuery
 
     override val favicon: Bitmap?
-        get() = webView.favicon
+        get() = tabWebChromeClient.faviconObservable.value?.value()
 
-    override fun faviconChanges(): Observable<Bitmap> = tabWebChromeClient.faviconObservable.hide()
+    override fun faviconChanges(): Observable<Option<Bitmap>> = tabWebChromeClient.faviconObservable
 
     // TODO do we show "new tab"
     override val url: String

@@ -3,6 +3,7 @@ package acr.browser.lightning._browser2.tab
 import acr.browser.lightning._browser2.download.PendingDownload
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.utils.Option
 import acr.browser.lightning.view.TabInitializer
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -50,7 +51,7 @@ interface TabModel {
 
     val favicon: Bitmap?
 
-    fun faviconChanges(): Observable<Bitmap>
+    fun faviconChanges(): Observable<Option<Bitmap>>
 
     val url: String
 

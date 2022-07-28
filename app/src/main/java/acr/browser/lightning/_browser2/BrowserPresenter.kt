@@ -252,7 +252,7 @@ class BrowserPresenter @Inject constructor(
         forEach { tabModel ->
             compositeDisposable += Observables.combineLatest(
                 tabModel.titleChanges().startWith(tabModel.title),
-                tabModel.faviconChanges().optional()
+                tabModel.faviconChanges()
                     .startWith(Option.fromNullable(tabModel.favicon))
             ).distinctUntilChanged()
                 .subscribeOn(mainScheduler)
@@ -267,8 +267,6 @@ class BrowserPresenter @Inject constructor(
                 }
         }
     }
-
-    private fun <T> Observable<T>.optional(): Observable<Option<T>> = map { Option.Some(it) }
 
     /**
      * TODO
