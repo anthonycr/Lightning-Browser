@@ -8,6 +8,7 @@ import android.app.Activity
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.Transformation
+import android.view.inputmethod.InputMethodManager
 import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -21,7 +22,8 @@ class WebViewScrollCoordinator @Inject constructor(
     private val browserFrame: FrameLayout,
     private val toolbarRoot: LinearLayout,
     private val toolbar: View,
-    private val userPreferences: UserPreferences
+    private val userPreferences: UserPreferences,
+    private val inputMethodManager: InputMethodManager
 ) {
 
     private val gestureListener: CustomGestureListener = CustomGestureListener(
@@ -34,6 +36,11 @@ class WebViewScrollCoordinator @Inject constructor(
      * TODO
      */
     fun configure(webView: WebView) {
+        webView.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
+            }
+        }
         if (userPreferences.fullScreenEnabled) {
             (toolbar.parent as ViewGroup?)?.removeView(toolbar)
 
