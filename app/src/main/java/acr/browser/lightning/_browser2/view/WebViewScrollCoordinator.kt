@@ -32,6 +32,8 @@ class WebViewScrollCoordinator @Inject constructor(
 
     private val touchListener = TouchListener(GestureDetector(activity, gestureListener))
 
+    private var currentToggleListener: ToggleListener? = null
+
     /**
      * TODO
      */
@@ -42,21 +44,32 @@ class WebViewScrollCoordinator @Inject constructor(
             }
         }
         if (userPreferences.fullScreenEnabled) {
-            (toolbar.parent as ViewGroup?)?.removeView(toolbar)
+            if (toolbar.parent != browserFrame) {
+                (toolbar.parent as ViewGroup?)?.removeView(toolbar)
 
-            browserFrame.addView(toolbar)
+                browserFrame.addView(toolbar)
+            }
 
-            toolbar.translationY = 0f
+            currentToggleListener?.showToolbar() ?: run {
+                toolbar.translationY = 0f
+            }
+
             webView.translationY = toolbar.height.toFloat()
             coordinate(toolbar, webView)
         } else {
-            (toolbar.parent as ViewGroup?)?.removeView(toolbar)
+            if (toolbar.parent != toolbarRoot) {
+                (toolbar.parent as ViewGroup?)?.removeView(toolbar)
 
-            toolbarRoot.addView(toolbar, 0)
+                toolbarRoot.addView(toolbar, 0)
+            }
 
             toolbar.translationY = 0f
             webView.translationY = 0f
         }
+    }
+
+    fun showToolbar() {
+        currentToggleListener?.showToolbar()
     }
 
     private fun coordinate(toolbar: View, webView: WebView) {
@@ -110,6 +123,7 @@ class WebViewScrollCoordinator @Inject constructor(
 
         touchListener.toggleListener = toggleListener
         gestureListener.toggleListener = toggleListener
+        currentToggleListener = toggleListener
     }
 
     interface ToggleListener {

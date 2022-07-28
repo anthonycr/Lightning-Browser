@@ -513,6 +513,10 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         binding.drawerLayout.closeDrawer(binding.tabDrawer)
     }
 
+    fun showToolbar() {
+        tabPager.showToolbar()
+    }
+
     fun showToolsDialog(areAdsAllowed: Boolean, shouldShowAdBlockOption: Boolean) {
         val whitelistString = if (areAdsAllowed) {
             R.string.dialog_adblock_enable_for_site

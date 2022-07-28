@@ -202,6 +202,7 @@ class BrowserPresenter @Inject constructor(
             )
         )
 
+        view?.showToolbar()
         view?.closeTabDrawer()
 
         tabDisposable.dispose()
@@ -234,9 +235,15 @@ class BrowserPresenter @Inject constructor(
             )
         }.subscribeOn(mainScheduler)
             .subscribe { view.updateState(it) }
+
         tabDisposable += tab.downloadRequests()
             .subscribeOn(mainScheduler)
             .subscribeBy(onNext = navigator::download)
+
+        tabDisposable += tab.urlChanges()
+            .distinctUntilChanged()
+            .subscribeOn(mainScheduler)
+            .subscribeBy { view?.showToolbar() }
     }
 
     private fun List<TabModel>.subscribeToUpdates(compositeDisposable: CompositeDisposable) {
