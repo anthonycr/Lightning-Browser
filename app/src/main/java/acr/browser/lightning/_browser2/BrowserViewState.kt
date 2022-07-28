@@ -13,6 +13,7 @@ data class BrowserViewState(
     val sslState: SslState,
     val isRefresh: Boolean,
     val progress: Int,
+    val enableFullMenu: Boolean,
 
     // Tabs
     val tabs: List<TabViewState>,
@@ -27,6 +28,7 @@ data class BrowserViewState(
 
     // find
     val findInPage: String
+
 )
 
 data class PartialBrowserViewState(
@@ -35,6 +37,7 @@ data class PartialBrowserViewState(
     val sslState: SslState?,
     val isRefresh: Boolean?,
     val progress: Int?,
+    val enableFullMenu: Boolean?,
 
     // Tabs
     val tabs: List<TabViewState>?,

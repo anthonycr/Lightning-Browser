@@ -53,6 +53,12 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     private lateinit var tabsAdapter: ListAdapter<TabViewState, TabViewHolder>
     private lateinit var bookmarksAdapter: BookmarkRecyclerViewAdapter
 
+    private var menuItemShare: MenuItem? = null
+    private var menuItemCopyLink: MenuItem? = null
+    private var menuItemAddToHome: MenuItem? = null
+    private var menuItemAddBookmark: MenuItem? = null
+    private var menuItemReaderMode: MenuItem? = null
+
     @Inject
     internal lateinit var imageLoader: ImageLoader
 
@@ -267,6 +273,11 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(menu(), menu)
+        menuItemShare = menu.findItem(R.id.action_share)
+        menuItemCopyLink = menu.findItem(R.id.action_copy)
+        menuItemAddToHome = menu.findItem(R.id.action_add_to_homescreen)
+        menuItemAddBookmark = menu.findItem(R.id.action_add_bookmark)
+        menuItemReaderMode = menu.findItem(R.id.action_reading_mode)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -290,6 +301,13 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         viewState.sslState?.let {
             binding.searchSslStatus.setImageDrawable(createSslDrawableForState(it))
             binding.searchSslStatus.updateVisibilityForDrawable()
+        }
+        viewState.enableFullMenu?.let {
+            menuItemShare?.isVisible = it
+            menuItemCopyLink?.isVisible = it
+            menuItemAddToHome?.isVisible = it
+            menuItemAddBookmark?.isVisible = it
+            menuItemReaderMode?.isVisible = it
         }
         viewState.tabs?.let { binding.tabCountView.updateCount(it.size) }
         viewState.progress?.let { binding.progressView.progress = it }

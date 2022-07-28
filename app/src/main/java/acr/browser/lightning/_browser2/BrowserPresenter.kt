@@ -78,6 +78,7 @@ class BrowserPresenter @Inject constructor(
         isRefresh = true,
         sslState = SslState.None,
         progress = 0,
+        enableFullMenu = true,
         tabs = emptyList(),
         isForwardEnabled = false,
         isBackEnabled = false,
@@ -193,6 +194,7 @@ class BrowserPresenter @Inject constructor(
                     title = null,
                     isLoading = false
                 ),
+                enableFullMenu = false,
                 isForwardEnabled = false,
                 isBackEnabled = false,
                 sslState = SslState.None,
@@ -225,6 +227,7 @@ class BrowserPresenter @Inject constructor(
                     title = title,
                     isLoading = progress < 100
                 ),
+                enableFullMenu = !url.isSpecialUrl(),
                 isRefresh = progress == 100,
                 isForwardEnabled = canGoForward,
                 isBackEnabled = canGoBack,
