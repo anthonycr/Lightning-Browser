@@ -2,6 +2,7 @@ package acr.browser.lightning._browser2
 
 import acr.browser.lightning._browser2.data.CookieAdministrator
 import acr.browser.lightning._browser2.di.Browser2Scope
+import acr.browser.lightning._browser2.di.IncognitoMode
 import acr.browser.lightning._browser2.di.InitialUrl
 import acr.browser.lightning._browser2.download.PendingDownload
 import acr.browser.lightning._browser2.history.HistoryRecord
@@ -67,7 +68,8 @@ class BrowserPresenter @Inject constructor(
     private val historyPageFactory: HistoryPageFactory,
     private val allowListModel: AllowListModel,
     private val cookieAdministrator: CookieAdministrator,
-    private val tabCountNotifier: TabCountNotifier
+    private val tabCountNotifier: TabCountNotifier,
+    @IncognitoMode private val incognitoMode: Boolean
 ) {
 
     private var view: BrowserContract.View? = null
@@ -458,7 +460,15 @@ class BrowserPresenter @Inject constructor(
                 view?.closeBookmarkDrawer()
             }
             currentTab?.canGoBack() == true -> currentTab?.goBack()
-            currentTab?.canGoBack() == false -> onTabClose(viewState.tabs.indexOfFirst { it.id == currentTab?.id })
+            currentTab?.canGoBack() == false -> if (incognitoMode) {
+                currentTab?.id?.let {
+                    view?.showCloseBrowserDialog(it)
+                }
+            } else if (tabIdOpenedFromAction == currentTab?.id) {
+                onTabClose(viewState.tabs.indexOfFirst { it.id == currentTab?.id })
+            } else {
+                navigator.backgroundBrowser()
+            }
         }
     }
 
