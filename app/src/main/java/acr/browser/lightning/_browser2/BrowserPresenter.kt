@@ -218,7 +218,8 @@ class BrowserPresenter @Inject constructor(
             tab.loadingProgress().startWith(tab.loadingProgress),
             tab.canGoBackChanges().startWith(tab.canGoBack()),
             tab.canGoForwardChanges().startWith(tab.canGoForward()),
-            tab.urlChanges().startWith(tab.url).flatMapSingle(bookmarkRepository::isBookmark),
+            tab.urlChanges().startWith(tab.url).observeOn(diskScheduler)
+                .flatMapSingle(bookmarkRepository::isBookmark),
             tab.urlChanges().startWith(tab.url).map(String::isSpecialUrl)
         ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl ->
             viewState.copy(
@@ -238,7 +239,7 @@ class BrowserPresenter @Inject constructor(
                 isBookmarkEnabled = !isSpecialUrl,
                 findInPage = tab.findQuery.orEmpty()
             )
-        }.subscribeOn(mainScheduler)
+        }.observeOn(mainScheduler)
             .subscribe { view.updateState(it) }
 
         tabDisposable += tab.downloadRequests()
