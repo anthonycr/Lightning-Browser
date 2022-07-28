@@ -362,24 +362,24 @@ class BrowserPresenter @Inject constructor(
      */
     fun onKeyComboClick(keyCombo: KeyCombo) {
         when (keyCombo) {
-            KeyCombo.CTRL_F -> TODO()
+            KeyCombo.CTRL_F -> view?.showFindInPageDialog()
             KeyCombo.CTRL_T -> onNewTabClick()
-            KeyCombo.CTRL_W -> TODO()
-            KeyCombo.CTRL_Q -> TODO()
+            KeyCombo.CTRL_W -> onTabClose(viewState.tabs.indexOfFirst { it.id == currentTab?.id })
+            KeyCombo.CTRL_Q -> view?.showCloseBrowserDialog(viewState.tabs.indexOfFirst { it.id == currentTab?.id })
             KeyCombo.CTRL_R -> onRefreshOrStopClick()
             KeyCombo.CTRL_TAB -> TODO()
             KeyCombo.CTRL_SHIFT_TAB -> TODO()
             KeyCombo.SEARCH -> TODO()
-            KeyCombo.ALT_0 -> TODO()
-            KeyCombo.ALT_1 -> TODO()
-            KeyCombo.ALT_2 -> TODO()
-            KeyCombo.ALT_3 -> TODO()
-            KeyCombo.ALT_4 -> TODO()
-            KeyCombo.ALT_5 -> TODO()
-            KeyCombo.ALT_6 -> TODO()
-            KeyCombo.ALT_7 -> TODO()
-            KeyCombo.ALT_8 -> TODO()
-            KeyCombo.ALT_9 -> TODO()
+            KeyCombo.ALT_0 -> onTabClick(0.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_1 -> onTabClick(1.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_2 -> onTabClick(2.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_3 -> onTabClick(3.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_4 -> onTabClick(4.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_5 -> onTabClick(5.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_6 -> onTabClick(6.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_7 -> onTabClick(7.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_8 -> onTabClick(8.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_9 -> onTabClick(9.coerceAtMost(viewState.tabs.size - 1))
         }
     }
 
