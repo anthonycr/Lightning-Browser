@@ -26,7 +26,8 @@ class TabAdapter(
     private val tabWebViewClient: TabWebViewClient,
     private val tabWebChromeClient: TabWebChromeClient,
     private val userPreferences: UserPreferences,
-    private val defaultUserAgent: String
+    private val defaultUserAgent: String,
+    private val iconFreeze: Bitmap
 ) : TabModel {
 
     private var latentInitializer: FreezableBundleInitializer? = null
@@ -124,7 +125,8 @@ class TabAdapter(
         get() = findInPageQuery
 
     override val favicon: Bitmap?
-        get() = tabWebChromeClient.faviconObservable.value?.value()
+        get() = latentInitializer?.let { iconFreeze }
+            ?: tabWebChromeClient.faviconObservable.value?.value()
 
     override fun faviconChanges(): Observable<Option<Bitmap>> = tabWebChromeClient.faviconObservable
 

@@ -1,11 +1,13 @@
 package acr.browser.lightning._browser2.di
 
+import acr.browser.lightning.R
 import acr.browser.lightning._browser2.BrowserContract
 import acr.browser.lightning._browser2.data.CookieAdministrator
 import acr.browser.lightning._browser2.data.DefaultCookieAdministrator
 import acr.browser.lightning._browser2.history.DefaultHistoryRecord
 import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.history.NoOpHistoryRecord
+import acr.browser.lightning._browser2.image.IconFreeze
 import acr.browser.lightning._browser2.notification.DefaultTabCountNotifier
 import acr.browser.lightning._browser2.notification.IncognitoTabCountNotifier
 import acr.browser.lightning._browser2.notification.TabCountNotifier
@@ -22,12 +24,15 @@ import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.BrowserView
+import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.IntentUtils
 import android.app.Activity
 import android.app.Application
 import android.content.Intent
+import android.graphics.Bitmap
 import android.webkit.WebSettings
+import androidx.core.graphics.drawable.toBitmap
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -125,5 +130,10 @@ class Browser2Module {
     } else {
         defaultBundleStore
     }
+
+    @IconFreeze
+    @Provides
+    fun providesFrozenIcon(activity: Activity): Bitmap =
+        activity.drawable(R.drawable.ic_frozen).toBitmap()
 
 }
