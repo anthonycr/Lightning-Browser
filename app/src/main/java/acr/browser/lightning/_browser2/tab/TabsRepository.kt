@@ -7,6 +7,7 @@ import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.*
 import android.graphics.Bitmap
@@ -22,6 +23,7 @@ class TabsRepository @Inject constructor(
     private val tabPager: TabPager,
     private val adBlocker: AdBlocker,
     private val allowListModel: AllowListModel,
+    private val faviconModel: FaviconModel,
     @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler,
     private val bundleStore: BundleStore,
@@ -64,7 +66,7 @@ class TabsRepository @Inject constructor(
                 webView,
                 headers,
                 TabWebViewClient(adBlocker, allowListModel, urlHandler, headers),
-                TabWebChromeClient(),
+                TabWebChromeClient(faviconModel, diskScheduler),
                 userPreferences,
                 defaultUserAgent,
                 iconFreeze
