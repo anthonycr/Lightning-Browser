@@ -94,6 +94,7 @@ class BrowserPresenter @Inject constructor(
     private var isBookmarkDrawerOpen = false
     private var isSearchViewFocused = false
     private var tabIdOpenedFromAction = -1
+    private var pendingAction: BrowserContract.Action.LoadUrl? = null
 
     private val compositeDisposable = CompositeDisposable()
     private val allTabsDisposable = CompositeDisposable()
@@ -277,13 +278,36 @@ class BrowserPresenter @Inject constructor(
      */
     fun onNewAction(action: BrowserContract.Action) {
         when (action) {
-            is BrowserContract.Action.LoadUrl -> createNewTabAndSelect(
-                tabInitializer = UrlInitializer(action.url),
-                shouldSelect = true,
-                markAsOpenedFromAction = true
-            )
+            is BrowserContract.Action.LoadUrl -> if (action.url.isSpecialUrl()) {
+                view?.showLocalFileBlockedDialog()
+                pendingAction = action
+            } else {
+                createNewTabAndSelect(
+                    tabInitializer = UrlInitializer(action.url),
+                    shouldSelect = true,
+                    markAsOpenedFromAction = true
+                )
+            }
             BrowserContract.Action.Panic -> panicClean()
         }
+    }
+
+    /**
+     * Call when the user confirms that they do or do not want to allow a local file to be opened
+     * in the browser. This is a security gate to prevent malicious local files from being opened
+     * in the browser without the user's knowledge.
+     */
+    fun onConfirmOpenLocalFile(allow: Boolean) {
+        if (allow) {
+            pendingAction?.let {
+                createNewTabAndSelect(
+                    tabInitializer = UrlInitializer(it.url),
+                    shouldSelect = true,
+                    markAsOpenedFromAction = true
+                )
+            }
+        }
+        pendingAction = null
     }
 
     private fun panicClean() {

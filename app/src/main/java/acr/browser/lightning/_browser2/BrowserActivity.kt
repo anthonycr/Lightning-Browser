@@ -26,6 +26,7 @@ import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.drawable
+import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
 import android.content.Intent
@@ -36,6 +37,7 @@ import android.widget.AdapterView
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.annotation.MenuRes
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -554,6 +556,21 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 onClick = presenter::onToggleAdBlocking
             )
         )
+    }
+
+    fun showLocalFileBlockedDialog() {
+        AlertDialog.Builder(this)
+            .setCancelable(true)
+            .setTitle(R.string.title_warning)
+            .setMessage(R.string.message_blocked_local)
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                presenter.onConfirmOpenLocalFile(allow = false)
+            }
+            .setPositiveButton(R.string.action_open) { _, _ ->
+                presenter.onConfirmOpenLocalFile(allow = true)
+            }
+            .setOnCancelListener { presenter.onConfirmOpenLocalFile(allow = false) }
+            .resizeAndShow()
     }
 
     private fun ImageView.updateVisibilityForDrawable() {

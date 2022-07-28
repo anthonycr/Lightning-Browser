@@ -67,6 +67,10 @@ fun smartUrlFilter(url: String, canBeSearch: Boolean, searchUrl: String): String
     }
 }
 
+/**
+ * True if the URL is a file URL, false otherwise.
+ */
+fun String?.isFileUrl(): Boolean = this != null && this.startsWith(FILE)
 
 /**
  * Returns whether the given url is the bookmarks/history page or a normal website
@@ -111,6 +115,7 @@ fun String?.isHistoryUrl(): Boolean =
 fun String?.isStartPageUrl(): Boolean =
     this != null && this.startsWith(FILE) && this.endsWith(HomePageFactory.FILENAME)
 
-private val ACCEPTED_URI_SCHEMA = Pattern.compile("(?i)((?:http|https|file)://|(?:inline|data|about|javascript):|(?:.*:.*@))(.*)")
+private val ACCEPTED_URI_SCHEMA =
+    Pattern.compile("(?i)((?:http|https|file)://|(?:inline|data|about|javascript):|(?:.*:.*@))(.*)")
 const val QUERY_PLACE_HOLDER = "%s"
 private const val URL_ENCODED_SPACE = "%20"

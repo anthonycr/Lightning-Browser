@@ -65,6 +65,8 @@ interface BrowserContract {
         fun showToolbar()
 
         fun showToolsDialog(areAdsAllowed: Boolean, shouldShowAdBlockOption: Boolean)
+
+        fun showLocalFileBlockedDialog()
     }
 
     interface Model {
