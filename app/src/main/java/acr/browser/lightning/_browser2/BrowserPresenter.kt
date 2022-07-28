@@ -545,7 +545,13 @@ class BrowserPresenter @Inject constructor(
     fun onSearchFocusChanged(isFocused: Boolean) {
         isSearchViewFocused = isFocused
         if (isFocused) {
-            view?.updateState(viewState.copy(sslState = SslState.None, isRefresh = false))
+            view?.updateState(
+                viewState.copy(
+                    sslState = SslState.None,
+                    isRefresh = false,
+                    displayUrl = currentTab?.url?.takeIf { !it.isSpecialUrl() }.orEmpty()
+                )
+            )
         } else {
             view?.updateState(
                 viewState.copy(

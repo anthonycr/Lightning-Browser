@@ -214,18 +214,15 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         }
         binding.search.setAdapter(suggestionsAdapter)
         val searchListener = SearchListener(
-            onConfirm = {
-                presenter.onSearch(binding.search.text.toString())
-            },
+            onConfirm = { presenter.onSearch(binding.search.text.toString()) },
             inputMethodManager = inputMethodManager
         )
         binding.search.setOnEditorActionListener(searchListener)
         binding.search.setOnKeyListener(searchListener)
         binding.search.addTextChangedListener(StyleRemovingTextWatcher())
         binding.search.setOnFocusChangeListener { _, hasFocus ->
-            presenter.onSearchFocusChanged(
-                hasFocus
-            )
+            binding.search.selectAll()
+            presenter.onSearchFocusChanged(hasFocus)
         }
 
         binding.findPrevious.setOnClickListener { presenter.onFindPrevious() }
