@@ -251,6 +251,14 @@ class BrowserPresenter @Inject constructor(
             .distinctUntilChanged()
             .subscribeOn(mainScheduler)
             .subscribeBy { view?.showToolbar() }
+
+        tabDisposable += tab.createWindowRequests()
+            .subscribeOn(mainScheduler)
+            .subscribeBy { createNewTabAndSelect(it, shouldSelect = true) }
+
+        tabDisposable += tab.closeWindowRequests()
+            .subscribeOn(mainScheduler)
+            .subscribeBy { onTabClose(viewState.indexOfCurrentTab()) }
     }
 
     private fun List<TabModel>.subscribeToUpdates(compositeDisposable: CompositeDisposable) {
@@ -381,6 +389,11 @@ class BrowserPresenter @Inject constructor(
             }
     }
 
+    private fun BrowserViewState.tabIndexForId(id: Int?): Int =
+        tabs.indexOfFirst { it.id == id }
+
+    private fun BrowserViewState.indexOfCurrentTab(): Int = tabIndexForId(currentTab?.id)
+
     /**
      * TODO
      */
@@ -388,7 +401,7 @@ class BrowserPresenter @Inject constructor(
         when (keyCombo) {
             KeyCombo.CTRL_F -> view?.showFindInPageDialog()
             KeyCombo.CTRL_T -> onNewTabClick()
-            KeyCombo.CTRL_W -> onTabClose(viewState.tabs.indexOfFirst { it.id == currentTab?.id })
+            KeyCombo.CTRL_W -> onTabClose(viewState.indexOfCurrentTab())
             KeyCombo.CTRL_Q -> view?.showCloseBrowserDialog(viewState.tabs.indexOfFirst { it.id == currentTab?.id })
             KeyCombo.CTRL_R -> onRefreshOrStopClick()
             KeyCombo.CTRL_TAB -> TODO()
@@ -491,7 +504,7 @@ class BrowserPresenter @Inject constructor(
                     view?.showCloseBrowserDialog(it)
                 }
             } else if (tabIdOpenedFromAction == currentTab?.id) {
-                onTabClose(viewState.tabs.indexOfFirst { it.id == currentTab?.id })
+                onTabClose(viewState.indexOfCurrentTab())
             } else {
                 navigator.backgroundBrowser()
             }
@@ -1053,7 +1066,7 @@ class BrowserPresenter @Inject constructor(
     fun onCloseBrowserEvent(id: Int, closeTabEvent: BrowserContract.CloseTabEvent) {
         when (closeTabEvent) {
             BrowserContract.CloseTabEvent.CLOSE_CURRENT ->
-                onTabClose(viewState.tabs.indexOfFirst { it.id == id })
+                onTabClose(viewState.tabIndexForId(id))
             BrowserContract.CloseTabEvent.CLOSE_OTHERS -> model.tabsList
                 .filter { it.id != id }
                 .toObservable()

@@ -2,7 +2,10 @@ package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.utils.Option
+import acr.browser.lightning.view.ResultMessageInitializer
+import acr.browser.lightning.view.TabInitializer
 import android.graphics.Bitmap
+import android.os.Message
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import io.reactivex.Scheduler
@@ -20,6 +23,22 @@ class TabWebChromeClient(
     val progressObservable: PublishSubject<Int> = PublishSubject.create()
     val titleObservable: PublishSubject<String> = PublishSubject.create()
     val faviconObservable: BehaviorSubject<Option<Bitmap>> = BehaviorSubject.create()
+    val createWindowObservable: PublishSubject<TabInitializer> = PublishSubject.create()
+    val closeWindowObservable: PublishSubject<Unit> = PublishSubject.create()
+
+    override fun onCreateWindow(
+        view: WebView,
+        isDialog: Boolean,
+        isUserGesture: Boolean,
+        resultMsg: Message
+    ): Boolean {
+        createWindowObservable.onNext(ResultMessageInitializer(resultMsg))
+        return true
+    }
+
+    override fun onCloseWindow(window: WebView) {
+        closeWindowObservable.onNext(Unit)
+    }
 
     override fun onProgressChanged(view: WebView, newProgress: Int) {
         super.onProgressChanged(view, newProgress)

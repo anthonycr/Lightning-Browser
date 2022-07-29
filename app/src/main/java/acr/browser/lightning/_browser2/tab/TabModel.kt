@@ -75,6 +75,10 @@ interface TabModel {
 
     // Lifecycle
 
+    fun createWindowRequests(): Observable<TabInitializer>
+
+    fun closeWindowRequests(): Observable<Unit>
+
     var isForeground: Boolean
 
     fun destroy()

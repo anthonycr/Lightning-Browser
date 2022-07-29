@@ -165,6 +165,12 @@ class TabAdapter(
 
     override fun downloadRequests(): Observable<PendingDownload> = downloadsSubject.hide()
 
+    override fun createWindowRequests(): Observable<TabInitializer> =
+        tabWebChromeClient.createWindowObservable.hide()
+
+    override fun closeWindowRequests(): Observable<Unit> =
+        tabWebChromeClient.closeWindowObservable.hide()
+
     override var isForeground: Boolean = false
         set(value) {
             field = value
