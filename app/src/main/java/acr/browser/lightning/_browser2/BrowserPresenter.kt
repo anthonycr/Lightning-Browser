@@ -31,7 +31,6 @@ import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.*
 import androidx.core.net.toUri
 import io.reactivex.Maybe
-import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
@@ -210,6 +209,8 @@ class BrowserPresenter @Inject constructor(
         view?.showToolbar()
         view?.closeTabDrawer()
 
+        view?.updateState(viewState.copy(tabs = viewState.tabs.map { it.copy(isSelected = it.id == tab.id ) }))
+
         tabDisposable.dispose()
         tabDisposable = CompositeDisposable()
         tabDisposable += Observables.combineLatest(
@@ -220,9 +221,11 @@ class BrowserPresenter @Inject constructor(
             tab.canGoBackChanges().startWith(tab.canGoBack()),
             tab.canGoForwardChanges().startWith(tab.canGoForward()),
             tab.urlChanges().startWith(tab.url).observeOn(diskScheduler)
-                .flatMapSingle(bookmarkRepository::isBookmark),
-            tab.urlChanges().startWith(tab.url).map(String::isSpecialUrl)
-        ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl ->
+                .flatMapSingle(bookmarkRepository::isBookmark).observeOn(mainScheduler),
+            tab.urlChanges().startWith(tab.url).map(String::isSpecialUrl),
+            tab.faviconChanges().startWith(Option.fromNullable(tab.favicon))
+        ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl, icon ->
+
             viewState.copy(
                 displayUrl = searchBoxModel.getDisplayContent(
                     url = url,
@@ -235,7 +238,9 @@ class BrowserPresenter @Inject constructor(
                 isBackEnabled = canGoBack,
                 sslState = sslState,
                 progress = progress,
-                tabs = viewState.tabs.map { it.copy(isSelected = it.id == tab.id) },
+                tabs = viewState.tabs.updateId(tab.id) {
+                    it.copy(title = title, icon = icon.value())
+                },
                 isBookmarked = isBookmark,
                 isBookmarkEnabled = !isSpecialUrl,
                 findInPage = tab.findQuery.orEmpty()
