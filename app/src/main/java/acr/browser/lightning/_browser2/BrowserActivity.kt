@@ -24,9 +24,7 @@ import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
-import acr.browser.lightning.extensions.color
-import acr.browser.lightning.extensions.drawable
-import acr.browser.lightning.extensions.resizeAndShow
+import acr.browser.lightning.extensions.*
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
 import android.content.Intent
@@ -191,6 +189,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             binding.desktopTabsList.adapter = tabsAdapter
             binding.desktopTabsList.layoutManager =
                 LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+            binding.desktopTabsList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
+                ?.supportsChangeAnimations = false
             binding.drawerTabsList.isVisible = false
         }
 
