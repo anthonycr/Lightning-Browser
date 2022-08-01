@@ -1,5 +1,7 @@
 package acr.browser.lightning.di
 
+import acr.browser.lightning._browser2.theme.LegacyThemeProvider
+import acr.browser.lightning._browser2.theme.ThemeProvider
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.adblock.allowlist.SessionAllowListModel
 import acr.browser.lightning.adblock.source.AssetsHostsDataSource
@@ -58,4 +60,7 @@ interface AppBindsModule {
 
     @Binds
     fun bindsHostsDataSourceProvider(preferencesHostsDataSourceProvider: PreferencesHostsDataSourceProvider): HostsDataSourceProvider
+
+    @Binds
+    fun bindsThemeProvider(legacyThemeProvider: LegacyThemeProvider): ThemeProvider
 }

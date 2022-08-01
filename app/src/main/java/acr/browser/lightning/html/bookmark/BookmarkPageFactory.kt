@@ -1,6 +1,7 @@
 package acr.browser.lightning.html.bookmark
 
 import acr.browser.lightning.R
+import acr.browser.lightning._browser2.theme.ThemeProvider
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.bookmark.BookmarkRepository
@@ -12,12 +13,14 @@ import acr.browser.lightning.favicon.toValidUri
 import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.jsoup.*
 import acr.browser.lightning.utils.ThemeUtils
+import android.app.Activity
 import android.app.Application
 import android.graphics.Bitmap
 import androidx.core.net.toUri
 import dagger.Reusable
 import io.reactivex.Scheduler
 import io.reactivex.Single
+import org.jsoup.nodes.DataNode
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FileWriter
@@ -33,12 +36,23 @@ class BookmarkPageFactory @Inject constructor(
     private val faviconModel: FaviconModel,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     @DiskScheduler private val diskScheduler: Scheduler,
-    private val bookmarkPageReader: BookmarkPageReader
+    private val bookmarkPageReader: BookmarkPageReader,
+    themeProvider: ThemeProvider
 ) : HtmlPageFactory {
 
     private val title = application.getString(R.string.action_bookmarks)
     private val folderIconFile by lazy { File(application.cacheDir, FOLDER_ICON) }
     private val defaultIconFile by lazy { File(application.cacheDir, DEFAULT_ICON) }
+
+    private fun Int.toColor(): String {
+        val string = Integer.toHexString(this)
+
+        return string.substring(2) + string.substring(0, 2)
+    }
+
+    private val backgroundColor = themeProvider.color(R.attr.colorPrimary).toColor()
+    private val cardColor = themeProvider.color(R.attr.autoCompleteBackgroundColor).toColor()
+    private val textColor = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
 
     override fun buildPage(): Single<String> = bookmarkModel
         .getAllBookmarksSorted()
@@ -50,7 +64,8 @@ class BookmarkPageFactory @Inject constructor(
                 .toList()
                 .concatWith(
                     if (folder == Bookmark.Folder.Root) {
-                        bookmarkModel.getFoldersSorted().map { it.filterIsInstance<Bookmark.Folder.Entry>() }
+                        bookmarkModel.getFoldersSorted()
+                            .map { it.filterIsInstance<Bookmark.Folder.Entry>() }
                     } else {
                         Single.just(emptyList())
                     }
@@ -70,7 +85,10 @@ class BookmarkPageFactory @Inject constructor(
         }
         .ignoreElements()
         .toSingle {
-            cacheIcon(ThemeUtils.createThemedBitmap(application, R.drawable.ic_folder, false), folderIconFile)
+            cacheIcon(
+                ThemeUtils.createThemedBitmap(application, R.drawable.ic_folder, false),
+                folderIconFile
+            )
             cacheIcon(faviconModel.createDefaultBitmapForTitle(null), defaultIconFile)
 
             "$FILE${createBookmarkPage(null)}"
@@ -84,6 +102,11 @@ class BookmarkPageFactory @Inject constructor(
     private fun construct(list: List<BookmarkViewModel>): String {
         return parse(bookmarkPageReader.provideHtml()) andBuild {
             title { title }
+            style { content ->
+                content.replace("--body-bg: {COLOR}", "--body-bg: #$backgroundColor;")
+                    .replace("--box-bg: {COLOR}", "--box-bg: #$cardColor;")
+                    .replace("--box-txt: {COLOR}", "--box-txt: #$textColor;")
+            }
             body {
                 val repeatableElement = id("repeated").removeElement()
                 id("content") {

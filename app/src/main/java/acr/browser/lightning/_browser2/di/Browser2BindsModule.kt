@@ -7,6 +7,8 @@ import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.image.FaviconImageLoader
 import acr.browser.lightning._browser2.image.ImageLoader
 import acr.browser.lightning._browser2.tab.TabsRepository
+import acr.browser.lightning._browser2.theme.LegacyThemeProvider
+import acr.browser.lightning._browser2.theme.ThemeProvider
 import dagger.Binds
 import dagger.Module
 
@@ -24,4 +26,7 @@ interface Browser2BindsModule {
 
     @Binds
     fun bindsBrowserNavigator(browserNavigator: BrowserNavigator): BrowserContract.Navigator
+
+    @Binds
+    fun bindsThemeProvider(legacyThemeProvider: LegacyThemeProvider): ThemeProvider
 }

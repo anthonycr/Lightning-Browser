@@ -11,13 +11,19 @@
     </title>
 </head>
 <style>
+    :root {
+        --body-bg: {COLOR}
+        --box-bg: {COLOR}
+        --box-txt: {COLOR}
+    }
+
     body {
-        background: #E5E5E5;
+        background: var(--body-bg);
         padding-top: 5px;
         max-width: 100%;
         min-height: 100%
     }
-    
+
     #content {
         width: 100%;
         max-width: 800px;
@@ -34,16 +40,13 @@
         width: 145px;
         margin: 6px;
         padding: 4px;
-        background-color: #fff;
-        border: 1px solid #d2d2d2;
-        border-top-width: 0;
-        border-bottom-width: 2px;
+        background-color: var(--box-bg);
         font-family: Arial;
-        color: #444;
+        color: var(--box-txt);
         font-size: 12px;
-        -moz-border-radius: 2px;
-        -webkit-border-radius: 2px;
-        border-radius: 2px
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: 3px
     }
     
     .box-content {
@@ -86,6 +89,8 @@
     .margin {
         margin: 10px
     }
+
+
 </style>
 
 <body>

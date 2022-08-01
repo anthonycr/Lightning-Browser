@@ -3,6 +3,7 @@
 package acr.browser.lightning.html.jsoup
 
 import org.jsoup.Jsoup
+import org.jsoup.nodes.DataNode
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -15,6 +16,14 @@ infix fun Document.andBuild(build: Document.() -> Unit): String {
 
 inline fun Document.title(provide: () -> String) {
     this.title(provide())
+}
+
+inline fun Document.style(mutate: (String) -> String) {
+    head().getElementsByTag("style").first().apply {
+        childNodes().filterIsInstance<DataNode>().first().apply {
+            wholeData = mutate(wholeData)
+        }
+    }
 }
 
 inline fun Document.body(build: Element.() -> Unit) {
