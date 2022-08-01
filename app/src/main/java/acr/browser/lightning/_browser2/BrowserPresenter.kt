@@ -912,6 +912,7 @@ class BrowserPresenter @Inject constructor(
                         view?.updateState(viewState.copy(bookmarks = list))
                         if (currentTab?.url?.isBookmarkUrl() == true) {
                             reload()
+                            currentTab?.goBack()
                         }
                     }
         }
