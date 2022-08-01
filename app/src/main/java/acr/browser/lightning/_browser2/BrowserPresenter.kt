@@ -279,7 +279,7 @@ class BrowserPresenter @Inject constructor(
                         it.copy(title = title, icon = bitmap.value())
                     }))
 
-                    tabModel.url.takeIf { !it.isSpecialUrl() }?.let {
+                    tabModel.url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {
                         historyRecord.recordVisit(title, it)
                     }
                 }
