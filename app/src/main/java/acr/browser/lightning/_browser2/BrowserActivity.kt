@@ -311,7 +311,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             menuItemAddBookmark?.isVisible = it
             menuItemReaderMode?.isVisible = it
         }
-        viewState.tabs?.let { binding.tabCountView.updateCount(it.size) }
         viewState.progress?.let { binding.progressView.progress = it }
         viewState.isRefresh?.let {
             binding.searchRefresh.setImageResource(
@@ -322,7 +321,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 }
             )
         }
-        viewState.tabs?.let(tabsAdapter::submitList)
         viewState.bookmarks?.let(bookmarksAdapter::submitList)
         viewState.isBookmarked?.let { binding.actionAddBookmark.isSelected = it }
         viewState.isBookmarkEnabled?.let { binding.actionAddBookmark.isEnabled = it }
@@ -343,6 +341,11 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 binding.findQuery.text = it
             }
         }
+    }
+
+    fun renderTabs(tabListState: List<TabViewState>) {
+        binding.tabCountView.updateCount(tabListState.size)
+        tabsAdapter.submitList(tabListState)
     }
 
     fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {

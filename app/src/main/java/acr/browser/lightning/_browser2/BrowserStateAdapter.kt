@@ -1,5 +1,6 @@
 package acr.browser.lightning._browser2
 
+import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
@@ -13,6 +14,7 @@ import targetUrl.LongPress
 class BrowserStateAdapter(private val browserActivity: BrowserActivity) : BrowserContract.View {
 
     private var currentState: BrowserViewState? = null
+    private var currentTabs: List<TabViewState>? = null
 
     override fun renderState(viewState: BrowserViewState) {
         val (
@@ -21,7 +23,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
             isRefresh,
             progress,
             enableFullMenu,
-            tabs,
             isForwardEnabled,
             isBackEnabled,
             bookmarks,
@@ -38,7 +39,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
                 isRefresh = isRefresh.takeIf { it != currentState?.isRefresh },
                 progress = progress.takeIf { it != currentState?.progress },
                 enableFullMenu = enableFullMenu.takeIf { it != currentState?.enableFullMenu },
-                tabs = tabs.takeIf { it != currentState?.tabs },
                 isForwardEnabled = isForwardEnabled.takeIf { it != currentState?.isForwardEnabled },
                 isBackEnabled = isBackEnabled.takeIf { it != currentState?.isBackEnabled },
                 bookmarks = bookmarks.takeIf { it != currentState?.bookmarks },
@@ -50,6 +50,10 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         )
 
         currentState = viewState
+    }
+
+    override fun renderTabs(tabs: List<TabViewState>) {
+        tabs.takeIf { it != currentTabs }?.let(browserActivity::renderTabs)
     }
 
     override fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {

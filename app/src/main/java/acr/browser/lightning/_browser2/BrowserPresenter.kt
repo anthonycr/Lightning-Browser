@@ -78,7 +78,6 @@ class BrowserPresenter @Inject constructor(
         sslState = SslState.None,
         progress = 0,
         enableFullMenu = true,
-        tabs = emptyList(),
         isForwardEnabled = false,
         isBackEnabled = false,
         bookmarks = emptyList(),
@@ -87,6 +86,7 @@ class BrowserPresenter @Inject constructor(
         isRootFolder = true,
         findInPage = ""
     )
+    private var tabListState: List<TabViewState> = emptyList()
     private var currentTab: TabModel? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
     private var isTabDrawerOpen = false
@@ -119,7 +119,7 @@ class BrowserPresenter @Inject constructor(
         compositeDisposable += model.tabsListChanges()
             .observeOn(mainScheduler)
             .subscribe { list ->
-                this.view.updateState(viewState.copy(tabs = list.map { it.asViewState() }))
+                this.view?.updateTabs(list.map { it.asViewState() })
 
                 allTabsDisposable.clear()
                 list.subscribeToUpdates(allTabsDisposable)
@@ -187,29 +187,29 @@ class BrowserPresenter @Inject constructor(
         currentTab = tabModel
         currentTab?.isForeground = true
 
-        val tab = tabModel ?: return view.updateState(
-            viewState.copy(
-                displayUrl = searchBoxModel.getDisplayContent(
-                    url = "",
-                    title = null,
-                    isLoading = false
-                ),
-                enableFullMenu = false,
-                isForwardEnabled = false,
-                isBackEnabled = false,
-                sslState = SslState.None,
-                progress = 100,
-                tabs = viewState.tabs.map {
-                    it.copy(isSelected = false)
-                },
-                findInPage = ""
+        val tab = tabModel ?: return run {
+            view.updateState(
+                viewState.copy(
+                    displayUrl = searchBoxModel.getDisplayContent(
+                        url = "",
+                        title = null,
+                        isLoading = false
+                    ),
+                    enableFullMenu = false,
+                    isForwardEnabled = false,
+                    isBackEnabled = false,
+                    sslState = SslState.None,
+                    progress = 100,
+                    findInPage = ""
+                )
             )
-        )
+            view.updateTabs(tabListState.map { it.copy(isSelected = false) })
+        }
 
         view?.showToolbar()
         view?.closeTabDrawer()
 
-        view?.updateState(viewState.copy(tabs = viewState.tabs.map { it.copy(isSelected = it.id == tab.id ) }))
+        view.updateTabs(tabListState.map { it.copy(isSelected = it.id == tab.id) })
 
         tabDisposable.dispose()
         tabDisposable = CompositeDisposable()
@@ -238,9 +238,6 @@ class BrowserPresenter @Inject constructor(
                 isBackEnabled = canGoBack,
                 sslState = sslState,
                 progress = progress,
-                tabs = viewState.tabs.updateId(tab.id) {
-                    it.copy(title = title, icon = icon.value())
-                },
                 isBookmarked = isBookmark,
                 isBookmarkEnabled = !isSpecialUrl,
                 findInPage = tab.findQuery.orEmpty()
@@ -263,7 +260,7 @@ class BrowserPresenter @Inject constructor(
 
         tabDisposable += tab.closeWindowRequests()
             .subscribeOn(mainScheduler)
-            .subscribeBy { onTabClose(viewState.indexOfCurrentTab()) }
+            .subscribeBy { onTabClose(tabListState.indexOfCurrentTab()) }
     }
 
     private fun List<TabModel>.subscribeToUpdates(compositeDisposable: CompositeDisposable) {
@@ -275,9 +272,9 @@ class BrowserPresenter @Inject constructor(
             ).distinctUntilChanged()
                 .subscribeOn(mainScheduler)
                 .subscribeBy { (title, bitmap) ->
-                    view.updateState(viewState.copy(tabs = viewState.tabs.updateId(tabModel.id) {
+                    view.updateTabs(tabListState.updateId(tabModel.id) {
                         it.copy(title = title, icon = bitmap.value())
-                    }))
+                    })
 
                     tabModel.url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {
                         historyRecord.recordVisit(title, it)
@@ -394,10 +391,10 @@ class BrowserPresenter @Inject constructor(
             }
     }
 
-    private fun BrowserViewState.tabIndexForId(id: Int?): Int =
-        tabs.indexOfFirst { it.id == id }
+    private fun List<TabViewState>.tabIndexForId(id: Int?): Int =
+        indexOfFirst { it.id == id }
 
-    private fun BrowserViewState.indexOfCurrentTab(): Int = tabIndexForId(currentTab?.id)
+    private fun List<TabViewState>.indexOfCurrentTab(): Int = tabIndexForId(currentTab?.id)
 
     /**
      * TODO
@@ -406,22 +403,22 @@ class BrowserPresenter @Inject constructor(
         when (keyCombo) {
             KeyCombo.CTRL_F -> view?.showFindInPageDialog()
             KeyCombo.CTRL_T -> onNewTabClick()
-            KeyCombo.CTRL_W -> onTabClose(viewState.indexOfCurrentTab())
-            KeyCombo.CTRL_Q -> view?.showCloseBrowserDialog(viewState.tabs.indexOfFirst { it.id == currentTab?.id })
+            KeyCombo.CTRL_W -> onTabClose(tabListState.indexOfCurrentTab())
+            KeyCombo.CTRL_Q -> view?.showCloseBrowserDialog(tabListState.indexOfCurrentTab())
             KeyCombo.CTRL_R -> onRefreshOrStopClick()
             KeyCombo.CTRL_TAB -> TODO()
             KeyCombo.CTRL_SHIFT_TAB -> TODO()
             KeyCombo.SEARCH -> TODO()
-            KeyCombo.ALT_0 -> onTabClick(0.coerceAtMost(viewState.tabs.size - 1))
-            KeyCombo.ALT_1 -> onTabClick(1.coerceAtMost(viewState.tabs.size - 1))
-            KeyCombo.ALT_2 -> onTabClick(2.coerceAtMost(viewState.tabs.size - 1))
-            KeyCombo.ALT_3 -> onTabClick(3.coerceAtMost(viewState.tabs.size - 1))
-            KeyCombo.ALT_4 -> onTabClick(4.coerceAtMost(viewState.tabs.size - 1))
-            KeyCombo.ALT_5 -> onTabClick(5.coerceAtMost(viewState.tabs.size - 1))
-            KeyCombo.ALT_6 -> onTabClick(6.coerceAtMost(viewState.tabs.size - 1))
-            KeyCombo.ALT_7 -> onTabClick(7.coerceAtMost(viewState.tabs.size - 1))
-            KeyCombo.ALT_8 -> onTabClick(8.coerceAtMost(viewState.tabs.size - 1))
-            KeyCombo.ALT_9 -> onTabClick(9.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_0 -> onTabClick(0.coerceAtMost(tabListState.size - 1))
+            KeyCombo.ALT_1 -> onTabClick(1.coerceAtMost(tabListState.size - 1))
+            KeyCombo.ALT_2 -> onTabClick(2.coerceAtMost(tabListState.size - 1))
+            KeyCombo.ALT_3 -> onTabClick(3.coerceAtMost(tabListState.size - 1))
+            KeyCombo.ALT_4 -> onTabClick(4.coerceAtMost(tabListState.size - 1))
+            KeyCombo.ALT_5 -> onTabClick(5.coerceAtMost(tabListState.size - 1))
+            KeyCombo.ALT_6 -> onTabClick(6.coerceAtMost(tabListState.size - 1))
+            KeyCombo.ALT_7 -> onTabClick(7.coerceAtMost(tabListState.size - 1))
+            KeyCombo.ALT_8 -> onTabClick(8.coerceAtMost(tabListState.size - 1))
+            KeyCombo.ALT_9 -> onTabClick(9.coerceAtMost(tabListState.size - 1))
         }
     }
 
@@ -429,14 +426,14 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onTabClick(index: Int) {
-        selectTab(model.selectTab(viewState.tabs[index].id))
+        selectTab(model.selectTab(tabListState[index].id))
     }
 
     /**
      * TODO
      */
     fun onTabLongClick(index: Int) {
-        view?.showCloseBrowserDialog(viewState.tabs[index].id)
+        view?.showCloseBrowserDialog(tabListState[index].id)
     }
 
     private fun <T> List<T>.nextSelected(removedIndex: Int): T? {
@@ -459,12 +456,12 @@ class BrowserPresenter @Inject constructor(
         if (index == -1) {
             return
         }
-        val nextTab = viewState.tabs.nextSelected(index)
+        val nextTab = tabListState.nextSelected(index)
 
         val currentTabId = currentTab?.id
-        val needToSelectNextTab = viewState.tabs[index].id == currentTabId
+        val needToSelectNextTab = tabListState[index].id == currentTabId
 
-        compositeDisposable += model.deleteTab(viewState.tabs[index].id)
+        compositeDisposable += model.deleteTab(tabListState[index].id)
             .observeOn(mainScheduler)
             .subscribe {
                 if (needToSelectNextTab) {
@@ -509,7 +506,7 @@ class BrowserPresenter @Inject constructor(
                     view?.showCloseBrowserDialog(it)
                 }
             } else if (tabIdOpenedFromAction == currentTab?.id) {
-                onTabClose(viewState.indexOfCurrentTab())
+                onTabClose(tabListState.indexOfCurrentTab())
             } else {
                 navigator.backgroundBrowser()
             }
@@ -1071,7 +1068,7 @@ class BrowserPresenter @Inject constructor(
     fun onCloseBrowserEvent(id: Int, closeTabEvent: BrowserContract.CloseTabEvent) {
         when (closeTabEvent) {
             BrowserContract.CloseTabEvent.CLOSE_CURRENT ->
-                onTabClose(viewState.tabIndexForId(id))
+                onTabClose(tabListState.tabIndexForId(id))
             BrowserContract.CloseTabEvent.CLOSE_OTHERS -> model.tabsList
                 .filter { it.id != id }
                 .toObservable()
@@ -1150,5 +1147,10 @@ class BrowserPresenter @Inject constructor(
     private fun BrowserContract.View?.updateState(state: BrowserViewState) {
         viewState = state
         this?.renderState(viewState)
+    }
+
+    private fun BrowserContract.View?.updateTabs(tabs: List<TabViewState>) {
+        tabListState = tabs
+        this?.renderTabs(tabListState)
     }
 }

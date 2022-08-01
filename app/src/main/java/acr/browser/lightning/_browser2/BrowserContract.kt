@@ -2,6 +2,7 @@ package acr.browser.lightning._browser2
 
 import acr.browser.lightning._browser2.download.PendingDownload
 import acr.browser.lightning._browser2.tab.TabModel
+import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
@@ -24,6 +25,8 @@ interface BrowserContract {
     interface View {
 
         fun renderState(viewState: BrowserViewState)
+
+        fun renderTabs(tabs: List<TabViewState>)
 
         fun showAddBookmarkDialog(title: String, url: String, folders: List<String>)
 

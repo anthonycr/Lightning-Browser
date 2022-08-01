@@ -16,7 +16,6 @@ data class BrowserViewState(
     val enableFullMenu: Boolean,
 
     // Tabs
-    val tabs: List<TabViewState>,
     val isForwardEnabled: Boolean,
     val isBackEnabled: Boolean,
 
@@ -40,7 +39,6 @@ data class PartialBrowserViewState(
     val enableFullMenu: Boolean?,
 
     // Tabs
-    val tabs: List<TabViewState>?,
     val isForwardEnabled: Boolean?,
     val isBackEnabled: Boolean?,
 
