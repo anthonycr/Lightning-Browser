@@ -2,18 +2,27 @@
 <html xmlns=http://www.w3.org/1999/xhtml>
 
 <head>
-    <meta content=en-us http-equiv=Content-Language />
-    <meta content='text/html; charset=utf-8' http-equiv=Content-Type />
-    <meta name=viewport content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+    <meta content=en-us http-equiv=Content-Language/>
+    <meta content='text/html; charset=utf-8' http-equiv=Content-Type/>
+    <meta name=viewport
+          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
     <title>
 
     </title>
 </head>
 <style>
+    :root {
+        --body-bg: {COLOR}
+        --divider-color: {COLOR}
+        --title-color: {COLOR}
+        --subtitle-color: {COLOR}
+    }
+
     body,
     html {
         margin: 0px;
         padding: 0px;
+        background-color: var(--body-bg);
     }
     
     .box {
@@ -25,8 +34,7 @@
         padding-right: 14px;
         padding-top: 9px;
         padding-bottom: 9px;
-        background-color: #fff;
-        border-bottom: 1px solid #d2d2d2;
+        border-bottom: 1px solid var(--divider-color);
         font-family: Arial;
         color: #444;
         font-size: 12px;
@@ -41,7 +49,7 @@
     }
     
     .black {
-        color: black;
+        color: var(--title-color);
         font-size: 15px;
         font-family: Arial;
         white-space: nowrap;
@@ -53,7 +61,7 @@
     }
     
     .font {
-        color: gray;
+        color: var(--subtitle-color);
         font-size: 10px;
         font-family: Arial;
         white-space: nowrap;
@@ -63,19 +71,18 @@
         -o-text-overflow: ellipsis;
         -ms-text-overflow: ellipsis;
     }
-
 </style>
 
 <body>
-    <div id="content">
+<div id="content">
 
-        <div id=repeated class=box>
-            <a href='${URL}'></a>
-            <p id='title' class='black'>${TITLE}</p>
-            <p id='url' class='font'>${URL}</p>
-        </div>
-
+    <div id=repeated class=box>
+        <a href='${URL}'></a>
+        <p id='title' class='black'>${TITLE}</p>
+        <p id='url' class='font'>${URL}</p>
     </div>
+
+</div>
 </body>
 
 </html>

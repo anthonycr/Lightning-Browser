@@ -39,6 +39,11 @@ class LegacyThemeProvider @Inject constructor(
             AppTheme.DARK -> application.color(R.color.white)
             AppTheme.BLACK -> application.color(R.color.white)
         }
+        R.attr.autoCompleteUrlColor -> when (theme) {
+            AppTheme.LIGHT -> application.color(R.color.hint_text_light_theme)
+            AppTheme.DARK -> application.color(R.color.hint_text_dark_theme)
+            AppTheme.BLACK -> application.color(R.color.hint_text_dark_theme)
+        }
         else -> error("Unsupported color")
     }
 }

@@ -1,6 +1,7 @@
 package acr.browser.lightning.html.history
 
 import acr.browser.lightning.R
+import acr.browser.lightning._browser2.theme.ThemeProvider
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.html.HtmlPageFactory
@@ -21,16 +22,34 @@ import javax.inject.Inject
 class HistoryPageFactory @Inject constructor(
     private val listPageReader: ListPageReader,
     private val application: Application,
-    private val historyRepository: HistoryRepository
+    private val historyRepository: HistoryRepository,
+    themeProvider: ThemeProvider
 ) : HtmlPageFactory {
 
     private val title = application.getString(R.string.action_history)
+
+    private fun Int.toColor(): String {
+        val string = Integer.toHexString(this)
+
+        return string.substring(2) + string.substring(0, 2)
+    }
+
+    private val backgroundColor = themeProvider.color(R.attr.colorPrimary).toColor()
+    private val dividerColor = themeProvider.color(R.attr.autoCompleteBackgroundColor).toColor()
+    private val textColor = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
+    private val subtitleColor = themeProvider.color(R.attr.autoCompleteUrlColor).toColor()
 
     override fun buildPage(): Single<String> = historyRepository
         .lastHundredVisitedHistoryEntries()
         .map { list ->
             parse(listPageReader.provideHtml()) andBuild {
                 title { title }
+                style { content ->
+                    content.replace("--body-bg: {COLOR}", "--body-bg: #$backgroundColor;")
+                        .replace("--divider-color: {COLOR}", "--divider-color: #$dividerColor;")
+                        .replace("--title-color: {COLOR}", "--title-color: #$textColor;")
+                        .replace("--subtitle-color: {COLOR}", "--subtitle-color: #$subtitleColor;")
+                }
                 body {
                     val repeatedElement = id("repeated").removeElement()
                     id("content") {
