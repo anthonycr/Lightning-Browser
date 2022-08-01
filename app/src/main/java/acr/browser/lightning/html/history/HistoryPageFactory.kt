@@ -23,7 +23,7 @@ class HistoryPageFactory @Inject constructor(
     private val listPageReader: ListPageReader,
     private val application: Application,
     private val historyRepository: HistoryRepository,
-    themeProvider: ThemeProvider
+    private val themeProvider: ThemeProvider
 ) : HtmlPageFactory {
 
     private val title = application.getString(R.string.action_history)
@@ -34,10 +34,14 @@ class HistoryPageFactory @Inject constructor(
         return string.substring(2) + string.substring(0, 2)
     }
 
-    private val backgroundColor = themeProvider.color(R.attr.colorPrimary).toColor()
-    private val dividerColor = themeProvider.color(R.attr.autoCompleteBackgroundColor).toColor()
-    private val textColor = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
-    private val subtitleColor = themeProvider.color(R.attr.autoCompleteUrlColor).toColor()
+    private val backgroundColor: String
+        get() = themeProvider.color(R.attr.colorPrimary).toColor()
+    private val dividerColor: String
+        get() = themeProvider.color(R.attr.autoCompleteBackgroundColor).toColor()
+    private val textColor: String
+        get() = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
+    private val subtitleColor: String
+        get() = themeProvider.color(R.attr.autoCompleteUrlColor).toColor()
 
     override fun buildPage(): Single<String> = historyRepository
         .lastHundredVisitedHistoryEntries()

@@ -37,7 +37,7 @@ class BookmarkPageFactory @Inject constructor(
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     @DiskScheduler private val diskScheduler: Scheduler,
     private val bookmarkPageReader: BookmarkPageReader,
-    themeProvider: ThemeProvider
+    private val themeProvider: ThemeProvider
 ) : HtmlPageFactory {
 
     private val title = application.getString(R.string.action_bookmarks)
@@ -50,9 +50,12 @@ class BookmarkPageFactory @Inject constructor(
         return string.substring(2) + string.substring(0, 2)
     }
 
-    private val backgroundColor = themeProvider.color(R.attr.colorPrimary).toColor()
-    private val cardColor = themeProvider.color(R.attr.autoCompleteBackgroundColor).toColor()
-    private val textColor = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
+    private val backgroundColor: String
+        get() = themeProvider.color(R.attr.colorPrimary).toColor()
+    private val cardColor: String
+        get() = themeProvider.color(R.attr.autoCompleteBackgroundColor).toColor()
+    private val textColor: String
+        get() = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
 
     override fun buildPage(): Single<String> = bookmarkModel
         .getAllBookmarksSorted()

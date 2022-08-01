@@ -25,7 +25,7 @@ class DownloadPageFactory @Inject constructor(
     private val userPreferences: UserPreferences,
     private val manager: DownloadsRepository,
     private val listPageReader: ListPageReader,
-    themeProvider: ThemeProvider
+    private val themeProvider: ThemeProvider
 ) : HtmlPageFactory {
 
     private fun Int.toColor(): String {
@@ -34,10 +34,14 @@ class DownloadPageFactory @Inject constructor(
         return string.substring(2) + string.substring(0, 2)
     }
 
-    private val backgroundColor = themeProvider.color(R.attr.colorPrimary).toColor()
-    private val dividerColor = themeProvider.color(R.attr.autoCompleteBackgroundColor).toColor()
-    private val textColor = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
-    private val subtitleColor = themeProvider.color(R.attr.autoCompleteUrlColor).toColor()
+    private val backgroundColor: String
+        get() = themeProvider.color(R.attr.colorPrimary).toColor()
+    private val dividerColor: String
+        get() = themeProvider.color(R.attr.autoCompleteBackgroundColor).toColor()
+    private val textColor: String
+        get() = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
+    private val subtitleColor: String
+        get() = themeProvider.color(R.attr.autoCompleteUrlColor).toColor()
 
     override fun buildPage(): Single<String> = manager
         .getAllDownloads()
@@ -73,7 +77,8 @@ class DownloadPageFactory @Inject constructor(
 
     private fun createDownloadsPageFile(): File = File(application.filesDir, FILENAME)
 
-    private fun createFileUrl(fileName: String): String = "$FILE${userPreferences.downloadDirectory}/$fileName"
+    private fun createFileUrl(fileName: String): String =
+        "$FILE${userPreferences.downloadDirectory}/$fileName"
 
     private fun createFileTitle(downloadItem: DownloadEntry): String {
         val contentSize = if (downloadItem.contentSize.isNotBlank()) {

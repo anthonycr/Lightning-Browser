@@ -13,10 +13,11 @@ import javax.inject.Inject
  */
 class LegacyThemeProvider @Inject constructor(
     private val application: Application,
-    userPreferences: UserPreferences
+    private val userPreferences: UserPreferences
 ) : ThemeProvider {
 
-    val theme = userPreferences.useTheme
+    val theme: AppTheme
+        get() = userPreferences.useTheme
 
     override fun color(attrRes: Int): Int = when (attrRes) {
         R.attr.colorPrimary -> when (theme) {
