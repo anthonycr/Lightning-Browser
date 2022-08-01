@@ -5,6 +5,7 @@ import acr.browser.lightning.browser.ProxyChoice
 import acr.browser.lightning.browser.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.constant.DEFAULT_ENCODING
+import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.di.UserPrefs
@@ -71,7 +72,7 @@ class UserPreferences @Inject constructor(
     /**
      * The URL of the selected homepage.
      */
-    var homepage by preferences.stringPreference(HOMEPAGE, SCHEME_HOMEPAGE)
+    var homepage by preferences.stringPreference(HOMEPAGE, SCHEME_BOOKMARKS)
 
     /**
      * True if cookies should be enabled in incognito mode, false otherwise.
