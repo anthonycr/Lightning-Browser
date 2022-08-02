@@ -1,7 +1,9 @@
 package acr.browser.lightning._browser2
 
+import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning._browser2.bookmark.BookmarkRecyclerViewAdapter
+import acr.browser.lightning._browser2.color.ColorAnimator
 import acr.browser.lightning._browser2.image.ImageLoader
 import acr.browser.lightning._browser2.keys.KeyEventAdapter
 import acr.browser.lightning._browser2.menu.MenuItemAdapter
@@ -27,7 +29,9 @@ import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.extensions.*
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
+import acr.browser.lightning.utils.value
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -41,6 +45,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import targetUrl.LongPress
 import javax.inject.Inject
 
@@ -58,6 +63,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     private var menuItemAddToHome: MenuItem? = null
     private var menuItemAddBookmark: MenuItem? = null
     private var menuItemReaderMode: MenuItem? = null
+
+    private val defaultColor by lazy { color(R.color.primary_color) }
+    private val backgroundDrawable by lazy { ColorDrawable(defaultColor) }
 
     @Inject
     internal lateinit var imageLoader: ImageLoader
@@ -311,6 +319,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             menuItemAddBookmark?.isVisible = it
             menuItemReaderMode?.isVisible = it
         }
+        viewState.themeColor?.value()?.let(::animateColorChange)
         viewState.progress?.let { binding.progressView.progress = it }
         viewState.isRefresh?.let {
             binding.searchRefresh.setImageResource(
@@ -574,6 +583,27 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             }
             .setOnCancelListener { presenter.onConfirmOpenLocalFile(allow = false) }
             .resizeAndShow()
+    }
+
+    private fun animateColorChange(color: Int) {
+        if (!userPreferences.colorModeEnabled || userPreferences.useTheme != AppTheme.LIGHT || isIncognito()) {
+            return
+        }
+        val shouldShowTabsInDrawer = userPreferences.showTabsInDrawer
+        val adapter = tabsAdapter as? DesktopTabRecyclerViewAdapter
+        val colorAnimator = ColorAnimator(defaultColor)
+        binding.toolbar.startAnimation(colorAnimator.animateTo(
+            color
+        ) { mainColor, secondaryColor ->
+            if (shouldShowTabsInDrawer) {
+                backgroundDrawable.color = mainColor
+                window.setBackgroundDrawable(backgroundDrawable)
+            } else {
+                adapter?.updateForegroundTabColor(mainColor)
+            }
+            binding.toolbar.setBackgroundColor(mainColor)
+            binding.searchContainer.background?.tint(secondaryColor)
+        })
     }
 
     private fun ImageView.updateVisibilityForDrawable() {

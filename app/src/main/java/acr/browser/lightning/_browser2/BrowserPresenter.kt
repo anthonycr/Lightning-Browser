@@ -29,6 +29,7 @@ import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.*
+import android.graphics.Color
 import androidx.core.net.toUri
 import io.reactivex.Maybe
 import io.reactivex.Scheduler
@@ -78,6 +79,7 @@ class BrowserPresenter @Inject constructor(
         sslState = SslState.None,
         progress = 0,
         enableFullMenu = true,
+        themeColor = Option.None,
         isForwardEnabled = false,
         isBackEnabled = false,
         bookmarks = emptyList(),
@@ -223,8 +225,8 @@ class BrowserPresenter @Inject constructor(
             tab.urlChanges().startWith(tab.url).observeOn(diskScheduler)
                 .flatMapSingle(bookmarkRepository::isBookmark).observeOn(mainScheduler),
             tab.urlChanges().startWith(tab.url).map(String::isSpecialUrl),
-            tab.faviconChanges().startWith(Option.fromNullable(tab.favicon))
-        ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl, icon ->
+            tab.themeColorChanges().startWith(tab.themeColor)
+        ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl, themeColor ->
 
             viewState.copy(
                 displayUrl = searchBoxModel.getDisplayContent(
@@ -233,6 +235,7 @@ class BrowserPresenter @Inject constructor(
                     isLoading = progress < 100
                 ),
                 enableFullMenu = !url.isSpecialUrl(),
+                themeColor = Option.Some(themeColor),
                 isRefresh = progress == 100,
                 isForwardEnabled = canGoForward,
                 isBackEnabled = canGoBack,

@@ -10,6 +10,7 @@ import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.*
+import android.app.Application
 import android.graphics.Bitmap
 import io.reactivex.*
 import io.reactivex.subjects.PublishSubject
@@ -19,6 +20,7 @@ import javax.inject.Inject
  * Created by anthonycr on 9/12/20.
  */
 class TabsRepository @Inject constructor(
+    private val application: Application,
     private val webViewFactory: WebViewFactory,
     private val tabPager: TabPager,
     private val adBlocker: AdBlocker,
@@ -66,7 +68,7 @@ class TabsRepository @Inject constructor(
                 webView,
                 headers,
                 TabWebViewClient(adBlocker, allowListModel, urlHandler, headers),
-                TabWebChromeClient(faviconModel, diskScheduler),
+                TabWebChromeClient(application, faviconModel, diskScheduler),
                 userPreferences,
                 defaultUserAgent,
                 iconFreeze

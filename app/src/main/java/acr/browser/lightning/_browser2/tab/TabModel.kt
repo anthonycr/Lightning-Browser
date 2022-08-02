@@ -53,6 +53,10 @@ interface TabModel {
 
     fun faviconChanges(): Observable<Option<Bitmap>>
 
+    val themeColor: Int
+
+    fun themeColorChanges(): Observable<Int>
+
     val url: String
 
     fun urlChanges(): Observable<String>

@@ -130,6 +130,11 @@ class TabAdapter(
 
     override fun faviconChanges(): Observable<Option<Bitmap>> = tabWebChromeClient.faviconObservable
 
+    override val themeColor: Int
+        get() = requireNotNull(tabWebChromeClient.colorChangeObservable.value)
+
+    override fun themeColorChanges(): Observable<Int> = tabWebChromeClient.colorChangeObservable
+
     // TODO do we show "new tab"
     override val url: String
         get() = webView.url.orEmpty()

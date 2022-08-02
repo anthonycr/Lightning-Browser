@@ -166,6 +166,16 @@ public final class Utils {
         return dir != null && dir.delete();
     }
 
+    public static boolean isColorGrayscale(int pixel) {
+        int alpha = (pixel & 0xFF000000) >> 24;
+        int red = (pixel & 0x00FF0000) >> 16;
+        int green = (pixel & 0x0000FF00) >> 8;
+        int blue = (pixel & 0x000000FF);
+
+        return red == green && green == blue;
+
+    }
+
     public static boolean isColorTooDark(int color) {
         final byte RED_CHANNEL = 16;
         final byte GREEN_CHANNEL = 8;

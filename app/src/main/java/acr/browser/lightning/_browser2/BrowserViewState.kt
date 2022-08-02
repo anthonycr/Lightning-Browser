@@ -1,8 +1,8 @@
 package acr.browser.lightning._browser2
 
-import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.utils.Option
 
 /**
  * Created by anthonycr on 9/11/20.
@@ -14,6 +14,7 @@ data class BrowserViewState(
     val isRefresh: Boolean,
     val progress: Int,
     val enableFullMenu: Boolean,
+    val themeColor: Option<Int>,
 
     // Tabs
     val isForwardEnabled: Boolean,
@@ -37,6 +38,7 @@ data class PartialBrowserViewState(
     val isRefresh: Boolean?,
     val progress: Int?,
     val enableFullMenu: Boolean?,
+    val themeColor: Option<Int>?,
 
     // Tabs
     val isForwardEnabled: Boolean?,
