@@ -1,5 +1,7 @@
 package acr.browser.lightning
 
+import acr.browser.lightning._browser2.proxy.Proxy
+import acr.browser.lightning._browser2.proxy.ProxyAdapter
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.device.BuildInfo
@@ -34,6 +36,7 @@ class BrowserApp : Application() {
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject internal lateinit var logger: Logger
     @Inject internal lateinit var buildInfo: BuildInfo
+    @Inject internal lateinit var proxyAdapter: ProxyAdapter
 
     lateinit var applicationComponent: AppComponent
 
@@ -47,14 +50,18 @@ class BrowserApp : Application() {
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
-            StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build())
-            StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build())
+            StrictMode.setThreadPolicy(
+                StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build()
+            )
+            StrictMode.setVmPolicy(
+                StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build()
+            )
         }
 
         if (Build.VERSION.SDK_INT >= 28) {
@@ -112,15 +119,19 @@ class BrowserApp : Application() {
                 MemoryLeakUtils.clearNextServedView(activity, this@BrowserApp)
             }
         })
+
+        registerActivityLifecycleCallbacks(proxyAdapter)
     }
 
     /**
      * Create the [BuildType] from the [BuildConfig].
      */
-    private fun createBuildInfo() = BuildInfo(when {
-        BuildConfig.DEBUG -> BuildType.DEBUG
-        else -> BuildType.RELEASE
-    })
+    private fun createBuildInfo() = BuildInfo(
+        when {
+            BuildConfig.DEBUG -> BuildType.DEBUG
+            else -> BuildType.RELEASE
+        }
+    )
 
     companion object {
         private const val TAG = "BrowserApp"
