@@ -1,5 +1,6 @@
 package acr.browser.lightning._browser2.tab
 
+import acr.browser.lightning._browser2.proxy.Proxy
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.ssl.SslState
@@ -19,7 +20,8 @@ class TabWebViewClient(
     private val adBlocker: AdBlocker,
     private val allowListModel: AllowListModel,
     private val urlHandler: UrlHandler,
-    private val headers: Map<String, String>
+    private val headers: Map<String, String>,
+    private val proxy: Proxy
 ) : WebViewClient() {
 
     val urlObservable: PublishSubject<String> = PublishSubject.create()
@@ -62,19 +64,24 @@ class TabWebViewClient(
     }
 
     override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+        if (!proxy.isProxyReady()) return true
         return urlHandler.shouldOverrideLoading(view, url, headers) ||
             super.shouldOverrideUrlLoading(view, url)
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+        if (!proxy.isProxyReady()) return true
         return urlHandler.shouldOverrideLoading(view, request.url.toString(), headers) ||
             super.shouldOverrideUrlLoading(view, request)
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
-        if (shouldBlockRequest(currentUrl, request.url.toString())) {
+    override fun shouldInterceptRequest(
+        view: WebView,
+        request: WebResourceRequest
+    ): WebResourceResponse? {
+        if (shouldBlockRequest(currentUrl, request.url.toString()) || !proxy.isProxyReady()) {
             val empty = ByteArrayInputStream(emptyResponseByteArray)
             return WebResourceResponse(BLOCKED_RESPONSE_MIME_TYPE, BLOCKED_RESPONSE_ENCODING, empty)
         }

@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning._browser2.download.PendingDownload
+import acr.browser.lightning._browser2.proxy.Proxy
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.userAgent
@@ -27,7 +28,8 @@ class TabAdapter(
     private val tabWebChromeClient: TabWebChromeClient,
     private val userPreferences: UserPreferences,
     private val defaultUserAgent: String,
-    private val iconFreeze: Bitmap
+    private val iconFreeze: Bitmap,
+    private val proxy: Proxy
 ) : TabModel {
 
     private var latentInitializer: FreezableBundleInitializer? = null
@@ -60,6 +62,7 @@ class TabAdapter(
     override val id: Int = webView.id
 
     override fun loadUrl(url: String) {
+        if (!proxy.isProxyReady()) return
         webView.loadUrl(url, requestHeaders)
     }
 
@@ -96,6 +99,7 @@ class TabAdapter(
     }
 
     override fun reload() {
+        if (!proxy.isProxyReady()) return
         webView.reload()
     }
 

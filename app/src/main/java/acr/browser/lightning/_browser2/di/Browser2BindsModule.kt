@@ -2,10 +2,10 @@ package acr.browser.lightning._browser2.di
 
 import acr.browser.lightning._browser2.BrowserContract
 import acr.browser.lightning._browser2.BrowserNavigator
-import acr.browser.lightning._browser2.history.DefaultHistoryRecord
-import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.image.FaviconImageLoader
 import acr.browser.lightning._browser2.image.ImageLoader
+import acr.browser.lightning._browser2.proxy.Proxy
+import acr.browser.lightning._browser2.proxy.ProxyAdapter
 import acr.browser.lightning._browser2.tab.TabsRepository
 import acr.browser.lightning._browser2.theme.LegacyThemeProvider
 import acr.browser.lightning._browser2.theme.ThemeProvider
@@ -29,4 +29,7 @@ interface Browser2BindsModule {
 
     @Binds
     fun bindsThemeProvider(legacyThemeProvider: LegacyThemeProvider): ThemeProvider
+
+    @Binds
+    fun bindsProxy(proxyAdapter: ProxyAdapter): Proxy
 }

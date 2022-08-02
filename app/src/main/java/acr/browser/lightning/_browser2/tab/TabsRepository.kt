@@ -2,6 +2,7 @@ package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning._browser2.BrowserContract
 import acr.browser.lightning._browser2.image.IconFreeze
+import acr.browser.lightning._browser2.proxy.Proxy
 import acr.browser.lightning._browser2.tab.bundle.BundleStore
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
@@ -13,7 +14,6 @@ import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.*
 import android.app.Application
 import android.graphics.Bitmap
-import android.os.Bundle
 import io.reactivex.*
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
@@ -35,7 +35,8 @@ class TabsRepository @Inject constructor(
     private val userPreferences: UserPreferences,
     @DefaultUserAgent private val defaultUserAgent: String,
     @IconFreeze private val iconFreeze: Bitmap,
-    private val recentTabModel: RecentTabModel
+    private val recentTabModel: RecentTabModel,
+    private val proxy: Proxy
 ) : BrowserContract.Model {
 
     private var selectedTab: TabModel? = null
@@ -71,11 +72,12 @@ class TabsRepository @Inject constructor(
                 tabInitializer,
                 webView,
                 headers,
-                TabWebViewClient(adBlocker, allowListModel, urlHandler, headers),
+                TabWebViewClient(adBlocker, allowListModel, urlHandler, headers, proxy),
                 TabWebChromeClient(application, faviconModel, diskScheduler),
                 userPreferences,
                 defaultUserAgent,
-                iconFreeze
+                iconFreeze,
+                proxy
             )
 
             tabsList = tabsList + tabAdapter

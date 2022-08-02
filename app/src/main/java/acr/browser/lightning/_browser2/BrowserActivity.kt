@@ -29,6 +29,7 @@ import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.extensions.*
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
+import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.utils.value
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
@@ -93,6 +94,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     @Inject
     internal lateinit var uiConfiguration: UiConfiguration
+
+    @Inject
+    internal lateinit var proxyUtils: ProxyUtils
 
     /**
      * True if the activity is operating in incognito mode, false otherwise.
