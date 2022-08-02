@@ -250,6 +250,10 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         binding.actionForward.setOnClickListener { presenter.onForwardClick() }
         binding.actionHome.setOnClickListener { presenter.onHomeClick() }
         binding.newTabButton.setOnClickListener { presenter.onNewTabClick() }
+        binding.newTabButton.setOnLongClickListener {
+            presenter.onNewTabLongClick()
+            true
+        }
         binding.searchRefresh.setOnClickListener { presenter.onRefreshOrStopClick() }
         binding.actionAddBookmark.setOnClickListener { presenter.onStarClick() }
         binding.actionPageTools.setOnClickListener { presenter.onToolsClick() }

@@ -80,6 +80,8 @@ interface BrowserContract {
 
         fun createTab(tabInitializer: TabInitializer): Single<TabModel>
 
+        fun reopenTab(): Maybe<TabModel>
+
         fun selectTab(id: Int): TabModel
 
         fun initializeTabs(): Maybe<List<TabModel>>

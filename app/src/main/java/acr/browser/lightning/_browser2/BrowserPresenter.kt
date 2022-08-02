@@ -549,6 +549,18 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
+     * Call when the user long clicks on the new tab button, indicating that they want to re-open
+     * the last closed tab.
+     */
+    fun onNewTabLongClick() {
+        compositeDisposable += model.reopenTab()
+            .observeOn(mainScheduler)
+            .subscribeBy { tab ->
+                selectTab(model.selectTab(tab.id))
+            }
+    }
+
+    /**
      * TODO
      */
     fun onRefreshOrStopClick() {

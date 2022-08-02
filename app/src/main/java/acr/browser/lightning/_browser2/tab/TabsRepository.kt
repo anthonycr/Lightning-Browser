@@ -5,6 +5,7 @@ import acr.browser.lightning._browser2.image.IconFreeze
 import acr.browser.lightning._browser2.tab.bundle.BundleStore
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
+import acr.browser.lightning.browser.RecentTabModel
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.favicon.FaviconModel
@@ -12,6 +13,7 @@ import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.*
 import android.app.Application
 import android.graphics.Bitmap
+import android.os.Bundle
 import io.reactivex.*
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
@@ -32,7 +34,8 @@ class TabsRepository @Inject constructor(
     private val urlHandler: UrlHandler,
     private val userPreferences: UserPreferences,
     @DefaultUserAgent private val defaultUserAgent: String,
-    @IconFreeze private val iconFreeze: Bitmap
+    @IconFreeze private val iconFreeze: Bitmap,
+    private val recentTabModel: RecentTabModel
 ) : BrowserContract.Model {
 
     private var selectedTab: TabModel? = null
@@ -43,6 +46,7 @@ class TabsRepository @Inject constructor(
             tabPager.clearTab()
         }
         val tab = tabsList.forId(id)
+        recentTabModel.addClosedTab(tab.freeze())
         tab.destroy()
         tabsList = tabsList - tab
     }.doOnComplete {
@@ -80,6 +84,9 @@ class TabsRepository @Inject constructor(
         }.doOnSuccess {
             tabsListObservable.onNext(tabsList)
         }
+
+    override fun reopenTab(): Maybe<TabModel> = Maybe.fromCallable(recentTabModel::lastClosed)
+        .flatMapSingleElement { createTab(BundleInitializer(it)) }
 
     override fun selectTab(id: Int): TabModel {
         val selected = tabsList.forId(id)
