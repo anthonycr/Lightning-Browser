@@ -3,7 +3,7 @@ package acr.browser.lightning
 import acr.browser.lightning.browser.BrowserActivity
 
 /**
- * Created by anthonycr on 7/26/22.
+ * The default browsing experience.
  */
 class DefaultBrowserActivity : BrowserActivity() {
     override fun isIncognito(): Boolean = false

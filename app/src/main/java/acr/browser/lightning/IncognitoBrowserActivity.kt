@@ -6,7 +6,7 @@ import android.content.Intent
 import androidx.core.net.toUri
 
 /**
- * Created by anthonycr on 7/26/22.
+ * The incognito browsing experience.
  */
 class IncognitoBrowserActivity : BrowserActivity() {
 
@@ -19,11 +19,17 @@ class IncognitoBrowserActivity : BrowserActivity() {
     override fun homeIcon(): Int = R.drawable.incognito_mode
 
     companion object {
+        /**
+         * Creates an intent to launch the browser with an optional [url] to load.
+         */
         fun intent(activity: Activity, url: String? = null): Intent =
             Intent(activity, IncognitoBrowserActivity::class.java).apply {
                 data = url?.let(String::toUri)
             }
 
+        /**
+         * Launch the browser with an optional [url] to load.
+         */
         fun launch(activity: Activity, url: String?) {
             activity.startActivity(intent(activity, url))
         }

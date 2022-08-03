@@ -2,6 +2,7 @@ package acr.browser.lightning.browser
 
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
+import acr.browser.lightning.ThemableBrowserActivity
 import acr.browser.lightning.browser.bookmark.BookmarkRecyclerViewAdapter
 import acr.browser.lightning.browser.color.ColorAnimator
 import acr.browser.lightning.browser.image.ImageLoader

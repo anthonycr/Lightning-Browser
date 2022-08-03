@@ -4,7 +4,7 @@ import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.search.SearchBoxModel
-import acr.browser.lightning.browser.ThemableBrowserActivity
+import acr.browser.lightning.ThemableBrowserActivity
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.LightningDownloadListener

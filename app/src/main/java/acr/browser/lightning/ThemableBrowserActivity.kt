@@ -1,7 +1,5 @@
-package acr.browser.lightning.browser
+package acr.browser.lightning
 
-import acr.browser.lightning.AppTheme
-import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
@@ -39,11 +37,13 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         showTabsInDrawer = userPreferences.showTabsInDrawer
 
         // set the theme
-        setTheme(provideThemeOverride() ?: when (userPreferences.useTheme) {
-            AppTheme.LIGHT -> R.style.Theme_LightTheme
-            AppTheme.DARK -> R.style.Theme_DarkTheme
-            AppTheme.BLACK -> R.style.Theme_BlackTheme
-        })
+        setTheme(
+            provideThemeOverride() ?: when (userPreferences.useTheme) {
+                AppTheme.LIGHT -> R.style.Theme_LightTheme
+                AppTheme.DARK -> R.style.Theme_DarkTheme
+                AppTheme.BLACK -> R.style.Theme_BlackTheme
+            }
+        )
         super.onCreate(savedInstanceState)
 
         resetPreferences()
@@ -53,7 +53,12 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         withStyledAttributes(attrs = intArrayOf(R.attr.iconColorState)) {
             val iconTintList = getColorStateList(0)
             menu.iterator().forEach { menuItem ->
-                menuItem.icon?.let { DrawableCompat.setTintList(DrawableCompat.wrap(it), iconTintList) }
+                menuItem.icon?.let {
+                    DrawableCompat.setTintList(
+                        DrawableCompat.wrap(it),
+                        iconTintList
+                    )
+                }
             }
         }
 
