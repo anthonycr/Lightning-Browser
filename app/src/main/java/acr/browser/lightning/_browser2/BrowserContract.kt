@@ -10,6 +10,7 @@ import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.view.TabInitializer
 import android.content.Intent
 import android.graphics.Bitmap
+import android.view.View
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -73,6 +74,10 @@ interface BrowserContract {
         fun showLocalFileBlockedDialog()
 
         fun showFileChooser(intent: Intent)
+
+        fun showCustomView(view: android.view.View)
+
+        fun hideCustomView()
     }
 
     interface Model {

@@ -8,6 +8,7 @@ import acr.browser.lightning.view.TabInitializer
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.View
 import androidx.activity.result.ActivityResult
 import io.reactivex.Observable
 
@@ -77,13 +78,19 @@ interface TabModel {
 
     fun loadingProgress(): Observable<Int>
 
+    // Lifecycle
+
     fun downloadRequests(): Observable<PendingDownload>
 
     fun fileChooserRequests(): Observable<Intent>
 
     fun handleFileChooserResult(activityResult: ActivityResult)
 
-    // Lifecycle
+    fun showCustomViewRequests(): Observable<View>
+
+    fun hideCustomViewRequests(): Observable<Unit>
+
+    fun hideCustomView()
 
     fun createWindowRequests(): Observable<TabInitializer>
 

@@ -14,6 +14,7 @@ import acr.browser.lightning.view.TabInitializer
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.View
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
 import io.reactivex.Observable
@@ -181,6 +182,16 @@ class TabAdapter(
 
     override fun handleFileChooserResult(activityResult: ActivityResult) {
         tabWebChromeClient.onResult(activityResult)
+    }
+
+    override fun showCustomViewRequests(): Observable<View> =
+        tabWebChromeClient.showCustomViewObservable.hide()
+
+    override fun hideCustomViewRequests(): Observable<Unit> =
+        tabWebChromeClient.hideCustomViewObservable.hide()
+
+    override fun hideCustomView() {
+        tabWebChromeClient.hideCustomView()
     }
 
     override fun createWindowRequests(): Observable<TabInitializer> =

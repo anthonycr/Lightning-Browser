@@ -13,6 +13,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Message
+import android.view.View
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -40,8 +41,11 @@ class TabWebChromeClient(
     val closeWindowObservable: PublishSubject<Unit> = PublishSubject.create()
     val colorChangeObservable: BehaviorSubject<Int> = BehaviorSubject.createDefault(defaultColor)
     val fileChooserObservable: PublishSubject<Intent> = PublishSubject.create()
+    val showCustomViewObservable: PublishSubject<View> = PublishSubject.create()
+    val hideCustomViewObservable: PublishSubject<Unit> = PublishSubject.create()
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
+    private var customViewCallback: CustomViewCallback? = null
 
     override fun onCreateWindow(
         view: WebView,
@@ -106,17 +110,36 @@ class TabWebChromeClient(
         filePathCallback = null
     }
 
+    fun hideCustomView() {
+        customViewCallback?.onCustomViewHidden()
+        customViewCallback = null
+    }
+
     override fun onShowFileChooser(
-        webView: WebView?,
-        filePathCallback: ValueCallback<Array<Uri>>?,
-        fileChooserParams: FileChooserParams?
+        webView: WebView,
+        filePathCallback: ValueCallback<Array<Uri>>,
+        fileChooserParams: FileChooserParams
     ): Boolean {
         // Ensure that previously set callbacks are resolved.
         this.filePathCallback?.onReceiveValue(null)
         this.filePathCallback = null
 
         this.filePathCallback = filePathCallback
-        fileChooserParams?.createIntent()?.let(fileChooserObservable::onNext)
+        fileChooserParams.createIntent().let(fileChooserObservable::onNext)
         return true
+    }
+
+    override fun getVideoLoadingProgressView(): View? {
+        return super.getVideoLoadingProgressView()
+    }
+
+    override fun onShowCustomView(view: View, callback: CustomViewCallback) {
+        customViewCallback = callback
+        showCustomViewObservable.onNext(view)
+    }
+
+    override fun onHideCustomView() {
+        hideCustomViewObservable.onNext(Unit)
+        customViewCallback = null
     }
 }

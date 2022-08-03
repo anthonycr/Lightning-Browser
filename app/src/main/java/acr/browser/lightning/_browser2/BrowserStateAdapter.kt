@@ -7,6 +7,7 @@ import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.showSslDialog
 import android.content.Intent
+import android.view.View
 import targetUrl.LongPress
 
 /**
@@ -142,5 +143,13 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
 
     override fun showFileChooser(intent: Intent) {
         browserActivity.showFileChooser(intent)
+    }
+
+    override fun showCustomView(view: View) {
+        browserActivity.showCustomView(view)
+    }
+
+    override fun hideCustomView() {
+        browserActivity.hideCustomView()
     }
 }

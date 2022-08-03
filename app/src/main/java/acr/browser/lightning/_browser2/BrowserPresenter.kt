@@ -97,6 +97,7 @@ class BrowserPresenter @Inject constructor(
     private var isSearchViewFocused = false
     private var tabIdOpenedFromAction = -1
     private var pendingAction: BrowserContract.Action.LoadUrl? = null
+    private var isCustomViewShowing = false
 
     private val compositeDisposable = CompositeDisposable()
     private val allTabsDisposable = CompositeDisposable()
@@ -269,6 +270,20 @@ class BrowserPresenter @Inject constructor(
         tabDisposable += tab.fileChooserRequests()
             .subscribeOn(mainScheduler)
             .subscribeBy { view?.showFileChooser(it) }
+
+        tabDisposable += tab.showCustomViewRequests()
+            .subscribeOn(mainScheduler)
+            .subscribeBy {
+                view?.showCustomView(it)
+                isCustomViewShowing = true
+            }
+
+        tabDisposable += tab.hideCustomViewRequests()
+            .subscribeOn(mainScheduler)
+            .subscribeBy {
+                view?.hideCustomView()
+                isCustomViewShowing = false
+            }
     }
 
     private fun List<TabModel>.subscribeToUpdates(compositeDisposable: CompositeDisposable) {
@@ -502,6 +517,10 @@ class BrowserPresenter @Inject constructor(
      */
     fun onNavigateBack() {
         when {
+            isCustomViewShowing -> {
+                view?.hideCustomView()
+                currentTab?.hideCustomView()
+            }
             isTabDrawerOpen -> view?.closeTabDrawer()
             isBookmarkDrawerOpen -> if (currentFolder != Bookmark.Folder.Root) {
                 onBookmarkMenuClick()
