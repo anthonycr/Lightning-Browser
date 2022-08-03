@@ -180,11 +180,11 @@ class WebViewFactory @Inject constructor(
         }
     }
 
-    private companion object {
+    companion object {
         private const val TAG = "WebViewFactory"
 
-        private const val HEADER_REQUESTED_WITH = "X-Requested-With"
-        private const val HEADER_WAP_PROFILE = "X-Wap-Profile"
+        const val HEADER_REQUESTED_WITH = "X-Requested-With"
+        const val HEADER_WAP_PROFILE = "X-Wap-Profile"
         private const val HEADER_DNT = "DNT"
         private const val HEADER_SAVEDATA = "Save-Data"
     }

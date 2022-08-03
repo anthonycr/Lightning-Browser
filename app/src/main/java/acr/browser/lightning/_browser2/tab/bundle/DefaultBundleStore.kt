@@ -2,8 +2,7 @@ package acr.browser.lightning._browser2.tab.bundle
 
 import acr.browser.lightning.R
 import acr.browser.lightning._browser2.tab.TabModel
-import acr.browser.lightning.browser.TabsManager
-import acr.browser.lightning.di.DiskScheduler
+import acr.browser.lightning._browser2.di.DiskScheduler
 import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.*
 import android.app.Application

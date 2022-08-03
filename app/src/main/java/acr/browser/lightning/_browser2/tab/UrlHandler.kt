@@ -9,7 +9,6 @@ import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.IntentUtils
 import acr.browser.lightning.utils.Utils
 import acr.browser.lightning.utils.isSpecialUrl
-import acr.browser.lightning.view.LightningWebClient
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent

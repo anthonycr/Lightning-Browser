@@ -3,8 +3,8 @@ package acr.browser.lightning._browser2.tab
 import acr.browser.lightning._browser2.BrowserContract
 import acr.browser.lightning._browser2.tab.bundle.BundleStore
 import acr.browser.lightning.browser.RecentTabModel
-import acr.browser.lightning.di.DiskScheduler
-import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning._browser2.di.DiskScheduler
+import acr.browser.lightning._browser2.di.MainScheduler
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.*
 import io.reactivex.*

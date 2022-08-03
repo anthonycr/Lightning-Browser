@@ -24,22 +24,17 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.BuildConfig;
-import acr.browser.lightning.MainActivity;
 import acr.browser.lightning.R;
+import acr.browser.lightning._browser2.DefaultBrowserActivity;
+import acr.browser.lightning._browser2.di.MainScheduler;
+import acr.browser.lightning._browser2.di.NetworkScheduler;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.controller.UIController;
-import acr.browser.lightning.database.downloads.DownloadEntry;
-import acr.browser.lightning.database.downloads.DownloadsRepository;
-import acr.browser.lightning.di.DatabaseScheduler;
-import acr.browser.lightning.di.MainScheduler;
-import acr.browser.lightning.di.NetworkScheduler;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.extensions.ActivityExtensions;
 import acr.browser.lightning.log.Logger;
 import acr.browser.lightning.preference.UserPreferences;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Utils;
-import acr.browser.lightning.view.LightningView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -56,23 +51,17 @@ public class DownloadHandler {
 
     private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
-    private final DownloadsRepository downloadsRepository;
     private final DownloadManager downloadManager;
-    private final Scheduler databaseScheduler;
     private final Scheduler networkScheduler;
     private final Scheduler mainScheduler;
     private final Logger logger;
 
     @Inject
-    public DownloadHandler(DownloadsRepository downloadsRepository,
-                           DownloadManager downloadManager,
-                           @DatabaseScheduler Scheduler databaseScheduler,
+    public DownloadHandler(DownloadManager downloadManager,
                            @NetworkScheduler Scheduler networkScheduler,
                            @MainScheduler Scheduler mainScheduler,
                            Logger logger) {
-        this.downloadsRepository = downloadsRepository;
         this.downloadManager = downloadManager;
-        this.databaseScheduler = databaseScheduler;
         this.networkScheduler = networkScheduler;
         this.mainScheduler = mainScheduler;
         this.logger = logger;
@@ -119,7 +108,7 @@ public class DownloadHandler {
                 // If we resolved to ourselves, we don't want to attempt to
                 // load the url only to try and download it again.
                 if (BuildConfig.APPLICATION_ID.equals(info.activityInfo.packageName)
-                    || MainActivity.class.getName().equals(info.activityInfo.name)) {
+                    || DefaultBrowserActivity.class.getName().equals(info.activityInfo.name)) {
                     // someone (other than us) knows how to handle this mime
                     // type with this scheme, don't download.
                     try {
@@ -297,22 +286,6 @@ public class DownloadHandler {
                 ActivityExtensions.snackbar(context, R.string.problem_location_download);
             }
             ActivityExtensions.snackbar(context, context.getString(R.string.download_pending) + ' ' + filename);
-        }
-
-        // save download in database
-        if (context instanceof UIController) {
-            UIController browserActivity = (UIController) context;
-            LightningView view = browserActivity.getTabModel().getCurrentTab();
-
-            if (view != null && !view.isIncognito()) {
-                downloadsRepository.addDownloadIfNotExists(new DownloadEntry(url, filename, contentSize))
-                    .subscribeOn(databaseScheduler)
-                    .subscribe(aBoolean -> {
-                        if (!aBoolean) {
-                            logger.log(TAG, "error saving download to database");
-                        }
-                    });
-            }
         }
     }
 

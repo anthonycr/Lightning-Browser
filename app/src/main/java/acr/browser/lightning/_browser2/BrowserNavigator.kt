@@ -3,8 +3,6 @@ package acr.browser.lightning._browser2
 import acr.browser.lightning.R
 import acr.browser.lightning._browser2.download.DownloadPermissionsHelper
 import acr.browser.lightning._browser2.download.PendingDownload
-import acr.browser.lightning.browser.activity.BrowserActivity
-import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.extensions.copyToClipboard
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.log.Logger
@@ -12,7 +10,6 @@ import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.settings.activity.SettingsActivity
 import acr.browser.lightning.utils.IntentUtils
 import acr.browser.lightning.utils.Utils
-import acr.browser.lightning.utils.isSpecialUrl
 import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Intent

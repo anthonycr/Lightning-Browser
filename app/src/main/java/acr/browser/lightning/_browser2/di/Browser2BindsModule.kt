@@ -28,8 +28,5 @@ interface Browser2BindsModule {
     fun bindsBrowserNavigator(browserNavigator: BrowserNavigator): BrowserContract.Navigator
 
     @Binds
-    fun bindsThemeProvider(legacyThemeProvider: LegacyThemeProvider): ThemeProvider
-
-    @Binds
     fun bindsProxy(proxyAdapter: ProxyAdapter): Proxy
 }

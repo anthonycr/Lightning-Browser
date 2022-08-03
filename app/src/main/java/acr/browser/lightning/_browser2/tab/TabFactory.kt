@@ -4,7 +4,7 @@ import acr.browser.lightning._browser2.image.IconFreeze
 import acr.browser.lightning._browser2.proxy.Proxy
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
-import acr.browser.lightning.di.DiskScheduler
+import acr.browser.lightning._browser2.di.DiskScheduler
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.TabInitializer

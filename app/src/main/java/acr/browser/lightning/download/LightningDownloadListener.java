@@ -18,7 +18,7 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.downloads.DownloadsRepository;
-import acr.browser.lightning.di.Injector;
+import acr.browser.lightning._browser2.di.Injector;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.log.Logger;
 import acr.browser.lightning.preference.UserPreferences;

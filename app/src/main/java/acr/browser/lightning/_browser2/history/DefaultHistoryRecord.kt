@@ -1,7 +1,7 @@
 package acr.browser.lightning._browser2.history
 
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning._browser2.di.DatabaseScheduler
 import io.reactivex.Scheduler
 import javax.inject.Inject
 

@@ -1,6 +1,6 @@
 package acr.browser.lightning.database.adblock
 
-import acr.browser.lightning.di.AdBlockPrefs
+import acr.browser.lightning._browser2.di.AdBlockPrefs
 import acr.browser.lightning.preference.delegates.nullableStringPreference
 import android.content.SharedPreferences
 import javax.inject.Inject

@@ -1,7 +1,6 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning.R
-import acr.browser.lightning.controller.UIController
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout

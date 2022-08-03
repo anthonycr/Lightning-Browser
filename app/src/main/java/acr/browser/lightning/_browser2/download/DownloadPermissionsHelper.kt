@@ -3,7 +3,7 @@ package acr.browser.lightning._browser2.download
 import acr.browser.lightning.R
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
-import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning._browser2.di.DatabaseScheduler
 import acr.browser.lightning.dialog.BrowserDialog.setDialogSize
 import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.log.Logger

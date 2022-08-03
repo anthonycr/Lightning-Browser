@@ -22,7 +22,7 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.databinding.BrowserActivityBinding
-import acr.browser.lightning.di.injector
+import acr.browser.lightning._browser2.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder

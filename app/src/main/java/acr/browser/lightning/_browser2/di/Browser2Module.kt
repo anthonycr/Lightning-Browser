@@ -13,7 +13,6 @@ import acr.browser.lightning._browser2.notification.IncognitoTabCountNotifier
 import acr.browser.lightning._browser2.notification.TabCountNotifier
 import acr.browser.lightning._browser2.search.IntentExtractor
 import acr.browser.lightning._browser2.tab.DefaultUserAgent
-import acr.browser.lightning._browser2.tab.WebViewFactory
 import acr.browser.lightning._browser2.tab.bundle.BundleStore
 import acr.browser.lightning._browser2.tab.bundle.DefaultBundleStore
 import acr.browser.lightning._browser2.tab.bundle.IncognitoBundleStore
@@ -23,7 +22,6 @@ import acr.browser.lightning._browser2.ui.UiConfiguration
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
-import acr.browser.lightning.browser.BrowserView
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.IntentUtils
@@ -33,7 +31,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.webkit.WebSettings
 import androidx.core.graphics.drawable.toBitmap
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Provider

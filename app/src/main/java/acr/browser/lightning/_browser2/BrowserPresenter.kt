@@ -20,9 +20,9 @@ import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning.di.DatabaseScheduler
-import acr.browser.lightning.di.DiskScheduler
-import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning._browser2.di.DatabaseScheduler
+import acr.browser.lightning._browser2.di.DiskScheduler
+import acr.browser.lightning._browser2.di.MainScheduler
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.search.SearchEngineProvider

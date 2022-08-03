@@ -4,7 +4,7 @@ import acr.browser.lightning.Capabilities
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.SearchBoxDisplayChoice
 import acr.browser.lightning.constant.TEXT_ENCODINGS
-import acr.browser.lightning.di.injector
+import acr.browser.lightning._browser2.di.injector
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.isSupported

@@ -3,16 +3,16 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.Capabilities
 import acr.browser.lightning.R
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning.di.DatabaseScheduler
-import acr.browser.lightning.di.MainScheduler
-import acr.browser.lightning.di.injector
+import acr.browser.lightning._browser2.di.DatabaseScheduler
+import acr.browser.lightning._browser2.di.MainScheduler
+import acr.browser.lightning._browser2.di.injector
+import acr.browser.lightning._browser2.tab.WebViewFactory
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.isSupported
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.WebUtils
-import acr.browser.lightning.view.LightningView
 import android.os.Bundle
 import android.webkit.WebView
 import io.reactivex.Completable
@@ -96,7 +96,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         checkBoxPreference(
             preference = SETTINGS_IDENTIFYINGHEADERS,
             isChecked = userPreferences.removeIdentifyingHeadersEnabled,
-            summary = "${LightningView.HEADER_REQUESTED_WITH}, ${LightningView.HEADER_WAP_PROFILE}",
+            summary = "${WebViewFactory.HEADER_REQUESTED_WITH}, ${WebViewFactory.HEADER_WAP_PROFILE}",
             onCheckChange = { userPreferences.removeIdentifyingHeadersEnabled = it }
         )
 

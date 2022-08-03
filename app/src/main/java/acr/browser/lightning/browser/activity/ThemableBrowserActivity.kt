@@ -2,7 +2,7 @@ package acr.browser.lightning.browser.activity
 
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
-import acr.browser.lightning.di.injector
+import acr.browser.lightning._browser2.di.injector
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.content.Intent

@@ -2,8 +2,8 @@ package acr.browser.lightning._browser2.image
 
 import acr.browser.lightning.R
 import acr.browser.lightning.database.Bookmark
-import acr.browser.lightning.di.MainScheduler
-import acr.browser.lightning.di.NetworkScheduler
+import acr.browser.lightning._browser2.di.MainScheduler
+import acr.browser.lightning._browser2.di.NetworkScheduler
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.favicon.FaviconModel
 import android.app.Application

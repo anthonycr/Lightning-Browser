@@ -6,7 +6,7 @@ package acr.browser.lightning.settings.activity
 import acr.browser.lightning.R
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
-import acr.browser.lightning.di.injector
+import acr.browser.lightning._browser2.di.injector
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem

@@ -1,4 +1,4 @@
-package acr.browser.lightning.di
+package acr.browser.lightning._browser2.di
 
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType

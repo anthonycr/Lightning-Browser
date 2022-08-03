@@ -5,8 +5,8 @@ import acr.browser.lightning._browser2.theme.ThemeProvider
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.bookmark.BookmarkRepository
-import acr.browser.lightning.di.DatabaseScheduler
-import acr.browser.lightning.di.DiskScheduler
+import acr.browser.lightning._browser2.di.DatabaseScheduler
+import acr.browser.lightning._browser2.di.DiskScheduler
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.favicon.toValidUri

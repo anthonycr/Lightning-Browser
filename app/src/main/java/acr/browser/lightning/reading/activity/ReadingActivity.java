@@ -19,9 +19,9 @@ import android.widget.TextView;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.di.Injector;
-import acr.browser.lightning.di.MainScheduler;
-import acr.browser.lightning.di.NetworkScheduler;
+import acr.browser.lightning._browser2.di.Injector;
+import acr.browser.lightning._browser2.di.MainScheduler;
+import acr.browser.lightning._browser2.di.NetworkScheduler;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.UserPreferences;
 import acr.browser.lightning.reading.HtmlFetcher;

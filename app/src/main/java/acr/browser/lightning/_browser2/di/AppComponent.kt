@@ -1,13 +1,10 @@
-package acr.browser.lightning.di
+package acr.browser.lightning._browser2.di
 
 import acr.browser.lightning.BrowserApp
-import acr.browser.lightning._browser2.di.Browser2Component
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.SearchBoxModel
-import acr.browser.lightning.browser.activity.BrowserActivity
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
-import acr.browser.lightning.browser.bookmarks.BookmarksDrawerView
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.LightningDownloadListener
@@ -16,9 +13,6 @@ import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.SettingsActivity
 import acr.browser.lightning.settings.activity.ThemableSettingsActivity
 import acr.browser.lightning.settings.fragment.*
-import acr.browser.lightning.view.LightningChromeClient
-import acr.browser.lightning.view.LightningView
-import acr.browser.lightning.view.LightningWebClient
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
@@ -41,13 +35,9 @@ interface AppComponent {
         fun build(): AppComponent
     }
 
-    fun inject(activity: BrowserActivity)
-
     fun inject(fragment: BookmarkSettingsFragment)
 
     fun inject(builder: LightningDialogBuilder)
-
-    fun inject(lightningView: LightningView)
 
     fun inject(activity: ThemableBrowserActivity)
 
@@ -56,8 +46,6 @@ interface AppComponent {
     fun inject(app: BrowserApp)
 
     fun inject(activity: ReadingActivity)
-
-    fun inject(webClient: LightningWebClient)
 
     fun inject(activity: SettingsActivity)
 
@@ -71,8 +59,6 @@ interface AppComponent {
 
     fun inject(suggestionsAdapter: SuggestionsAdapter)
 
-    fun inject(chromeClient: LightningChromeClient)
-
     fun inject(searchBoxModel: SearchBoxModel)
 
     fun inject(generalSettingsFragment: GeneralSettingsFragment)
@@ -81,8 +67,6 @@ interface AppComponent {
 
     fun inject(adBlockSettingsFragment: AdBlockSettingsFragment)
 
-    fun inject(bookmarksView: BookmarksDrawerView)
-
     fun provideBloomFilterAdBlocker(): BloomFilterAdBlocker
 
     fun provideNoOpAdBlocker(): NoOpAdBlocker
@@ -90,7 +74,6 @@ interface AppComponent {
     fun browser2ComponentBuilder(): Browser2Component.Builder
 
 }
-
 
 @Module(subcomponents = [Browser2Component::class])
 internal class Submodules

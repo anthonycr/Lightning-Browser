@@ -1,6 +1,6 @@
 package acr.browser.lightning.adblock.source
 
-import acr.browser.lightning.di.HostsClient
+import acr.browser.lightning._browser2.di.HostsClient
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Application
