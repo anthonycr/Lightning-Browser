@@ -31,7 +31,6 @@ import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
 import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.utils.value
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.ColorDrawable
@@ -40,7 +39,6 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ImageView
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.annotation.MenuRes
@@ -51,7 +49,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
-import targetUrl.LongPress
+import acr.browser.lightning._browser2.view.targetUrl.LongPress
 import javax.inject.Inject
 
 /**

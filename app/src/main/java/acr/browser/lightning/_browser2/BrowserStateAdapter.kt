@@ -8,7 +8,7 @@ import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.showSslDialog
 import android.content.Intent
 import android.view.View
-import targetUrl.LongPress
+import acr.browser.lightning._browser2.view.targetUrl.LongPress
 
 /**
  * Created by anthonycr on 9/16/20.

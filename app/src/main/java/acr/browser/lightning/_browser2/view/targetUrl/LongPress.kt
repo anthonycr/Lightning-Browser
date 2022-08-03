@@ -1,4 +1,4 @@
-package targetUrl
+package acr.browser.lightning._browser2.view.targetUrl
 
 /**
  * Created by anthonycr on 12/23/20.

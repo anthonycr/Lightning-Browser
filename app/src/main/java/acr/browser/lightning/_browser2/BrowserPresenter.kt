@@ -29,7 +29,6 @@ import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.*
-import android.graphics.Color
 import androidx.activity.result.ActivityResult
 import androidx.core.net.toUri
 import io.reactivex.Maybe
@@ -40,7 +39,7 @@ import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
-import targetUrl.LongPress
+import acr.browser.lightning._browser2.view.targetUrl.LongPress
 import javax.inject.Inject
 import kotlin.system.exitProcess
 

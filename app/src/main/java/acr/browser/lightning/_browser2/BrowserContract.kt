@@ -10,12 +10,11 @@ import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.view.TabInitializer
 import android.content.Intent
 import android.graphics.Bitmap
-import android.view.View
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
-import targetUrl.LongPress
+import acr.browser.lightning._browser2.view.targetUrl.LongPress
 
 /**
  * Created by anthonycr on 9/11/20.

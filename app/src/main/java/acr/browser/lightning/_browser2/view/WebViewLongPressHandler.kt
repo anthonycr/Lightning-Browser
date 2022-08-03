@@ -1,6 +1,6 @@
 package acr.browser.lightning._browser2.view
 
-import targetUrl.LongPress
+import acr.browser.lightning._browser2.view.targetUrl.LongPress
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Handler

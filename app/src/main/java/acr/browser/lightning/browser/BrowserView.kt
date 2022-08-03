@@ -3,7 +3,6 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.ssl.SslState
 import android.view.View
 import androidx.annotation.StringRes
-import targetUrl.LongPress
 
 interface BrowserView {
 

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.FrameLayout
 import androidx.core.view.children
-import targetUrl.LongPress
+import acr.browser.lightning._browser2.view.targetUrl.LongPress
 import javax.inject.Inject
 
 /**
