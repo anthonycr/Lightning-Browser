@@ -6,7 +6,6 @@ import android.content.Intent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.activity.ComponentActivity
 import dagger.BindsInstance
 import dagger.Subcomponent
 import javax.inject.Qualifier
@@ -22,7 +21,7 @@ interface Browser2Component {
     interface Builder {
 
         @BindsInstance
-        fun activity(activity: ComponentActivity): Builder
+        fun activity(activity: Activity): Builder
 
         @BindsInstance
         fun browserFrame(frameLayout: FrameLayout): Builder
