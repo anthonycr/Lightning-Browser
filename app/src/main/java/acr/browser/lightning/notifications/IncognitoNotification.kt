@@ -1,7 +1,7 @@
 package acr.browser.lightning.notifications
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.IncognitoBrowserActivity
+import acr.browser.lightning.IncognitoBrowserActivity
 import acr.browser.lightning.utils.ThemeUtils
 import android.annotation.TargetApi
 import android.app.Activity

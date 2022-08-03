@@ -1,6 +1,6 @@
-package acr.browser.lightning.browser
+package acr.browser.lightning
 
-import acr.browser.lightning.R
+import acr.browser.lightning.browser.BrowserActivity
 
 /**
  * Created by anthonycr on 7/26/22.

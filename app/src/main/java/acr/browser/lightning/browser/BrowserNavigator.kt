@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser
 
+import acr.browser.lightning.IncognitoBrowserActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.download.DownloadPermissionsHelper
 import acr.browser.lightning.browser.download.PendingDownload

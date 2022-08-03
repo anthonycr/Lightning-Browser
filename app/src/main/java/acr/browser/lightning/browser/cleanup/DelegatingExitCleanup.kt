@@ -2,7 +2,7 @@ package acr.browser.lightning.browser.cleanup
 
 import acr.browser.lightning.Capabilities
 import acr.browser.lightning.browser.BrowserActivity
-import acr.browser.lightning.browser.DefaultBrowserActivity
+import acr.browser.lightning.DefaultBrowserActivity
 import acr.browser.lightning.isSupported
 import android.webkit.WebView
 import javax.inject.Inject

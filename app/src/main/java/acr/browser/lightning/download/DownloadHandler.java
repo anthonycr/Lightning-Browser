@@ -25,7 +25,7 @@ import javax.inject.Singleton;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
-import acr.browser.lightning.browser.DefaultBrowserActivity;
+import acr.browser.lightning.DefaultBrowserActivity;
 import acr.browser.lightning.browser.di.MainScheduler;
 import acr.browser.lightning.browser.di.NetworkScheduler;
 import acr.browser.lightning.constant.Constants;

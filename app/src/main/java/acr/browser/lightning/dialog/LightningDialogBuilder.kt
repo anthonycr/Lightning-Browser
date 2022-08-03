@@ -2,7 +2,7 @@ package acr.browser.lightning.dialog
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserContract
-import acr.browser.lightning.browser.DefaultBrowserActivity
+import acr.browser.lightning.DefaultBrowserActivity
 import acr.browser.lightning.databinding.DialogEditBookmarkBinding
 import acr.browser.lightning.extensions.resizeAndShow
 import android.app.Activity
