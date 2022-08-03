@@ -204,8 +204,8 @@
                     android:layout_height="match_parent"
                     android:background="?selectableItemBackgroundBorderless"
                     android:contentDescription="@null"
-                    android:tint="?attr/iconColor"
-                    app:srcCompat="@drawable/ic_action_collapse" />
+                    app:srcCompat="@drawable/ic_action_collapse"
+                    app:tint="?attr/iconColor" />
 
                 <ImageButton
                     android:id="@+id/find_next"
@@ -214,8 +214,8 @@
                     android:layout_height="match_parent"
                     android:background="?selectableItemBackgroundBorderless"
                     android:contentDescription="@null"
-                    android:tint="?attr/iconColor"
-                    app:srcCompat="@drawable/ic_action_expand" />
+                    app:srcCompat="@drawable/ic_action_expand"
+                    app:tint="?attr/iconColor" />
 
                 <ImageButton
                     android:id="@+id/find_quit"
@@ -224,8 +224,8 @@
                     android:layout_height="match_parent"
                     android:background="?selectableItemBackgroundBorderless"
                     android:contentDescription="@null"
-                    android:tint="?attr/iconColor"
-                    app:srcCompat="@drawable/ic_action_delete" />
+                    app:srcCompat="@drawable/ic_action_delete"
+                    app:tint="?attr/iconColor" />
             </LinearLayout>
         </LinearLayout>
 
