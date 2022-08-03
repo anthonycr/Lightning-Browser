@@ -71,7 +71,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     private val defaultColor by lazy { color(R.color.primary_color) }
     private val backgroundDrawable by lazy { ColorDrawable(defaultColor) }
-    
+
     private var customView: View? = null
 
     @Suppress("ConvertLambdaToReference")

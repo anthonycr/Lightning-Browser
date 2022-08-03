@@ -8,7 +8,8 @@ import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.TabInitializer
-import android.app.Application
+import acr.browser.lightning.view.webrtc.WebRtcPermissionsModel
+import android.app.Activity
 import android.graphics.Bitmap
 import android.webkit.WebView
 import io.reactivex.Scheduler
@@ -19,7 +20,7 @@ import javax.inject.Inject
  */
 class TabFactory @Inject constructor(
     private val webViewFactory: WebViewFactory,
-    private val application: Application,
+    private val activity: Activity,
     private val adBlocker: AdBlocker,
     private val allowListModel: AllowListModel,
     private val faviconModel: FaviconModel,
@@ -28,7 +29,8 @@ class TabFactory @Inject constructor(
     private val userPreferences: UserPreferences,
     @DefaultUserAgent private val defaultUserAgent: String,
     @IconFreeze private val iconFreeze: Bitmap,
-    private val proxy: Proxy
+    private val proxy: Proxy,
+    private val webRtcPermissionsModel: WebRtcPermissionsModel
 ) {
 
     fun constructTab(tabInitializer: TabInitializer, webView: WebView): TabModel {
@@ -38,7 +40,13 @@ class TabFactory @Inject constructor(
             webView,
             headers,
             TabWebViewClient(adBlocker, allowListModel, urlHandler, headers, proxy),
-            TabWebChromeClient(application, faviconModel, diskScheduler),
+            TabWebChromeClient(
+                activity,
+                faviconModel,
+                diskScheduler,
+                userPreferences,
+                webRtcPermissionsModel
+            ),
             userPreferences,
             defaultUserAgent,
             iconFreeze,
