@@ -8,12 +8,15 @@ import acr.browser.lightning.utils.Utils
 import acr.browser.lightning.view.ResultMessageInitializer
 import acr.browser.lightning.view.TabInitializer
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.net.Uri
 import android.os.Message
+import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
-import androidx.core.content.ContextCompat
+import androidx.activity.result.ActivityResult
 import androidx.palette.graphics.Palette
 import io.reactivex.Scheduler
 import io.reactivex.subjects.BehaviorSubject
@@ -36,6 +39,9 @@ class TabWebChromeClient(
     val createWindowObservable: PublishSubject<TabInitializer> = PublishSubject.create()
     val closeWindowObservable: PublishSubject<Unit> = PublishSubject.create()
     val colorChangeObservable: BehaviorSubject<Int> = BehaviorSubject.createDefault(defaultColor)
+    val fileChooserObservable: PublishSubject<Intent> = PublishSubject.create()
+
+    private var filePathCallback: ValueCallback<Array<Uri>>? = null
 
     override fun onCreateWindow(
         view: WebView,
@@ -73,7 +79,7 @@ class TabWebChromeClient(
         generateColorAndPropagate(icon)
     }
 
-    fun generateColorAndPropagate(favicon: Bitmap?) {
+    private fun generateColorAndPropagate(favicon: Bitmap?) {
         val icon = favicon ?: return run {
             colorChangeObservable.onNext(defaultColor)
         }
@@ -89,5 +95,28 @@ class TabWebChromeClient(
             }
             colorChangeObservable.onNext(finalColor)
         }
+    }
+
+    fun onResult(activityResult: ActivityResult) {
+        val resultCode = activityResult.resultCode
+        val intent = activityResult.data
+        val result = FileChooserParams.parseResult(resultCode, intent)
+
+        filePathCallback?.onReceiveValue(result)
+        filePathCallback = null
+    }
+
+    override fun onShowFileChooser(
+        webView: WebView?,
+        filePathCallback: ValueCallback<Array<Uri>>?,
+        fileChooserParams: FileChooserParams?
+    ): Boolean {
+        // Ensure that previously set callbacks are resolved.
+        this.filePathCallback?.onReceiveValue(null)
+        this.filePathCallback = null
+
+        this.filePathCallback = filePathCallback
+        fileChooserParams?.createIntent()?.let(fileChooserObservable::onNext)
+        return true
     }
 }

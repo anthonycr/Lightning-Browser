@@ -6,6 +6,7 @@ import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.showSslDialog
+import android.content.Intent
 import targetUrl.LongPress
 
 /**
@@ -139,4 +140,7 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.showLocalFileBlockedDialog()
     }
 
+    override fun showFileChooser(intent: Intent) {
+        browserActivity.showFileChooser(intent)
+    }
 }

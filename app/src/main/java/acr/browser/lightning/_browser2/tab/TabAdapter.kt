@@ -11,9 +11,11 @@ import acr.browser.lightning.utils.Option
 import acr.browser.lightning.utils.value
 import acr.browser.lightning.view.FreezableBundleInitializer
 import acr.browser.lightning.view.TabInitializer
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.webkit.WebView
+import androidx.activity.result.ActivityResult
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
@@ -173,6 +175,13 @@ class TabAdapter(
     override fun loadingProgress(): Observable<Int> = tabWebChromeClient.progressObservable.hide()
 
     override fun downloadRequests(): Observable<PendingDownload> = downloadsSubject.hide()
+
+    override fun fileChooserRequests(): Observable<Intent> =
+        tabWebChromeClient.fileChooserObservable.hide()
+
+    override fun handleFileChooserResult(activityResult: ActivityResult) {
+        tabWebChromeClient.onResult(activityResult)
+    }
 
     override fun createWindowRequests(): Observable<TabInitializer> =
         tabWebChromeClient.createWindowObservable.hide()

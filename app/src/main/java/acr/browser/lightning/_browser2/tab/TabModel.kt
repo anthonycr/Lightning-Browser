@@ -5,8 +5,10 @@ import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.Option
 import acr.browser.lightning.view.TabInitializer
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import androidx.activity.result.ActivityResult
 import io.reactivex.Observable
 
 interface TabModel {
@@ -76,6 +78,10 @@ interface TabModel {
     fun loadingProgress(): Observable<Int>
 
     fun downloadRequests(): Observable<PendingDownload>
+
+    fun fileChooserRequests(): Observable<Intent>
+
+    fun handleFileChooserResult(activityResult: ActivityResult)
 
     // Lifecycle
 

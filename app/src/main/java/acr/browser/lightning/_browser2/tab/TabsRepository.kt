@@ -1,19 +1,11 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning._browser2.BrowserContract
-import acr.browser.lightning._browser2.image.IconFreeze
-import acr.browser.lightning._browser2.proxy.Proxy
 import acr.browser.lightning._browser2.tab.bundle.BundleStore
-import acr.browser.lightning.adblock.AdBlocker
-import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.RecentTabModel
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
-import acr.browser.lightning.favicon.FaviconModel
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.*
-import android.app.Application
-import android.graphics.Bitmap
 import io.reactivex.*
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
@@ -22,21 +14,13 @@ import javax.inject.Inject
  * Created by anthonycr on 9/12/20.
  */
 class TabsRepository @Inject constructor(
-    private val application: Application,
     private val webViewFactory: WebViewFactory,
     private val tabPager: TabPager,
-    private val adBlocker: AdBlocker,
-    private val allowListModel: AllowListModel,
-    private val faviconModel: FaviconModel,
     @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler,
     private val bundleStore: BundleStore,
-    private val urlHandler: UrlHandler,
-    private val userPreferences: UserPreferences,
-    @DefaultUserAgent private val defaultUserAgent: String,
-    @IconFreeze private val iconFreeze: Bitmap,
     private val recentTabModel: RecentTabModel,
-    private val proxy: Proxy
+    private val tabFactory: TabFactory,
 ) : BrowserContract.Model {
 
     private var selectedTab: TabModel? = null
@@ -66,19 +50,8 @@ class TabsRepository @Inject constructor(
     override fun createTab(tabInitializer: TabInitializer): Single<TabModel> =
         Single.fromCallable<TabModel> {
             val webView = webViewFactory.createWebView()
-            val headers = webViewFactory.createRequestHeaders()
             tabPager.addTab(webView)
-            val tabAdapter = TabAdapter(
-                tabInitializer,
-                webView,
-                headers,
-                TabWebViewClient(adBlocker, allowListModel, urlHandler, headers, proxy),
-                TabWebChromeClient(application, faviconModel, diskScheduler),
-                userPreferences,
-                defaultUserAgent,
-                iconFreeze,
-                proxy
-            )
+            val tabAdapter = tabFactory.constructTab(tabInitializer, webView)
 
             tabsList = tabsList + tabAdapter
 

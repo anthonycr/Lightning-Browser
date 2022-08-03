@@ -30,6 +30,7 @@ import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.*
 import android.graphics.Color
+import androidx.activity.result.ActivityResult
 import androidx.core.net.toUri
 import io.reactivex.Maybe
 import io.reactivex.Scheduler
@@ -264,6 +265,10 @@ class BrowserPresenter @Inject constructor(
         tabDisposable += tab.closeWindowRequests()
             .subscribeOn(mainScheduler)
             .subscribeBy { onTabClose(tabListState.indexOfCurrentTab()) }
+
+        tabDisposable += tab.fileChooserRequests()
+            .subscribeOn(mainScheduler)
+            .subscribeBy { view?.showFileChooser(it) }
     }
 
     private fun List<TabModel>.subscribeToUpdates(compositeDisposable: CompositeDisposable) {
@@ -1158,6 +1163,10 @@ class BrowserPresenter @Inject constructor(
                 )
             )
         }
+    }
+
+    fun onFileChooserResult(activityResult: ActivityResult) {
+        currentTab?.handleFileChooserResult(activityResult)
     }
 
     private fun BrowserContract.View?.updateState(state: BrowserViewState) {

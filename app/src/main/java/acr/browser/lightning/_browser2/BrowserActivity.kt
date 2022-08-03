@@ -38,6 +38,8 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ImageView
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
@@ -67,6 +69,11 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     private val defaultColor by lazy { color(R.color.primary_color) }
     private val backgroundDrawable by lazy { ColorDrawable(defaultColor) }
+
+    @Suppress("ConvertLambdaToReference")
+    private val launcher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { presenter.onFileChooserResult(it) }
 
     @Inject
     internal lateinit var imageLoader: ImageLoader
@@ -591,6 +598,10 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             }
             .setOnCancelListener { presenter.onConfirmOpenLocalFile(allow = false) }
             .resizeAndShow()
+    }
+
+    fun showFileChooser(intent: Intent) {
+        launcher.launch(intent)
     }
 
     private fun animateColorChange(color: Int) {

@@ -8,6 +8,7 @@ import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.view.TabInitializer
+import android.content.Intent
 import android.graphics.Bitmap
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -70,6 +71,8 @@ interface BrowserContract {
         fun showToolsDialog(areAdsAllowed: Boolean, shouldShowAdBlockOption: Boolean)
 
         fun showLocalFileBlockedDialog()
+
+        fun showFileChooser(intent: Intent)
     }
 
     interface Model {
@@ -115,6 +118,7 @@ interface BrowserContract {
         fun backgroundBrowser()
 
         fun launchIncognito(url: String?)
+
     }
 
     enum class CloseTabEvent {
