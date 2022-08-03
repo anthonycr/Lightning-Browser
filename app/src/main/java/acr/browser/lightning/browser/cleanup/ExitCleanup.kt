@@ -1,6 +1,6 @@
 package acr.browser.lightning.browser.cleanup
 
-import acr.browser.lightning._browser2.BrowserActivity
+import acr.browser.lightning.browser.BrowserActivity
 import android.webkit.WebView
 
 /**

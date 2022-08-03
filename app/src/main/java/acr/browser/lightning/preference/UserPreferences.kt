@@ -1,14 +1,13 @@
 package acr.browser.lightning.preference
 
 import acr.browser.lightning.AppTheme
-import acr.browser.lightning.browser.ProxyChoice
-import acr.browser.lightning.browser.SearchBoxDisplayChoice
-import acr.browser.lightning.browser.SearchBoxModel
+import acr.browser.lightning.browser.proxy.ProxyChoice
+import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
+import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
-import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.device.ScreenSize
-import acr.browser.lightning._browser2.di.UserPrefs
+import acr.browser.lightning.browser.di.UserPrefs
 import acr.browser.lightning.preference.delegates.*
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.GoogleSearch

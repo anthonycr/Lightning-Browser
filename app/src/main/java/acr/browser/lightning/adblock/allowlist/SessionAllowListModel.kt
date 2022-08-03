@@ -2,7 +2,7 @@ package acr.browser.lightning.adblock.allowlist
 
 import acr.browser.lightning.database.allowlist.AdBlockAllowListRepository
 import acr.browser.lightning.database.allowlist.AllowListEntry
-import acr.browser.lightning._browser2.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.log.Logger
 import androidx.core.net.toUri
 import io.reactivex.Completable

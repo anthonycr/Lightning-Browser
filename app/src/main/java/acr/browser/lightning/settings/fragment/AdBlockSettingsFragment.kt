@@ -6,9 +6,9 @@ import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.source.HostsSourceType
 import acr.browser.lightning.adblock.source.selectedHostsSource
 import acr.browser.lightning.adblock.source.toPreferenceIndex
-import acr.browser.lightning._browser2.di.DiskScheduler
-import acr.browser.lightning._browser2.di.MainScheduler
-import acr.browser.lightning._browser2.di.injector
+import acr.browser.lightning.browser.di.DiskScheduler
+import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.toast

@@ -1,7 +1,7 @@
 package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.R
-import acr.browser.lightning._browser2.di.injector
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.preference.DeveloperPreferences
 import android.os.Bundle

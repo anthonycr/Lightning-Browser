@@ -7,10 +7,10 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning._browser2.di.DatabaseScheduler
-import acr.browser.lightning._browser2.di.MainScheduler
-import acr.browser.lightning._browser2.di.NetworkScheduler
-import acr.browser.lightning._browser2.di.injector
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.browser.di.NetworkScheduler
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.rx.join

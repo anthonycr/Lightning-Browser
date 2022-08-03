@@ -1,7 +1,7 @@
 package acr.browser.lightning.html.download
 
 import acr.browser.lightning.R
-import acr.browser.lightning._browser2.theme.ThemeProvider
+import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository

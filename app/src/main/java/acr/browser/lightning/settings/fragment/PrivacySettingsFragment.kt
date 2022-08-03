@@ -3,10 +3,10 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.Capabilities
 import acr.browser.lightning.R
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning._browser2.di.DatabaseScheduler
-import acr.browser.lightning._browser2.di.MainScheduler
-import acr.browser.lightning._browser2.di.injector
-import acr.browser.lightning._browser2.tab.WebViewFactory
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.browser.tab.WebViewFactory
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar

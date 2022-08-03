@@ -5,7 +5,7 @@ package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
-import acr.browser.lightning._browser2.di.injector
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.preference.UserPreferences

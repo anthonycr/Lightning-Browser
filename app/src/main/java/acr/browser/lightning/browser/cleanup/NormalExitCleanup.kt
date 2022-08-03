@@ -1,8 +1,8 @@
 package acr.browser.lightning.browser.cleanup
 
-import acr.browser.lightning._browser2.BrowserActivity
+import acr.browser.lightning.browser.BrowserActivity
 import acr.browser.lightning.database.history.HistoryDatabase
-import acr.browser.lightning._browser2.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.WebUtils

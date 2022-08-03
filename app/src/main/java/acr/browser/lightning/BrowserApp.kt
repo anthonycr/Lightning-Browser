@@ -1,14 +1,14 @@
 package acr.browser.lightning
 
-import acr.browser.lightning._browser2.proxy.ProxyAdapter
+import acr.browser.lightning.browser.proxy.ProxyAdapter
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
-import acr.browser.lightning._browser2.di.AppComponent
-import acr.browser.lightning._browser2.di.DaggerAppComponent
-import acr.browser.lightning._browser2.di.DatabaseScheduler
-import acr.browser.lightning._browser2.di.injector
+import acr.browser.lightning.browser.di.AppComponent
+import acr.browser.lightning.browser.di.DaggerAppComponent
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.DeveloperPreferences
 import acr.browser.lightning.utils.FileUtils

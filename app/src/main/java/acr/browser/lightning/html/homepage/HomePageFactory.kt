@@ -1,7 +1,7 @@
 package acr.browser.lightning.html.homepage
 
 import acr.browser.lightning.R
-import acr.browser.lightning._browser2.theme.ThemeProvider
+import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.html.HtmlPageFactory

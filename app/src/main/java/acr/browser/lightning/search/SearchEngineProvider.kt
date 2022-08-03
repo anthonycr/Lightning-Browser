@@ -1,6 +1,6 @@
 package acr.browser.lightning.search
 
-import acr.browser.lightning._browser2.di.SuggestionsClient
+import acr.browser.lightning.browser.di.SuggestionsClient
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.engine.*

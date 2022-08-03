@@ -13,8 +13,8 @@ import acr.browser.lightning.adblock.util.hash.MurmurHashStringAdapter
 import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.database.adblock.HostsRepositoryInfo
-import acr.browser.lightning._browser2.di.DatabaseScheduler
-import acr.browser.lightning._browser2.di.MainScheduler
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.log.Logger
 import android.app.Application

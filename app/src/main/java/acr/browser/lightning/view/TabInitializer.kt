@@ -3,8 +3,8 @@ package acr.browser.lightning.view
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
-import acr.browser.lightning._browser2.di.DiskScheduler
-import acr.browser.lightning._browser2.di.MainScheduler
+import acr.browser.lightning.browser.di.DiskScheduler
+import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
