@@ -95,19 +95,23 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
         val maxValue = 5
         AlertDialog.Builder(activity).apply {
             val layoutInflater = activity.layoutInflater
-            val customView = (layoutInflater.inflate(R.layout.dialog_seek_bar, null) as LinearLayout).apply {
-                val text = TextView(activity).apply {
-                    setText(R.string.untitled)
-                    layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
-                    gravity = Gravity.CENTER_HORIZONTAL
+            val customView =
+                (layoutInflater.inflate(R.layout.dialog_seek_bar, null) as LinearLayout).apply {
+                    val text = TextView(activity).apply {
+                        setText(R.string.untitled)
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            WindowManager.LayoutParams.WRAP_CONTENT
+                        )
+                        gravity = Gravity.CENTER_HORIZONTAL
+                    }
+                    addView(text)
+                    findViewById<SeekBar>(R.id.text_size_seekbar).apply {
+                        setOnSeekBarChangeListener(TextSeekBarListener(text))
+                        max = maxValue
+                        progress = maxValue - userPreferences.textSize
+                    }
                 }
-                addView(text)
-                findViewById<SeekBar>(R.id.text_size_seekbar).apply {
-                    setOnSeekBarChangeListener(TextSeekBarListener(text))
-                    max = maxValue
-                    progress = maxValue - userPreferences.textSize
-                }
-            }
             setView(customView)
             setTitle(R.string.title_text_size)
             setPositiveButton(android.R.string.ok) { _, _ ->
@@ -139,11 +143,13 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
         }.resizeAndShow()
     }
 
-    private fun AppTheme.toDisplayString(): String = getString(when (this) {
-        AppTheme.LIGHT -> R.string.light_theme
-        AppTheme.DARK -> R.string.dark_theme
-        AppTheme.BLACK -> R.string.black_theme
-    })
+    private fun AppTheme.toDisplayString(): String = getString(
+        when (this) {
+            AppTheme.LIGHT -> R.string.light_theme
+            AppTheme.DARK -> R.string.dark_theme
+            AppTheme.BLACK -> R.string.black_theme
+        }
+    )
 
     private class TextSeekBarListener(
         private val sampleText: TextView

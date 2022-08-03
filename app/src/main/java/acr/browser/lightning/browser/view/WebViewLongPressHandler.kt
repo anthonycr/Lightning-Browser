@@ -22,23 +22,25 @@ class WebViewLongPressHandler @Inject constructor(private val activity: Activity
         webView: WebView,
         onLongClick: (LongPress) -> Unit
     ): Cancellable {
-        webView.setCompositeTouchListener("long_press", GestureTriggeringTouchListener(
-            GestureDetector(
-                activity,
-                CustomGestureListener(
-                    messageHandler = MessageHandler {
-                        val hitTestResult = webView.hitTestResult
-                        val longPress = LongPress(
-                            targetUrl = it ?: hitTestResult.extra,
-                            hitUrl = hitTestResult.extra,
-                            hitCategory = hitTestResult.type.asLongPressCategory()
-                        )
-                        onLongClick(longPress)
-                    },
-                    webView = webView
+        webView.setCompositeTouchListener(
+            "long_press", GestureTriggeringTouchListener(
+                GestureDetector(
+                    activity,
+                    CustomGestureListener(
+                        messageHandler = MessageHandler {
+                            val hitTestResult = webView.hitTestResult
+                            val longPress = LongPress(
+                                targetUrl = it ?: hitTestResult.extra,
+                                hitUrl = hitTestResult.extra,
+                                hitCategory = hitTestResult.type.asLongPressCategory()
+                            )
+                            onLongClick(longPress)
+                        },
+                        webView = webView
+                    )
                 )
             )
-        ))
+        )
 
         return Cancellable {
             webView.setCompositeTouchListener("long_press", null)

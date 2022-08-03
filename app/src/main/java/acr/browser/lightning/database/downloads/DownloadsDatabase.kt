@@ -27,12 +27,13 @@ class DownloadsDatabase @Inject constructor(
 
     // Creating Tables
     override fun onCreate(db: SQLiteDatabase) {
-        val createDownloadsTable = "CREATE TABLE ${DatabaseUtils.sqlEscapeString(TABLE_DOWNLOADS)}(" +
-            "${DatabaseUtils.sqlEscapeString(KEY_ID)} INTEGER PRIMARY KEY," +
-            "${DatabaseUtils.sqlEscapeString(KEY_URL)} TEXT," +
-            "${DatabaseUtils.sqlEscapeString(KEY_TITLE)} TEXT," +
-            "${DatabaseUtils.sqlEscapeString(KEY_SIZE)} TEXT" +
-            ')'
+        val createDownloadsTable =
+            "CREATE TABLE ${DatabaseUtils.sqlEscapeString(TABLE_DOWNLOADS)}(" +
+                "${DatabaseUtils.sqlEscapeString(KEY_ID)} INTEGER PRIMARY KEY," +
+                "${DatabaseUtils.sqlEscapeString(KEY_URL)} TEXT," +
+                "${DatabaseUtils.sqlEscapeString(KEY_TITLE)} TEXT," +
+                "${DatabaseUtils.sqlEscapeString(KEY_SIZE)} TEXT" +
+                ')'
         db.execSQL(createDownloadsTable)
     }
 
@@ -71,38 +72,40 @@ class DownloadsDatabase @Inject constructor(
         }
     }
 
-    override fun addDownloadIfNotExists(entry: DownloadEntry): Single<Boolean> = Single.fromCallable {
-        database.query(
-            TABLE_DOWNLOADS,
-            null,
-            "$KEY_URL=?",
-            arrayOf(entry.url),
-            null,
-            null,
-            "1"
-        ).use {
-            if (it.moveToFirst()) {
-                return@fromCallable false
-            }
-        }
-
-        val id = database.insert(TABLE_DOWNLOADS, null, entry.toContentValues())
-
-        return@fromCallable id != -1L
-    }
-
-    override fun addDownloadsList(downloadEntries: List<DownloadEntry>): Completable = Completable.fromAction {
-        database.apply {
-            beginTransaction()
-            setTransactionSuccessful()
-
-            for (item in downloadEntries) {
-                addDownloadIfNotExists(item).subscribe()
+    override fun addDownloadIfNotExists(entry: DownloadEntry): Single<Boolean> =
+        Single.fromCallable {
+            database.query(
+                TABLE_DOWNLOADS,
+                null,
+                "$KEY_URL=?",
+                arrayOf(entry.url),
+                null,
+                null,
+                "1"
+            ).use {
+                if (it.moveToFirst()) {
+                    return@fromCallable false
+                }
             }
 
-            endTransaction()
+            val id = database.insert(TABLE_DOWNLOADS, null, entry.toContentValues())
+
+            return@fromCallable id != -1L
         }
-    }
+
+    override fun addDownloadsList(downloadEntries: List<DownloadEntry>): Completable =
+        Completable.fromAction {
+            database.apply {
+                beginTransaction()
+                setTransactionSuccessful()
+
+                for (item in downloadEntries) {
+                    addDownloadIfNotExists(item).subscribe()
+                }
+
+                endTransaction()
+            }
+        }
 
     override fun deleteDownload(url: String): Single<Boolean> = Single.fromCallable {
         return@fromCallable database.delete(TABLE_DOWNLOADS, "$KEY_URL=?", arrayOf(url)) > 0

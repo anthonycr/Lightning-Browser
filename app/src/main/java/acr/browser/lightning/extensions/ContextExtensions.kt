@@ -27,7 +27,8 @@ inline fun Context.color(@ColorRes colorRes: Int): Int = ContextCompat.getColor(
 /**
  * Shows a toast with the provided [StringRes].
  */
-inline fun Context.toast(@StringRes stringRes: Int) = Toast.makeText(this, stringRes, Toast.LENGTH_SHORT).show()
+inline fun Context.toast(@StringRes stringRes: Int) =
+    Toast.makeText(this, stringRes, Toast.LENGTH_SHORT).show()
 
 /**
  * The [LayoutInflater] available on the [Context].
@@ -38,7 +39,8 @@ inline val Context.inflater: LayoutInflater
 /**
  * Gets a drawable from the context.
  */
-inline fun Context.drawable(@DrawableRes drawableRes: Int): Drawable = ContextCompat.getDrawable(this, drawableRes)!!
+inline fun Context.drawable(@DrawableRes drawableRes: Int): Drawable =
+    ContextCompat.getDrawable(this, drawableRes)!!
 
 /**
  * The preferred locale of the user.

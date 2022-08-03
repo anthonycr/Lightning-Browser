@@ -8,29 +8,10 @@ import android.net.http.SslCertificate
 import android.text.format.DateFormat
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import java.util.*
 
 /**
  * Shows an informative dialog with the provided [SslCertificate] information.
  */
-fun Context.showSslDialog(sslCertificate: SslCertificate, sslState: SslState) {
-    val by = sslCertificate.issuedBy
-    val to = sslCertificate.issuedTo
-    val issueDate = sslCertificate.validNotBeforeDate
-    val expireDate = sslCertificate.validNotAfterDate
-
-    showSslDialog(
-        SslCertificateInfo(
-            issuedByCommonName = by.cName,
-            issuedToCommonName = to.cName,
-            issuedToOrganizationName = to.oName,
-            issueDate = sslCertificate.validNotBeforeDate,
-            expireDate = sslCertificate.validNotAfterDate,
-            sslState = sslState
-        )
-    )
-}
-
 fun Context.showSslDialog(sslCertificateInfo: SslCertificateInfo) {
     val dateFormat = DateFormat.getDateFormat(applicationContext)
 

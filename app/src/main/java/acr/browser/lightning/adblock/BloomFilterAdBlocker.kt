@@ -50,7 +50,8 @@ class BloomFilterAdBlocker @Inject constructor(
 ) : AdBlocker {
 
     private val bloomFilter: DelegatingBloomFilter<Host> = DelegatingBloomFilter()
-    private val objectStore: ObjectStore<DefaultBloomFilter<Host>> = JvmObjectStore(application, MurmurHashStringAdapter())
+    private val objectStore: ObjectStore<DefaultBloomFilter<Host>> =
+        JvmObjectStore(application, MurmurHashStringAdapter())
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -116,19 +117,20 @@ class BloomFilterAdBlocker @Inject constructor(
         objectStore.retrieve(BLOOM_FILTER_KEY)
     }
 
-    private fun createAndSaveBloomFilter(hosts: List<Host>): Single<BloomFilter<Host>> = Single.fromCallable {
-        logger.log(TAG, "Constructing bloom filter from list")
+    private fun createAndSaveBloomFilter(hosts: List<Host>): Single<BloomFilter<Host>> =
+        Single.fromCallable {
+            logger.log(TAG, "Constructing bloom filter from list")
 
-        val bloomFilter = DefaultBloomFilter(
-            numberOfElements = hosts.size,
-            falsePositiveRate = 0.01,
-            hashingAlgorithm = MurmurHashHostAdapter()
-        )
-        bloomFilter.putAll(hosts)
-        objectStore.store(BLOOM_FILTER_KEY, bloomFilter)
+            val bloomFilter = DefaultBloomFilter(
+                numberOfElements = hosts.size,
+                falsePositiveRate = 0.01,
+                hashingAlgorithm = MurmurHashHostAdapter()
+            )
+            bloomFilter.putAll(hosts)
+            objectStore.store(BLOOM_FILTER_KEY, bloomFilter)
 
-        bloomFilter
-    }
+            bloomFilter
+        }
 
     override fun isAd(url: String): Boolean {
         val domain = url.host() ?: return false

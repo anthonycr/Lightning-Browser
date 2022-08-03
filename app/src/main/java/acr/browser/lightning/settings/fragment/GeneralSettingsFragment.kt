@@ -124,12 +124,14 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             setTitle(R.string.http_proxy)
             val stringArray = resources.getStringArray(R.array.proxy_choices_array)
             val values = ProxyChoice.values().map {
-                Pair(it, when (it) {
-                    ProxyChoice.NONE -> stringArray[0]
-                    ProxyChoice.ORBOT -> stringArray[1]
-                    ProxyChoice.I2P -> stringArray[2]
-                    ProxyChoice.MANUAL -> stringArray[3]
-                })
+                Pair(
+                    it, when (it) {
+                        ProxyChoice.NONE -> stringArray[0]
+                        ProxyChoice.ORBOT -> stringArray[1]
+                        ProxyChoice.I2P -> stringArray[2]
+                        ProxyChoice.MANUAL -> stringArray[3]
+                    }
+                )
             }
             withSingleChoiceItems(values, userPreferences.proxyChoice) {
                 updateProxyChoice(it, activity, summaryUpdater)
@@ -138,7 +140,11 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         }
     }
 
-    private fun updateProxyChoice(choice: ProxyChoice, activity: Activity, summaryUpdater: SummaryUpdater) {
+    private fun updateProxyChoice(
+        choice: ProxyChoice,
+        activity: Activity,
+        summaryUpdater: SummaryUpdater
+    ) {
         val sanitizedChoice = ProxyUtils.sanitizeProxyChoice(choice, activity)
         if (sanitizedChoice == ProxyChoice.MANUAL) {
             showManualProxyPicker(activity, summaryUpdater)
@@ -193,7 +199,10 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     private fun showUserAgentChooserDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(resources.getString(R.string.title_user_agent))
-            setSingleChoiceItems(R.array.user_agent, userPreferences.userAgentChoice - 1) { _, which ->
+            setSingleChoiceItems(
+                R.array.user_agent,
+                userPreferences.userAgentChoice - 1
+            ) { _, which ->
                 userPreferences.userAgentChoice = which + 1
                 summaryUpdater.updateSummary(choiceToUserAgent(userPreferences.userAgentChoice))
                 when (which) {
@@ -210,11 +219,13 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
     private fun showCustomUserAgentPicker(summaryUpdater: SummaryUpdater) {
         activity?.let {
-            BrowserDialog.showEditText(it,
+            BrowserDialog.showEditText(
+                it,
                 R.string.title_user_agent,
                 R.string.title_user_agent,
                 userPreferences.userAgentString,
-                R.string.action_ok) { s ->
+                R.string.action_ok
+            ) { s ->
                 userPreferences.userAgentString = s
                 summaryUpdater.updateSummary(it.getString(R.string.agent_custom))
             }
@@ -224,11 +235,12 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     private fun showDownloadLocationDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(resources.getString(R.string.title_download_location))
-            val n: Int = if (userPreferences.downloadDirectory.contains(Environment.DIRECTORY_DOWNLOADS)) {
-                0
-            } else {
-                1
-            }
+            val n: Int =
+                if (userPreferences.downloadDirectory.contains(Environment.DIRECTORY_DOWNLOADS)) {
+                    0
+                } else {
+                    1
+                }
 
             setSingleChoiceItems(R.array.download_folder, n) { _, which ->
                 when (which) {
@@ -254,7 +266,13 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             val errorColor = ContextCompat.getColor(activity, R.color.error_red)
             val regularColor = ThemeUtils.getTextColor(activity)
             getDownload.setTextColor(regularColor)
-            getDownload.addTextChangedListener(DownloadLocationTextWatcher(getDownload, errorColor, regularColor))
+            getDownload.addTextChangedListener(
+                DownloadLocationTextWatcher(
+                    getDownload,
+                    errorColor,
+                    regularColor
+                )
+            )
             getDownload.setText(userPreferences.downloadDirectory)
 
             BrowserDialog.showCustomDialog(activity) {
@@ -337,11 +355,13 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         }
 
         activity?.let {
-            BrowserDialog.showEditText(it,
+            BrowserDialog.showEditText(
+                it,
                 R.string.title_custom_homepage,
                 R.string.title_custom_homepage,
                 currentHomepage,
-                R.string.action_ok) { url ->
+                R.string.action_ok
+            ) { url ->
                 userPreferences.homepage = url
                 summaryUpdater.updateSummary(url)
             }
@@ -373,7 +393,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 val searchEngine = searchEngineList[which]
 
                 // Store the search engine preference
-                val preferencesIndex = searchEngineProvider.mapSearchEngineToPreferenceIndex(searchEngine)
+                val preferencesIndex =
+                    searchEngineProvider.mapSearchEngineToPreferenceIndex(searchEngine)
                 userPreferences.searchChoice = preferencesIndex
 
                 if (searchEngine is CustomSearch) {

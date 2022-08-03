@@ -58,40 +58,50 @@ class AppModule {
 
     @Provides
     @UserPrefs
-    fun provideUserPreferences(application: Application): SharedPreferences = application.getSharedPreferences("settings", 0)
+    fun provideUserPreferences(application: Application): SharedPreferences =
+        application.getSharedPreferences("settings", 0)
 
     @Provides
     @DevPrefs
-    fun provideDebugPreferences(application: Application): SharedPreferences = application.getSharedPreferences("developer_settings", 0)
+    fun provideDebugPreferences(application: Application): SharedPreferences =
+        application.getSharedPreferences("developer_settings", 0)
 
     @Provides
     @AdBlockPrefs
-    fun provideAdBlockPreferences(application: Application): SharedPreferences = application.getSharedPreferences("ad_block_settings", 0)
+    fun provideAdBlockPreferences(application: Application): SharedPreferences =
+        application.getSharedPreferences("ad_block_settings", 0)
 
     @Provides
     fun providesAssetManager(application: Application): AssetManager = application.assets
 
     @Provides
-    fun providesClipboardManager(application: Application) = application.getSystemService<ClipboardManager>()!!
+    fun providesClipboardManager(application: Application) =
+        application.getSystemService<ClipboardManager>()!!
 
     @Provides
-    fun providesInputMethodManager(application: Application) = application.getSystemService<InputMethodManager>()!!
+    fun providesInputMethodManager(application: Application) =
+        application.getSystemService<InputMethodManager>()!!
 
     @Provides
-    fun providesDownloadManager(application: Application) = application.getSystemService<DownloadManager>()!!
+    fun providesDownloadManager(application: Application) =
+        application.getSystemService<DownloadManager>()!!
 
     @Provides
-    fun providesConnectivityManager(application: Application) = application.getSystemService<ConnectivityManager>()!!
+    fun providesConnectivityManager(application: Application) =
+        application.getSystemService<ConnectivityManager>()!!
 
     @Provides
-    fun providesNotificationManager(application: Application) = application.getSystemService<NotificationManager>()!!
+    fun providesNotificationManager(application: Application) =
+        application.getSystemService<NotificationManager>()!!
 
     @Provides
-    fun providesWindowManager(application: Application) = application.getSystemService<WindowManager>()!!
+    fun providesWindowManager(application: Application) =
+        application.getSystemService<WindowManager>()!!
 
     @RequiresApi(Build.VERSION_CODES.N_MR1)
     @Provides
-    fun providesShortcutManager(application: Application) = application.getSystemService<ShortcutManager>()!!
+    fun providesShortcutManager(application: Application) =
+        application.getSystemService<ShortcutManager>()!!
 
     @Provides
     @DatabaseScheduler
@@ -106,7 +116,8 @@ class AppModule {
     @Provides
     @NetworkScheduler
     @Singleton
-    fun providesNetworkThread(): Scheduler = Schedulers.from(ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, LinkedBlockingDeque()))
+    fun providesNetworkThread(): Scheduler =
+        Schedulers.from(ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, LinkedBlockingDeque()))
 
     @Provides
     @MainScheduler
@@ -115,18 +126,20 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun providesSuggestionsCacheControl(): CacheControl = CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build()
+    fun providesSuggestionsCacheControl(): CacheControl =
+        CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build()
 
     @Singleton
     @Provides
-    fun providesSuggestionsRequestFactory(cacheControl: CacheControl): RequestFactory = object : RequestFactory {
-        override fun createSuggestionsRequest(httpUrl: HttpUrl, encoding: String): Request {
-            return Request.Builder().url(httpUrl)
-                .addHeader("Accept-Charset", encoding)
-                .cacheControl(cacheControl)
-                .build()
+    fun providesSuggestionsRequestFactory(cacheControl: CacheControl): RequestFactory =
+        object : RequestFactory {
+            override fun createSuggestionsRequest(httpUrl: HttpUrl, encoding: String): Request {
+                return Request.Builder().url(httpUrl)
+                    .addHeader("Accept-Charset", encoding)
+                    .cacheControl(cacheControl)
+                    .build()
+            }
         }
-    }
 
     private fun createInterceptorWithMaxCacheAge(maxCacheAgeSeconds: Long) = Interceptor { chain ->
         chain.proceed(chain.request()).newBuilder()
@@ -137,28 +150,30 @@ class AppModule {
     @Singleton
     @Provides
     @SuggestionsClient
-    fun providesSuggestionsHttpClient(application: Application): Single<OkHttpClient> = Single.fromCallable {
-        val intervalDay = TimeUnit.DAYS.toSeconds(1)
-        val suggestionsCache = File(application.cacheDir, "suggestion_responses")
+    fun providesSuggestionsHttpClient(application: Application): Single<OkHttpClient> =
+        Single.fromCallable {
+            val intervalDay = TimeUnit.DAYS.toSeconds(1)
+            val suggestionsCache = File(application.cacheDir, "suggestion_responses")
 
-        return@fromCallable OkHttpClient.Builder()
-            .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
-            .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalDay))
-            .build()
-    }.cache()
+            return@fromCallable OkHttpClient.Builder()
+                .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
+                .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalDay))
+                .build()
+        }.cache()
 
     @Singleton
     @Provides
     @HostsClient
-    fun providesHostsHttpClient(application: Application): Single<OkHttpClient> = Single.fromCallable {
-        val intervalYear = TimeUnit.DAYS.toSeconds(365)
-        val suggestionsCache = File(application.cacheDir, "hosts_cache")
+    fun providesHostsHttpClient(application: Application): Single<OkHttpClient> =
+        Single.fromCallable {
+            val intervalYear = TimeUnit.DAYS.toSeconds(365)
+            val suggestionsCache = File(application.cacheDir, "hosts_cache")
 
-        return@fromCallable OkHttpClient.Builder()
-            .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(5)))
-            .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalYear))
-            .build()
-    }.cache()
+            return@fromCallable OkHttpClient.Builder()
+                .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(5)))
+                .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalYear))
+                .build()
+        }.cache()
 
     @Provides
     @Singleton
@@ -170,7 +185,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideI2PAndroidHelper(application: Application): I2PAndroidHelper = I2PAndroidHelper(application)
+    fun provideI2PAndroidHelper(application: Application): I2PAndroidHelper =
+        I2PAndroidHelper(application)
 
     @Provides
     fun providesListPageReader(): ListPageReader = MezzanineGenerator.ListPageReader()

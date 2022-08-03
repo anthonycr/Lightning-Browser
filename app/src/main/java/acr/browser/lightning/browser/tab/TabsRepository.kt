@@ -1,9 +1,9 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.BrowserContract
-import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.*
 import io.reactivex.*
@@ -49,7 +49,7 @@ class TabsRepository @Inject constructor(
     }
 
     override fun createTab(tabInitializer: TabInitializer): Single<TabModel> =
-        Single.fromCallable<TabModel> {
+        Single.fromCallable {
             val webView = webViewFactory.createWebView()
             tabPager.addTab(webView)
             val tabAdapter = tabFactory.constructTab(tabInitializer, webView)

@@ -31,10 +31,12 @@ class FaviconModel @Inject constructor(
 ) {
 
     private val loaderOptions = BitmapFactory.Options()
-    private val bookmarkIconSize = application.resources.getDimensionPixelSize(R.dimen.material_grid_small_icon)
-    private val faviconCache = object : LruCache<String, Bitmap>(FileUtils.megabytesToBytes(1).toInt()) {
-        override fun sizeOf(key: String, value: Bitmap) = value.byteCount
-    }
+    private val bookmarkIconSize =
+        application.resources.getDimensionPixelSize(R.dimen.material_grid_small_icon)
+    private val faviconCache =
+        object : LruCache<String, Bitmap>(FileUtils.megabytesToBytes(1).toInt()) {
+            override fun sizeOf(key: String, value: Bitmap) = value.byteCount
+        }
 
     /**
      * Retrieves a favicon from the memory cache.Bitmap may not be present if no bitmap has been
@@ -52,7 +54,8 @@ class FaviconModel @Inject constructor(
     fun createDefaultBitmapForTitle(title: String?): Bitmap {
         val firstTitleCharacter = title?.takeIf(String::isNotBlank)?.let { it[0] } ?: '?'
 
-        @ColorInt val defaultFaviconColor = DrawableUtils.characterToColorHash(firstTitleCharacter, application)
+        @ColorInt val defaultFaviconColor =
+            DrawableUtils.characterToColorHash(firstTitleCharacter, application)
 
         return DrawableUtils.createRoundedLetterImage(
             firstTitleCharacter,
@@ -111,16 +114,17 @@ class FaviconModel @Inject constructor(
      * @param url     the URL to cache the favicon for.
      * @return an observable that notifies the consumer when it is complete.
      */
-    fun cacheFaviconForUrl(favicon: Bitmap, url: String): Completable = Completable.create { emitter ->
-        val uri = url.toUri().toValidUri() ?: return@create emitter.onComplete()
+    fun cacheFaviconForUrl(favicon: Bitmap, url: String): Completable =
+        Completable.create { emitter ->
+            val uri = url.toUri().toValidUri() ?: return@create emitter.onComplete()
 
-        logger.log(TAG, "Caching icon for ${uri.host}")
-        FileOutputStream(getFaviconCacheFile(application, uri)).safeUse {
-            favicon.compress(Bitmap.CompressFormat.PNG, 100, it)
-            it.flush()
-            emitter.onComplete()
+            logger.log(TAG, "Caching icon for ${uri.host}")
+            FileOutputStream(getFaviconCacheFile(application, uri)).safeUse {
+                favicon.compress(Bitmap.CompressFormat.PNG, 100, it)
+                it.flush()
+                emitter.onComplete()
+            }
         }
-    }
 
     companion object {
 

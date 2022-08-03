@@ -23,7 +23,6 @@ class LightningDialogBuilder @Inject constructor() {
      * if the link is relative to a bookmark or is just a folder.
      *
      * @param activity used to show the dialog
-     * @param url      the long pressed url
      */
     fun showLongPressedDialogForBookmarkUrl(
         activity: Activity,
@@ -58,7 +57,6 @@ class LightningDialogBuilder @Inject constructor() {
      * Show the appropriated dialog for the long pressed link.
      *
      * @param activity used to show the dialog
-     * @param url      the long pressed url
      */
     // TODO allow individual downloads to be deleted.
     fun showLongPressedDialogForDownloadUrl(

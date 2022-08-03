@@ -54,7 +54,10 @@ class UserPreferences @Inject constructor(
     /**
      * The folder into which files will be downloaded.
      */
-    var downloadDirectory by preferences.stringPreference(DOWNLOAD_DIRECTORY, FileUtils.DEFAULT_DOWNLOAD_PATH)
+    var downloadDirectory by preferences.stringPreference(
+        DOWNLOAD_DIRECTORY,
+        FileUtils.DEFAULT_DOWNLOAD_PATH
+    )
 
     /**
      * True if the browser should hide the navigation bar when scrolling, false if it should be
@@ -186,7 +189,10 @@ class UserPreferences @Inject constructor(
      *
      * @see SearchBoxModel
      */
-    var urlBoxContentChoice by preferences.enumPreference(URL_BOX_CONTENTS, SearchBoxDisplayChoice.DOMAIN)
+    var urlBoxContentChoice by preferences.enumPreference(
+        URL_BOX_CONTENTS,
+        SearchBoxDisplayChoice.DOMAIN
+    )
 
     /**
      * True if the browser should invert the display colors of the web page content, false
@@ -218,7 +224,10 @@ class UserPreferences @Inject constructor(
      * True if the app should use the navigation drawer UI, false if it should use the traditional
      * desktop browser tabs UI.
      */
-    var showTabsInDrawer by preferences.booleanPreference(SHOW_TABS_IN_DRAWER, !screenSize.isTablet())
+    var showTabsInDrawer by preferences.booleanPreference(
+        SHOW_TABS_IN_DRAWER,
+        !screenSize.isTablet()
+    )
 
     /**
      * True if the browser should send a do not track (DNT) header with every GET request, false

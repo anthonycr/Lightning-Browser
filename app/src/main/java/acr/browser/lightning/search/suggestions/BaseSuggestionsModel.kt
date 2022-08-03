@@ -70,7 +70,10 @@ abstract class BaseSuggestionsModel internal constructor(
      *
      * @return the cache file containing the suggestions
      */
-    private fun OkHttpClient.downloadSuggestionsForQuery(query: String, language: String): Response? {
+    private fun OkHttpClient.downloadSuggestionsForQuery(
+        query: String,
+        language: String
+    ): Response? {
         val queryUrl = createQueryUrl(query, language)
         val request = requestFactory.createSuggestionsRequest(queryUrl, encoding)
         return try {

@@ -26,7 +26,13 @@ class PreferencesHostsDataSourceProvider @Inject constructor(
         when (val source = userPreferences.selectedHostsSource()) {
             HostsSourceType.Default -> AssetsHostsDataSource(assetManager, logger)
             is HostsSourceType.Local -> FileHostsDataSource(logger, source.file)
-            is HostsSourceType.Remote -> UrlHostsDataSource(source.httpUrl, okHttpClient, logger, userPreferences, application)
+            is HostsSourceType.Remote -> UrlHostsDataSource(
+                source.httpUrl,
+                okHttpClient,
+                logger,
+                userPreferences,
+                application
+            )
         }
 
 }

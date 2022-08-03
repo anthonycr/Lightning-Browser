@@ -61,30 +61,31 @@ class HistoryDatabase @Inject constructor(
         database.delete(TABLE_HISTORY, "$KEY_URL = ?", arrayOf(url))
     }
 
-    override fun visitHistoryEntry(url: String, title: String?): Completable = Completable.fromAction {
-        val values = ContentValues().apply {
-            put(KEY_TITLE, title ?: "")
-            put(KEY_TIME_VISITED, System.currentTimeMillis())
-        }
+    override fun visitHistoryEntry(url: String, title: String?): Completable =
+        Completable.fromAction {
+            val values = ContentValues().apply {
+                put(KEY_TITLE, title ?: "")
+                put(KEY_TIME_VISITED, System.currentTimeMillis())
+            }
 
-        database.query(
-            false,
-            TABLE_HISTORY,
-            arrayOf(KEY_ID),
-            "$KEY_URL = ?",
-            arrayOf(url),
-            null,
-            null,
-            null,
-            "1"
-        ).use {
-            if (it.count > 0) {
-                database.update(TABLE_HISTORY, values, "$KEY_URL = ?", arrayOf(url))
-            } else {
-                addHistoryEntry(HistoryEntry(url, title ?: ""))
+            database.query(
+                false,
+                TABLE_HISTORY,
+                arrayOf(KEY_ID),
+                "$KEY_URL = ?",
+                arrayOf(url),
+                null,
+                null,
+                null,
+                "1"
+            ).use {
+                if (it.count > 0) {
+                    database.update(TABLE_HISTORY, values, "$KEY_URL = ?", arrayOf(url))
+                } else {
+                    addHistoryEntry(HistoryEntry(url, title ?: ""))
+                }
             }
         }
-    }
 
     override fun findHistoryEntriesContaining(query: String): Single<List<HistoryEntry>> =
         Single.fromCallable {

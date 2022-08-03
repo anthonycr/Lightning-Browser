@@ -155,13 +155,15 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
         }
     }
 
-    private fun RenderingMode.toDisplayString(): String = getString(when (this) {
-        RenderingMode.NORMAL -> R.string.name_normal
-        RenderingMode.INVERTED -> R.string.name_inverted
-        RenderingMode.GRAYSCALE -> R.string.name_grayscale
-        RenderingMode.INVERTED_GRAYSCALE -> R.string.name_inverted_grayscale
-        RenderingMode.INCREASE_CONTRAST -> R.string.name_increase_contrast
-    })
+    private fun RenderingMode.toDisplayString(): String = getString(
+        when (this) {
+            RenderingMode.NORMAL -> R.string.name_normal
+            RenderingMode.INVERTED -> R.string.name_inverted
+            RenderingMode.GRAYSCALE -> R.string.name_grayscale
+            RenderingMode.INVERTED_GRAYSCALE -> R.string.name_inverted_grayscale
+            RenderingMode.INCREASE_CONTRAST -> R.string.name_increase_contrast
+        }
+    )
 
     companion object {
         private const val SETTINGS_NEW_WINDOW = "allow_new_window"

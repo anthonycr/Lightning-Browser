@@ -38,9 +38,10 @@ class DefaultBloomFilter<T>(
     private val hashingAlgorithm: HashingAlgorithm<T>
 ) : BloomFilter<T>, Serializable {
 
-    private val numberOfBits: Int = (-numberOfElements * ln(falsePositiveRate) / (ln(2.0) * ln(2.0)))
-        .roundToInt()
-        .coerceAtLeast(1)
+    private val numberOfBits: Int =
+        (-numberOfElements * ln(falsePositiveRate) / (ln(2.0) * ln(2.0)))
+            .roundToInt()
+            .coerceAtLeast(1)
 
     private val numberOfHashes: Int = (numberOfBits * ln(2.0) / numberOfElements)
         .roundToInt()

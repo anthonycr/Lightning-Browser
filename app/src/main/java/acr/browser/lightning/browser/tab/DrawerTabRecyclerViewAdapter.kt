@@ -22,14 +22,20 @@ class DrawerTabRecyclerViewAdapter(
         override fun areItemsTheSame(oldItem: TabViewState, newItem: TabViewState): Boolean =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: TabViewState, newItem: TabViewState): Boolean = oldItem == newItem
+        override fun areContentsTheSame(oldItem: TabViewState, newItem: TabViewState): Boolean =
+            oldItem == newItem
     }
 ) {
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): TabViewHolder {
         val view = viewGroup.context.inflater.inflate(R.layout.tab_list_item, viewGroup, false)
         view.background = BackgroundDrawable(view.context)
-        return TabViewHolder(view, onClick = onClick, onLongClick = onLongClick, onCloseClick = onCloseClick)
+        return TabViewHolder(
+            view,
+            onClick = onClick,
+            onLongClick = onLongClick,
+            onCloseClick = onCloseClick
+        )
     }
 
     override fun onBindViewHolder(holder: TabViewHolder, position: Int) {
@@ -43,7 +49,11 @@ class DrawerTabRecyclerViewAdapter(
         updateViewHolderBackground(holder, tab.isSelected)
     }
 
-    private fun updateViewHolderFavicon(viewHolder: TabViewHolder, favicon: Bitmap?, isForeground: Boolean) {
+    private fun updateViewHolderFavicon(
+        viewHolder: TabViewHolder,
+        favicon: Bitmap?,
+        isForeground: Boolean
+    ) {
         favicon?.let {
             if (isForeground) {
                 viewHolder.favicon.setImageBitmap(it)
@@ -63,7 +73,11 @@ class DrawerTabRecyclerViewAdapter(
         }
     }
 
-    private fun updateViewHolderAppearance(viewHolder: TabViewHolder, favicon: Bitmap?, isForeground: Boolean) {
+    private fun updateViewHolderAppearance(
+        viewHolder: TabViewHolder,
+        favicon: Bitmap?,
+        isForeground: Boolean
+    ) {
         if (isForeground) {
             TextViewCompat.setTextAppearance(viewHolder.txtTitle, R.style.boldText)
         } else {

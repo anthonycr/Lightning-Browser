@@ -207,9 +207,16 @@ class SuggestionsAdapter(
                 }
         }
         .map { (bookmarks, history, searches) ->
-            val bookmarkCount = MAX_SUGGESTIONS - 2.coerceAtMost(history.size) - 1.coerceAtMost(searches.size)
-            val historyCount = MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - 1.coerceAtMost(searches.size)
-            val searchCount = MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - historyCount.coerceAtMost(history.size)
+            val bookmarkCount =
+                MAX_SUGGESTIONS - 2.coerceAtMost(history.size) - 1.coerceAtMost(searches.size)
+            val historyCount =
+                MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - 1.coerceAtMost(
+                    searches.size
+                )
+            val searchCount =
+                MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - historyCount.coerceAtMost(
+                    history.size
+                )
 
             bookmarks.take(bookmarkCount) + history.take(historyCount) + searches.take(searchCount)
         }

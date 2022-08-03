@@ -80,7 +80,8 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
         forceRefreshHostsPreference?.isEnabled = isRefreshHostsEnabled()
     }
 
-    private fun isRefreshHostsEnabled() = userPreferences.selectedHostsSource() is HostsSourceType.Remote
+    private fun isRefreshHostsEnabled() =
+        userPreferences.selectedHostsSource() is HostsSourceType.Remote
 
     override fun onDestroy() {
         super.onDestroy()
@@ -161,9 +162,12 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                         .subscribeBy(
                             onComplete = { activity?.toast(R.string.action_message_canceled) },
                             onSuccess = { file ->
-                                userPreferences.hostsSource = HostsSourceType.Local(file).toPreferenceIndex()
+                                userPreferences.hostsSource =
+                                    HostsSourceType.Local(file).toPreferenceIndex()
                                 userPreferences.hostsLocalFile = file.path
-                                recentSummaryUpdater?.updateSummary(userPreferences.selectedHostsSource().toSummary())
+                                recentSummaryUpdater?.updateSummary(
+                                    userPreferences.selectedHostsSource().toSummary()
+                                )
                                 updateForNewHostsSource()
                             }
                         )

@@ -36,12 +36,14 @@ class NetscapeBookmarkFormatImporter @Inject constructor() : BookmarkImporter {
                         immediateChild.nextElementSibling()
                             .processFolder(computeFolderName(folderName, immediateChild.text()))
                     immediateChild.isTag(BOOKMARK_TAG) ->
-                        listOf(Bookmark.Entry(
-                            url = immediateChild.attr(HREF),
-                            title = immediateChild.text(),
-                            position = 0,
-                            folder = folderName.asFolder()
-                        ))
+                        listOf(
+                            Bookmark.Entry(
+                                url = immediateChild.attr(HREF),
+                                title = immediateChild.text(),
+                                position = 0,
+                                folder = folderName.asFolder()
+                            )
+                        )
                     else -> emptyList()
                 }
             }

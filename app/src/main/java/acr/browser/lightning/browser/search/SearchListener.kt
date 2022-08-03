@@ -35,7 +35,8 @@ class SearchListener(
             || actionId == EditorInfo.IME_ACTION_NEXT
             || actionId == EditorInfo.IME_ACTION_SEND
             || actionId == EditorInfo.IME_ACTION_SEARCH
-            || event?.action == KeyEvent.KEYCODE_ENTER) {
+            || event?.action == KeyEvent.KEYCODE_ENTER
+        ) {
             onConfirm()
             view.clearFocus()
             inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)

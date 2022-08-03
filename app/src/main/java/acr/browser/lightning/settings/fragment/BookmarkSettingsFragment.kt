@@ -58,7 +58,10 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
 
         clickablePreference(preference = SETTINGS_EXPORT, onClick = this::exportBookmarks)
         clickablePreference(preference = SETTINGS_IMPORT, onClick = this::importBookmarks)
-        clickablePreference(preference = SETTINGS_DELETE_BOOKMARKS, onClick = this::deleteAllBookmarks)
+        clickablePreference(
+            preference = SETTINGS_DELETE_BOOKMARKS,
+            onClick = this::deleteAllBookmarks
+        )
     }
 
     override fun onDestroyView() {
@@ -76,62 +79,77 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun exportBookmarks() {
-        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, REQUIRED_PERMISSIONS,
-            object : PermissionsResultAction() {
-                override fun onGranted() {
-                    bookmarkRepository.getAllBookmarksSorted()
-                        .subscribeOn(databaseScheduler)
-                        .subscribe { list ->
-                            if (!isAdded) {
-                                return@subscribe
+        PermissionsManager.getInstance()
+            .requestPermissionsIfNecessaryForResult(activity, REQUIRED_PERMISSIONS,
+                object : PermissionsResultAction() {
+                    override fun onGranted() {
+                        bookmarkRepository.getAllBookmarksSorted()
+                            .subscribeOn(databaseScheduler)
+                            .subscribe { list ->
+                                if (!isAdded) {
+                                    return@subscribe
+                                }
+
+                                val exportFile = BookmarkExporter.createNewExportFile()
+                                exportSubscription?.dispose()
+                                exportSubscription =
+                                    BookmarkExporter.exportBookmarksToFile(list, exportFile)
+                                        .subscribeOn(databaseScheduler)
+                                        .observeOn(mainScheduler)
+                                        .subscribeBy(
+                                            onComplete = {
+                                                activity?.apply {
+                                                    snackbar("${getString(R.string.bookmark_export_path)} ${exportFile.path}")
+                                                }
+                                            },
+                                            onError = { throwable ->
+                                                logger.log(
+                                                    TAG,
+                                                    "onError: exporting bookmarks",
+                                                    throwable
+                                                )
+                                                val activity = activity
+                                                if (activity != null && !activity.isFinishing && isAdded) {
+                                                    Utils.createInformativeDialog(
+                                                        activity,
+                                                        R.string.title_error,
+                                                        R.string.bookmark_export_failure
+                                                    )
+                                                } else {
+                                                    application.toast(R.string.bookmark_export_failure)
+                                                }
+                                            }
+                                        )
                             }
-
-                            val exportFile = BookmarkExporter.createNewExportFile()
-                            exportSubscription?.dispose()
-                            exportSubscription = BookmarkExporter.exportBookmarksToFile(list, exportFile)
-                                .subscribeOn(databaseScheduler)
-                                .observeOn(mainScheduler)
-                                .subscribeBy(
-                                    onComplete = {
-                                        activity?.apply {
-                                            snackbar("${getString(R.string.bookmark_export_path)} ${exportFile.path}")
-                                        }
-                                    },
-                                    onError = { throwable ->
-                                        logger.log(TAG, "onError: exporting bookmarks", throwable)
-                                        val activity = activity
-                                        if (activity != null && !activity.isFinishing && isAdded) {
-                                            Utils.createInformativeDialog(activity, R.string.title_error, R.string.bookmark_export_failure)
-                                        } else {
-                                            application.toast(R.string.bookmark_export_failure)
-                                        }
-                                    }
-                                )
-                        }
-                }
-
-                override fun onDenied(permission: String) {
-                    val activity = activity
-                    if (activity != null && !activity.isFinishing && isAdded) {
-                        Utils.createInformativeDialog(activity, R.string.title_error, R.string.bookmark_export_failure)
-                    } else {
-                        application.toast(R.string.bookmark_export_failure)
                     }
-                }
-            })
+
+                    override fun onDenied(permission: String) {
+                        val activity = activity
+                        if (activity != null && !activity.isFinishing && isAdded) {
+                            Utils.createInformativeDialog(
+                                activity,
+                                R.string.title_error,
+                                R.string.bookmark_export_failure
+                            )
+                        } else {
+                            application.toast(R.string.bookmark_export_failure)
+                        }
+                    }
+                })
     }
 
     private fun importBookmarks() {
-        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, REQUIRED_PERMISSIONS,
-            object : PermissionsResultAction() {
-                override fun onGranted() {
-                    showImportBookmarkDialog(null)
-                }
+        PermissionsManager.getInstance()
+            .requestPermissionsIfNecessaryForResult(activity, REQUIRED_PERMISSIONS,
+                object : PermissionsResultAction() {
+                    override fun onGranted() {
+                        showImportBookmarkDialog(null)
+                    }
 
-                override fun onDenied(permission: String) {
-                    //TODO Show message
-                }
-            })
+                    override fun onDenied(permission: String) {
+                        //TODO Show message
+                    }
+                })
     }
 
     private fun deleteAllBookmarks() {
@@ -225,7 +243,11 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                             logger.log(TAG, "onError: importing bookmarks", it)
                             val activity = activity
                             if (activity != null && !activity.isFinishing && isAdded) {
-                                Utils.createInformativeDialog(activity, R.string.title_error, R.string.import_bookmark_error)
+                                Utils.createInformativeDialog(
+                                    activity,
+                                    R.string.title_error,
+                                    R.string.import_bookmark_error
+                                )
                             } else {
                                 application.toast(R.string.import_bookmark_error)
                             }
@@ -246,6 +268,9 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
         private const val SETTINGS_IMPORT = "import_bookmark"
         private const val SETTINGS_DELETE_BOOKMARKS = "delete_bookmarks"
 
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        private val REQUIRED_PERMISSIONS = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
     }
 }

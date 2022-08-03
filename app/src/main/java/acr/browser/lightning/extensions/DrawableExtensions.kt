@@ -9,5 +9,6 @@ import androidx.core.graphics.BlendModeCompat
  * Tint a drawable with the provided [color], using [BlendModeCompat.SRC_IN].
  */
 fun Drawable.tint(@ColorInt color: Int) {
-    colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(color, BlendModeCompat.SRC_IN)
+    colorFilter =
+        BlendModeColorFilterCompat.createBlendModeColorFilterCompat(color, BlendModeCompat.SRC_IN)
 }
