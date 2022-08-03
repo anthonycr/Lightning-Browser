@@ -5,6 +5,7 @@ import acr.browser.lightning._browser2.tab.bundle.BundleStore
 import acr.browser.lightning.browser.RecentTabModel
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.*
 import io.reactivex.*
 import io.reactivex.subjects.PublishSubject
@@ -21,6 +22,7 @@ class TabsRepository @Inject constructor(
     private val bundleStore: BundleStore,
     private val recentTabModel: RecentTabModel,
     private val tabFactory: TabFactory,
+    private val userPreferences: UserPreferences
 ) : BrowserContract.Model {
 
     private var selectedTab: TabModel? = null
@@ -86,7 +88,9 @@ class TabsRepository @Inject constructor(
             .filter(MutableList<TabModel>::isNotEmpty)
 
     override fun freeze() {
-        bundleStore.save(tabsList)
+        if (userPreferences.restoreLostTabsEnabled) {
+            bundleStore.save(tabsList)
+        }
     }
 
     override fun clean() {
