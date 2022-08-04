@@ -29,7 +29,7 @@ class NormalExitCleanup @Inject constructor(
             logger.log(TAG, "History Cleared")
         }
         if (userPreferences.clearCookiesExitEnabled) {
-            WebUtils.clearCookies(context)
+            WebUtils.clearCookies()
             logger.log(TAG, "Cookies Cleared")
         }
         if (userPreferences.clearWebStorageExitEnabled) {

@@ -10,7 +10,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.TypedValue;
 
 import acr.browser.lightning.R;
@@ -19,7 +18,6 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 
 public final class ThemeUtils {
 
@@ -126,14 +124,7 @@ public final class ThemeUtils {
 
     @NonNull
     private static Drawable getVectorDrawable(@NonNull Context context, int drawableId) {
-        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
-
-        Preconditions.checkNonNull(drawable);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
-        }
-        return drawable;
+        return ContextCompat.getDrawable(context, drawableId);
     }
 
     // http://stackoverflow.com/a/38244327/1499541

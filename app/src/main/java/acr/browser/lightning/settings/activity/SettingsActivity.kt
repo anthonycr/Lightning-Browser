@@ -4,10 +4,9 @@
 package acr.browser.lightning.settings.activity
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
-import acr.browser.lightning.browser.di.injector
-import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -43,11 +42,6 @@ class SettingsActivity : ThemableSettingsActivity() {
 
         if (buildInfo.buildType == BuildType.RELEASE) {
             target.removeAll { it.titleRes == R.string.debug_title }
-        }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            // Workaround for bug in the AppCompat support library
-            target.forEach { it.iconRes = R.drawable.empty }
         }
 
         fragments.addAll(target.map(Header::fragment))

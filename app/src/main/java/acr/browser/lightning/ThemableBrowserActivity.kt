@@ -5,7 +5,6 @@ import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import androidx.annotation.StyleRes
@@ -17,8 +16,8 @@ import javax.inject.Inject
 
 abstract class ThemableBrowserActivity : AppCompatActivity() {
 
-    // TODO reduce protected visibility
-    @Inject protected lateinit var userPreferences: UserPreferences
+    @Inject
+    internal lateinit var userPreferences: UserPreferences
 
     private var themeId: AppTheme = AppTheme.LIGHT
     private var showTabsInDrawer: Boolean = false
@@ -66,12 +65,10 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     }
 
     private fun resetPreferences() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (userPreferences.useBlackStatusBar || !userPreferences.showTabsInDrawer) {
-                window.statusBarColor = Color.BLACK
-            } else {
-                window.statusBarColor = ThemeUtils.getStatusBarColor(this)
-            }
+        if (userPreferences.useBlackStatusBar || !userPreferences.showTabsInDrawer) {
+            window.statusBarColor = Color.BLACK
+        } else {
+            window.statusBarColor = ThemeUtils.getStatusBarColor(this)
         }
     }
 

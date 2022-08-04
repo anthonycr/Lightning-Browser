@@ -1,9 +1,7 @@
 package acr.browser.lightning.utils;
 
 import android.content.Context;
-import android.os.Build;
 import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewDatabase;
@@ -20,15 +18,8 @@ public final class WebUtils {
 
     private WebUtils() {}
 
-    public static void clearCookies(@NonNull Context context) {
-        CookieManager c = CookieManager.getInstance();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            c.removeAllCookies(null);
-        } else {
-            //noinspection deprecation
-            CookieSyncManager.createInstance(context);
-            c.removeAllCookie();
-        }
+    public static void clearCookies() {
+        CookieManager.getInstance().removeAllCookies(null);
     }
 
     public static void clearWebStorage() {

@@ -17,6 +17,6 @@ enum class Capabilities {
 val Capabilities.isSupported: Boolean
     get() = when (this) {
         Capabilities.FULL_INCOGNITO -> Build.VERSION.SDK_INT >= 28
-        Capabilities.WEB_RTC -> Build.VERSION.SDK_INT >= 21
-        Capabilities.THIRD_PARTY_COOKIE_BLOCKING -> Build.VERSION.SDK_INT >= 21
+        Capabilities.WEB_RTC -> true
+        Capabilities.THIRD_PARTY_COOKIE_BLOCKING -> true
     }

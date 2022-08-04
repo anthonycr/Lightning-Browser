@@ -16,7 +16,7 @@ class EnhancedIncognitoExitCleanup @Inject constructor(
     override fun cleanUp(webView: WebView?, context: BrowserActivity) {
         WebUtils.clearCache(webView)
         logger.log(TAG, "Cache Cleared")
-        WebUtils.clearCookies(context)
+        WebUtils.clearCookies()
         logger.log(TAG, "Cookies Cleared")
         WebUtils.clearWebStorage()
         logger.log(TAG, "WebStorage Cleared")

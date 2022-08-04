@@ -1,26 +1,23 @@
 package acr.browser.lightning
 
+import acr.browser.lightning.browser.di.AppComponent
+import acr.browser.lightning.browser.di.DaggerAppComponent
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.proxy.ProxyAdapter
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
-import acr.browser.lightning.browser.di.AppComponent
-import acr.browser.lightning.browser.di.DaggerAppComponent
-import acr.browser.lightning.browser.di.DatabaseScheduler
-import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.DeveloperPreferences
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.MemoryLeakUtils
-import acr.browser.lightning.utils.installMultiDex
 import android.app.Activity
 import android.app.Application
-import android.content.Context
 import android.os.Build
 import android.os.StrictMode
 import android.webkit.WebView
-import androidx.appcompat.app.AppCompatDelegate
 import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -38,13 +35,6 @@ class BrowserApp : Application() {
     @Inject internal lateinit var proxyAdapter: ProxyAdapter
 
     lateinit var applicationComponent: AppComponent
-
-    override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(base)
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT < 21) {
-            installMultiDex(context = base)
-        }
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -134,10 +124,6 @@ class BrowserApp : Application() {
 
     companion object {
         private const val TAG = "BrowserApp"
-
-        init {
-            AppCompatDelegate.setCompatVectorFromResourcesEnabled(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
-        }
     }
 
 }
