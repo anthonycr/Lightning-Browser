@@ -44,7 +44,10 @@ import javax.inject.Inject
 import kotlin.system.exitProcess
 
 /**
- * Created by anthonycr on 9/11/20.
+ * The monolithic (oops) presenter that governs the behavior of the browser UI and interactions by
+ * the user for both default and incognito browsers. This presenter should live for the entire
+ * duration of the browser activity, which itself should not be recreated during configuration
+ * changes.
  */
 @Browser2Scope
 class BrowserPresenter @Inject constructor(
@@ -103,7 +106,7 @@ class BrowserPresenter @Inject constructor(
     private var tabDisposable: CompositeDisposable = CompositeDisposable()
 
     /**
-     * TODO
+     * Call when the view is attached to the presenter.
      */
     fun onViewAttached(view: BrowserContract.View) {
         this.view = view
@@ -147,7 +150,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the view is detached from the presenter.
      */
     fun onViewDetached() {
         view = null
@@ -157,7 +160,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the view is hidden (i.e. the browser is sent to the background).
      */
     fun onViewHidden() {
         model.freeze()
@@ -306,7 +309,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when a new action is triggered, such as the user opening a new URL in the browser.
      */
     fun onNewAction(action: BrowserContract.Action) {
         when (action) {
@@ -357,7 +360,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user selects an option from the menu.
      */
     fun onMenuClick(menuSelection: MenuSelection) {
         when (menuSelection) {
@@ -419,7 +422,7 @@ class BrowserPresenter @Inject constructor(
     private fun List<TabViewState>.indexOfCurrentTab(): Int = tabIndexForId(currentTab?.id)
 
     /**
-     * TODO
+     * Call when the user selects a combination of keys to perform a shortcut.
      */
     fun onKeyComboClick(keyCombo: KeyCombo) {
         when (keyCombo) {
@@ -445,14 +448,14 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user selects a tab to switch to at the provided [index].
      */
     fun onTabClick(index: Int) {
         selectTab(model.selectTab(tabListState[index].id))
     }
 
     /**
-     * TODO
+     * Call when the user long presses on a tab at the provided [index].
      */
     fun onTabLongClick(index: Int) {
         view?.showCloseBrowserDialog(tabListState[index].id)
@@ -472,10 +475,12 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user clicks on the close button for the tab at the provided [index]
      */
     fun onTabClose(index: Int) {
         if (index == -1) {
+            // If the user clicks on close multiple times, the index may be -1 if the view is in the
+            // process of being removed.
             return
         }
         val nextTab = tabListState.nextSelected(index)
@@ -502,10 +507,20 @@ class BrowserPresenter @Inject constructor(
             }
     }
 
+    /**
+     * Call when the tab drawer is opened or closed.
+     *
+     * @param isOpen True if the drawer is now open, false if it is now closed.
+     */
     fun onTabDrawerMoved(isOpen: Boolean) {
         isTabDrawerOpen = isOpen
     }
 
+    /**
+     * Call when the bookmark drawer is opened or closed.
+     *
+     * @param isOpen True if the drawer is now open, false if it is now closed.
+     */
     fun onBookmarkDrawerMoved(isOpen: Boolean) {
         isBookmarkDrawerOpen = isOpen
     }
@@ -558,14 +573,14 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user clicks on the home button.
      */
     fun onHomeClick() {
         currentTab?.loadFromInitializer(homePageInitializer)
     }
 
     /**
-     * TODO
+     * Call when the user clicks on the open new tab button.
      */
     fun onNewTabClick() {
         createNewTabAndSelect(homePageInitializer, shouldSelect = true)
@@ -584,7 +599,8 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user clicks on the refresh (or stop/delete) button that is located in the
+     * search bar.
      */
     fun onRefreshOrStopClick() {
         if (isSearchViewFocused) {
@@ -621,7 +637,9 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the focus state changes for the search bar.
+     *
+     * @param isFocused True if the view is now focused, false otherwise.
      */
     fun onSearchFocusChanged(isFocused: Boolean) {
         isSearchViewFocused = isFocused
@@ -649,7 +667,8 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user submits a search [query] to the search bar. At this point the user has
+     * provided intent to search and is no longer trying to manipulate the query.
      */
     fun onSearch(query: String) {
         if (query.isEmpty()) {
@@ -671,7 +690,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user enters a [query] to look for in the current web page.
      */
     fun onFindInPage(query: String) {
         currentTab?.find(query)
@@ -679,21 +698,21 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user selects to move to the next highlighted word in the web page.
      */
     fun onFindNext() {
         currentTab?.findNext()
     }
 
     /**
-     * TODO
+     * Call when the user selects to move to the previous highlighted word in the web page.
      */
     fun onFindPrevious() {
         currentTab?.findPrevious()
     }
 
     /**
-     * TODO
+     * Call when the user chooses to dismiss the find in page UI component.
      */
     fun onFindDismiss() {
         currentTab?.clearFindMatches()
@@ -701,7 +720,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user selects a search suggestion that was suggested by the search box.
      */
     fun onSearchSuggestionClicked(webPage: WebPage) {
         val url = when (webPage) {
@@ -715,7 +734,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user clicks on the SSL icon in the search box.
      */
     fun onSslIconClick() {
         currentTab?.sslCertificateInfo?.let {
@@ -724,7 +743,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user clicks on a bookmark from the bookmark list at the provided [index].
      */
     fun onBookmarkClick(index: Int) {
         when (val bookmark = viewState.bookmarks[index]) {
@@ -759,7 +778,7 @@ class BrowserPresenter @Inject constructor(
             .map(MutableList<List<Bookmark>>::flatten)
 
     /**
-     * TODO
+     * Call when the user long presses on a bookmark in the bookmark list at the provided [index].
      */
     fun onBookmarkLongClick(index: Int) {
         when (val item = viewState.bookmarks[index]) {
@@ -770,7 +789,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user clicks on the page tools button.
      */
     fun onToolsClick() {
         val currentUrl = currentTab?.url ?: return
@@ -780,11 +799,17 @@ class BrowserPresenter @Inject constructor(
         )
     }
 
+    /**
+     * Call when the user chooses to toggle the desktop user agent on/off.
+     */
     fun onToggleDesktopAgent() {
         currentTab?.toggleDesktopAgent()
         currentTab?.reload()
     }
 
+    /**
+     * Call when the user chooses to toggle ad blocking on/off for the current web page.
+     */
     fun onToggleAdBlocking() {
         val currentUrl = currentTab?.url ?: return
         if (allowListModel.isUrlAllowedAds(currentUrl)) {
@@ -796,7 +821,8 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user clicks on the star icon to add a bookmark for the current page or remove
+     * the existing one.
      */
     fun onStarClick() {
         val url = currentTab?.url ?: return
@@ -841,6 +867,13 @@ class BrowserPresenter @Inject constructor(
             }
     }
 
+    /**
+     * Call when the user confirms the details for adding a bookmark.
+     *
+     * @param title The title of the bookmark.
+     * @param url The URL of the bookmark.
+     * @param folder The name of the folder the bookmark is in.
+     */
     fun onBookmarkConfirmed(title: String, url: String, folder: String) {
         compositeDisposable += bookmarkRepository.addBookmarkIfNotExists(
             Bookmark.Entry(
@@ -857,6 +890,13 @@ class BrowserPresenter @Inject constructor(
             }
     }
 
+    /**
+     * Call when the user confirms the details when editing a bookmark.
+     *
+     * @param title The title of the bookmark.
+     * @param url The URL of the bookmark.
+     * @param folder The name of the folder the bookmark is in.
+     */
     fun onBookmarkEditConfirmed(title: String, url: String, folder: String) {
         compositeDisposable += bookmarkRepository.editBookmark(
             oldBookmark = Bookmark.Entry(
@@ -882,6 +922,12 @@ class BrowserPresenter @Inject constructor(
             }
     }
 
+    /**
+     * Call when the user confirms a name change to an existing folder.
+     *
+     * @param oldTitle The previous title of the folder.
+     * @param newTitle The new title of the folder.
+     */
     fun onBookmarkFolderRenameConfirmed(oldTitle: String, newTitle: String) {
         compositeDisposable += bookmarkRepository.renameFolder(oldTitle, newTitle)
             .andThen(bookmarkRepository.bookmarksAndFolders(folder = currentFolder))
@@ -896,7 +942,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user clicks on a menu [option] for the provided [bookmark].
      */
     fun onBookmarkOptionClick(
         bookmark: Bookmark.Entry,
@@ -938,6 +984,9 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Call when the user clicks on a menu [option] for the provided [folder].
+     */
     fun onFolderOptionClick(folder: Bookmark.Folder, option: BrowserContract.FolderOptionEvent) {
         when (option) {
             BrowserContract.FolderOptionEvent.RENAME -> view?.showEditFolderDialog(folder.title)
@@ -956,6 +1005,9 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Call when the user clicks on a menu [option] for the provided [download] entry.
+     */
     fun onDownloadOptionClick(
         download: DownloadEntry,
         option: BrowserContract.DownloadOptionEvent
@@ -982,6 +1034,9 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Call when the user clicks on a menu [option] for the provided [historyEntry].
+     */
     fun onHistoryOptionClick(
         historyEntry: HistoryEntry,
         option: BrowserContract.HistoryOptionEvent
@@ -1009,7 +1064,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user clicks on the button to open reading mode..
      */
     fun onReadingModeClick() {
         currentTab?.url?.takeIf { !it.isSpecialUrl() }
@@ -1017,7 +1072,8 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user clicks on the tab count button (or home button in desktop mode, or
+     * incognito icon in incognito mode).
      */
     fun onTabCountViewClick() {
         if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
@@ -1028,7 +1084,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user clicks on the tab menu located in the tab drawer.
      */
     fun onTabMenuClick() {
         currentTab?.let {
@@ -1037,7 +1093,8 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user clicks on the bookmark menu (star or back arrow) located in the bookmark
+     * drawer.
      */
     fun onBookmarkMenuClick() {
         if (currentFolder != Bookmark.Folder.Root) {
@@ -1053,7 +1110,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * TODO
+     * Call when the user long presses anywhere on the web page with the provided tab [id].
      */
     fun onPageLongPress(id: Int, longPress: LongPress) {
         val pageUrl = model.tabsList.find { it.id == id }?.url
@@ -1104,6 +1161,10 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Call when the user selects an option from the close browser menu that can be invoked by long
+     * pressing on individual tabs.
+     */
     fun onCloseBrowserEvent(id: Int, closeTabEvent: BrowserContract.CloseTabEvent) {
         when (closeTabEvent) {
             BrowserContract.CloseTabEvent.CLOSE_CURRENT ->
@@ -1120,6 +1181,10 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Call when the user long presses on a link within the web page and selects what they want to
+     * do with that link.
+     */
     fun onLinkLongPressEvent(
         longPress: LongPress,
         linkLongPressEvent: BrowserContract.LinkLongPressEvent
@@ -1147,6 +1212,10 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Call when the user long presses on an image within the web page and selects what they want to
+     * do with that image.
+     */
     fun onImageLongPressEvent(
         longPress: LongPress,
         imageLongPressEvent: BrowserContract.ImageLongPressEvent
@@ -1183,6 +1252,9 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Call when the user has selected a file from the file chooser to upload.
+     */
     fun onFileChooserResult(activityResult: ActivityResult) {
         currentTab?.handleFileChooserResult(activityResult)
     }
