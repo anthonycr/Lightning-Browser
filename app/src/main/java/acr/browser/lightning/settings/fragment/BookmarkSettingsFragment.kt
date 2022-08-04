@@ -30,7 +30,6 @@ import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import java.io.File
-import java.util.*
 import javax.inject.Inject
 
 class BookmarkSettingsFragment : AbstractSettingsFragment() {

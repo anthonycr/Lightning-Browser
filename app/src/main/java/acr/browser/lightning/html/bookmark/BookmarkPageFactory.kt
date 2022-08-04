@@ -11,7 +11,15 @@ import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.favicon.toValidUri
 import acr.browser.lightning.html.HtmlPageFactory
-import acr.browser.lightning.html.jsoup.*
+import acr.browser.lightning.html.jsoup.andBuild
+import acr.browser.lightning.html.jsoup.body
+import acr.browser.lightning.html.jsoup.clone
+import acr.browser.lightning.html.jsoup.id
+import acr.browser.lightning.html.jsoup.parse
+import acr.browser.lightning.html.jsoup.removeElement
+import acr.browser.lightning.html.jsoup.style
+import acr.browser.lightning.html.jsoup.tag
+import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.utils.ThemeUtils
 import android.app.Application
 import android.graphics.Bitmap

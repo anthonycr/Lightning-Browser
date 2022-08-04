@@ -2,8 +2,19 @@ package acr.browser.lightning.browser.tab.bundle
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.DiskScheduler
-import acr.browser.lightning.browser.tab.*
-import acr.browser.lightning.utils.*
+import acr.browser.lightning.browser.tab.BookmarkPageInitializer
+import acr.browser.lightning.browser.tab.DownloadPageInitializer
+import acr.browser.lightning.browser.tab.FreezableBundleInitializer
+import acr.browser.lightning.browser.tab.HistoryPageInitializer
+import acr.browser.lightning.browser.tab.HomePageInitializer
+import acr.browser.lightning.browser.tab.TabInitializer
+import acr.browser.lightning.browser.tab.TabModel
+import acr.browser.lightning.utils.FileUtils
+import acr.browser.lightning.utils.isBookmarkUrl
+import acr.browser.lightning.utils.isDownloadsUrl
+import acr.browser.lightning.utils.isHistoryUrl
+import acr.browser.lightning.utils.isSpecialUrl
+import acr.browser.lightning.utils.isStartPageUrl
 import android.app.Application
 import android.os.Bundle
 import io.reactivex.Scheduler

@@ -19,7 +19,11 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Message
 import android.view.View
-import android.webkit.*
+import android.webkit.GeolocationPermissions
+import android.webkit.PermissionRequest
+import android.webkit.ValueCallback
+import android.webkit.WebChromeClient
+import android.webkit.WebView
 import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AlertDialog
 import androidx.palette.graphics.Palette

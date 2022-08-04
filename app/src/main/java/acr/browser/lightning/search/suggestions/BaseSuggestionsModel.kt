@@ -11,7 +11,7 @@ import okhttp3.ResponseBody
 import java.io.IOException
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
-import java.util.*
+import java.util.Locale
 
 /**
  * The base search suggestions API. Provides common fetching and caching functionality for each

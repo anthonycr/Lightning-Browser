@@ -2,7 +2,7 @@ package acr.browser.lightning.adblock.util.hash
 
 import java.io.InputStream
 import java.security.MessageDigest
-import java.util.*
+import java.util.Locale
 
 /**
  * Compute and return the MD5 hash of the [InputStream].

@@ -5,7 +5,11 @@ import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.Utils
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.view.*
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewConfiguration
+import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.Transformation
 import android.view.inputmethod.InputMethodManager

@@ -37,7 +37,12 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.i2p.android.ui.I2PAndroidHelper
-import okhttp3.*
+import okhttp3.Cache
+import okhttp3.CacheControl
+import okhttp3.HttpUrl
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingDeque

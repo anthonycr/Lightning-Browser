@@ -2,7 +2,7 @@ package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.extensions.popIfNotEmpty
 import android.os.Bundle
-import java.util.*
+import java.util.Stack
 import javax.inject.Inject
 
 /**

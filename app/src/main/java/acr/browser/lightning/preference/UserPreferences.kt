@@ -8,11 +8,15 @@ import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.browser.di.UserPrefs
-import acr.browser.lightning.preference.delegates.*
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.browser.view.RenderingMode
+import acr.browser.lightning.preference.delegates.booleanPreference
+import acr.browser.lightning.preference.delegates.enumPreference
+import acr.browser.lightning.preference.delegates.intPreference
+import acr.browser.lightning.preference.delegates.nullableStringPreference
+import acr.browser.lightning.preference.delegates.stringPreference
 import android.content.SharedPreferences
 import javax.inject.Inject
 import javax.inject.Singleton

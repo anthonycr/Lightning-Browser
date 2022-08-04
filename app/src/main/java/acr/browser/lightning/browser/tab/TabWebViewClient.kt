@@ -8,7 +8,12 @@ import android.annotation.TargetApi
 import android.graphics.Bitmap
 import android.net.http.SslError
 import android.os.Build
-import android.webkit.*
+import android.webkit.SslErrorHandler
+import android.webkit.URLUtil
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
 import io.reactivex.subjects.PublishSubject
 import java.io.ByteArrayInputStream

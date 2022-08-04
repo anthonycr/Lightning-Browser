@@ -7,9 +7,13 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.annotation.*
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
-import java.util.*
+import java.util.Locale
 
 /**
  * Returns the dimension in pixels.

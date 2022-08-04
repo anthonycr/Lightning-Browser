@@ -1,6 +1,6 @@
 package acr.browser.lightning.ssl
 
-import java.util.*
+import java.util.Date
 
 /**
  * Created by anthonycr on 11/19/20.

@@ -5,7 +5,14 @@ import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.html.HtmlPageFactory
-import acr.browser.lightning.html.jsoup.*
+import acr.browser.lightning.html.jsoup.andBuild
+import acr.browser.lightning.html.jsoup.body
+import acr.browser.lightning.html.jsoup.charset
+import acr.browser.lightning.html.jsoup.id
+import acr.browser.lightning.html.jsoup.parse
+import acr.browser.lightning.html.jsoup.style
+import acr.browser.lightning.html.jsoup.tag
+import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.search.SearchEngineProvider
 import android.app.Application
 import dagger.Reusable

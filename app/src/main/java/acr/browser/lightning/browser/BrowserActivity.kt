@@ -10,7 +10,6 @@ import acr.browser.lightning.browser.keys.KeyEventAdapter
 import acr.browser.lightning.browser.menu.MenuItemAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.search.SearchListener
-import acr.browser.lightning.browser.tab.*
 import acr.browser.lightning.browser.ui.BookmarkConfiguration
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
@@ -23,10 +22,14 @@ import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.databinding.BrowserActivityBinding
 import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.browser.tab.DesktopTabRecyclerViewAdapter
+import acr.browser.lightning.browser.tab.DrawerTabRecyclerViewAdapter
+import acr.browser.lightning.browser.tab.TabPager
+import acr.browser.lightning.browser.tab.TabViewHolder
+import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
-import acr.browser.lightning.extensions.*
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
 import acr.browser.lightning.utils.ProxyUtils
@@ -35,7 +38,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ImageView
@@ -50,6 +52,18 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import acr.browser.lightning.browser.view.targetUrl.LongPress
+import acr.browser.lightning.extensions.color
+import acr.browser.lightning.extensions.drawable
+import acr.browser.lightning.extensions.resizeAndShow
+import acr.browser.lightning.extensions.takeIfInstance
+import acr.browser.lightning.extensions.tint
+import android.view.Gravity
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
 import javax.inject.Inject
 
 /**

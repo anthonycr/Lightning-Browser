@@ -1,7 +1,11 @@
 package acr.browser.lightning.extensions
 
 import acr.browser.lightning.utils.Utils
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
 import androidx.core.graphics.createBitmap
 
 /**

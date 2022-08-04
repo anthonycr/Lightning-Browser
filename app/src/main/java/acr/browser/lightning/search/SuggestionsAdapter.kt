@@ -23,10 +23,13 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Filter
 import android.widget.Filterable
-import io.reactivex.*
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 class SuggestionsAdapter(

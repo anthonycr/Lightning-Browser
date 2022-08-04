@@ -1,7 +1,13 @@
 package acr.browser.lightning.adblock.parser
 
 import acr.browser.lightning.database.adblock.Host
-import acr.browser.lightning.extensions.*
+import acr.browser.lightning.extensions.containsChar
+import acr.browser.lightning.extensions.indexOfChar
+import acr.browser.lightning.extensions.inlineReplace
+import acr.browser.lightning.extensions.inlineReplaceChar
+import acr.browser.lightning.extensions.inlineTrim
+import acr.browser.lightning.extensions.stringEquals
+import acr.browser.lightning.extensions.substringToBuilder
 import acr.browser.lightning.log.Logger
 import java.io.InputStreamReader
 

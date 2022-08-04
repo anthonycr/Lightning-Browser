@@ -7,7 +7,15 @@ import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.ListPageReader
-import acr.browser.lightning.html.jsoup.*
+import acr.browser.lightning.html.jsoup.andBuild
+import acr.browser.lightning.html.jsoup.body
+import acr.browser.lightning.html.jsoup.clone
+import acr.browser.lightning.html.jsoup.id
+import acr.browser.lightning.html.jsoup.parse
+import acr.browser.lightning.html.jsoup.removeElement
+import acr.browser.lightning.html.jsoup.style
+import acr.browser.lightning.html.jsoup.tag
+import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Application
 import dagger.Reusable

@@ -4,7 +4,7 @@ import acr.browser.lightning.adblock.util.hash.HashingAlgorithm
 import acr.browser.lightning.adblock.util.integer.lowerHalf
 import acr.browser.lightning.adblock.util.integer.upperHalf
 import java.io.Serializable
-import java.util.*
+import java.util.BitSet
 import kotlin.math.ln
 import kotlin.math.roundToInt
 

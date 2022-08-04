@@ -24,7 +24,7 @@ import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import android.util.Patterns
 import android.webkit.URLUtil
-import java.util.*
+import java.util.Locale
 import java.util.regex.Pattern
 
 /**

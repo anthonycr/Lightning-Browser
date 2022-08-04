@@ -1,7 +1,11 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.R
-import acr.browser.lightning.extensions.*
+import acr.browser.lightning.extensions.desaturate
+import acr.browser.lightning.extensions.dimen
+import acr.browser.lightning.extensions.drawTrapezoid
+import acr.browser.lightning.extensions.inflater
+import acr.browser.lightning.extensions.tint
 import acr.browser.lightning.utils.ThemeUtils
 import acr.browser.lightning.utils.Utils
 import android.content.Context
