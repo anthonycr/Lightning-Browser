@@ -69,7 +69,5 @@ class FaviconImageLoader @Inject constructor(
         fun cleanup() {
             compositeDisposable.clear()
         }
-
-
     }
 }

@@ -901,7 +901,7 @@ class BrowserPresenter @Inject constructor(
         ).flatMap { bookmarkRepository.bookmarksAndFolders(folder = currentFolder) }
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
-            .subscribe { list ->
+            .subscribeBy { list ->
                 this.view?.updateState(viewState.copy(bookmarks = list))
             }
     }
@@ -930,7 +930,7 @@ class BrowserPresenter @Inject constructor(
         ).andThen(bookmarkRepository.bookmarksAndFolders(folder = currentFolder))
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
-            .subscribe { list ->
+            .subscribeBy { list ->
                 this.view?.updateState(viewState.copy(bookmarks = list))
                 if (currentTab?.url?.isBookmarkUrl() == true) {
                     reload()
@@ -1119,7 +1119,7 @@ class BrowserPresenter @Inject constructor(
                 .bookmarksAndFolders(folder = Bookmark.Folder.Root)
                 .subscribeOn(databaseScheduler)
                 .observeOn(mainScheduler)
-                .subscribe { list ->
+                .subscribeBy { list ->
                     view?.updateState(viewState.copy(bookmarks = list, isRootFolder = true))
                 }
         }
@@ -1168,12 +1168,12 @@ class BrowserPresenter @Inject constructor(
                     }
 
             }
-            return
-        }
-        when (longPress.hitCategory) {
-            LongPress.Category.IMAGE -> view?.showImageLongPressDialog(longPress)
-            LongPress.Category.LINK -> view?.showLinkLongPressDialog(longPress)
-            LongPress.Category.UNKNOWN -> Unit // Do nothing
+        } else {
+            when (longPress.hitCategory) {
+                LongPress.Category.IMAGE -> view?.showImageLongPressDialog(longPress)
+                LongPress.Category.LINK -> view?.showLinkLongPressDialog(longPress)
+                LongPress.Category.UNKNOWN -> Unit // Do nothing
+            }
         }
     }
 
