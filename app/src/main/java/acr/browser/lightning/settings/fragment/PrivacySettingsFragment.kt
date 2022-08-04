@@ -46,7 +46,6 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         checkBoxPreference(
             preference = SETTINGS_THIRDPCOOKIES,
             isChecked = userPreferences.blockThirdPartyCookiesEnabled,
-            isEnabled = Capabilities.THIRD_PARTY_COOKIE_BLOCKING.isSupported,
             onCheckChange = { userPreferences.blockThirdPartyCookiesEnabled = it }
         )
 
@@ -88,8 +87,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
             preference = SETTINGS_WEBRTC,
-            isChecked = userPreferences.webRtcEnabled && Capabilities.WEB_RTC.isSupported,
-            isEnabled = Capabilities.WEB_RTC.isSupported,
+            isChecked = userPreferences.webRtcEnabled,
             onCheckChange = { userPreferences.webRtcEnabled = it }
         )
 
