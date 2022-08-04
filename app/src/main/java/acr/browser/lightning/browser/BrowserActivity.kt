@@ -265,8 +265,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         binding.search.setOnKeyListener(searchListener)
         binding.search.addTextChangedListener(StyleRemovingTextWatcher())
         binding.search.setOnFocusChangeListener { _, hasFocus ->
-            binding.search.selectAll()
             presenter.onSearchFocusChanged(hasFocus)
+            binding.search.selectAll()
         }
 
         binding.findPrevious.setOnClickListener { presenter.onFindPrevious() }
