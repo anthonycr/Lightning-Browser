@@ -21,7 +21,7 @@ import io.reactivex.Scheduler
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/20/20.
+ * A bundle store that serializes each tab state to disk and supports its retrieval.
  */
 class DefaultBundleStore @Inject constructor(
     private val application: Application,

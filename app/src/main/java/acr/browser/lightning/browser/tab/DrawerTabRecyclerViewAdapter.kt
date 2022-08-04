@@ -11,7 +11,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 
 /**
- * Created by anthonycr on 11/19/20.
+ * The adapter that renders tabs in the drawer list form.
+ *
+ * @param onClick Invoked when the tab is clicked.
+ * @param onLongClick Invoked when the tab is long pressed.
+ * @param onCloseClick Invoked when the tab's close button is clicked.
  */
 class DrawerTabRecyclerViewAdapter(
     private val onClick: (Int) -> Unit,

@@ -19,7 +19,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
 /**
- * Created by anthonycr on 9/12/20.
+ * Creates the adaptation between a [WebView] and the [TabModel] interface used by the browser.
  */
 class TabAdapter(
     tabInitializer: TabInitializer,

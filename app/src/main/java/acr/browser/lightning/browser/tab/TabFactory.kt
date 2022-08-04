@@ -15,7 +15,7 @@ import io.reactivex.Scheduler
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 8/3/22.
+ * Constructs a [TabModel].
  */
 class TabFactory @Inject constructor(
     private val webViewFactory: WebViewFactory,
@@ -32,6 +32,9 @@ class TabFactory @Inject constructor(
     private val webRtcPermissionsModel: WebRtcPermissionsModel
 ) {
 
+    /**
+     * Constructs a tab from the [webView] with the provided [tabInitializer].
+     */
     fun constructTab(tabInitializer: TabInitializer, webView: WebView): TabModel {
         val headers = webViewFactory.createRequestHeaders()
         return TabAdapter(
