@@ -53,7 +53,8 @@ import acr.browser.lightning.browser.view.targetUrl.LongPress
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/11/20.
+ * The base browser activity that governs the browsing experience for both default and incognito
+ * browsers.
  */
 abstract class BrowserActivity : ThemableBrowserActivity() {
 
@@ -319,7 +320,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     }
 
     /**
-     * TODO
+     * @see BrowserContract.View.renderState
      */
     fun renderState(viewState: PartialBrowserViewState) {
         viewState.isBackEnabled?.let { binding.actionBack.isEnabled = it }
@@ -369,11 +370,17 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         }
     }
 
+    /**
+     * @see BrowserContract.View.renderTabs
+     */
     fun renderTabs(tabListState: List<TabViewState>) {
         binding.tabCountView.updateCount(tabListState.size)
         tabsAdapter.submitList(tabListState)
     }
 
+    /**
+     * @see BrowserContract.View.showAddBookmarkDialog
+     */
     fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {
         lightningDialogBuilder.showAddBookmarkDialog(
             activity = this,
@@ -384,6 +391,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         )
     }
 
+    /**
+     * @see BrowserContract.View.showBookmarkOptionsDialog
+     */
     fun showBookmarkOptionsDialog(bookmark: Bookmark.Entry) {
         lightningDialogBuilder.showLongPressedDialogForBookmarkUrl(
             activity = this,
@@ -393,6 +403,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         )
     }
 
+    /**
+     * @see BrowserContract.View.showEditBookmarkDialog
+     */
     fun showEditBookmarkDialog(title: String, url: String, folder: String, folders: List<String>) {
         lightningDialogBuilder.showEditBookmarkDialog(
             activity = this,
@@ -404,6 +417,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         )
     }
 
+    /**
+     * @see BrowserContract.View.showFolderOptionsDialog
+     */
     fun showFolderOptionsDialog(folder: Bookmark.Folder) {
         lightningDialogBuilder.showBookmarkFolderLongPressedDialog(
             activity = this,
@@ -413,6 +429,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         )
     }
 
+    /**
+     * @see BrowserContract.View.showEditFolderDialog
+     */
     fun showEditFolderDialog(oldTitle: String) {
         lightningDialogBuilder.showRenameFolderDialog(
             activity = this,
@@ -421,6 +440,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         )
     }
 
+    /**
+     * @see BrowserContract.View.showDownloadOptionsDialog
+     */
     fun showDownloadOptionsDialog(download: DownloadEntry) {
         lightningDialogBuilder.showLongPressedDialogForDownloadUrl(
             activity = this,
@@ -430,6 +452,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         )
     }
 
+    /**
+     * @see BrowserContract.View.showHistoryOptionsDialog
+     */
     fun showHistoryOptionsDialog(historyEntry: HistoryEntry) {
         lightningDialogBuilder.showLongPressedHistoryLinkDialog(
             activity = this,
@@ -439,6 +464,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         )
     }
 
+    /**
+     * @see BrowserContract.View.showFindInPageDialog
+     */
     fun showFindInPageDialog() {
         BrowserDialog.showEditText(
             this,
@@ -449,6 +477,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         )
     }
 
+    /**
+     * @see BrowserContract.View.showLinkLongPressDialog
+     */
     fun showLinkLongPressDialog(longPress: LongPress) {
         BrowserDialog.show(this, longPress.targetUrl?.replace(HTTP, ""),
             DialogItem(title = R.string.dialog_open_new_tab) {
@@ -483,6 +514,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             })
     }
 
+    /**
+     * @see BrowserContract.View.showImageLongPressDialog
+     */
     fun showImageLongPressDialog(longPress: LongPress) {
         BrowserDialog.show(this, longPress.targetUrl?.replace(HTTP, ""),
             DialogItem(title = R.string.dialog_open_new_tab) {
@@ -526,6 +560,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             })
     }
 
+    /**
+     * @see BrowserContract.View.showCloseBrowserDialog
+     */
     fun showCloseBrowserDialog(id: Int) {
         BrowserDialog.show(
             this, R.string.dialog_title_close_browser,
@@ -541,28 +578,46 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         )
     }
 
+    /**
+     * @see BrowserContract.View.openBookmarkDrawer
+     */
     fun openBookmarkDrawer() {
         binding.drawerLayout.closeDrawer(binding.tabDrawer)
         binding.drawerLayout.openDrawer(binding.bookmarkDrawer)
     }
 
+    /**
+     * @see BrowserContract.View.closeBookmarkDrawer
+     */
     fun closeBookmarkDrawer() {
         binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
     }
 
+    /**
+     * @see BrowserContract.View.openTabDrawer
+     */
     fun openTabDrawer() {
         binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
         binding.drawerLayout.openDrawer(binding.tabDrawer)
     }
 
+    /**
+     * @see BrowserContract.View.closeTabDrawer
+     */
     fun closeTabDrawer() {
         binding.drawerLayout.closeDrawer(binding.tabDrawer)
     }
 
+    /**
+     * @see BrowserContract.View.showToolbar
+     */
     fun showToolbar() {
         tabPager.showToolbar()
     }
 
+    /**
+     * @see BrowserContract.View.showToolsDialog
+     */
     fun showToolsDialog(areAdsAllowed: Boolean, shouldShowAdBlockOption: Boolean) {
         val whitelistString = if (areAdsAllowed) {
             R.string.dialog_adblock_enable_for_site
@@ -587,6 +642,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         )
     }
 
+    /**
+     * @see BrowserContract.View.showLocalFileBlockedDialog
+     */
     fun showLocalFileBlockedDialog() {
         AlertDialog.Builder(this)
             .setCancelable(true)
@@ -602,10 +660,16 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             .resizeAndShow()
     }
 
+    /**
+     * @see BrowserContract.View.showFileChooser
+     */
     fun showFileChooser(intent: Intent) {
         launcher.launch(intent)
     }
 
+    /**
+     * @see BrowserContract.View.showCustomView
+     */
     fun showCustomView(view: View) {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
         binding.root.addView(view)
@@ -613,6 +677,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         setFullscreen(enabled = true, immersive = true)
     }
 
+    /**
+     * @see BrowserContract.View.hideCustomView
+     */
     fun hideCustomView() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         customView?.let(binding.root::removeView)

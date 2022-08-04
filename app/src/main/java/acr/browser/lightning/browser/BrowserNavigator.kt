@@ -18,7 +18,7 @@ import android.graphics.Bitmap
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/15/20.
+ * The navigator implementation.
  */
 class BrowserNavigator @Inject constructor(
     private val activity: Activity,

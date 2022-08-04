@@ -11,7 +11,8 @@ import android.view.View
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 
 /**
- * Created by anthonycr on 9/16/20.
+ * An adapter between [BrowserContract.View] and the [BrowserActivity] that creates partial states
+ * to render in the activity.
  */
 class BrowserStateAdapter(private val browserActivity: BrowserActivity) : BrowserContract.View {
 
