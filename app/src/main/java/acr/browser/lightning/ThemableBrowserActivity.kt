@@ -14,6 +14,9 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.iterator
 import javax.inject.Inject
 
+/**
+ * A theme aware activity that updates its theme based on the user preferences.
+ */
 abstract class ThemableBrowserActivity : AppCompatActivity() {
 
     @Inject

@@ -25,14 +25,29 @@ import io.reactivex.plugins.RxJavaPlugins
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
+/**
+ * The browser application.
+ */
 class BrowserApp : Application() {
 
-    @Inject internal lateinit var developerPreferences: DeveloperPreferences
-    @Inject internal lateinit var bookmarkModel: BookmarkRepository
-    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
-    @Inject internal lateinit var logger: Logger
-    @Inject internal lateinit var buildInfo: BuildInfo
-    @Inject internal lateinit var proxyAdapter: ProxyAdapter
+    @Inject
+    internal lateinit var developerPreferences: DeveloperPreferences
+
+    @Inject
+    internal lateinit var bookmarkModel: BookmarkRepository
+
+    @Inject
+    @field:DatabaseScheduler
+    internal lateinit var databaseScheduler: Scheduler
+
+    @Inject
+    internal lateinit var logger: Logger
+
+    @Inject
+    internal lateinit var buildInfo: BuildInfo
+
+    @Inject
+    internal lateinit var proxyAdapter: ProxyAdapter
 
     lateinit var applicationComponent: AppComponent
 
@@ -125,5 +140,4 @@ class BrowserApp : Application() {
     companion object {
         private const val TAG = "BrowserApp"
     }
-
 }
