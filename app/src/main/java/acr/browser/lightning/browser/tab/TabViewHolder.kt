@@ -8,9 +8,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 /**
- * Created by anthonycr on 9/13/20.
+ * The view holder for a tab.
+ *
+ * @param onClick Invoked when the tab is clicked.
+ * @param onLongClick Invoked when the tab is long pressed.
+ * @param onCloseClick Invoked when the tab's close button is clicked.
  */
-
 class TabViewHolder(
     view: View,
     private val onClick: (Int) -> Unit,

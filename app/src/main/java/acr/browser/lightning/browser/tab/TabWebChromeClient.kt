@@ -34,7 +34,7 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
 /**
- * Created by anthonycr on 9/12/20.
+ * A [WebChromeClient] that supports the tab adaptation.
  */
 class TabWebChromeClient(
     private val activity: Activity,
@@ -47,18 +47,74 @@ class TabWebChromeClient(
     private val defaultColor = activity.color(R.color.primary_color)
     private val geoLocationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
 
+    /**
+     * Emits changes to the page loading progress.
+     */
     val progressObservable: PublishSubject<Int> = PublishSubject.create()
+
+    /**
+     * Emits changes to the page title.
+     */
     val titleObservable: PublishSubject<String> = PublishSubject.create()
+
+    /**
+     * Emits changes to the page favicon. Always emits the last emitted favicon.
+     */
     val faviconObservable: BehaviorSubject<Option<Bitmap>> = BehaviorSubject.create()
+
+    /**
+     * Emits create window requests.
+     */
     val createWindowObservable: PublishSubject<TabInitializer> = PublishSubject.create()
+
+    /**
+     * Emits close window requests.
+     */
     val closeWindowObservable: PublishSubject<Unit> = PublishSubject.create()
+
+    /**
+     * Emits changes to the thematic color of the current page.
+     */
     val colorChangeObservable: BehaviorSubject<Int> = BehaviorSubject.createDefault(defaultColor)
+
+    /**
+     * Emits requests to open the file chooser for upload.
+     */
     val fileChooserObservable: PublishSubject<Intent> = PublishSubject.create()
+
+    /**
+     * Emits requests to show a custom view (i.e. full screen video).
+     */
     val showCustomViewObservable: PublishSubject<View> = PublishSubject.create()
+
+    /**
+     * Emits requests to hide the custom view that was shown prior.
+     */
     val hideCustomViewObservable: PublishSubject<Unit> = PublishSubject.create()
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
     private var customViewCallback: CustomViewCallback? = null
+
+
+    /**
+     * Handle the [activityResult] that was returned by the file chooser.
+     */
+    fun onResult(activityResult: ActivityResult) {
+        val resultCode = activityResult.resultCode
+        val intent = activityResult.data
+        val result = FileChooserParams.parseResult(resultCode, intent)
+
+        filePathCallback?.onReceiveValue(result)
+        filePathCallback = null
+    }
+
+    /**
+     * Notify the client that we have manually hidden the custom view.
+     */
+    fun hideCustomView() {
+        customViewCallback?.onCustomViewHidden()
+        customViewCallback = null
+    }
 
     override fun onCreateWindow(
         view: WebView,
@@ -112,20 +168,6 @@ class TabWebChromeClient(
             }
             colorChangeObservable.onNext(finalColor)
         }
-    }
-
-    fun onResult(activityResult: ActivityResult) {
-        val resultCode = activityResult.resultCode
-        val intent = activityResult.data
-        val result = FileChooserParams.parseResult(resultCode, intent)
-
-        filePathCallback?.onReceiveValue(result)
-        filePathCallback = null
-    }
-
-    fun hideCustomView() {
-        customViewCallback?.onCustomViewHidden()
-        customViewCallback = null
     }
 
     override fun onShowFileChooser(

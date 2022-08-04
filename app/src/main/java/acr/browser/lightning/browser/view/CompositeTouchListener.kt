@@ -5,7 +5,9 @@ import android.view.MotionEvent
 import android.view.View
 
 /**
- * Created by anthonycr on 12/23/20.
+ * A composite [View.OnTouchListener] that delegates touches to multiple listeners.
+ *
+ * @param delegates The actual listeners we are delegating to.
  */
 class CompositeTouchListener(
     val delegates: MutableMap<String, View.OnTouchListener?> = mutableMapOf()

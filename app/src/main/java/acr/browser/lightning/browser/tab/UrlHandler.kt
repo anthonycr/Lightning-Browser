@@ -22,7 +22,8 @@ import java.net.URISyntaxException
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/24/20.
+ * Handle URLs loaded by the [WebView] and determine if they should be loaded by the browser or
+ * another app.
  */
 class UrlHandler @Inject constructor(
     private val activity: Activity,
@@ -31,18 +32,15 @@ class UrlHandler @Inject constructor(
     @IncognitoMode private val incognitoMode: Boolean
 ) {
 
+    /**
+     * Return true if the [url] should be loaded by another app or in another way, false if the
+     * browser can let the [view] continue loading as it wants.
+     */
     fun shouldOverrideLoading(
         view: WebView,
         url: String,
         headers: Map<String, String>
     ): Boolean {
-        // TODO: handle proxy
-//        // Check if configured proxy is available
-//        if (!proxyUtils.isProxyReady(activity)) {
-//            // User has been notified
-//            return true
-//        }
-
         if (incognitoMode) {
             // If we are in incognito, immediately load, we don't want the url to leave the app
             return continueLoadingUrl(view, url, headers)

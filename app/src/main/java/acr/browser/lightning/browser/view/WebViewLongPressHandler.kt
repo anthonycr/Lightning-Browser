@@ -14,10 +14,14 @@ import io.reactivex.functions.Cancellable
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 11/21/20.
+ * Handles long presses on a [WebView] and converts them into [LongPress] events.
  */
 class WebViewLongPressHandler @Inject constructor(private val activity: Activity) {
 
+    /**
+     * Configure the provided [webView] for listening to long press events and invoke [onLongClick]
+     * whenever a long press is detected.
+     */
     fun configure(
         webView: WebView,
         onLongClick: (LongPress) -> Unit

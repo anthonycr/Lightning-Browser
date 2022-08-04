@@ -19,7 +19,8 @@ import android.webkit.WebView
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/12/20.
+ * Constructs [WebView] instances configured for the browser based on user's preferences and create
+ * the headers we will send with requests.
  */
 class WebViewFactory @Inject constructor(
     private val activity: Activity,
@@ -28,6 +29,9 @@ class WebViewFactory @Inject constructor(
     @IncognitoMode private val incognitoMode: Boolean
 ) {
 
+    /**
+     * Create the request headers that notify websites of various privacy and data preferences.
+     */
     fun createRequestHeaders(): Map<String, String> {
         val requestHeaders = mutableMapOf<String, String>()
         if (userPreferences.doNotTrackEnabled) {
@@ -53,6 +57,9 @@ class WebViewFactory @Inject constructor(
         return requestHeaders
     }
 
+    /**
+     * Construct a [WebView] based on the user's preferences.
+     */
     fun createWebView(): WebView = WebView(activity).apply {
         id = View.generateViewId()
         tag = CompositeTouchListener().also(::setOnTouchListener)

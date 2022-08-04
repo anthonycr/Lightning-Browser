@@ -11,7 +11,8 @@ import acr.browser.lightning.browser.view.targetUrl.LongPress
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/12/20.
+ * A sort of coordinator that manages the relationship between [WebViews][WebView] and the container
+ * the views are placed in.
  */
 @Browser2Scope
 class TabPager @Inject constructor(
@@ -24,6 +25,9 @@ class TabPager @Inject constructor(
 
     var longPressListener: ((id: Int, longPress: LongPress) -> Unit)? = null
 
+    /**
+     * Select the tab with the provided [id] to be displayed by the pager.
+     */
     fun selectTab(id: Int) {
         container.removeWebViews()
         val webView = webViews.forId(id)
@@ -39,14 +43,23 @@ class TabPager @Inject constructor(
         })
     }
 
+    /**
+     * Clear the container of the [WebView] currently shown.
+     */
     fun clearTab() {
         container.removeWebViews()
     }
 
+    /**
+     * Add a [WebView] to the list of views shown by this pager.
+     */
     fun addTab(webView: WebView) {
         webViews.add(webView)
     }
 
+    /**
+     * Show the toolbar/search box if it is currently hidden.
+     */
     fun showToolbar() {
         webViewScrollCoordinator.showToolbar()
     }

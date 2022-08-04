@@ -19,7 +19,7 @@ import io.reactivex.subjects.PublishSubject
 import java.io.ByteArrayInputStream
 
 /**
- * Created by anthonycr on 9/12/20.
+ * A [WebViewClient] that supports the tab adaptation.
  */
 class TabWebViewClient(
     private val adBlocker: AdBlocker,
@@ -29,11 +29,29 @@ class TabWebViewClient(
     private val proxy: Proxy
 ) : WebViewClient() {
 
+    /**
+     * Emits changes to the current URL.
+     */
     val urlObservable: PublishSubject<String> = PublishSubject.create()
+
+    /**
+     * Emits changes to the current SSL state.
+     */
     val sslStateObservable: PublishSubject<SslState> = PublishSubject.create()
+
+    /**
+     * Emits changes to the can go back state of the browser.
+     */
     val goBackObservable: PublishSubject<Boolean> = PublishSubject.create()
+
+    /**
+     * Emits changes to the can go forward state of the browser.
+     */
     val goForwardObservable: PublishSubject<Boolean> = PublishSubject.create()
 
+    /**
+     * The current SSL state of the page.
+     */
     var sslState: SslState = SslState.None
         private set
 

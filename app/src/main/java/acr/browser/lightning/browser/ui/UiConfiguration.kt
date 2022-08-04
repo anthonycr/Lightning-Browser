@@ -1,7 +1,10 @@
 package acr.browser.lightning.browser.ui
 
 /**
- * Created by anthonycr on 11/18/20.
+ * The configuration of the adjustable UI elements.
+ *
+ * @param tabConfiguration The configuration of the tabs.
+ * @param bookmarkConfiguration The configuration of the bookmarks.
  */
 data class UiConfiguration(
     val tabConfiguration: TabConfiguration,

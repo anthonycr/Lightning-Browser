@@ -19,7 +19,7 @@ import android.widget.LinearLayout
 import javax.inject.Inject
 
 /**
- * TODO
+ * Coordinates scrolling behavior between a [WebView] and a toolbar/search box.
  */
 class WebViewScrollCoordinator @Inject constructor(
     activity: Activity,
@@ -39,7 +39,7 @@ class WebViewScrollCoordinator @Inject constructor(
     private var currentToggleListener: ToggleListener? = null
 
     /**
-     * TODO
+     * Configure the [webView] to match its scrolling behavior with showing an hiding the toolbar.
      */
     fun configure(webView: WebView) {
         webView.setOnFocusChangeListener { v, hasFocus ->
@@ -72,6 +72,10 @@ class WebViewScrollCoordinator @Inject constructor(
         }
     }
 
+    /**
+     * Show the toolbar if it is hidden via scrolling. Has no effect if the toolbar is already
+     * visible.
+     */
     fun showToolbar() {
         currentToggleListener?.showToolbar()
     }
@@ -130,7 +134,7 @@ class WebViewScrollCoordinator @Inject constructor(
         currentToggleListener = toggleListener
     }
 
-    interface ToggleListener {
+    private interface ToggleListener {
         fun hideToolbar()
 
         fun showToolbar()

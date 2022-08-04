@@ -14,7 +14,8 @@ import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/12/20.
+ * The repository for tabs that implements the [BrowserContract.Model] interface. Manages the state
+ * of the tabs list and adding new tabs to it or removing tabs from it.
  */
 class TabsRepository @Inject constructor(
     private val webViewFactory: WebViewFactory,
