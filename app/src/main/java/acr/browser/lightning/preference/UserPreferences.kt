@@ -12,7 +12,7 @@ import acr.browser.lightning.preference.delegates.*
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
-import acr.browser.lightning.view.RenderingMode
+import acr.browser.lightning.browser.view.RenderingMode
 import android.content.SharedPreferences
 import javax.inject.Inject
 import javax.inject.Singleton

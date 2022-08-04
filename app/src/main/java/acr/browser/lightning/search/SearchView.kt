@@ -1,4 +1,4 @@
-package acr.browser.lightning.view
+package acr.browser.lightning.search
 
 import android.content.Context
 import android.util.AttributeSet

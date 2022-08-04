@@ -117,7 +117,7 @@
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
-                            <acr.browser.lightning.view.SearchView
+                            <acr.browser.lightning.search.SearchView
                                 android:id="@+id/search"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"

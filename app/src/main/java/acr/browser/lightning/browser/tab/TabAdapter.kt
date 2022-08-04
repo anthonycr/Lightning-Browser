@@ -9,8 +9,6 @@ import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.Option
 import acr.browser.lightning.utils.value
-import acr.browser.lightning.view.FreezableBundleInitializer
-import acr.browser.lightning.view.TabInitializer
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle

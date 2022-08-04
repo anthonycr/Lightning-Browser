@@ -7,8 +7,7 @@ import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferences
-import acr.browser.lightning.view.TabInitializer
-import acr.browser.lightning.view.webrtc.WebRtcPermissionsModel
+import acr.browser.lightning.browser.webrtc.WebRtcPermissionsModel
 import android.app.Activity
 import android.graphics.Bitmap
 import android.webkit.WebView

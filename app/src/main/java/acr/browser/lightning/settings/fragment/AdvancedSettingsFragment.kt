@@ -9,7 +9,7 @@ import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.isSupported
 import acr.browser.lightning.preference.UserPreferences
-import acr.browser.lightning.view.RenderingMode
+import acr.browser.lightning.browser.view.RenderingMode
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import javax.inject.Inject

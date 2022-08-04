@@ -9,10 +9,8 @@ import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.Option
 import acr.browser.lightning.utils.Utils
-import acr.browser.lightning.view.ResultMessageInitializer
-import acr.browser.lightning.view.TabInitializer
-import acr.browser.lightning.view.webrtc.WebRtcPermissionsModel
-import acr.browser.lightning.view.webrtc.WebRtcPermissionsView
+import acr.browser.lightning.browser.webrtc.WebRtcPermissionsModel
+import acr.browser.lightning.browser.webrtc.WebRtcPermissionsView
 import android.Manifest
 import android.app.Activity
 import android.content.Intent

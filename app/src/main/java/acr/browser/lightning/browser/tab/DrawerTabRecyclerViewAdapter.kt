@@ -1,9 +1,9 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.tab.view.BackgroundDrawable
 import acr.browser.lightning.extensions.desaturate
 import acr.browser.lightning.extensions.inflater
-import acr.browser.lightning.view.BackgroundDrawable
 import android.graphics.Bitmap
 import android.view.ViewGroup
 import androidx.core.widget.TextViewCompat

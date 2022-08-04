@@ -1,4 +1,4 @@
-package acr.browser.lightning.view.webrtc
+package acr.browser.lightning.browser.webrtc
 
 import android.net.Uri
 import android.webkit.PermissionRequest

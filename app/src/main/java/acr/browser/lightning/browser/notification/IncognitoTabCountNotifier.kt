@@ -1,6 +1,5 @@
 package acr.browser.lightning.browser.notification
 
-import acr.browser.lightning.notifications.IncognitoNotification
 import javax.inject.Inject
 
 /**

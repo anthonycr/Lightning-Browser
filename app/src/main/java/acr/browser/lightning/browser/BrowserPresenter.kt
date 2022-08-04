@@ -9,8 +9,6 @@ import acr.browser.lightning.browser.history.HistoryRecord
 import acr.browser.lightning.browser.keys.KeyCombo
 import acr.browser.lightning.browser.menu.MenuSelection
 import acr.browser.lightning.browser.notification.TabCountNotifier
-import acr.browser.lightning.browser.tab.TabModel
-import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
 import acr.browser.lightning.adblock.allowlist.AllowListModel
@@ -23,6 +21,7 @@ import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.browser.tab.*
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.search.SearchEngineProvider

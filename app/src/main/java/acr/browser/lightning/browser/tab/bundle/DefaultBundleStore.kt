@@ -1,10 +1,9 @@
 package acr.browser.lightning.browser.tab.bundle
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.di.DiskScheduler
+import acr.browser.lightning.browser.tab.*
 import acr.browser.lightning.utils.*
-import acr.browser.lightning.view.*
 import android.app.Application
 import android.os.Bundle
 import io.reactivex.Scheduler

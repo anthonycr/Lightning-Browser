@@ -1,4 +1,4 @@
-package acr.browser.lightning.notifications
+package acr.browser.lightning.browser.notification
 
 import acr.browser.lightning.R
 import acr.browser.lightning.IncognitoBrowserActivity

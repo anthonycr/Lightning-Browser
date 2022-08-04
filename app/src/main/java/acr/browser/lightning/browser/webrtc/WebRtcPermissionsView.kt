@@ -1,4 +1,4 @@
-package acr.browser.lightning.view.webrtc
+package acr.browser.lightning.browser.webrtc
 
 /**
  * A view which specializes in requesting device permissions and resources from the user.

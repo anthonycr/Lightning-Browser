@@ -1,4 +1,4 @@
-package acr.browser.lightning.view.webrtc
+package acr.browser.lightning.browser.webrtc
 
 import acr.browser.lightning.extensions.requiredPermissions
 import android.annotation.TargetApi

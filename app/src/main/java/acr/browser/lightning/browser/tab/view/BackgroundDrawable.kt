@@ -1,4 +1,4 @@
-package acr.browser.lightning.view
+package acr.browser.lightning.browser.tab.view
 
 import acr.browser.lightning.R
 import acr.browser.lightning.utils.ThemeUtils

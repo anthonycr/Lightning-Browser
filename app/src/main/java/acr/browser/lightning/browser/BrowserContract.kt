@@ -7,7 +7,7 @@ import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
-import acr.browser.lightning.view.TabInitializer
+import acr.browser.lightning.browser.tab.TabInitializer
 import android.content.Intent
 import android.graphics.Bitmap
 import io.reactivex.Completable

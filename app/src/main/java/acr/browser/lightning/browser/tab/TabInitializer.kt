@@ -1,4 +1,4 @@
-package acr.browser.lightning.view
+package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS

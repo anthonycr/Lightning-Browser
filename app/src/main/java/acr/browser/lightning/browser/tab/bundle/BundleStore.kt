@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.tab.bundle
 
 import acr.browser.lightning.browser.tab.TabModel
-import acr.browser.lightning.view.TabInitializer
+import acr.browser.lightning.browser.tab.TabInitializer
 
 /**
  * Created by anthonycr on 7/27/22.
