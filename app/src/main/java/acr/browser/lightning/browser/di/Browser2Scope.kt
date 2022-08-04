@@ -3,7 +3,7 @@ package acr.browser.lightning.browser.di
 import javax.inject.Scope
 
 /**
- * Created by anthonycr on 12/23/20.
+ * The dependency scope for the browser screen.
  */
 @Scope
 @Retention

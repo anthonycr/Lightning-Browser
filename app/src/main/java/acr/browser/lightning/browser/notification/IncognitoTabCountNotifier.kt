@@ -3,7 +3,7 @@ package acr.browser.lightning.browser.notification
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 7/27/22.
+ * Shows a notification about the number of incognito tabs currently open.
  */
 class IncognitoTabCountNotifier @Inject constructor(
     private val incognitoNotification: IncognitoNotification

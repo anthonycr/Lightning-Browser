@@ -18,7 +18,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/15/20.
+ * An image loader implementation that caches icons in memory after reading them from the disk
+ * cache.
  */
 class FaviconImageLoader @Inject constructor(
     private val faviconModel: FaviconModel,

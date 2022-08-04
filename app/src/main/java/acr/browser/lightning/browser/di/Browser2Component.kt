@@ -11,7 +11,7 @@ import dagger.Subcomponent
 import javax.inject.Qualifier
 
 /**
- * Created by anthonycr on 9/15/20.
+ * The component for the browser scope.
  */
 @Browser2Scope
 @Subcomponent(modules = [Browser2Module::class, Browser2BindsModule::class])

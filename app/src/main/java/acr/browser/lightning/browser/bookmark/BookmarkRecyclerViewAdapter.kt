@@ -9,7 +9,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 
 /**
- * Created by anthonycr on 9/13/20.
+ * An adapter that creates the views for bookmark list items and binds the bookmark data to them.
+ *
+ * @param onClick Invoked when the cell is clicked.
+ * @param onLongClick Invoked when the cell is long pressed.
+ * @param imageLoader The image loader needed to load favicons.
  */
 class BookmarkRecyclerViewAdapter(
     private val onClick: (Int) -> Unit,

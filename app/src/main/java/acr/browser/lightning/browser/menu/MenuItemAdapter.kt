@@ -5,10 +5,13 @@ import android.view.MenuItem
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/16/20.
+ * Adapts a click on a menu item to a [MenuSelection].
  */
 class MenuItemAdapter @Inject constructor() {
 
+    /**
+     * Adapt the [menuItem] or return null if the item is unsupported.
+     */
     fun adaptMenuItem(menuItem: MenuItem): MenuSelection? {
         return when (menuItem.itemId) {
             android.R.id.home -> TODO()

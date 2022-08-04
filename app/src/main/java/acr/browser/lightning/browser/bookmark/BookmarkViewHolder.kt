@@ -5,7 +5,10 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
 /**
- * Created by anthonycr on 9/13/20.
+ * The view holder that shows bookmark items.
+ *
+ * @param onItemClickListener Invoked when the cell is clicked.
+ * @param onItemLongClickListener Invoked when the cell is long pressed.
  */
 class BookmarkViewHolder(
     itemView: View,

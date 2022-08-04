@@ -11,7 +11,7 @@ import dagger.Binds
 import dagger.Module
 
 /**
- * Created by anthonycr on 9/15/20.
+ * Binds implementations to interfaces for the browser scope.
  */
 @Module
 interface Browser2BindsModule {

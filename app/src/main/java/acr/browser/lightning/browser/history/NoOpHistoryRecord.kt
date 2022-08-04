@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.history
 
 /**
- * Created by anthonycr on 9/14/20.
+ * A non functional history record that ignores all attempts to record a visit.
  */
 object NoOpHistoryRecord : HistoryRecord {
     override fun recordVisit(title: String, url: String) = Unit

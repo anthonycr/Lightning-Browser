@@ -6,7 +6,7 @@ import io.reactivex.Scheduler
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/14/20.
+ * The default history record that records the history in a permanent data store.
  */
 class DefaultHistoryRecord @Inject constructor(
     private val historyRepository: HistoryRepository,

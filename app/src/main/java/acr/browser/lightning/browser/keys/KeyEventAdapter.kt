@@ -4,10 +4,13 @@ import android.view.KeyEvent
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/16/20.
+ * Adapts [KeyEvents][KeyEvent] to [KeyCombos][KeyCombo].
  */
 class KeyEventAdapter @Inject constructor() {
 
+    /**
+     * Adapt the [event] or return null if the key combo is unsupported.
+     */
     fun adaptKeyEvent(event: KeyEvent): KeyCombo? {
         when {
             event.isCtrlPressed -> when (event.keyCode) {

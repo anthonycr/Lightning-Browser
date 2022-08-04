@@ -7,7 +7,10 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 
 /**
- * Created by anthonycr on 9/14/20.
+ * Listens for actions on the search bar.
+ *
+ * @param onConfirm Invoked when the user has confirmed what they are searching for.
+ * @param inputMethodManager Used to manage keyboard visibility.
  */
 class SearchListener(
     private val onConfirm: () -> Unit,

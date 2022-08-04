@@ -1,10 +1,13 @@
 package acr.browser.lightning.browser.proxy
 
 /**
- * Created by anthonycr on 8/2/22.
+ * A proxy for the proxy that determines if the proxy is ready (proxy-ception).
  */
 interface Proxy {
 
+    /**
+     * True if the proxy is ready for use or if no proxy is being used, false otherwise.
+     */
     fun isProxyReady(): Boolean
 
 }

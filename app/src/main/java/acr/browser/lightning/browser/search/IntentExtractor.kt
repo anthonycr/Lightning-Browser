@@ -9,12 +9,12 @@ import android.content.Intent
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/20/20.
+ * Extracts data from an [Intent] and into a [BrowserContract.Action].
  */
 class IntentExtractor @Inject constructor(private val searchEngineProvider: SearchEngineProvider) {
 
     /**
-     * TODO
+     * Extract the action from the [intent] or return null if no data was extracted.
      */
     fun extractUrlFromIntent(intent: Intent): BrowserContract.Action? {
         return when (intent.action) {

@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.menu
 
 /**
- * Created by anthonycr on 9/16/20.
+ * Supported browser menu options.
  */
 enum class MenuSelection {
     NEW_TAB,

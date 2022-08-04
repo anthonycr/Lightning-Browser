@@ -22,7 +22,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 7/25/21.
+ * Wraps [DownloadHandler] for a better download API.
  */
 class DownloadPermissionsHelper @Inject constructor(
     private val downloadHandler: DownloadHandler,
@@ -32,6 +32,9 @@ class DownloadPermissionsHelper @Inject constructor(
     @DatabaseScheduler private val databaseScheduler: Scheduler
 ) {
 
+    /**
+     * Download a file with the provided [url].
+     */
     fun download(
         activity: Activity,
         url: String,

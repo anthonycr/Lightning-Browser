@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.notification
 
 /**
- * Created by anthonycr on 7/27/22.
+ * Do nothing when notified about the new tab count.
  */
 object DefaultTabCountNotifier : TabCountNotifier {
     override fun notifyTabCountChange(total: Int) = Unit

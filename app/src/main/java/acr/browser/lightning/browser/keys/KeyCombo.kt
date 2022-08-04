@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.keys
 
 /**
- * Created by anthonycr on 9/16/20.
+ * Supported key shortcut combinations.
  */
 enum class KeyCombo {
     CTRL_F,

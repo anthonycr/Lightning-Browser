@@ -36,7 +36,7 @@ import dagger.Provides
 import javax.inject.Provider
 
 /**
- * Created by anthonycr on 9/17/20.
+ * Constructs dependencies for the browser scope.
  */
 @Module
 class Browser2Module {

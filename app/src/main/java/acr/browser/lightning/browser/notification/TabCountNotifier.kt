@@ -1,10 +1,13 @@
 package acr.browser.lightning.browser.notification
 
 /**
- * Created by anthonycr on 7/27/22.
+ * Notify the browser outside of the regular view that the tab count has changed.
  */
 interface TabCountNotifier {
 
+    /**
+     * The open tab count has changed to the new [total].
+     */
     fun notifyTabCountChange(total: Int)
 
 }
