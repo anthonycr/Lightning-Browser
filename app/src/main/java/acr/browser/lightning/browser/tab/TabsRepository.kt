@@ -5,7 +5,6 @@ import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.preference.UserPreferences
-import acr.browser.lightning.view.*
 import io.reactivex.*
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject

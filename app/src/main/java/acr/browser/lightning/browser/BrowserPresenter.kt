@@ -27,7 +27,6 @@ import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.*
-import acr.browser.lightning.view.*
 import androidx.activity.result.ActivityResult
 import androidx.core.net.toUri
 import io.reactivex.Maybe
