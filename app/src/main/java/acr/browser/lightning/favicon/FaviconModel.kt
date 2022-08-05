@@ -51,6 +51,9 @@ class FaviconModel @Inject constructor(
         }
     }
 
+    /**
+     * Create the default favicon for a bookmark with the provided [title].
+     */
     fun createDefaultBitmapForTitle(title: String?): Bitmap {
         val firstTitleCharacter = title?.takeIf(String::isNotBlank)?.let { it[0] } ?: '?'
 
