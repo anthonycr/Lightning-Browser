@@ -106,7 +106,10 @@ object BrowserDialog {
 
         val itemList = items.filter(DialogItem::isConditionMet)
 
-        val adapter = RecyclerViewStringAdapter(itemList, convertToString = { activity.getString(this.title) })
+        val adapter = RecyclerViewStringAdapter(
+            listItems = itemList,
+            convertToString = { activity.getString(this.title) }
+        )
 
         if (title?.isNotEmpty() == true) {
             titleView.text = title
@@ -181,8 +184,7 @@ object BrowserDialog {
         AlertDialog.Builder(activity)
             .setTitle(title)
             .setView(dialogView)
-            .setPositiveButton(action
-            ) { _, _ -> textInputListener(editText.text.toString()) }
+            .setPositiveButton(action) { _, _ -> textInputListener(editText.text.toString()) }
             .resizeAndShow()
     }
 
