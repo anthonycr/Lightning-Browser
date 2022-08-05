@@ -3,6 +3,7 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning.ThemableBrowserActivity
+import acr.browser.lightning.animation.AnimationUtils
 import acr.browser.lightning.browser.bookmark.BookmarkRecyclerViewAdapter
 import acr.browser.lightning.browser.color.ColorAnimator
 import acr.browser.lightning.browser.image.ImageLoader
@@ -366,12 +367,15 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         viewState.isBookmarked?.let { binding.actionAddBookmark.isSelected = it }
         viewState.isBookmarkEnabled?.let { binding.actionAddBookmark.isEnabled = it }
         viewState.isRootFolder?.let {
-            binding.bookmarkBackButton.setImageResource(
-                if (it) {
-                    R.drawable.ic_action_star
-                } else {
-                    R.drawable.ic_action_back
-                }
+            binding.bookmarkBackButton.startAnimation(
+                AnimationUtils.createRotationTransitionAnimation(
+                    binding.bookmarkBackButton,
+                    if (it) {
+                        R.drawable.ic_action_star
+                    } else {
+                        R.drawable.ic_action_back
+                    }
+                )
             )
         }
         viewState.findInPage?.let {
