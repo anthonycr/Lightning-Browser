@@ -2,6 +2,8 @@ package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.browser.BrowserContract
 import acr.browser.lightning.browser.BrowserNavigator
+import acr.browser.lightning.browser.cleanup.DelegatingExitCleanup
+import acr.browser.lightning.browser.cleanup.ExitCleanup
 import acr.browser.lightning.browser.image.FaviconImageLoader
 import acr.browser.lightning.browser.image.ImageLoader
 import acr.browser.lightning.browser.proxy.Proxy
@@ -27,4 +29,7 @@ interface Browser2BindsModule {
 
     @Binds
     fun bindsProxy(proxyAdapter: ProxyAdapter): Proxy
+
+    @Binds
+    fun bindsExitCleanup(delegatingExitCleanup: DelegatingExitCleanup): ExitCleanup
 }

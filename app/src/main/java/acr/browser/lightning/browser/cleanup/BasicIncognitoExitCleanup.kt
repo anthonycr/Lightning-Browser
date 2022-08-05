@@ -1,8 +1,6 @@
 package acr.browser.lightning.browser.cleanup
 
-import acr.browser.lightning.browser.BrowserActivity
 import acr.browser.lightning.utils.WebUtils
-import android.webkit.WebView
 import javax.inject.Inject
 
 /**
@@ -10,7 +8,7 @@ import javax.inject.Inject
  * significantly less secure than on API > 28 since we can separate WebView data from
  */
 class BasicIncognitoExitCleanup @Inject constructor() : ExitCleanup {
-    override fun cleanUp(webView: WebView?, context: BrowserActivity) {
+    override fun cleanUp() {
         // We want to make sure incognito mode is secure as possible without also breaking existing
         // browser instances.
         WebUtils.clearWebStorage()

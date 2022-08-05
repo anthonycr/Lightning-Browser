@@ -2,6 +2,7 @@ package acr.browser.lightning.browser
 
 import acr.browser.lightning.IncognitoBrowserActivity
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.cleanup.ExitCleanup
 import acr.browser.lightning.browser.download.DownloadPermissionsHelper
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.extensions.copyToClipboard
@@ -24,7 +25,8 @@ class BrowserNavigator @Inject constructor(
     private val activity: Activity,
     private val clipboardManager: ClipboardManager,
     private val logger: Logger,
-    private val downloadPermissionsHelper: DownloadPermissionsHelper
+    private val downloadPermissionsHelper: DownloadPermissionsHelper,
+    private val exitCleanup: ExitCleanup
 ) : BrowserContract.Navigator {
 
     override fun openSettings() {
@@ -45,6 +47,7 @@ class BrowserNavigator @Inject constructor(
     }
 
     override fun closeBrowser() {
+        exitCleanup.cleanUp()
         activity.finish()
     }
 

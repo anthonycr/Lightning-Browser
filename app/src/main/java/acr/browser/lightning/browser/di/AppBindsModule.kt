@@ -32,9 +32,6 @@ import dagger.Module
 interface AppBindsModule {
 
     @Binds
-    fun bindsExitCleanup(delegatingExitCleanup: DelegatingExitCleanup): ExitCleanup
-
-    @Binds
     fun bindsBookmarkModel(bookmarkDatabase: BookmarkDatabase): BookmarkRepository
 
     @Binds

@@ -1,5 +1,6 @@
 package acr.browser.lightning.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.webkit.CookieManager;
 import android.webkit.WebStorage;
@@ -8,7 +9,6 @@ import android.webkit.WebViewDatabase;
 
 import acr.browser.lightning.database.history.HistoryRepository;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import io.reactivex.Scheduler;
 
 /**
@@ -38,9 +38,10 @@ public final class WebUtils {
         Utils.trimCache(context);
     }
 
-    public static void clearCache(@Nullable WebView view) {
-        if (view == null) return;
-        view.clearCache(true);
+    public static void clearCache(@NonNull Activity activity) {
+        final WebView webView = new WebView(activity);
+        webView.clearCache(true);
+        webView.destroy();
     }
 
 }

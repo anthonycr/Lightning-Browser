@@ -4,6 +4,7 @@ import acr.browser.lightning.Capabilities
 import acr.browser.lightning.browser.BrowserActivity
 import acr.browser.lightning.DefaultBrowserActivity
 import acr.browser.lightning.isSupported
+import android.app.Activity
 import android.webkit.WebView
 import javax.inject.Inject
 
@@ -14,16 +15,14 @@ import javax.inject.Inject
 class DelegatingExitCleanup @Inject constructor(
     private val basicIncognitoExitCleanup: BasicIncognitoExitCleanup,
     private val enhancedIncognitoExitCleanup: EnhancedIncognitoExitCleanup,
-    private val normalExitCleanup: NormalExitCleanup
+    private val normalExitCleanup: NormalExitCleanup,
+    private val activity: Activity
 ) : ExitCleanup {
-    override fun cleanUp(webView: WebView?, context: BrowserActivity) {
+    override fun cleanUp() {
         when {
-            context is DefaultBrowserActivity -> normalExitCleanup.cleanUp(webView, context)
-            Capabilities.FULL_INCOGNITO.isSupported -> enhancedIncognitoExitCleanup.cleanUp(
-                webView,
-                context
-            )
-            else -> basicIncognitoExitCleanup.cleanUp(webView, context)
+            activity is DefaultBrowserActivity -> normalExitCleanup.cleanUp()
+            Capabilities.FULL_INCOGNITO.isSupported -> enhancedIncognitoExitCleanup.cleanUp()
+            else -> basicIncognitoExitCleanup.cleanUp()
         }
     }
 }
