@@ -123,7 +123,7 @@ class HistoryDatabase @Inject constructor(
     }
 
     @WorkerThread
-    fun getHistoryEntry(url: String): String? =
+    private fun getHistoryEntry(url: String): String? =
         database.query(
             TABLE_HISTORY,
             arrayOf(KEY_ID, KEY_URL, KEY_TITLE),
@@ -136,7 +136,7 @@ class HistoryDatabase @Inject constructor(
         ).firstOrNullMap { it.getString(0) }
 
 
-    fun getAllHistoryEntries(): List<HistoryEntry> {
+    private fun getAllHistoryEntries(): List<HistoryEntry> {
         return database.query(
             TABLE_HISTORY,
             null,
@@ -148,7 +148,8 @@ class HistoryDatabase @Inject constructor(
         ).useMap { it.bindToHistoryEntry() }
     }
 
-    fun getHistoryEntriesCount(): Long = DatabaseUtils.queryNumEntries(database, TABLE_HISTORY)
+    private fun getHistoryEntriesCount(): Long =
+        DatabaseUtils.queryNumEntries(database, TABLE_HISTORY)
 
     private fun HistoryEntry.toContentValues() = ContentValues().apply {
         put(KEY_URL, url)
