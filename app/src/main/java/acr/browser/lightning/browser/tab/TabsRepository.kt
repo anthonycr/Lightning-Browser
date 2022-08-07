@@ -81,14 +81,13 @@ class TabsRepository @Inject constructor(
 
     override fun tabsListChanges(): Observable<List<TabModel>> = tabsListObservable.hide()
 
-    override fun initializeTabs(): Maybe<List<TabModel>> =
+    override fun initializeTabs(): Maybe<List<TabInitializer>> =
         Single.fromCallable(bundleStore::retrieve)
             .flatMapObservable { Observable.fromIterable(it) }
             .subscribeOn(diskScheduler)
             .observeOn(mainScheduler)
-            .flatMapSingle(::createTab)
             .toList()
-            .filter(MutableList<TabModel>::isNotEmpty)
+            .filter(List<TabInitializer>::isNotEmpty)
 
     override fun freeze() {
         if (userPreferences.restoreLostTabsEnabled) {

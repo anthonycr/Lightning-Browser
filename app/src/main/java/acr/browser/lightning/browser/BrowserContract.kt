@@ -200,7 +200,7 @@ interface BrowserContract {
         /**
          * Initialize all tabs that were previously frozen when the browser was last open.
          */
-        fun initializeTabs(): Maybe<List<TabModel>>
+        fun initializeTabs(): Maybe<List<TabInitializer>>
 
         /**
          * Notifies the model that all tabs need to be frozen before the browser shuts down.
