@@ -56,8 +56,6 @@ import acr.browser.lightning.utils.isHistoryUrl
 import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.smartUrlFilter
 import acr.browser.lightning.utils.value
-import io.reactivex.Flowable
-import io.reactivex.Observable
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -153,10 +151,13 @@ class BrowserPresenter @Inject constructor(
 
         compositeDisposable += model.initializeTabs()
             .observeOn(mainScheduler)
-            .concatWith(Maybe.fromCallable { initialUrl }.map { listOf(UrlInitializer(it)) })
-            .flatMap { Flowable.fromIterable(it) }
-            .flatMapSingle(model::createTab)
+            .concatWith(
+                Maybe.fromCallable { initialUrl }
+                    .flatMapSingleElement { model.createTab(UrlInitializer(it)) }
+                    .map(::listOf)
+            )
             .toList()
+            .map(MutableList<List<TabModel>>::flatten)
             .filter(List<TabModel>::isNotEmpty)
             .switchIfEmpty(model.createTab(homePageInitializer).map(::listOf))
             .subscribe { list ->
