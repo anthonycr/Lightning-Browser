@@ -237,7 +237,6 @@ class BrowserPresenter @Inject constructor(
             tab.urlChanges().startWith(tab.url).map(String::isSpecialUrl),
             tab.themeColorChanges().startWith(tab.themeColor)
         ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl, themeColor ->
-
             viewState.copy(
                 displayUrl = searchBoxModel.getDisplayContent(
                     url = url,

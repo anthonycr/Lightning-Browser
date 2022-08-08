@@ -131,19 +131,16 @@ class TabWebChromeClient(
     }
 
     override fun onProgressChanged(view: WebView, newProgress: Int) {
-        super.onProgressChanged(view, newProgress)
         progressObservable.onNext(newProgress)
     }
 
     override fun onReceivedTitle(view: WebView, title: String) {
-        super.onReceivedTitle(view, title)
         titleObservable.onNext(title)
         faviconObservable.onNext(Option.None)
         generateColorAndPropagate(null)
     }
 
     override fun onReceivedIcon(view: WebView, icon: Bitmap) {
-        super.onReceivedIcon(view, icon)
         faviconObservable.onNext(Option.Some(icon))
         val url = view.url ?: return
         faviconModel.cacheFaviconForUrl(icon, url)
