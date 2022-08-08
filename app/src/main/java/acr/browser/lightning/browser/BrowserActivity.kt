@@ -705,6 +705,13 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         setFullscreen(enabled = false, immersive = false)
     }
 
+    /**
+     * @see BrowserContract.View.clearSearchFocus
+     */
+    fun clearSearchFocus() {
+        binding.search.clearFocus()
+    }
+
     // TODO: update to use non deprecated flags
     private fun setFullscreen(enabled: Boolean, immersive: Boolean) {
         val window = window

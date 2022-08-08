@@ -153,4 +153,8 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
     override fun hideCustomView() {
         browserActivity.hideCustomView()
     }
+
+    override fun clearSearchFocus() {
+        browserActivity.clearSearchFocus()
+    }
 }

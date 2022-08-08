@@ -165,6 +165,11 @@ interface BrowserContract {
          * Hide the custom view that was previously shown by calling [showCustomView].
          */
         fun hideCustomView()
+
+        /**
+         * Clear focus from the search view if it has focus.
+         */
+        fun clearSearchFocus()
     }
 
     /**

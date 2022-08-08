@@ -199,6 +199,8 @@ class BrowserPresenter @Inject constructor(
         currentTab = tabModel
         currentTab?.isForeground = true
 
+        view?.clearSearchFocus()
+
         val tab = tabModel ?: return run {
             view.updateState(
                 viewState.copy(
@@ -242,13 +244,14 @@ class BrowserPresenter @Inject constructor(
                     url = url,
                     title = title,
                     isLoading = progress < 100
-                ),
+                ).takeIf { !isSearchViewFocused } ?: viewState.displayUrl,
                 enableFullMenu = !url.isSpecialUrl(),
                 themeColor = Option.Some(themeColor),
-                isRefresh = progress == 100,
+                isRefresh = (progress == 100).takeIf { !isSearchViewFocused }
+                    ?: viewState.isRefresh,
                 isForwardEnabled = canGoForward,
                 isBackEnabled = canGoBack,
-                sslState = sslState,
+                sslState = sslState.takeIf { !isSearchViewFocused } ?: viewState.sslState,
                 progress = progress,
                 isBookmarked = isBookmark,
                 isBookmarkEnabled = !isSpecialUrl,
