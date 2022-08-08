@@ -198,7 +198,8 @@ interface BrowserContract {
         fun selectTab(id: Int): TabModel
 
         /**
-         * Initialize all tabs that were previously frozen when the browser was last open.
+         * Initialize all tabs that were previously frozen when the browser was last open, and
+         * initialize any tabs that should be opened from the initial browser action.
          */
         fun initializeTabs(): Maybe<List<TabModel>>
 

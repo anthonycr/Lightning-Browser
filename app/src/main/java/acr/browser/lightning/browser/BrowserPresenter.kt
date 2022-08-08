@@ -1,25 +1,18 @@
 package acr.browser.lightning.browser
 
+import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.data.CookieAdministrator
 import acr.browser.lightning.browser.di.Browser2Scope
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.di.IncognitoMode
-import acr.browser.lightning.browser.di.InitialUrl
+import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.history.HistoryRecord
 import acr.browser.lightning.browser.keys.KeyCombo
 import acr.browser.lightning.browser.menu.MenuSelection
 import acr.browser.lightning.browser.notification.TabCountNotifier
-import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.browser.ui.UiConfiguration
-import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.search.SearchBoxModel
-import acr.browser.lightning.database.bookmark.BookmarkRepository
-import acr.browser.lightning.database.downloads.DownloadEntry
-import acr.browser.lightning.database.downloads.DownloadsRepository
-import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning.browser.di.DatabaseScheduler
-import acr.browser.lightning.browser.di.DiskScheduler
-import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.tab.DownloadPageInitializer
 import acr.browser.lightning.browser.tab.HistoryPageInitializer
 import acr.browser.lightning.browser.tab.HomePageInitializer
@@ -28,10 +21,30 @@ import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.browser.tab.UrlInitializer
+import acr.browser.lightning.browser.ui.TabConfiguration
+import acr.browser.lightning.browser.ui.UiConfiguration
+import acr.browser.lightning.browser.view.targetUrl.LongPress
+import acr.browser.lightning.database.Bookmark
+import acr.browser.lightning.database.HistoryEntry
+import acr.browser.lightning.database.SearchSuggestion
+import acr.browser.lightning.database.WebPage
+import acr.browser.lightning.database.asFolder
+import acr.browser.lightning.database.bookmark.BookmarkRepository
+import acr.browser.lightning.database.downloads.DownloadEntry
+import acr.browser.lightning.database.downloads.DownloadsRepository
+import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.utils.Option
+import acr.browser.lightning.utils.QUERY_PLACE_HOLDER
+import acr.browser.lightning.utils.isBookmarkUrl
+import acr.browser.lightning.utils.isDownloadsUrl
+import acr.browser.lightning.utils.isHistoryUrl
+import acr.browser.lightning.utils.isSpecialUrl
+import acr.browser.lightning.utils.smartUrlFilter
+import acr.browser.lightning.utils.value
 import androidx.activity.result.ActivityResult
 import androidx.core.net.toUri
 import io.reactivex.Maybe
@@ -42,20 +55,6 @@ import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
-import acr.browser.lightning.browser.view.targetUrl.LongPress
-import acr.browser.lightning.database.Bookmark
-import acr.browser.lightning.database.HistoryEntry
-import acr.browser.lightning.database.SearchSuggestion
-import acr.browser.lightning.database.WebPage
-import acr.browser.lightning.database.asFolder
-import acr.browser.lightning.utils.Option
-import acr.browser.lightning.utils.QUERY_PLACE_HOLDER
-import acr.browser.lightning.utils.isBookmarkUrl
-import acr.browser.lightning.utils.isDownloadsUrl
-import acr.browser.lightning.utils.isHistoryUrl
-import acr.browser.lightning.utils.isSpecialUrl
-import acr.browser.lightning.utils.smartUrlFilter
-import acr.browser.lightning.utils.value
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -82,7 +81,6 @@ class BrowserPresenter @Inject constructor(
     private val downloadPageInitializer: DownloadPageInitializer,
     private val searchBoxModel: SearchBoxModel,
     private val searchEngineProvider: SearchEngineProvider,
-    @InitialUrl private val initialUrl: String?,
     private val uiConfiguration: UiConfiguration,
     private val historyPageFactory: HistoryPageFactory,
     private val allowListModel: AllowListModel,
@@ -151,14 +149,6 @@ class BrowserPresenter @Inject constructor(
 
         compositeDisposable += model.initializeTabs()
             .observeOn(mainScheduler)
-            .concatWith(
-                Maybe.fromCallable { initialUrl }
-                    .flatMapSingleElement { model.createTab(UrlInitializer(it)) }
-                    .map(::listOf)
-            )
-            .toList()
-            .map(MutableList<List<TabModel>>::flatten)
-            .filter(List<TabModel>::isNotEmpty)
             .switchIfEmpty(model.createTab(homePageInitializer).map(::listOf))
             .subscribe { list ->
                 selectTab(model.selectTab(list.last().id))

@@ -2,9 +2,11 @@ package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.BrowserContract
 import acr.browser.lightning.browser.di.DiskScheduler
+import acr.browser.lightning.browser.di.InitialUrl
 import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.utils.isFileUrl
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -25,7 +27,9 @@ class TabsRepository @Inject constructor(
     private val bundleStore: BundleStore,
     private val recentTabModel: RecentTabModel,
     private val tabFactory: TabFactory,
-    private val userPreferences: UserPreferences
+    private val userPreferences: UserPreferences,
+    @InitialUrl private val initialUrl: String?,
+    private val permissionInitializerFactory: PermissionInitializer.Factory
 ) : BrowserContract.Model {
 
     private var selectedTab: TabModel? = null
@@ -86,6 +90,13 @@ class TabsRepository @Inject constructor(
             .flatMapObservable { Observable.fromIterable(it) }
             .subscribeOn(diskScheduler)
             .observeOn(mainScheduler)
+            .concatWith(Maybe.fromCallable { initialUrl }.map {
+                if (it.isFileUrl()) {
+                    permissionInitializerFactory.create(it)
+                } else {
+                    UrlInitializer(it)
+                }
+            })
             .flatMapSingle(::createTab)
             .toList()
             .filter(MutableList<TabModel>::isNotEmpty)

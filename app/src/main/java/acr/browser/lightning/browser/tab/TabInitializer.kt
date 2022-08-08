@@ -18,6 +18,9 @@ import android.os.Message
 import android.webkit.WebView
 import androidx.appcompat.app.AlertDialog
 import dagger.Reusable
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import io.reactivex.Scheduler
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -175,8 +178,8 @@ class NoOpInitializer : TabInitializer {
  * permission. Useful for scenarios where another app may attempt to open a malicious URL in the
  * browser via an intent.
  */
-class PermissionInitializer(
-    private val url: String,
+class PermissionInitializer @AssistedInject constructor(
+    @Assisted private val url: String,
     private val activity: Activity,
     private val homePageInitializer: HomePageInitializer
 ) : TabInitializer {
@@ -194,6 +197,19 @@ class PermissionInitializer(
                 UrlInitializer(url).initialize(webView, headers)
             }
         }.resizeAndShow()
+    }
+
+    /**
+     * The factory for constructing the permission initializer.
+     */
+    @AssistedFactory
+    interface Factory {
+
+        /**
+         * Creates the initializer.
+         */
+        fun create(url: String): PermissionInitializer
+
     }
 
 }
