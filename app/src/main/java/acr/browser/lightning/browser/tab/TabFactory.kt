@@ -8,6 +8,7 @@ import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.browser.webrtc.WebRtcPermissionsModel
+import acr.browser.lightning.js.TextReflow
 import android.app.Activity
 import android.graphics.Bitmap
 import android.webkit.WebView
@@ -29,7 +30,8 @@ class TabFactory @Inject constructor(
     @DefaultUserAgent private val defaultUserAgent: String,
     @IconFreeze private val iconFreeze: Bitmap,
     private val proxy: Proxy,
-    private val webRtcPermissionsModel: WebRtcPermissionsModel
+    private val webRtcPermissionsModel: WebRtcPermissionsModel,
+    private val textReflow: TextReflow
 ) {
 
     /**
@@ -41,7 +43,15 @@ class TabFactory @Inject constructor(
             tabInitializer,
             webView,
             headers,
-            TabWebViewClient(adBlocker, allowListModel, urlHandler, headers, proxy),
+            TabWebViewClient(
+                adBlocker,
+                allowListModel,
+                urlHandler,
+                headers,
+                proxy,
+                userPreferences,
+                textReflow
+            ),
             TabWebChromeClient(
                 activity,
                 faviconModel,

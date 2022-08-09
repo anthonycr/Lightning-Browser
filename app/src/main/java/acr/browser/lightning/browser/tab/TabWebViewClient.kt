@@ -3,6 +3,8 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.browser.proxy.Proxy
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
+import acr.browser.lightning.js.TextReflow
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SslState
 import android.annotation.TargetApi
 import android.graphics.Bitmap
@@ -17,6 +19,7 @@ import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
 import io.reactivex.subjects.PublishSubject
 import java.io.ByteArrayInputStream
+import kotlin.math.abs
 
 /**
  * A [WebViewClient] that supports the tab adaptation.
@@ -26,7 +29,9 @@ class TabWebViewClient(
     private val allowListModel: AllowListModel,
     private val urlHandler: UrlHandler,
     private val headers: Map<String, String>,
-    private val proxy: Proxy
+    private val proxy: Proxy,
+    private val userPreferences: UserPreferences,
+    private val textReflow: TextReflow
 ) : WebViewClient() {
 
     /**
@@ -56,6 +61,8 @@ class TabWebViewClient(
         private set
 
     private var currentUrl: String = ""
+    private var isReflowRunning: Boolean = false
+    private var zoomScale: Float = 0.0F
 
     private fun shouldBlockRequest(pageUrl: String, requestUrl: String) =
         !allowListModel.isUrlAllowedAds(pageUrl) &&
@@ -78,6 +85,22 @@ class TabWebViewClient(
         urlObservable.onNext(url)
         goBackObservable.onNext(view.canGoBack())
         goForwardObservable.onNext(view.canGoForward())
+    }
+
+
+    override fun onScaleChanged(view: WebView, oldScale: Float, newScale: Float) {
+        if (view.isShown && userPreferences.textReflowEnabled) {
+            if (isReflowRunning)
+                return
+            val changeInPercent = abs(100 - 100 / zoomScale * newScale)
+            if (changeInPercent > 2.5f && !isReflowRunning) {
+                isReflowRunning = view.postDelayed({
+                    zoomScale = newScale
+                    view.evaluateJavascript(textReflow.provideJs()) { isReflowRunning = false }
+                }, 100)
+            }
+
+        }
     }
 
     override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
