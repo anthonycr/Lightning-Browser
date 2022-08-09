@@ -2,36 +2,23 @@ package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.image.IconFreeze
 import acr.browser.lightning.browser.proxy.Proxy
-import acr.browser.lightning.adblock.AdBlocker
-import acr.browser.lightning.adblock.allowlist.AllowListModel
-import acr.browser.lightning.browser.di.DiskScheduler
-import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferences
-import acr.browser.lightning.browser.webrtc.WebRtcPermissionsModel
-import acr.browser.lightning.js.TextReflow
-import android.app.Activity
 import android.graphics.Bitmap
 import android.webkit.WebView
-import io.reactivex.Scheduler
 import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * Constructs a [TabModel].
  */
 class TabFactory @Inject constructor(
     private val webViewFactory: WebViewFactory,
-    private val activity: Activity,
-    private val adBlocker: AdBlocker,
-    private val allowListModel: AllowListModel,
-    private val faviconModel: FaviconModel,
-    @DiskScheduler private val diskScheduler: Scheduler,
-    private val urlHandler: UrlHandler,
     private val userPreferences: UserPreferences,
     @DefaultUserAgent private val defaultUserAgent: String,
     @IconFreeze private val iconFreeze: Bitmap,
     private val proxy: Proxy,
-    private val webRtcPermissionsModel: WebRtcPermissionsModel,
-    private val textReflow: TextReflow
+    private val tabWebViewClientFactory: TabWebViewClient.Factory,
+    private val tabWebChromeClientProvider: Provider<TabWebChromeClient>
 ) {
 
     /**
@@ -43,22 +30,8 @@ class TabFactory @Inject constructor(
             tabInitializer,
             webView,
             headers,
-            TabWebViewClient(
-                adBlocker,
-                allowListModel,
-                urlHandler,
-                headers,
-                proxy,
-                userPreferences,
-                textReflow
-            ),
-            TabWebChromeClient(
-                activity,
-                faviconModel,
-                diskScheduler,
-                userPreferences,
-                webRtcPermissionsModel
-            ),
+            tabWebViewClientFactory.create(headers),
+            tabWebChromeClientProvider.get(),
             userPreferences,
             defaultUserAgent,
             iconFreeze,

@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.color
@@ -32,14 +33,15 @@ import com.anthonycr.grant.PermissionsResultAction
 import io.reactivex.Scheduler
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import javax.inject.Inject
 
 /**
  * A [WebChromeClient] that supports the tab adaptation.
  */
-class TabWebChromeClient(
+class TabWebChromeClient @Inject constructor(
     private val activity: Activity,
     private val faviconModel: FaviconModel,
-    private val diskScheduler: Scheduler,
+    @DiskScheduler private val diskScheduler: Scheduler,
     private val userPreferences: UserPreferences,
     private val webRtcPermissionsModel: WebRtcPermissionsModel
 ) : WebChromeClient(), WebRtcPermissionsView {
