@@ -88,8 +88,6 @@ class TabsRepository @Inject constructor(
     override fun initializeTabs(): Maybe<List<TabModel>> =
         Single.fromCallable(bundleStore::retrieve)
             .flatMapObservable { Observable.fromIterable(it) }
-            .subscribeOn(diskScheduler)
-            .observeOn(mainScheduler)
             .concatWith(Maybe.fromCallable { initialUrl }.map {
                 if (it.isFileUrl()) {
                     permissionInitializerFactory.create(it)
@@ -97,9 +95,11 @@ class TabsRepository @Inject constructor(
                     UrlInitializer(it)
                 }
             })
+            .subscribeOn(diskScheduler)
+            .observeOn(mainScheduler)
             .flatMapSingle(::createTab)
             .toList()
-            .filter(MutableList<TabModel>::isNotEmpty)
+            .filter(List<TabModel>::isNotEmpty)
 
     override fun freeze() {
         if (userPreferences.restoreLostTabsEnabled) {
