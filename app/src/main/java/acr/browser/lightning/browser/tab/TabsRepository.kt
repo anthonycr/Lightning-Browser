@@ -12,6 +12,7 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.Single
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
@@ -32,8 +33,12 @@ class TabsRepository @Inject constructor(
     private val permissionInitializerFactory: PermissionInitializer.Factory
 ) : BrowserContract.Model {
 
+    private var isInitialized = BehaviorSubject.createDefault(false)
     private var selectedTab: TabModel? = null
     private val tabsListObservable = PublishSubject.create<List<TabModel>>()
+
+    private fun afterInitialization(): Single<Boolean> =
+        isInitialized.filter { it }.firstOrError()
 
     override fun deleteTab(id: Int): Completable = Completable.fromAction {
         if (selectedTab?.id == id) {
@@ -47,16 +52,25 @@ class TabsRepository @Inject constructor(
         tabsListObservable.onNext(tabsList)
     }
 
-    override fun deleteAllTabs(): Completable = Completable.fromAction {
-        tabPager.clearTab()
+    override fun deleteAllTabs(): Completable =
+        afterInitialization().flatMapCompletable {
+            Completable.fromAction {
+                tabPager.clearTab()
 
-        tabsList.forEach(TabModel::destroy)
-        tabsList = emptyList()
-    }.doOnComplete {
-        tabsListObservable.onNext(tabsList)
-    }
+                tabsList.forEach(TabModel::destroy)
+                tabsList = emptyList()
+            }
+        }.doOnComplete {
+            tabsListObservable.onNext(tabsList)
+        }
 
     override fun createTab(tabInitializer: TabInitializer): Single<TabModel> =
+        afterInitialization().flatMap { createTabUnsafe(tabInitializer) }
+
+    /**
+     * Creates a tab without waiting for the browser to be initialized.
+     */
+    private fun createTabUnsafe(tabInitializer: TabInitializer): Single<TabModel> =
         Single.fromCallable {
             val webView = webViewFactory.createWebView()
             tabPager.addTab(webView)
@@ -97,8 +111,11 @@ class TabsRepository @Inject constructor(
             })
             .subscribeOn(diskScheduler)
             .observeOn(mainScheduler)
-            .flatMapSingle(::createTab)
+            .flatMapSingle(::createTabUnsafe)
             .toList()
+            .doOnSuccess {
+                isInitialized.onNext(true)
+            }
             .filter(List<TabModel>::isNotEmpty)
 
     override fun freeze() {
