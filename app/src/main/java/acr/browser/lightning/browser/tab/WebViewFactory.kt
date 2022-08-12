@@ -83,10 +83,10 @@ class WebViewFactory @Inject constructor(
         settings.apply {
             mediaPlaybackRequiresUserGesture = true
 
-            if (!incognitoMode) {
-                mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+            mixedContentMode = if (!incognitoMode) {
+                WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
             } else {
-                mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
+                WebSettings.MIXED_CONTENT_NEVER_ALLOW
             }
 
             if (!incognitoMode || Capabilities.FULL_INCOGNITO.isSupported) {
