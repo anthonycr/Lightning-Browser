@@ -9,6 +9,8 @@ import acr.browser.lightning.browser.image.ImageLoader
 import acr.browser.lightning.browser.proxy.Proxy
 import acr.browser.lightning.browser.proxy.ProxyAdapter
 import acr.browser.lightning.browser.tab.TabsRepository
+import acr.browser.lightning.browser.theme.DefaultThemeProvider
+import acr.browser.lightning.browser.theme.ThemeProvider
 import dagger.Binds
 import dagger.Module
 
@@ -32,4 +34,7 @@ interface Browser2BindsModule {
 
     @Binds
     fun bindsExitCleanup(delegatingExitCleanup: DelegatingExitCleanup): ExitCleanup
+
+    @Binds
+    fun bindsThemeProvider(legacyThemeProvider: DefaultThemeProvider): ThemeProvider
 }

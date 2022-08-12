@@ -26,7 +26,6 @@ import javax.inject.Inject
 /**
  * Factory for the history page.
  */
-@Reusable
 class HistoryPageFactory @Inject constructor(
     private val listPageReader: ListPageReader,
     private val application: Application,

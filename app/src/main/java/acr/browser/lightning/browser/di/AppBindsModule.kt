@@ -1,15 +1,11 @@
 package acr.browser.lightning.browser.di
 
-import acr.browser.lightning.browser.theme.LegacyThemeProvider
-import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.adblock.allowlist.SessionAllowListModel
 import acr.browser.lightning.adblock.source.AssetsHostsDataSource
 import acr.browser.lightning.adblock.source.HostsDataSource
 import acr.browser.lightning.adblock.source.HostsDataSourceProvider
 import acr.browser.lightning.adblock.source.PreferencesHostsDataSourceProvider
-import acr.browser.lightning.browser.cleanup.DelegatingExitCleanup
-import acr.browser.lightning.browser.cleanup.ExitCleanup
 import acr.browser.lightning.database.adblock.HostsDatabase
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.database.allowlist.AdBlockAllowListDatabase
@@ -57,7 +53,4 @@ interface AppBindsModule {
 
     @Binds
     fun bindsHostsDataSourceProvider(preferencesHostsDataSourceProvider: PreferencesHostsDataSourceProvider): HostsDataSourceProvider
-
-    @Binds
-    fun bindsThemeProvider(legacyThemeProvider: LegacyThemeProvider): ThemeProvider
 }

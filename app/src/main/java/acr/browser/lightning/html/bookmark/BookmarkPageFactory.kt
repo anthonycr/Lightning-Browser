@@ -35,7 +35,6 @@ import javax.inject.Inject
 /**
  * Created by anthonycr on 9/23/18.
  */
-@Reusable
 class BookmarkPageFactory @Inject constructor(
     private val application: Application,
     private val bookmarkModel: BookmarkRepository,

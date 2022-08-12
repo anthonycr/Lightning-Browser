@@ -27,7 +27,6 @@ import javax.inject.Inject
 /**
  * The factory for the downloads page.
  */
-@Reusable
 class DownloadPageFactory @Inject constructor(
     private val application: Application,
     private val userPreferences: UserPreferences,
