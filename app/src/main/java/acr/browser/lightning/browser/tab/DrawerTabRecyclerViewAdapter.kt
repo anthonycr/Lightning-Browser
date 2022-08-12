@@ -48,7 +48,7 @@ class DrawerTabRecyclerViewAdapter(
         val tab = getItem(position)
 
         holder.txtTitle.text = tab.title
-        updateViewHolderAppearance(holder, null, tab.isSelected)
+        updateViewHolderAppearance(holder, tab.isSelected)
         updateViewHolderFavicon(holder, tab.icon, tab.isSelected)
         updateViewHolderBackground(holder, tab.isSelected)
     }
@@ -79,7 +79,6 @@ class DrawerTabRecyclerViewAdapter(
 
     private fun updateViewHolderAppearance(
         viewHolder: TabViewHolder,
-        favicon: Bitmap?,
         isForeground: Boolean
     ) {
         if (isForeground) {

@@ -83,9 +83,9 @@ class WebViewFactory @Inject constructor(
         settings.apply {
             mediaPlaybackRequiresUserGesture = true
 
-            if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP && !incognitoMode) {
+            if (!incognitoMode) {
                 mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
-            } else if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            } else {
                 mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
             }
 
@@ -151,7 +151,7 @@ class WebViewFactory @Inject constructor(
         }
 
         if (userPreferences.textReflowEnabled) {
-            settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NARROW_COLUMNS
+            settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
             try {
                 settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
             } catch (e: Exception) {
@@ -179,12 +179,10 @@ class WebViewFactory @Inject constructor(
             else -> throw IllegalArgumentException("Unsupported text size")
         }
 
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            CookieManager.getInstance().setAcceptThirdPartyCookies(
-                this,
-                !userPreferences.blockThirdPartyCookiesEnabled
-            )
-        }
+        CookieManager.getInstance().setAcceptThirdPartyCookies(
+            this,
+            !userPreferences.blockThirdPartyCookiesEnabled
+        )
     }
 
     companion object {
