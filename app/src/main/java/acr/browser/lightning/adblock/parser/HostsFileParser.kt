@@ -10,11 +10,12 @@ import acr.browser.lightning.extensions.stringEquals
 import acr.browser.lightning.extensions.substringToBuilder
 import acr.browser.lightning.log.Logger
 import java.io.InputStreamReader
+import javax.inject.Inject
 
 /**
  * A single threaded parser for a hosts file.
  */
-class HostsFileParser(
+class HostsFileParser @Inject constructor(
     private val logger: Logger
 ) {
 
