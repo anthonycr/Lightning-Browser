@@ -50,7 +50,7 @@ class TabsRepository @Inject constructor(
         tabsList = tabsList - tab
     }.doOnComplete {
         tabsListObservable.onNext(tabsList)
-    }
+    }.subscribeOn(mainScheduler)
 
     override fun deleteAllTabs(): Completable =
         afterInitialization().flatMapCompletable {
@@ -62,10 +62,11 @@ class TabsRepository @Inject constructor(
             }
         }.doOnComplete {
             tabsListObservable.onNext(tabsList)
-        }
+        }.subscribeOn(mainScheduler)
 
     override fun createTab(tabInitializer: TabInitializer): Single<TabModel> =
         afterInitialization().flatMap { createTabUnsafe(tabInitializer) }
+            .subscribeOn(mainScheduler)
 
     /**
      * Creates a tab without waiting for the browser to be initialized.
@@ -81,10 +82,11 @@ class TabsRepository @Inject constructor(
             return@fromCallable tabAdapter
         }.doOnSuccess {
             tabsListObservable.onNext(tabsList)
-        }
+        }.subscribeOn(mainScheduler)
 
     override fun reopenTab(): Maybe<TabModel> = Maybe.fromCallable(recentTabModel::lastClosed)
         .flatMapSingleElement { createTab(BundleInitializer(it)) }
+        .subscribeOn(mainScheduler)
 
     override fun selectTab(id: Int): TabModel {
         val selected = tabsList.forId(id)
@@ -101,6 +103,8 @@ class TabsRepository @Inject constructor(
 
     override fun initializeTabs(): Maybe<List<TabModel>> =
         Single.fromCallable(bundleStore::retrieve)
+            .subscribeOn(diskScheduler)
+            .observeOn(mainScheduler)
             .flatMapObservable { Observable.fromIterable(it) }
             .concatWith(Maybe.fromCallable { initialUrl }.map {
                 if (it.isFileUrl()) {
@@ -109,8 +113,6 @@ class TabsRepository @Inject constructor(
                     UrlInitializer(it)
                 }
             })
-            .subscribeOn(diskScheduler)
-            .observeOn(mainScheduler)
             .flatMapSingle(::createTabUnsafe)
             .toList()
             .doOnSuccess {
