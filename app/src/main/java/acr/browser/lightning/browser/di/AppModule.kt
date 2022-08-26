@@ -1,5 +1,7 @@
 package acr.browser.lightning.browser.di
 
+import acr.browser.lightning.R
+import acr.browser.lightning.browser.tab.DefaultTabTitle
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
 import acr.browser.lightning.html.ListPageReader
@@ -210,6 +212,11 @@ class AppModule {
 
     @Provides
     fun providesInvertPage(): InvertPage = MezzanineGenerator.InvertPage()
+
+    @DefaultTabTitle
+    @Provides
+    fun providesDefaultTabTitle(application: Application): String =
+        application.getString(R.string.untitled)
 
 }
 

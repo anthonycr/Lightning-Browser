@@ -29,6 +29,7 @@ class TabAdapter(
     private val tabWebChromeClient: TabWebChromeClient,
     private val userPreferences: UserPreferences,
     private val defaultUserAgent: String,
+    private val defaultTabTitle: String,
     private val iconFreeze: Bitmap,
     private val proxy: Proxy
 ) : TabModel {
@@ -140,14 +141,13 @@ class TabAdapter(
 
     override fun themeColorChanges(): Observable<Int> = tabWebChromeClient.colorChangeObservable
 
-    // TODO do we show "new tab"
     override val url: String
         get() = webView.url.orEmpty()
 
     override fun urlChanges(): Observable<String> = tabWebViewClient.urlObservable.hide()
 
     override val title: String
-        get() = latentInitializer?.initialTitle ?: webView.title.orEmpty()
+        get() = latentInitializer?.initialTitle ?: webView.title ?: defaultTabTitle
 
     override fun titleChanges(): Observable<String> = tabWebChromeClient.titleObservable.hide()
 
