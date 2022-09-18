@@ -3,7 +3,12 @@ package acr.browser.lightning.adblock.util.`object`
 import acr.browser.lightning.adblock.util.hash.HashingAlgorithm
 import acr.browser.lightning.extensions.safeUse
 import android.app.Application
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
 
 /**
  * An [ObjectStore] that serializes objects using the [ObjectInputStream].

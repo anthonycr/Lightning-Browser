@@ -7,9 +7,13 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.annotation.*
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
-import java.util.*
+import java.util.Locale
 
 /**
  * Returns the dimension in pixels.
@@ -27,7 +31,8 @@ inline fun Context.color(@ColorRes colorRes: Int): Int = ContextCompat.getColor(
 /**
  * Shows a toast with the provided [StringRes].
  */
-inline fun Context.toast(@StringRes stringRes: Int) = Toast.makeText(this, stringRes, Toast.LENGTH_SHORT).show()
+inline fun Context.toast(@StringRes stringRes: Int) =
+    Toast.makeText(this, stringRes, Toast.LENGTH_SHORT).show()
 
 /**
  * The [LayoutInflater] available on the [Context].
@@ -38,7 +43,8 @@ inline val Context.inflater: LayoutInflater
 /**
  * Gets a drawable from the context.
  */
-inline fun Context.drawable(@DrawableRes drawableRes: Int): Drawable = ContextCompat.getDrawable(this, drawableRes)!!
+inline fun Context.drawable(@DrawableRes drawableRes: Int): Drawable =
+    ContextCompat.getDrawable(this, drawableRes)!!
 
 /**
  * The preferred locale of the user.

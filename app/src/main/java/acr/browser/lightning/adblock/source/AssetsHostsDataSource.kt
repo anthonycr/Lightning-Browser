@@ -6,15 +6,19 @@ import acr.browser.lightning.log.Logger
 import android.content.res.AssetManager
 import io.reactivex.Single
 import java.io.InputStreamReader
+import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * A [HostsDataSource] that reads from the hosts list in assets.
  *
  * @param assetManager The store for application assets.
+ * @param hostsFileParserProvider The provider used to construct the parser.
  * @param logger The logger used to log status.
  */
-class AssetsHostsDataSource constructor(
+class AssetsHostsDataSource @Inject constructor(
     private val assetManager: AssetManager,
+    private val hostsFileParserProvider: Provider<HostsFileParser>,
     private val logger: Logger
 ) : HostsDataSource {
 
@@ -28,7 +32,7 @@ class AssetsHostsDataSource constructor(
      */
     override fun loadHosts(): Single<HostsResult> = Single.create { emitter ->
         val reader = InputStreamReader(assetManager.open(BLOCKED_DOMAINS_LIST_FILE_NAME))
-        val hostsFileParser = HostsFileParser(logger)
+        val hostsFileParser = hostsFileParserProvider.get()
 
         val domains = hostsFileParser.parseInput(reader)
 

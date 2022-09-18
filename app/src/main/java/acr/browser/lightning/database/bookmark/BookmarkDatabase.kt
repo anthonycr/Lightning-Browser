@@ -130,46 +130,49 @@ class BookmarkDatabase @Inject constructor(
         }
     }
 
-    override fun addBookmarkIfNotExists(entry: Bookmark.Entry): Single<Boolean> = Single.fromCallable {
-        queryWithOptionalEndSlash(entry.url).use {
-            if (it.moveToFirst()) {
-                return@fromCallable false
-            }
-        }
-
-        val id = database.insert(
-            TABLE_BOOKMARK,
-            null,
-            entry.bindBookmarkToContentValues()
-        )
-
-        return@fromCallable id != -1L
-    }
-
-    override fun addBookmarkList(bookmarkItems: List<Bookmark.Entry>): Completable = Completable.fromAction {
-        database.apply {
-            beginTransaction()
-
-            for (item in bookmarkItems) {
-                addBookmarkIfNotExists(item).subscribe()
+    override fun addBookmarkIfNotExists(entry: Bookmark.Entry): Single<Boolean> =
+        Single.fromCallable {
+            queryWithOptionalEndSlash(entry.url).use {
+                if (it.moveToFirst()) {
+                    return@fromCallable false
+                }
             }
 
-            setTransactionSuccessful()
-            endTransaction()
+            val id = database.insert(
+                TABLE_BOOKMARK,
+                null,
+                entry.bindBookmarkToContentValues()
+            )
+
+            return@fromCallable id != -1L
         }
-    }
+
+    override fun addBookmarkList(bookmarkItems: List<Bookmark.Entry>): Completable =
+        Completable.fromAction {
+            database.apply {
+                beginTransaction()
+
+                for (item in bookmarkItems) {
+                    addBookmarkIfNotExists(item).subscribe()
+                }
+
+                setTransactionSuccessful()
+                endTransaction()
+            }
+        }
 
     override fun deleteBookmark(entry: Bookmark.Entry): Single<Boolean> = Single.fromCallable {
         return@fromCallable deleteWithOptionalEndSlash(entry.url) > 0
     }
 
-    override fun renameFolder(oldName: String, newName: String): Completable = Completable.fromAction {
-        val contentValues = ContentValues(1).apply {
-            put(KEY_FOLDER, newName)
-        }
+    override fun renameFolder(oldName: String, newName: String): Completable =
+        Completable.fromAction {
+            val contentValues = ContentValues(1).apply {
+                put(KEY_FOLDER, newName)
+            }
 
-        database.update(TABLE_BOOKMARK, contentValues, "$KEY_FOLDER=?", arrayOf(oldName))
-    }
+            database.update(TABLE_BOOKMARK, contentValues, "$KEY_FOLDER=?", arrayOf(oldName))
+        }
 
     override fun deleteFolder(folderToDelete: String): Completable =
         Completable.fromAction(renameFolder(folderToDelete, "")::subscribe)
@@ -181,7 +184,10 @@ class BookmarkDatabase @Inject constructor(
         }
     }
 
-    override fun editBookmark(oldBookmark: Bookmark.Entry, newBookmark: Bookmark.Entry): Completable = Completable.fromAction {
+    override fun editBookmark(
+        oldBookmark: Bookmark.Entry,
+        newBookmark: Bookmark.Entry
+    ): Completable = Completable.fromAction {
         val contentValues = newBookmark.bindBookmarkToContentValues()
 
         updateWithOptionalEndSlash(oldBookmark.url, contentValues)
@@ -199,18 +205,19 @@ class BookmarkDatabase @Inject constructor(
         ).useMap { it.bindToBookmarkEntry() }
     }
 
-    override fun getBookmarksFromFolderSorted(folder: String?): Single<List<Bookmark>> = Single.fromCallable {
-        val finalFolder = folder ?: ""
-        return@fromCallable database.query(
-            TABLE_BOOKMARK,
-            null,
-            "$KEY_FOLDER=?",
-            arrayOf(finalFolder),
-            null,
-            null,
-            "$KEY_POSITION ASC, $KEY_TITLE COLLATE NOCASE ASC, $KEY_URL ASC"
-        ).useMap { it.bindToBookmarkEntry() }
-    }
+    override fun getBookmarksFromFolderSorted(folder: String?): Single<List<Bookmark>> =
+        Single.fromCallable {
+            val finalFolder = folder ?: ""
+            return@fromCallable database.query(
+                TABLE_BOOKMARK,
+                null,
+                "$KEY_FOLDER=?",
+                arrayOf(finalFolder),
+                null,
+                null,
+                "$KEY_POSITION ASC, $KEY_TITLE COLLATE NOCASE ASC, $KEY_URL ASC"
+            ).useMap { it.bindToBookmarkEntry() }
+        }
 
     override fun getFoldersSorted(): Single<List<Bookmark.Folder>> = Single.fromCallable {
         return@fromCallable database

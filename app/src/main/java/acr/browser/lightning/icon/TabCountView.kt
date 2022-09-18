@@ -3,7 +3,13 @@ package acr.browser.lightning.icon
 import acr.browser.lightning.R
 import acr.browser.lightning.extensions.preferredLocale
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.RectF
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.withStyledAttributes

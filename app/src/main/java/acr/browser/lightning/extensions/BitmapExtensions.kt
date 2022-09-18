@@ -1,7 +1,11 @@
 package acr.browser.lightning.extensions
 
 import acr.browser.lightning.utils.Utils
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
 import androidx.core.graphics.createBitmap
 
 /**
@@ -18,7 +22,12 @@ fun Bitmap.pad(): Bitmap = let {
     Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).apply {
         Canvas(this).apply {
             drawARGB(0x00, 0x00, 0x00, 0x00) // this represents white color
-            drawBitmap(it, (padding / 2).toFloat(), (padding / 2).toFloat(), Paint(Paint.FILTER_BITMAP_FLAG))
+            drawBitmap(
+                it,
+                (padding / 2).toFloat(),
+                (padding / 2).toFloat(),
+                Paint(Paint.FILTER_BITMAP_FLAG)
+            )
         }
     }
 }

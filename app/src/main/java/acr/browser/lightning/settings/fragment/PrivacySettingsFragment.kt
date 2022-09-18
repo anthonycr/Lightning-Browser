@@ -3,16 +3,16 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.Capabilities
 import acr.browser.lightning.R
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning.di.DatabaseScheduler
-import acr.browser.lightning.di.MainScheduler
-import acr.browser.lightning.di.injector
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.browser.tab.WebViewFactory
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.isSupported
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.WebUtils
-import acr.browser.lightning.view.LightningView
 import android.os.Bundle
 import android.webkit.WebView
 import io.reactivex.Completable
@@ -46,7 +46,6 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         checkBoxPreference(
             preference = SETTINGS_THIRDPCOOKIES,
             isChecked = userPreferences.blockThirdPartyCookiesEnabled,
-            isEnabled = Capabilities.THIRD_PARTY_COOKIE_BLOCKING.isSupported,
             onCheckChange = { userPreferences.blockThirdPartyCookiesEnabled = it }
         )
 
@@ -88,15 +87,14 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
             preference = SETTINGS_WEBRTC,
-            isChecked = userPreferences.webRtcEnabled && Capabilities.WEB_RTC.isSupported,
-            isEnabled = Capabilities.WEB_RTC.isSupported,
+            isChecked = userPreferences.webRtcEnabled,
             onCheckChange = { userPreferences.webRtcEnabled = it }
         )
 
         checkBoxPreference(
             preference = SETTINGS_IDENTIFYINGHEADERS,
             isChecked = userPreferences.removeIdentifyingHeadersEnabled,
-            summary = "${LightningView.HEADER_REQUESTED_WITH}, ${LightningView.HEADER_WAP_PROFILE}",
+            summary = "${WebViewFactory.HEADER_REQUESTED_WITH}, ${WebViewFactory.HEADER_WAP_PROFILE}",
             onCheckChange = { userPreferences.removeIdentifyingHeadersEnabled = it }
         )
 
@@ -157,12 +155,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun clearCookies(): Completable = Completable.fromAction {
-        val activity = activity
-        if (activity != null) {
-            WebUtils.clearCookies(activity)
-        } else {
-            throw RuntimeException("Activity was null in clearCookies")
-        }
+        WebUtils.clearCookies()
     }
 
     private fun clearWebStorage() {

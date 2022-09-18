@@ -7,10 +7,10 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning.di.DatabaseScheduler
-import acr.browser.lightning.di.MainScheduler
-import acr.browser.lightning.di.NetworkScheduler
-import acr.browser.lightning.di.injector
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.browser.di.NetworkScheduler
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.rx.join
@@ -23,10 +23,13 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Filter
 import android.widget.Filterable
-import io.reactivex.*
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 class SuggestionsAdapter(
@@ -192,24 +195,31 @@ class SuggestionsAdapter(
 
             bookmarksEntries
                 .join(
-                    historyEntries,
-                    { bookmarksEntries },
-                    { historyEntries }
+                    other = historyEntries,
+                    selectorLeft = { bookmarksEntries },
+                    selectorRight = { historyEntries }
                 ) { t1, t2 -> Pair(t1, t2) }
                 .compose { bookmarksAndHistory ->
                     bookmarksAndHistory.join(
-                        searchEntries,
-                        { bookmarksAndHistory },
-                        { searchEntries }
+                        other = searchEntries,
+                        selectorLeft = { bookmarksAndHistory },
+                        selectorRight = { searchEntries }
                     ) { (bookmarks, history), t2 ->
                         Triple(bookmarks, history, t2)
                     }
                 }
         }
         .map { (bookmarks, history, searches) ->
-            val bookmarkCount = MAX_SUGGESTIONS - 2.coerceAtMost(history.size) - 1.coerceAtMost(searches.size)
-            val historyCount = MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - 1.coerceAtMost(searches.size)
-            val searchCount = MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - historyCount.coerceAtMost(history.size)
+            val bookmarkCount =
+                MAX_SUGGESTIONS - 2.coerceAtMost(history.size) - 1.coerceAtMost(searches.size)
+            val historyCount =
+                MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - 1.coerceAtMost(
+                    searches.size
+                )
+            val searchCount =
+                MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - historyCount.coerceAtMost(
+                    history.size
+                )
 
             bookmarks.take(bookmarkCount) + history.take(historyCount) + searches.take(searchCount)
         }

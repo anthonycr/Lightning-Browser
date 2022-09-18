@@ -1,16 +1,25 @@
 package acr.browser.lightning.html.bookmark
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.bookmark.BookmarkRepository
-import acr.browser.lightning.di.DatabaseScheduler
-import acr.browser.lightning.di.DiskScheduler
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.favicon.toValidUri
 import acr.browser.lightning.html.HtmlPageFactory
-import acr.browser.lightning.html.jsoup.*
+import acr.browser.lightning.html.jsoup.andBuild
+import acr.browser.lightning.html.jsoup.body
+import acr.browser.lightning.html.jsoup.clone
+import acr.browser.lightning.html.jsoup.id
+import acr.browser.lightning.html.jsoup.parse
+import acr.browser.lightning.html.jsoup.removeElement
+import acr.browser.lightning.html.jsoup.style
+import acr.browser.lightning.html.jsoup.tag
+import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.utils.ThemeUtils
 import android.app.Application
 import android.graphics.Bitmap
@@ -26,19 +35,32 @@ import javax.inject.Inject
 /**
  * Created by anthonycr on 9/23/18.
  */
-@Reusable
 class BookmarkPageFactory @Inject constructor(
     private val application: Application,
     private val bookmarkModel: BookmarkRepository,
     private val faviconModel: FaviconModel,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     @DiskScheduler private val diskScheduler: Scheduler,
-    private val bookmarkPageReader: BookmarkPageReader
+    private val bookmarkPageReader: BookmarkPageReader,
+    private val themeProvider: ThemeProvider
 ) : HtmlPageFactory {
 
     private val title = application.getString(R.string.action_bookmarks)
     private val folderIconFile by lazy { File(application.cacheDir, FOLDER_ICON) }
     private val defaultIconFile by lazy { File(application.cacheDir, DEFAULT_ICON) }
+
+    private fun Int.toColor(): String {
+        val string = Integer.toHexString(this)
+
+        return string.substring(2) + string.substring(0, 2)
+    }
+
+    private val backgroundColor: String
+        get() = themeProvider.color(R.attr.colorPrimary).toColor()
+    private val cardColor: String
+        get() = themeProvider.color(R.attr.autoCompleteBackgroundColor).toColor()
+    private val textColor: String
+        get() = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
 
     override fun buildPage(): Single<String> = bookmarkModel
         .getAllBookmarksSorted()
@@ -50,7 +72,8 @@ class BookmarkPageFactory @Inject constructor(
                 .toList()
                 .concatWith(
                     if (folder == Bookmark.Folder.Root) {
-                        bookmarkModel.getFoldersSorted().map { it.filterIsInstance<Bookmark.Folder.Entry>() }
+                        bookmarkModel.getFoldersSorted()
+                            .map { it.filterIsInstance<Bookmark.Folder.Entry>() }
                     } else {
                         Single.just(emptyList())
                     }
@@ -70,7 +93,10 @@ class BookmarkPageFactory @Inject constructor(
         }
         .ignoreElements()
         .toSingle {
-            cacheIcon(ThemeUtils.createThemedBitmap(application, R.drawable.ic_folder, false), folderIconFile)
+            cacheIcon(
+                ThemeUtils.createThemedBitmap(application, R.drawable.ic_folder, false),
+                folderIconFile
+            )
             cacheIcon(faviconModel.createDefaultBitmapForTitle(null), defaultIconFile)
 
             "$FILE${createBookmarkPage(null)}"
@@ -84,6 +110,11 @@ class BookmarkPageFactory @Inject constructor(
     private fun construct(list: List<BookmarkViewModel>): String {
         return parse(bookmarkPageReader.provideHtml()) andBuild {
             title { title }
+            style { content ->
+                content.replace("--body-bg: {COLOR}", "--body-bg: #$backgroundColor;")
+                    .replace("--box-bg: {COLOR}", "--box-bg: #$cardColor;")
+                    .replace("--box-txt: {COLOR}", "--box-txt: #$textColor;")
+            }
             body {
                 val repeatableElement = id("repeated").removeElement()
                 id("content") {

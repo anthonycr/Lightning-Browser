@@ -6,9 +6,9 @@ import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.source.HostsSourceType
 import acr.browser.lightning.adblock.source.selectedHostsSource
 import acr.browser.lightning.adblock.source.toPreferenceIndex
-import acr.browser.lightning.di.DiskScheduler
-import acr.browser.lightning.di.MainScheduler
-import acr.browser.lightning.di.injector
+import acr.browser.lightning.browser.di.DiskScheduler
+import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.toast
@@ -80,7 +80,8 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
         forceRefreshHostsPreference?.isEnabled = isRefreshHostsEnabled()
     }
 
-    private fun isRefreshHostsEnabled() = userPreferences.selectedHostsSource() is HostsSourceType.Remote
+    private fun isRefreshHostsEnabled() =
+        userPreferences.selectedHostsSource() is HostsSourceType.Remote
 
     override fun onDestroy() {
         super.onDestroy()
@@ -161,9 +162,12 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                         .subscribeBy(
                             onComplete = { activity?.toast(R.string.action_message_canceled) },
                             onSuccess = { file ->
-                                userPreferences.hostsSource = HostsSourceType.Local(file).toPreferenceIndex()
+                                userPreferences.hostsSource =
+                                    HostsSourceType.Local(file).toPreferenceIndex()
                                 userPreferences.hostsLocalFile = file.path
-                                recentSummaryUpdater?.updateSummary(userPreferences.selectedHostsSource().toSummary())
+                                recentSummaryUpdater?.updateSummary(
+                                    userPreferences.selectedHostsSource().toSummary()
+                                )
                                 updateForNewHostsSource()
                             }
                         )

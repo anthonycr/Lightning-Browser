@@ -4,7 +4,7 @@ import acr.browser.lightning.adblock.util.hash.HashingAlgorithm
 import acr.browser.lightning.adblock.util.integer.lowerHalf
 import acr.browser.lightning.adblock.util.integer.upperHalf
 import java.io.Serializable
-import java.util.*
+import java.util.BitSet
 import kotlin.math.ln
 import kotlin.math.roundToInt
 
@@ -38,9 +38,10 @@ class DefaultBloomFilter<T>(
     private val hashingAlgorithm: HashingAlgorithm<T>
 ) : BloomFilter<T>, Serializable {
 
-    private val numberOfBits: Int = (-numberOfElements * ln(falsePositiveRate) / (ln(2.0) * ln(2.0)))
-        .roundToInt()
-        .coerceAtLeast(1)
+    private val numberOfBits: Int =
+        (-numberOfElements * ln(falsePositiveRate) / (ln(2.0) * ln(2.0)))
+            .roundToInt()
+            .coerceAtLeast(1)
 
     private val numberOfHashes: Int = (numberOfBits * ln(2.0) / numberOfElements)
         .roundToInt()

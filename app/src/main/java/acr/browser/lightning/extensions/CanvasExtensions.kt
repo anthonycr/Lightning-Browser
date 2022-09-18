@@ -1,7 +1,12 @@
 package acr.browser.lightning.extensions
 
 import acr.browser.lightning.utils.Utils.mixTwoColors
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.LinearGradient
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Shader
 import kotlin.math.tan
 
 /**

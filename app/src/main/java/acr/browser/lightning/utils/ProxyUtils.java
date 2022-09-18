@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 
 import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
-import acr.browser.lightning.browser.ProxyChoice;
+import acr.browser.lightning.browser.proxy.ProxyChoice;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.extensions.ActivityExtensions;
 import acr.browser.lightning.extensions.AlertDialogExtensionsKt;

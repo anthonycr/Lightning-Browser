@@ -29,6 +29,7 @@
         android:id="@+id/bookmark_folder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:completionThreshold="1"
         android:hint="@string/folder"
         android:maxLines="1"
         android:singleLine="true" />

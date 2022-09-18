@@ -11,7 +11,7 @@ import okhttp3.ResponseBody
 import java.io.IOException
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
-import java.util.*
+import java.util.Locale
 
 /**
  * The base search suggestions API. Provides common fetching and caching functionality for each
@@ -70,7 +70,10 @@ abstract class BaseSuggestionsModel internal constructor(
      *
      * @return the cache file containing the suggestions
      */
-    private fun OkHttpClient.downloadSuggestionsForQuery(query: String, language: String): Response? {
+    private fun OkHttpClient.downloadSuggestionsForQuery(
+        query: String,
+        language: String
+    ): Response? {
         val queryUrl = createQueryUrl(query, language)
         val request = requestFactory.createSuggestionsRequest(queryUrl, encoding)
         return try {
