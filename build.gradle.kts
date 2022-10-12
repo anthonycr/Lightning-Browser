@@ -9,7 +9,7 @@ buildscript {
         classpath("com.github.ben-manes:gradle-versions-plugin:0.36.0")
     }
 
-    extra.apply{
+    extra.apply {
         set("kotlinVersion", "1.4.21")
         set("minSdkVersion", 21)
         set("targetSdkVersion", 30)
