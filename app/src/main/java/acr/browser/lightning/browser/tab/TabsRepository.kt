@@ -115,10 +115,10 @@ class TabsRepository @Inject constructor(
             })
             .flatMapSingle(::createTabUnsafe)
             .toList()
-            .doOnSuccess {
+            .filter(List<TabModel>::isNotEmpty)
+            .doAfterSuccess {
                 isInitialized.onNext(true)
             }
-            .filter(List<TabModel>::isNotEmpty)
 
     override fun freeze() {
         if (userPreferences.restoreLostTabsEnabled) {
