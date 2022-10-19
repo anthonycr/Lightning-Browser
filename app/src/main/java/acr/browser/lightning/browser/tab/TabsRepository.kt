@@ -116,7 +116,7 @@ class TabsRepository @Inject constructor(
             .flatMapSingle(::createTabUnsafe)
             .toList()
             .filter(List<TabModel>::isNotEmpty)
-            .doAfterSuccess {
+            .doAfterTerminate {
                 isInitialized.onNext(true)
             }
 
