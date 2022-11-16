@@ -57,14 +57,6 @@ android {
         }
     }
 
-    tasks {
-        withType<Test> {
-            configure<JacocoTaskExtension> {
-                isIncludeNoLocationClasses = true
-            }
-        }
-    }
-
     flavorDimensions.add("capabilities")
 
     productFlavors {
