@@ -99,7 +99,7 @@ android {
 }
 
 jacoco {
-    toolVersion = "0.7.9" // See http://www.eclemma.org/jacoco/
+    toolVersion = "0.8.8" // See http://www.eclemma.org/jacoco/
 }
 
 dependencies {
