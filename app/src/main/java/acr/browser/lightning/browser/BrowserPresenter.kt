@@ -471,8 +471,8 @@ class BrowserPresenter @Inject constructor(
 
     private fun <T> List<T>.nextSelected(removedIndex: Int): T? {
         val nextIndex = when {
-            removedIndex > 0 -> removedIndex - 1
             size > removedIndex + 1 -> removedIndex + 1
+            removedIndex > 0 -> removedIndex - 1
             else -> -1
         }
         return if (nextIndex >= 0) {
