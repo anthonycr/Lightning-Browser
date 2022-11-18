@@ -94,7 +94,11 @@ class BookmarkPageFactory @Inject constructor(
         .ignoreElements()
         .toSingle {
             cacheIcon(
-                ThemeUtils.createThemedBitmap(application, R.drawable.ic_folder, false),
+                ThemeUtils.createThemedBitmap(
+                    application,
+                    R.drawable.ic_folder,
+                    themeProvider.color(R.attr.autoCompleteTitleColor)
+                ),
                 folderIconFile
             )
             cacheIcon(faviconModel.createDefaultBitmapForTitle(null), defaultIconFile)

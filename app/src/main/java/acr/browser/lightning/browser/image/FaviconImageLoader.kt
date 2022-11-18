@@ -4,7 +4,9 @@ import acr.browser.lightning.R
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.di.NetworkScheduler
+import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.extensions.drawable
+import acr.browser.lightning.extensions.themedDrawable
 import acr.browser.lightning.favicon.FaviconModel
 import android.app.Application
 import android.graphics.Bitmap
@@ -25,12 +27,19 @@ class FaviconImageLoader @Inject constructor(
     private val faviconModel: FaviconModel,
     application: Application,
     @NetworkScheduler private val networkScheduler: Scheduler,
-    @MainScheduler private val mainScheduler: Scheduler
+    @MainScheduler private val mainScheduler: Scheduler,
+    themeProvider: ThemeProvider
 ) : ImageLoader {
 
     private val lruCache: LruCache<String, Any> = LruCache(1 * 1000 * 1000)
-    private val folderIcon = application.drawable(R.drawable.ic_folder)
-    private val webPageIcon = application.drawable(R.drawable.ic_webpage)
+    private val folderIcon = application.themedDrawable(
+        R.drawable.ic_folder,
+        themeProvider.color(R.attr.autoCompleteTitleColor)
+    )
+    private val webPageIcon = application.themedDrawable(
+        R.drawable.ic_webpage,
+        themeProvider.color(R.attr.autoCompleteTitleColor)
+    )
     private val compositeDisposable = CompositeDisposable()
 
     override fun loadImage(imageView: ImageView, bookmark: Bookmark) {

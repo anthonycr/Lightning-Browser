@@ -155,6 +155,11 @@ public final class ThemeUtils {
     public static Bitmap createThemedBitmap(@NonNull Context context, @DrawableRes int res, boolean dark) {
         int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
 
+        return createThemedBitmap(context, res, color);
+    }
+
+    @NonNull
+    public static Bitmap createThemedBitmap(@NonNull Context context, @DrawableRes int res, @ColorInt int color) {
         Bitmap sourceBitmap = getBitmapFromVectorDrawable(context, res);
         Bitmap resultBitmap = Bitmap.createBitmap(sourceBitmap.getWidth(), sourceBitmap.getHeight(),
             Bitmap.Config.ARGB_8888);
