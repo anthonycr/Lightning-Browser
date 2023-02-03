@@ -45,6 +45,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     override fun providePreferencesXmlResource(): Int = R.xml.preference_ad_block
 
+    @Deprecated("Deprecated in Java")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -83,6 +84,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
     private fun isRefreshHostsEnabled() =
         userPreferences.selectedHostsSource() is HostsSourceType.Remote
 
+    @Deprecated("Deprecated in Java")
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.clear()
@@ -152,6 +154,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
         )
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {

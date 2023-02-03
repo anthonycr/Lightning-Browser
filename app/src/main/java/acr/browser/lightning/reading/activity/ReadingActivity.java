@@ -33,8 +33,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
@@ -57,8 +55,8 @@ public class ReadingActivity extends AppCompatActivity {
 
     private static final String TAG = "ReadingActivity";
 
-    @BindView(R.id.textViewTitle) TextView mTitle;
-    @BindView(R.id.textViewBody) TextView mBody;
+    private TextView mTitle;
+    private TextView mBody;
 
     @Inject UserPreferences mUserPreferences;
     @Inject @NetworkScheduler Scheduler mNetworkScheduler;
@@ -95,7 +93,8 @@ public class ReadingActivity extends AppCompatActivity {
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reading_view);
-        ButterKnife.bind(this);
+        mTitle = findViewById(R.id.textViewTitle);
+        mBody = findViewById(R.id.textViewBody);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

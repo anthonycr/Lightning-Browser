@@ -12,17 +12,17 @@ import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.settings.activity.SettingsActivity
 import acr.browser.lightning.utils.IntentUtils
 import acr.browser.lightning.utils.Utils
-import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Intent
 import android.graphics.Bitmap
+import androidx.fragment.app.FragmentActivity
 import javax.inject.Inject
 
 /**
  * The navigator implementation.
  */
 class BrowserNavigator @Inject constructor(
-    private val activity: Activity,
+    private val activity: FragmentActivity,
     private val clipboardManager: ClipboardManager,
     private val logger: Logger,
     private val downloadPermissionsHelper: DownloadPermissionsHelper,

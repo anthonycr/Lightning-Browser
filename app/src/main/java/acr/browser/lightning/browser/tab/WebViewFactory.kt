@@ -91,12 +91,10 @@ class WebViewFactory @Inject constructor(
 
             if (!incognitoMode || Capabilities.FULL_INCOGNITO.isSupported) {
                 domStorageEnabled = true
-                setAppCacheEnabled(true)
                 databaseEnabled = true
                 cacheMode = WebSettings.LOAD_DEFAULT
             } else {
                 domStorageEnabled = false
-                setAppCacheEnabled(false)
                 databaseEnabled = false
                 cacheMode = WebSettings.LOAD_NO_CACHE
             }
@@ -109,8 +107,6 @@ class WebViewFactory @Inject constructor(
             allowFileAccessFromFileURLs = false
             allowUniversalAccessFromFileURLs = false
 
-            // TODO: remove?
-            setAppCachePath(activity.getDir("appcache", 0).path)
             setGeolocationDatabasePath(activity.getDir("geolocation", 0).path)
         }
 

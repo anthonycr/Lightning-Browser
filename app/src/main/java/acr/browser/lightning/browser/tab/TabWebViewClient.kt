@@ -221,6 +221,7 @@ class TabWebViewClient @AssistedInject constructor(
         }.resizeAndShow()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
         if (!proxy.isProxyReady()) return true
         return urlHandler.shouldOverrideLoading(view, url, headers) ||

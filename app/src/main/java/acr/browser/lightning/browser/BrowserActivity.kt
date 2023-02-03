@@ -65,6 +65,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.window.OnBackInvokedCallback
+import android.window.OnBackInvokedDispatcher
+import androidx.activity.addCallback
 import javax.inject.Inject
 
 /**
@@ -292,6 +295,10 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         binding.searchSslStatus.setOnClickListener { presenter.onSslIconClick() }
 
         tabPager.longPressListener = presenter::onPageLongPress
+
+        onBackPressedDispatcher.addCallback {
+            presenter.onNavigateBack()
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -308,10 +315,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     override fun onPause() {
         super.onPause()
         presenter.onViewHidden()
-    }
-
-    override fun onBackPressed() {
-        presenter.onNavigateBack()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

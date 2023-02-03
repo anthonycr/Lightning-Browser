@@ -49,6 +49,7 @@
 
         <activity
             android:name="acr.browser.lightning.DefaultBrowserActivity"
+            android:exported="true"
             android:alwaysRetainTaskState="true"
             android:clearTaskOnLaunch="false"
             android:colorMode="wideColorGamut"
@@ -139,6 +140,7 @@
         </activity>
         <activity
             android:name="acr.browser.lightning.IncognitoBrowserActivity"
+            android:exported="true"
             android:alwaysRetainTaskState="true"
             android:colorMode="wideColorGamut"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
@@ -155,6 +157,7 @@
         </activity>
         <activity
             android:name=".settings.activity.SettingsActivity"
+            android:exported="false"
             android:colorMode="wideColorGamut"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
             android:label="@string/settings"
@@ -167,6 +170,7 @@
         </activity>
         <activity
             android:name=".reading.activity.ReadingActivity"
+            android:exported="false"
             android:colorMode="wideColorGamut"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
             android:label="@string/reading_mode"

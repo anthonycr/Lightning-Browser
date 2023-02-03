@@ -27,9 +27,10 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.FragmentActivity
 import androidx.palette.graphics.Palette
-import com.anthonycr.grant.PermissionsManager
-import com.anthonycr.grant.PermissionsResultAction
+import com.permissionx.guolindev.PermissionX
+import com.permissionx.guolindev.callback.RequestCallback
 import io.reactivex.Scheduler
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -39,7 +40,7 @@ import javax.inject.Inject
  * A [WebChromeClient] that supports the tab adaptation.
  */
 class TabWebChromeClient @Inject constructor(
-    private val activity: Activity,
+    private val activity: FragmentActivity,
     private val faviconModel: FaviconModel,
     @DiskScheduler private val diskScheduler: Scheduler,
     private val userPreferences: UserPreferences,
@@ -195,20 +196,19 @@ class TabWebChromeClient @Inject constructor(
 
     override fun requestPermissions(permissions: Set<String>, onGrant: (Boolean) -> Unit) {
         val missingPermissions = permissions
-            .filter { PermissionsManager.getInstance().hasPermission(activity, it) }
+            .filter { !PermissionX.isGranted(activity, it) }
 
         if (missingPermissions.isEmpty()) {
             onGrant(true)
         } else {
-            PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(
-                activity,
-                missingPermissions.toTypedArray(),
-                object : PermissionsResultAction() {
-                    override fun onGranted() = onGrant(true)
-
-                    override fun onDenied(permission: String?) = onGrant(false)
+            PermissionX.init(activity).permissions(missingPermissions)
+                .request { allGranted, _, _ ->
+                    if (allGranted) {
+                        onGrant(true)
+                    } else {
+                        onGrant(false)
+                    }
                 }
-            )
         }
     }
 
@@ -242,31 +242,30 @@ class TabWebChromeClient @Inject constructor(
     override fun onGeolocationPermissionsShowPrompt(
         origin: String,
         callback: GeolocationPermissions.Callback
-    ) = PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(
-        activity,
-        geoLocationPermissions,
-        object : PermissionsResultAction() {
-            override fun onGranted() {
-                val remember = true
-                AlertDialog.Builder(activity).apply {
-                    setTitle(activity.getString(R.string.location))
-                    val org = if (origin.length > 50) {
-                        "${origin.subSequence(0, 50)}..."
-                    } else {
-                        origin
-                    }
-                    setMessage(org + activity.getString(R.string.message_location))
-                    setCancelable(true)
-                    setPositiveButton(activity.getString(R.string.action_allow)) { _, _ ->
-                        callback.invoke(origin, true, remember)
-                    }
-                    setNegativeButton(activity.getString(R.string.action_dont_allow)) { _, _ ->
-                        callback.invoke(origin, false, remember)
-                    }
-                }.resizeAndShow()
+    ) {
+        PermissionX.init(activity).permissions(geoLocationPermissions.toList())
+            .request { allGranted, _, _ ->
+                if (allGranted) {
+                    val remember = true
+                    AlertDialog.Builder(activity).apply {
+                        setTitle(activity.getString(R.string.location))
+                        val org = if (origin.length > 50) {
+                            "${origin.subSequence(0, 50)}..."
+                        } else {
+                            origin
+                        }
+                        setMessage(org + activity.getString(R.string.message_location))
+                        setCancelable(true)
+                        setPositiveButton(activity.getString(R.string.action_allow)) { _, _ ->
+                            callback.invoke(origin, true, remember)
+                        }
+                        setNegativeButton(activity.getString(R.string.action_dont_allow)) { _, _ ->
+                            callback.invoke(origin, false, remember)
+                        }
+                    }.resizeAndShow()
+                } else {
+                    //TODO show message and/or turn off setting
+                }
             }
-
-            //TODO show message and/or turn off setting
-            override fun onDenied(permission: String) = Unit
-        })
+    }
 }

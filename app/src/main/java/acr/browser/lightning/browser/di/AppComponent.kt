@@ -7,7 +7,6 @@ import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.ThemableBrowserActivity
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.dialog.LightningDialogBuilder
-import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.SettingsActivity
@@ -56,8 +55,6 @@ interface AppComponent {
     fun inject(activity: SettingsActivity)
 
     fun inject(activity: ThemableSettingsActivity)
-
-    fun inject(listener: LightningDownloadListener)
 
     fun inject(fragment: PrivacySettingsFragment)
 

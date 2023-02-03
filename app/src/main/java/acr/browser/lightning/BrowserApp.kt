@@ -18,7 +18,6 @@ import android.app.Application
 import android.os.Build
 import android.os.StrictMode
 import android.webkit.WebView
-import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
@@ -111,7 +110,7 @@ class BrowserApp : Application() {
             .subscribe()
 
         if (developerPreferences.useLeakCanary && buildInfo.buildType == BuildType.DEBUG) {
-            LeakCanary.install(this)
+            // LeakCanary.install(this)
         }
         if (buildInfo.buildType == BuildType.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true)

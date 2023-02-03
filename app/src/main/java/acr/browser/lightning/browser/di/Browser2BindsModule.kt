@@ -11,6 +11,8 @@ import acr.browser.lightning.browser.proxy.ProxyAdapter
 import acr.browser.lightning.browser.tab.TabsRepository
 import acr.browser.lightning.browser.theme.DefaultThemeProvider
 import acr.browser.lightning.browser.theme.ThemeProvider
+import android.app.Activity
+import androidx.fragment.app.FragmentActivity
 import dagger.Binds
 import dagger.Module
 
@@ -19,6 +21,9 @@ import dagger.Module
  */
 @Module
 interface Browser2BindsModule {
+
+    @Binds
+    fun bindsActivity(fragmentActivity: FragmentActivity): Activity
 
     @Binds
     fun bindsBrowserModel(tabsRepository: TabsRepository): BrowserContract.Model

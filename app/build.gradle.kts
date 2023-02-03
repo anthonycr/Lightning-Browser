@@ -3,18 +3,17 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("kotlin-android-extensions")
     id("kotlin-kapt")
     id("jacoco")
     id("com.github.ben-manes.versions")
 }
 
 android {
-    compileSdk = 30
+    compileSdk = 33
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 30
+        targetSdk = 33
         versionName = "5.1.0"
         vectorDrawables.useSupportLibrary = true
     }
@@ -100,7 +99,7 @@ dependencies {
 
     // test dependencies
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.assertj:assertj-core:3.20.2")
+    testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("org.mockito:mockito-core:3.11.2")
     testImplementation("com.nhaarman:mockito-kotlin:1.6.0") {
         exclude(group = "org.jetbrains.kotlin")
@@ -109,14 +108,14 @@ dependencies {
 
     // support libraries
     implementation("androidx.palette:palette-ktx:1.0.0")
-    implementation("androidx.annotation:annotation:1.2.0")
+    implementation("androidx.annotation:annotation:1.5.0")
     implementation("androidx.vectordrawable:vectordrawable-animated:1.1.0")
-    implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("com.google.android.material:material:1.4.0")
+    implementation("androidx.appcompat:appcompat:1.6.0")
+    implementation("com.google.android.material:material:1.8.0")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("androidx.core:core-ktx:1.7.0-alpha01")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-    implementation("androidx.fragment:fragment-ktx:1.3.6")
+    implementation("androidx.core:core-ktx:1.10.0-alpha02")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.fragment:fragment-ktx:1.5.5")
     implementation("androidx.drawerlayout:drawerlayout:1.1.1")
 
     // html parsing for reading mode
@@ -128,18 +127,13 @@ dependencies {
     kapt("com.anthonycr.mezzanine:mezzanine-compiler:$mezzanineVersion")
 
     // dependency injection
-    val daggerVersion = "2.38"
+    val daggerVersion = "2.44.2"
     implementation("com.google.dagger:dagger:$daggerVersion")
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
     compileOnly("javax.annotation:jsr250-api:1.0")
 
-    // view binding
-    val butterKnifeVersion = "10.2.3"
-    implementation("com.jakewharton:butterknife:$butterKnifeVersion")
-    kapt("com.jakewharton:butterknife-compiler:$butterKnifeVersion")
-
     // permissions
-    implementation("com.anthonycr.grant:permissions:1.1.2")
+    implementation("com.guolindev.permissionx:permissionx:1.7.1")
 
     // proxy support
     implementation("net.i2p.android:client:0.9.45")
@@ -159,10 +153,10 @@ dependencies {
 
     implementation("com.anthonycr.progress:animated-progress:1.0")
 
-    // memory leak analysis
-    val leakCanaryVersion = "1.6.3"
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion")
-    releaseImplementation("com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion")
+//    // memory leak analysis
+//    val leakCanaryVersion = "1.6.3"
+//    debugImplementation("com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion")
+//    releaseImplementation("com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion")
 
     // kotlin
     implementation(kotlin("stdlib", KotlinCompilerVersion.VERSION))
@@ -175,9 +169,6 @@ kapt {
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).all {
-    sourceCompatibility = JavaVersion.VERSION_1_8.toString()
-    targetCompatibility = JavaVersion.VERSION_1_8.toString()
-
     kotlinOptions {
         jvmTarget = "1.8"
         kotlinOptions {

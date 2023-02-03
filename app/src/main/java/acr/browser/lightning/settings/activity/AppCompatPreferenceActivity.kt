@@ -23,6 +23,7 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
 
     private lateinit var delegate: AppCompatDelegate
 
+    @Deprecated("Deprecated in Java")
     override fun onCreate(savedInstanceState: Bundle?) {
         delegate = AppCompatDelegate.create(this, null)
         overridePendingTransition(R.anim.slide_in_from_right, R.anim.fade_out_scale)
@@ -74,11 +75,13 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onStop() {
         super.onStop()
         delegate.onStop()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onDestroy() {
         super.onDestroy()
         delegate.onDestroy()

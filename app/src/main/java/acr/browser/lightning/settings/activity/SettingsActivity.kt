@@ -12,13 +12,13 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import com.anthonycr.grant.PermissionsManager
 import javax.inject.Inject
 
 class SettingsActivity : ThemableSettingsActivity() {
 
     @Inject lateinit var buildInfo: BuildInfo
 
+    @Deprecated("Deprecated in Java")
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
         super.onCreate(savedInstanceState)
@@ -36,6 +36,7 @@ class SettingsActivity : ThemableSettingsActivity() {
         getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBuildHeaders(target: MutableList<Header>) {
         loadHeadersFromResource(R.xml.preferences_headers, target)
         fragments.clear()
@@ -47,20 +48,13 @@ class SettingsActivity : ThemableSettingsActivity() {
         fragments.addAll(target.map(Header::fragment))
     }
 
+    @Deprecated("Deprecated in Java")
     override fun isValidFragment(fragmentName: String): Boolean = fragments.contains(fragmentName)
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         finish()
         return true
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults)
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     companion object {

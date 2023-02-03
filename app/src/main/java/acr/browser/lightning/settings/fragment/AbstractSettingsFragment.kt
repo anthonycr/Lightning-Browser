@@ -18,6 +18,7 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
     @XmlRes
     protected abstract fun providePreferencesXmlResource(): Int
 
+    @Deprecated("Deprecated in Java")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

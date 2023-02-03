@@ -1,11 +1,11 @@
 package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.browser.BrowserActivity
-import android.app.Activity
 import android.content.Intent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.fragment.app.FragmentActivity
 import dagger.BindsInstance
 import dagger.Subcomponent
 import javax.inject.Qualifier
@@ -21,7 +21,7 @@ interface Browser2Component {
     interface Builder {
 
         @BindsInstance
-        fun activity(activity: Activity): Builder
+        fun activity(activity: FragmentActivity): Builder
 
         @BindsInstance
         fun browserFrame(frameLayout: FrameLayout): Builder

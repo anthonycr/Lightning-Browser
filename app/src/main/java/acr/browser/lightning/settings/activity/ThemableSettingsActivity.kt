@@ -16,6 +16,7 @@ abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
 
     @Inject internal lateinit var userPreferences: UserPreferences
 
+    @Deprecated("Deprecated in Java")
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
         themeId = userPreferences.useTheme

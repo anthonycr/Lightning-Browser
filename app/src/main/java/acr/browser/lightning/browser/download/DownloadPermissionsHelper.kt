@@ -1,22 +1,21 @@
 package acr.browser.lightning.browser.download
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
-import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.dialog.BrowserDialog.setDialogSize
 import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import android.Manifest
-import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
 import android.text.format.Formatter
 import android.webkit.URLUtil
 import androidx.appcompat.app.AlertDialog
-import com.anthonycr.grant.PermissionsManager
-import com.anthonycr.grant.PermissionsResultAction
+import androidx.fragment.app.FragmentActivity
+import com.permissionx.guolindev.PermissionX
 import io.reactivex.Scheduler
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -36,19 +35,21 @@ class DownloadPermissionsHelper @Inject constructor(
      * Download a file with the provided [url].
      */
     fun download(
-        activity: Activity,
+        activity: FragmentActivity,
         url: String,
         userAgent: String?,
         contentDisposition: String?,
         mimeType: String?,
         contentLength: Long
     ) {
-        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ),
-            object : PermissionsResultAction() {
-                override fun onGranted() {
+        PermissionX.init(activity)
+            .permissions(
+                listOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            ).request { allGranted, grantedList, deniedList ->
+                if (allGranted) {
                     val fileName = URLUtil.guessFileName(url, contentDisposition, mimeType)
                     val downloadSize: String = if (contentLength > 0) {
                         Formatter.formatFileSize(activity, contentLength)
@@ -98,13 +99,11 @@ class DownloadPermissionsHelper @Inject constructor(
                         ).show()
                     setDialogSize(activity, dialog)
                     logger.log(TAG, "Downloading: $fileName")
-                }
-
-                override fun onDenied(permission: String) {
+                } else {
                     //TODO show message
                     logger.log(TAG, "Download permission denied")
                 }
-            })
+            }
     }
 
     companion object {
