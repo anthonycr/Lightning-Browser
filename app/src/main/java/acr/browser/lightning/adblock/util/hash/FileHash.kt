@@ -29,5 +29,5 @@ fun InputStream.computeMD5(): String {
         t.printStackTrace()
     }
 
-    return returnVal.toUpperCase(Locale.ROOT)
+    return returnVal.uppercase(Locale.ROOT)
 }

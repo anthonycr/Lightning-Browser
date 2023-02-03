@@ -63,7 +63,7 @@ class HistoryDatabase @Inject constructor(
 
     override fun visitHistoryEntry(url: String, title: String): Completable =
         Single.just(Pair(url, title))
-            .filter { (url, title) -> title.isNotBlank() }
+            .filter { (_, title) -> title.isNotBlank() }
             .flatMapCompletable { (url, title) ->
                 Completable.fromAction {
                     val values = ContentValues().apply {

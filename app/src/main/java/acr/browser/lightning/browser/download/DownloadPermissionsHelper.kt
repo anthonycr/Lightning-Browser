@@ -48,7 +48,7 @@ class DownloadPermissionsHelper @Inject constructor(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 )
-            ).request { allGranted, grantedList, deniedList ->
+            ).request { allGranted, _, _ ->
                 if (allGranted) {
                     val fileName = URLUtil.guessFileName(url, contentDisposition, mimeType)
                     val downloadSize: String = if (contentLength > 0) {
