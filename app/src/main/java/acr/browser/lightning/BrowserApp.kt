@@ -21,6 +21,7 @@ import android.webkit.WebView
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
+import leakcanary.LeakCanary
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -109,9 +110,10 @@ class BrowserApp : Application() {
             .subscribeOn(databaseScheduler)
             .subscribe()
 
-        if (developerPreferences.useLeakCanary && buildInfo.buildType == BuildType.DEBUG) {
-            // LeakCanary.install(this)
-        }
+        LeakCanary.config = LeakCanary.config.copy(
+            dumpHeap = developerPreferences.useLeakCanary && buildInfo.buildType == BuildType.DEBUG
+        )
+
         if (buildInfo.buildType == BuildType.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true)
         }

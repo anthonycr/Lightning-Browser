@@ -153,10 +153,8 @@ dependencies {
 
     implementation("com.anthonycr.progress:animated-progress:1.0")
 
-//    // memory leak analysis
-//    val leakCanaryVersion = "1.6.3"
-//    debugImplementation("com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion")
-//    releaseImplementation("com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion")
+    // memory leak analysis
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.10")
 
     // kotlin
     implementation(kotlin("stdlib", KotlinCompilerVersion.VERSION))
