@@ -12,6 +12,7 @@ import acr.browser.lightning.device.BuildType
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.DeveloperPreferences
 import acr.browser.lightning.utils.FileUtils
+import acr.browser.lightning.utils.LeakCanaryUtils
 import acr.browser.lightning.utils.MemoryLeakUtils
 import android.app.Activity
 import android.app.Application
@@ -21,7 +22,6 @@ import android.webkit.WebView
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
-import leakcanary.LeakCanary
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -31,7 +31,7 @@ import kotlin.system.exitProcess
 class BrowserApp : Application() {
 
     @Inject
-    internal lateinit var developerPreferences: DeveloperPreferences
+    internal lateinit var leakCanaryUtils: LeakCanaryUtils
 
     @Inject
     internal lateinit var bookmarkModel: BookmarkRepository
@@ -110,9 +110,9 @@ class BrowserApp : Application() {
             .subscribeOn(databaseScheduler)
             .subscribe()
 
-        LeakCanary.config = LeakCanary.config.copy(
-            dumpHeap = developerPreferences.useLeakCanary && buildInfo.buildType == BuildType.DEBUG
-        )
+        if (buildInfo.buildType == BuildType.DEBUG) {
+            leakCanaryUtils.setup()
+        }
 
         if (buildInfo.buildType == BuildType.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true)
