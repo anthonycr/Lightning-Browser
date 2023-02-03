@@ -12,7 +12,7 @@ class DefaultHistoryRecord @Inject constructor(
     private val historyRepository: HistoryRepository,
     @DatabaseScheduler private val databaseScheduler: Scheduler
 ) : HistoryRecord {
-    override fun recordVisit(title: String, url: String) {
+    override fun visit(title: String, url: String) {
         historyRepository.visitHistoryEntry(url, title)
             .subscribeOn(databaseScheduler)
             .subscribe()

@@ -8,6 +8,6 @@ interface HistoryRecord {
     /**
      * Record a visit to the [url] with the provided [title].
      */
-    fun recordVisit(title: String, url: String)
+    fun visit(title: String, url: String)
 
 }

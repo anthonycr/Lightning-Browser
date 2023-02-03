@@ -34,7 +34,7 @@ interface HistoryRepository {
      * @param title the title of the item that was visited.
      * @return a valid observable.
      */
-    fun visitHistoryEntry(url: String, title: String?): Completable
+    fun visitHistoryEntry(url: String, title: String): Completable
 
     /**
      * An observable that finds all history items containing the given query. If the query is

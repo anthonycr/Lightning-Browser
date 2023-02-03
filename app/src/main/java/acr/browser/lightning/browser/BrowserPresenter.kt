@@ -310,7 +310,7 @@ class BrowserPresenter @Inject constructor(
                     })
 
                     tabModel.url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {
-                        historyRecord.recordVisit(title, it)
+                        historyRecord.visit(title, it)
                     }
                 }
         }
