@@ -139,7 +139,7 @@ dependencies {
     implementation("net.i2p.android:client:0.9.45")
     implementation("net.i2p.android:helper:0.9.5")
 
-    implementation("com.squareup.okhttp3:okhttp:3.14.9")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
 
     // rx
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
