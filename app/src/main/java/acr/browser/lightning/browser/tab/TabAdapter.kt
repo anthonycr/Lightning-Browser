@@ -143,7 +143,8 @@ class TabAdapter(
     override fun urlChanges(): Observable<String> = tabWebViewClient.urlObservable.hide()
 
     override val title: String
-        get() = latentInitializer?.initialTitle ?: webView.title ?: defaultTabTitle
+        get() = latentInitializer?.initialTitle ?: webView.title?.takeIf(String::isNotBlank)
+        ?: defaultTabTitle
 
     override fun titleChanges(): Observable<String> = tabWebChromeClient.titleObservable.hide()
 
