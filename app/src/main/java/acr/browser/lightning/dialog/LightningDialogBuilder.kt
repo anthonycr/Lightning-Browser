@@ -115,7 +115,7 @@ class LightningDialogBuilder @Inject constructor() {
         onSave: (title: String, url: String, folder: String) -> Unit
     ) {
         val editBookmarkDialog = AlertDialog.Builder(activity)
-        editBookmarkDialog.setTitle(R.string.action_add_bookmark)
+        editBookmarkDialog.setTitle(R.string.dialog_edit_bookmark)
         val dialogLayout = View.inflate(activity, R.layout.dialog_edit_bookmark, null)
         val binding = DialogEditBookmarkBinding.bind(dialogLayout)
         binding.bookmarkTitle.setText(currentTitle)
