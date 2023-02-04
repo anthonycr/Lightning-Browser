@@ -39,6 +39,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
+        android:taskAffinity="com.anthonycr.browser.AffinityDefault"
         android:usesCleartextTraffic="true">
         <meta-data
             android:name="android.webkit.WebView.MetricsOptOut"
@@ -55,7 +56,6 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
             android:exported="true"
             android:launchMode="singleInstance"
-            android:taskAffinity="com.anthonycr.browser.AffinityDefault"
             android:theme="@style/Theme.LightTheme"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
@@ -165,7 +165,7 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
             android:exported="false"
             android:label="@string/settings"
-            android:taskAffinity="com.anthonycr.browser.AffinityDefault"
+            android:parentActivityName="acr.browser.lightning.DefaultBrowserActivity"
             android:theme="@style/Theme.SettingsTheme">
             <intent-filter>
                 <action android:name="android.intent.action.SETTINGS" />
@@ -179,7 +179,7 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
             android:exported="false"
             android:label="@string/reading_mode"
-            android:taskAffinity="com.anthonycr.browser.AffinityDefault"
+            android:parentActivityName="acr.browser.lightning.DefaultBrowserActivity"
             android:theme="@style/Theme.SettingsTheme">
             <intent-filter>
                 <action android:name="android.intent.action.READING" />
