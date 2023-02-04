@@ -165,6 +165,7 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
             android:exported="false"
             android:label="@string/settings"
+            android:taskAffinity="com.anthonycr.browser.AffinityDefault"
             android:theme="@style/Theme.SettingsTheme">
             <intent-filter>
                 <action android:name="android.intent.action.SETTINGS" />
@@ -178,6 +179,7 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
             android:exported="false"
             android:label="@string/reading_mode"
+            android:taskAffinity="com.anthonycr.browser.AffinityDefault"
             android:theme="@style/Theme.SettingsTheme">
             <intent-filter>
                 <action android:name="android.intent.action.READING" />
