@@ -12,6 +12,7 @@ import android.Manifest
 import android.app.Dialog
 import android.content.DialogInterface
 import android.text.format.Formatter
+import android.webkit.MimeTypeMap
 import android.webkit.URLUtil
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
@@ -50,7 +51,13 @@ class DownloadPermissionsHelper @Inject constructor(
                 )
             ).request { allGranted, _, _ ->
                 if (allGranted) {
-                    val fileName = URLUtil.guessFileName(url, contentDisposition, mimeType)
+                    val fileName = MimeTypeMap.getFileExtensionFromUrl(url)
+                        .takeIf(String::isNotBlank)
+                        ?: if (MimeTypeMap.getSingleton().hasMimeType(mimeType)) {
+                            URLUtil.guessFileName(url, contentDisposition, mimeType)
+                        } else {
+                            url
+                        }
                     val downloadSize: String = if (contentLength > 0) {
                         Formatter.formatFileSize(activity, contentLength)
                     } else {
