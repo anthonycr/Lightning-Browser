@@ -1,7 +1,6 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.image.IconFreeze
-import acr.browser.lightning.browser.proxy.Proxy
 import acr.browser.lightning.preference.UserPreferences
 import android.graphics.Bitmap
 import android.webkit.WebView
@@ -17,7 +16,6 @@ class TabFactory @Inject constructor(
     @DefaultUserAgent private val defaultUserAgent: String,
     @DefaultTabTitle private val defaultTabTitle: String,
     @IconFreeze private val iconFreeze: Bitmap,
-    private val proxy: Proxy,
     private val tabWebViewClientFactory: TabWebViewClient.Factory,
     private val tabWebChromeClientProvider: Provider<TabWebChromeClient>
 ) {
@@ -36,8 +34,7 @@ class TabFactory @Inject constructor(
             userPreferences = userPreferences,
             defaultUserAgent = defaultUserAgent,
             defaultTabTitle = defaultTabTitle,
-            iconFreeze = iconFreeze,
-            proxy = proxy
+            iconFreeze = iconFreeze
         )
     }
 }

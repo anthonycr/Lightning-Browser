@@ -3,7 +3,6 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
-import acr.browser.lightning.browser.proxy.Proxy
 import acr.browser.lightning.databinding.DialogAuthRequestBinding
 import acr.browser.lightning.databinding.DialogSslWarningBinding
 import acr.browser.lightning.extensions.resizeAndShow
@@ -42,7 +41,6 @@ class TabWebViewClient @AssistedInject constructor(
     private val allowListModel: AllowListModel,
     private val urlHandler: UrlHandler,
     @Assisted private val headers: Map<String, String>,
-    private val proxy: Proxy,
     private val userPreferences: UserPreferences,
     private val sslWarningPreferences: SslWarningPreferences,
     private val textReflow: TextReflow,
@@ -223,14 +221,12 @@ class TabWebViewClient @AssistedInject constructor(
 
     @Deprecated("Deprecated in Java")
     override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-        if (!proxy.isProxyReady()) return true
         return urlHandler.shouldOverrideLoading(view, url, headers) ||
             super.shouldOverrideUrlLoading(view, url)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-        if (!proxy.isProxyReady()) return true
         return urlHandler.shouldOverrideLoading(view, request.url.toString(), headers) ||
             super.shouldOverrideUrlLoading(view, request)
     }
@@ -239,7 +235,7 @@ class TabWebViewClient @AssistedInject constructor(
         view: WebView,
         request: WebResourceRequest
     ): WebResourceResponse? {
-        if (shouldBlockRequest(currentUrl, request.url.toString()) || !proxy.isProxyReady()) {
+        if (shouldBlockRequest(currentUrl, request.url.toString())) {
             val empty = ByteArrayInputStream(emptyResponseByteArray)
             return WebResourceResponse(BLOCKED_RESPONSE_MIME_TYPE, BLOCKED_RESPONSE_ENCODING, empty)
         }

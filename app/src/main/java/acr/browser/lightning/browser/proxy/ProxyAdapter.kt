@@ -9,12 +9,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * An adapter between [ProxyUtils] and [Proxy].
+ * Properly updates the current proxy when the activity is refreshed..
  */
 @Singleton
 class ProxyAdapter @Inject constructor(
     private val proxyUtils: ProxyUtils
-) : Proxy, Application.ActivityLifecycleCallbacks {
+) : Application.ActivityLifecycleCallbacks {
 
     private var currentActivity: Activity? = null
 
@@ -23,10 +23,7 @@ class ProxyAdapter @Inject constructor(
         currentActivity = activity
     }
 
-    override fun onActivityStarted(activity: Activity) {
-        if (activity !is BrowserActivity) return
-        proxyUtils.onStart(activity)
-    }
+    override fun onActivityStarted(activity: Activity) = Unit
 
     override fun onActivityResumed(activity: Activity) {
         if (activity !is BrowserActivity) return
@@ -36,10 +33,7 @@ class ProxyAdapter @Inject constructor(
 
     override fun onActivityPaused(activity: Activity) = Unit
 
-    override fun onActivityStopped(activity: Activity) {
-        if (activity !is BrowserActivity) return
-        proxyUtils.onStop()
-    }
+    override fun onActivityStopped(activity: Activity) = Unit
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
 
@@ -47,6 +41,4 @@ class ProxyAdapter @Inject constructor(
         if (activity !is BrowserActivity) return
         currentActivity = null
     }
-
-    override fun isProxyReady(): Boolean = currentActivity?.let(proxyUtils::isProxyReady) ?: false
 }

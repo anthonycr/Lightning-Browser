@@ -150,17 +150,13 @@
     <string-array name="proxy_choices_array">
         <item>Aucun</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>Manuel</item>
     </string-array>
     <string name="manual_proxy">Proxy manuel</string>
     <string name="host">Host :</string>
     <string name="port">Port :</string>
     <string name="use_tor_prompt">Il semble que vous avez installé Orbot. Voulez-vous utiliser Tor ?</string>
-    <string name="use_i2p_prompt">Il semble que vous avez installé I2P. Voulez-vous utiliser I2P ?</string>
     <string name="install_orbot">Veuillez installer Orbot comme proxy avec Tor.</string>
-    <string name="i2p_not_running">I2P n\'est pas exécution.</string>
-    <string name="i2p_tunnels_not_ready">Les tunnels I2P ne sont pas encore prêts.</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="clear_cookies_exit">Effacer les cookies en quittant</string>

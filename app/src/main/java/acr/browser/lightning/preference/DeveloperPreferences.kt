@@ -20,9 +20,9 @@ class DeveloperPreferences @Inject constructor(
 
     var checkedForTor by preferences.booleanPreference(INITIAL_CHECK_FOR_TOR, false)
 
-    var checkedForI2P by preferences.booleanPreference(INITIAL_CHECK_FOR_I2P, false)
+    // var checkedForI2P by preferences.booleanPreference(INITIAL_CHECK_FOR_I2P, false)
 }
 
 private const val LEAK_CANARY = "leakCanary"
 private const val INITIAL_CHECK_FOR_TOR = "checkForTor"
-private const val INITIAL_CHECK_FOR_I2P = "checkForI2P"
+// private const val INITIAL_CHECK_FOR_I2P = "checkForI2P"

@@ -177,17 +177,13 @@
     <string-array name="proxy_choices_array">
         <item>Yok</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>El ile</item>
     </string-array>
     <string name="manual_proxy">Elle vekil sunucu</string>
     <string name="host">Host:</string>
     <string name="port">Port:</string>
     <string name="use_tor_prompt">Cihazında Orbot yüklü görünüyor. Tor kullanmak ister misiniz?</string>
-    <string name="use_i2p_prompt">Cihazında I2P yüklü görünüyor. I2P kullanmak ister misiniz?</string>
     <string name="install_orbot">Tor proxy ağı ile gezinmek için Orbot yüklemelisiniz.</string>
-    <string name="i2p_not_running">I2P çalışmıyor.</string>
-    <string name="i2p_tunnels_not_ready">I2P tünelleri henüz hazır değil.</string>
     <string name="yes">Evet</string>
     <string name="no">Hayır</string>
     <string name="clear_cookies_exit">Çıkarken çerezleri temizle</string>

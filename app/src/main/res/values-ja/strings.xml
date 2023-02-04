@@ -137,17 +137,13 @@
     <string-array name="proxy_choices_array">
         <item>使用しない</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>手動</item>
     </string-array>
     <string name="manual_proxy">手動プロキシ</string>
     <string name="host">ホスト:</string>
     <string name="port">ポート:</string>
     <string name="use_tor_prompt">Orbot はインストール済みです。Tor を使用しますか?</string>
-    <string name="use_i2p_prompt">I2P はインストール済みです。I2P を使用しますか?</string>
     <string name="install_orbot">プロキシとして Tor を使用にするには Orbot をインストールしてください</string>
-    <string name="i2p_not_running">I2P が動作していません</string>
-    <string name="i2p_tunnels_not_ready">I2P トンネルの使用準備が整っていません</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
     <string name="clear_cookies_exit">終了時に Cookie を消去する</string>

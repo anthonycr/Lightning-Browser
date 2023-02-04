@@ -185,9 +185,6 @@
     <string name="manual_proxy">수동 프록시</string>
     <string name="host">호스트:</string>
     <string name="port">포트:</string>
-    <string name="use_i2p_prompt">I2P가 설치되어 있습니다. I2P를 사용할까요?</string>
-    <string name="i2p_not_running">I2P가 실행 중이지 않습니다.</string>
-    <string name="i2p_tunnels_not_ready">I2P 터널이 준비되지 않았습니다.</string>
     <string name="bookmark_export_failure">죄송합니다, 즐겨찾기를 내보내지 못했습니다!</string>
     <string name="message_bookmark_added">즐겨찾기를 추가했습니다.</string>
     <string name="close_other_tabs">다른 탭 닫기</string>

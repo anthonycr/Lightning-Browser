@@ -146,17 +146,13 @@
     <string-array name="proxy_choices_array">
         <item>無</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>手動設定</item>
     </string-array>
     <string name="manual_proxy">手動設定代理</string>
     <string name="host">主機位址：</string>
     <string name="port">連線埠：</string>
     <string name="use_tor_prompt">看起來您已經安裝了 Orbot，您想使用 Tor 嗎？</string>
-    <string name="use_i2p_prompt">看起來您已經安裝 I2P。您想使用 I2P 嗎？</string>
     <string name="install_orbot">請安裝 Orbot 以便透過 Tor 使用 Proxy。</string>
-    <string name="i2p_not_running">I2P 非執行中</string>
-    <string name="i2p_tunnels_not_ready">尚未準備好 I2P Tunnel。</string>
     <string name="yes">確定</string>
     <string name="no">取消</string>
     <string name="clear_cookies_exit">結束時清除 Cookies</string>

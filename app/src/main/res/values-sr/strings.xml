@@ -147,17 +147,13 @@
     <string-array name="proxy_choices_array">
         <item>Ништа</item>
         <item>Орбот</item>
-        <item>I2P</item>
         <item>Ручно</item>
     </string-array>
     <string name="manual_proxy">Ручне поставке проксија</string>
     <string name="host">Домаћин:</string>
     <string name="port">Порт:</string>
     <string name="use_tor_prompt">Изгледа да имате Орбот инсталиран. Желите ли да користите Тор?</string>
-    <string name="use_i2p_prompt">Изгледа да имате I2P инсталиран. Желите ли да користите I2P?</string>
     <string name="install_orbot">Инсталирајте Орбот да бисте користили Тор.</string>
-    <string name="i2p_not_running">I2P није покренут.</string>
-    <string name="i2p_tunnels_not_ready">I2P тунели још нису спремни.</string>
     <string name="yes">Да</string>
     <string name="no">Не</string>
     <string name="clear_cookies_exit">Очисти колачиће по затварању</string>

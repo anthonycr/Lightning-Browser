@@ -121,7 +121,6 @@
     <string-array name="proxy_choices_array">
         <item>Ninguno</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>Manual</item>
     </string-array>
     <string name="manual_proxy">Proxy manual</string>
@@ -225,10 +224,6 @@
     <string name="dialog_rename_folder">Renombrar carpeta</string>
     <string name="dialog_remove_folder">Remover carpeta</string>
     <string name="dialog_title_close_browser">Cerrar navegador</string>
-
-    <string name="i2p_not_running">I2P no está corriendo.</string>
-    <string name="i2p_tunnels_not_ready">Los túneles I2P no están preparados aún.</string>
-    <string name="use_i2p_prompt">Parece que tienes I2P instalado. ¿Quieres usar I2P?</string>
 
     <string name="message_certificate_date_invalid">la fecha del certificado no es válida</string>
     <string name="message_certificate_domain_mismatch">el dominio del certificado no coincide con el dominio del sitio web</string>

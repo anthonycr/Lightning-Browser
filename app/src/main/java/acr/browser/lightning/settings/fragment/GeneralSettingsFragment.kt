@@ -115,7 +115,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         return when (this) {
             ProxyChoice.NONE -> stringArray[0]
             ProxyChoice.ORBOT -> stringArray[1]
-            ProxyChoice.I2P -> stringArray[2]
+            // ProxyChoice.I2P -> stringArray[2]
             ProxyChoice.MANUAL -> "${userPreferences.proxyHost}:${userPreferences.proxyPort}"
         }
     }
@@ -129,8 +129,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     it, when (it) {
                         ProxyChoice.NONE -> stringArray[0]
                         ProxyChoice.ORBOT -> stringArray[1]
-                        ProxyChoice.I2P -> stringArray[2]
-                        ProxyChoice.MANUAL -> stringArray[3]
+                        // ProxyChoice.I2P -> stringArray[2]
+                        ProxyChoice.MANUAL -> stringArray[2]
                     }
                 )
             }

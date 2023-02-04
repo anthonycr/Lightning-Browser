@@ -130,17 +130,13 @@
     <string-array name="proxy_choices_array">
         <item>Нет</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>Вручную</item>
     </string-array>
     <string name="manual_proxy">Прокси</string>
     <string name="host">Хост:</string>
     <string name="port">Порт:</string>
     <string name="use_tor_prompt">Похоже, установлен Orbot. Вы хотите использовать Tor?</string>
-    <string name="use_i2p_prompt">Похоже, установлен I2P. Вы хотите использовать I2P?</string>
     <string name="install_orbot">Пожалуйста, установите Orbot для проксирования через Tor.</string>
-    <string name="i2p_not_running">I2P не запущен.</string>
-    <string name="i2p_tunnels_not_ready">I2P туннели ещё не готовы.</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="clear_cookies_exit">Очищать куки при выходе</string>

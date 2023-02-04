@@ -135,10 +135,6 @@ dependencies {
     // permissions
     implementation("com.guolindev.permissionx:permissionx:1.7.1")
 
-    // proxy support
-    implementation("net.i2p.android:client:0.9.45")
-    implementation("net.i2p.android:helper:0.9.5")
-
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
 
     // rx

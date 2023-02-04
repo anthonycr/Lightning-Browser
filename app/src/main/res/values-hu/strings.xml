@@ -147,17 +147,13 @@
     <string-array name="proxy_choices_array">
         <item>Egyik sem</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>Manuális</item>
     </string-array>
     <string name="manual_proxy">Manuális proxy</string>
     <string name="host">Hoszt:</string>
     <string name="port">Port:</string>
     <string name="use_tor_prompt">Úgy tűnik, hogy önnek telepítve van az Orbot. Szeretné használni a Tor-t?</string>
-    <string name="use_i2p_prompt">Úgy tűnik, hogy önnek telepítve van az I2P. Szeretné használni az I2P-t?</string>
     <string name="install_orbot">Kérjük telepítse az Orbot-ot annak érdekében, hogy működjön a proxy a Tor-ral.</string>
-    <string name="i2p_not_running">I2P, nem fut.</string>
-    <string name="i2p_tunnels_not_ready">I2P alagútak, nem állnak készen még.</string>
     <string name="yes">Igen</string>
     <string name="no">Nem</string>
     <string name="clear_cookies_exit">Cookie-ek törlése kilépéskor</string>

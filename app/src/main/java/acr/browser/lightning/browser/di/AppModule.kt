@@ -38,7 +38,6 @@ import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import net.i2p.android.ui.I2PAndroidHelper
 import okhttp3.Cache
 import okhttp3.CacheControl
 import okhttp3.HttpUrl
@@ -189,11 +188,6 @@ class AppModule {
     } else {
         NoOpLogger()
     }
-
-    @Provides
-    @Singleton
-    fun provideI2PAndroidHelper(application: Application): I2PAndroidHelper =
-        I2PAndroidHelper(application)
 
     @Provides
     fun providesListPageReader(): ListPageReader = MezzanineGenerator.ListPageReader()

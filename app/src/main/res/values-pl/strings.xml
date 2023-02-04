@@ -106,10 +106,7 @@
 	<string name="clear_cookies_exit">Wyczyść ciasteczka po zamknięciu</string>
 	<string name="no">Nie</string>
 	<string name="yes">Tak</string>
-	<string name="i2p_tunnels_not_ready">Tunele I2P nie są jeszcze gotowe.</string>
-	<string name="i2p_not_running">I2P nie jest uruchomiony.</string>
 	<string name="install_orbot">Zainstaluj Orbota by móc używać sieci TOR do łączenia się z internetem.</string>
-	<string name="use_i2p_prompt">Wygląda na to że I2P jest zainstalowany. Chciałbyś go użyć do łączenia się z internetem?</string>
 	<string name="use_tor_prompt">Wygląda na to że Orbot jest zainstalowany. Chciałbyś go włączyć i użyć sieci TOR do łączenia się z internetem?</string>
 	<string name="port">Port:</string>
 	<string name="host">Host:</string>
@@ -250,7 +247,6 @@
 	<string-array name="proxy_choices_array">
 		<item>Bez proxy</item>
 		<item>Orbot</item>
-		<item>I2P</item>
 		<item>Ręczne ustawienia</item>
 	</string-array>
 	<string-array name="url_content_array">
