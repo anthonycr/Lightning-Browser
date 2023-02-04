@@ -53,8 +53,9 @@
             android:alwaysRetainTaskState="true"
             android:clearTaskOnLaunch="false"
             android:colorMode="wideColorGamut"
+            android:taskAffinity="com.anthonycr.browser.AffinityDefault"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
-            android:launchMode="singleTask"
+            android:launchMode="singleInstance"
             android:theme="@style/Theme.LightTheme"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
@@ -143,12 +144,15 @@
             android:exported="true"
             android:alwaysRetainTaskState="true"
             android:colorMode="wideColorGamut"
+            android:clearTaskOnLaunch="false"
+            android:taskAffinity="com.anthonycr.browser.AffinityIncognito"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
             android:launchMode="singleInstance"
             android:process=":incognito"
             android:parentActivityName="acr.browser.lightning.DefaultBrowserActivity"
             android:theme="@style/Theme.DarkTheme"
             android:windowSoftInputMode="stateHidden|adjustResize">
+
             <intent-filter>
                 <action android:name="android.intent.action.INCOGNITO"/>
 
