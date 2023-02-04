@@ -10,7 +10,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.webkit.WebView
-import io.reactivex.functions.Cancellable
+import io.reactivex.rxjava3.functions.Cancellable
 import javax.inject.Inject
 
 /**

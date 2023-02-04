@@ -6,11 +6,10 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.R
 import acr.browser.lightning.bookmark.LegacyBookmarkImporter
 import acr.browser.lightning.bookmark.NetscapeBookmarkFormatImporter
-import acr.browser.lightning.database.bookmark.BookmarkExporter
-import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.resizeAndShow
@@ -23,10 +22,10 @@ import android.app.Application
 import android.os.Bundle
 import android.os.Environment
 import androidx.appcompat.app.AlertDialog
-import io.reactivex.Scheduler
-import io.reactivex.Single
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import java.io.File
 import javax.inject.Inject
 

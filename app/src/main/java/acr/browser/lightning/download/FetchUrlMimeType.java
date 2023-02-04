@@ -15,7 +15,7 @@ import java.net.URL;
 
 import acr.browser.lightning.utils.Utils;
 import androidx.annotation.NonNull;
-import io.reactivex.Single;
+import io.reactivex.rxjava3.core.Single;
 
 /**
  * This class is used to pull down the http headers of a given URL so that we

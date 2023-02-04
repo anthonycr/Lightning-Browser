@@ -2,9 +2,9 @@ package acr.browser.lightning.database.bookmark
 
 import acr.browser.lightning.database.Bookmark
 import androidx.annotation.WorkerThread
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
 
 /**
  * The interface that should be used to communicate with the bookmark database.

@@ -47,14 +47,15 @@ import acr.browser.lightning.utils.smartUrlFilter
 import acr.browser.lightning.utils.value
 import androidx.activity.result.ActivityResult
 import androidx.core.net.toUri
-import io.reactivex.Maybe
-import io.reactivex.Scheduler
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.Observables
-import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.rxkotlin.toObservable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.Observables
+import io.reactivex.rxjava3.kotlin.plusAssign
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.kotlin.toObservable
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -227,17 +228,17 @@ class BrowserPresenter @Inject constructor(
 
         tabDisposable.dispose()
         tabDisposable = CompositeDisposable()
-        tabDisposable += Observables.combineLatest(
-            tab.sslChanges().startWith(tab.sslState),
-            tab.titleChanges().startWith(tab.title),
-            tab.urlChanges().startWith(tab.url),
-            tab.loadingProgress().startWith(tab.loadingProgress),
-            tab.canGoBackChanges().startWith(tab.canGoBack()),
-            tab.canGoForwardChanges().startWith(tab.canGoForward()),
-            tab.urlChanges().startWith(tab.url).observeOn(diskScheduler)
+        tabDisposable += Observable.combineLatest(
+            tab.sslChanges().startWithItem(tab.sslState),
+            tab.titleChanges().startWithItem(tab.title),
+            tab.urlChanges().startWithItem(tab.url),
+            tab.loadingProgress().startWithItem(tab.loadingProgress),
+            tab.canGoBackChanges().startWithItem(tab.canGoBack()),
+            tab.canGoForwardChanges().startWithItem(tab.canGoForward()),
+            tab.urlChanges().startWithItem(tab.url).observeOn(diskScheduler)
                 .flatMapSingle(bookmarkRepository::isBookmark).observeOn(mainScheduler),
-            tab.urlChanges().startWith(tab.url).map(String::isSpecialUrl),
-            tab.themeColorChanges().startWith(tab.themeColor)
+            tab.urlChanges().startWithItem(tab.url).map(String::isSpecialUrl),
+            tab.themeColorChanges().startWithItem(tab.themeColor)
         ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl, themeColor ->
             viewState.copy(
                 displayUrl = searchBoxModel.getDisplayContent(
@@ -299,9 +300,9 @@ class BrowserPresenter @Inject constructor(
     private fun List<TabModel>.subscribeToUpdates(compositeDisposable: CompositeDisposable) {
         forEach { tabModel ->
             compositeDisposable += Observables.combineLatest(
-                tabModel.titleChanges().startWith(tabModel.title),
+                tabModel.titleChanges().startWithItem(tabModel.title),
                 tabModel.faviconChanges()
-                    .startWith(Option.fromNullable(tabModel.favicon))
+                    .startWithItem(Option.fromNullable(tabModel.favicon))
             ).distinctUntilChanged()
                 .subscribeOn(mainScheduler)
                 .subscribeBy { (title, bitmap) ->
@@ -854,7 +855,7 @@ class BrowserPresenter @Inject constructor(
                 }
             }
             .doOnComplete(::showAddBookmarkDialog)
-            .flatMapSingleElement { bookmarkRepository.bookmarksAndFolders(folder = currentFolder) }
+            .flatMapSingle { bookmarkRepository.bookmarksAndFolders(folder = currentFolder) }
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribeBy { list ->

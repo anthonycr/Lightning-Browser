@@ -1,7 +1,7 @@
 package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.database.SearchSuggestion
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 
 /**
  * A search suggestions repository that doesn't fetch any results.

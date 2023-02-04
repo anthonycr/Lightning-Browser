@@ -7,13 +7,13 @@ import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.isFileUrl
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Observable
-import io.reactivex.Scheduler
-import io.reactivex.Single
-import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
 
 /**
@@ -85,7 +85,7 @@ class TabsRepository @Inject constructor(
         }.subscribeOn(mainScheduler)
 
     override fun reopenTab(): Maybe<TabModel> = Maybe.fromCallable(recentTabModel::lastClosed)
-        .flatMapSingleElement { createTab(BundleInitializer(it)) }
+        .flatMapSingle { createTab(BundleInitializer(it)) }
         .subscribeOn(mainScheduler)
 
     override fun selectTab(id: Int): TabModel {

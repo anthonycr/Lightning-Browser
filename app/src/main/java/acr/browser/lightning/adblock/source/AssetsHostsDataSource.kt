@@ -4,7 +4,7 @@ import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.adblock.parser.HostsFileParser
 import acr.browser.lightning.log.Logger
 import android.content.res.AssetManager
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import java.io.InputStreamReader
 import javax.inject.Inject
 import javax.inject.Provider

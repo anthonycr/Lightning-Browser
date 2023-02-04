@@ -17,7 +17,7 @@ import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.isStartPageUrl
 import android.app.Application
 import android.os.Bundle
-import io.reactivex.Scheduler
+import io.reactivex.rxjava3.core.Scheduler
 import javax.inject.Inject
 
 /**

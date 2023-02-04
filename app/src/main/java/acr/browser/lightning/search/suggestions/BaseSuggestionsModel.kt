@@ -3,7 +3,7 @@ package acr.browser.lightning.search.suggestions
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.log.Logger
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Response

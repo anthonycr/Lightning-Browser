@@ -5,7 +5,6 @@ import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.di.NetworkScheduler
 import acr.browser.lightning.browser.theme.ThemeProvider
-import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.themedDrawable
 import acr.browser.lightning.favicon.FaviconModel
 import android.app.Application
@@ -13,10 +12,10 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.util.LruCache
 import android.widget.ImageView
-import io.reactivex.Scheduler
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.plusAssign
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import javax.inject.Inject
 
 /**

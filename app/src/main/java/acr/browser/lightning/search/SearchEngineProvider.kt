@@ -25,7 +25,7 @@ import acr.browser.lightning.search.suggestions.RequestFactory
 import acr.browser.lightning.search.suggestions.SuggestionsRepository
 import android.app.Application
 import dagger.Reusable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 

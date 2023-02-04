@@ -10,7 +10,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.annotation.ColorInt
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 
 /**
  * The representation of a browser tab.

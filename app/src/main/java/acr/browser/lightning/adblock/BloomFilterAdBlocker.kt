@@ -19,12 +19,12 @@ import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.log.Logger
 import android.app.Application
 import android.net.Uri
-import io.reactivex.Maybe
-import io.reactivex.Scheduler
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.plusAssign
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import java.net.URISyntaxException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -84,7 +84,7 @@ class BloomFilterAdBlocker @Inject constructor(
                                 }
                             }
                         }
-                        .flatMapSingleElement {
+                        .flatMapSingle {
                             logger.log(TAG, "Loaded ${it.size} hosts")
                             // Clear out the old hosts and bloom filter now that we have the new hosts.
                             hostsRepository.removeAllHosts()

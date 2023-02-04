@@ -15,8 +15,8 @@ import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.WebUtils
 import android.os.Bundle
 import android.webkit.WebView
-import io.reactivex.Completable
-import io.reactivex.Scheduler
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Scheduler
 import javax.inject.Inject
 
 class PrivacySettingsFragment : AbstractSettingsFragment() {

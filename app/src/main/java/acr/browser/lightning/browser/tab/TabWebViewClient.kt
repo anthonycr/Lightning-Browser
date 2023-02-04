@@ -29,7 +29,7 @@ import androidx.appcompat.app.AlertDialog
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.io.ByteArrayInputStream
 import kotlin.math.abs
 

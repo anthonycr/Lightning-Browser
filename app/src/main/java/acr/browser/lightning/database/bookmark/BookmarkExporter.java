@@ -24,7 +24,7 @@ import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
-import io.reactivex.Completable;
+import io.reactivex.rxjava3.core.Completable;
 
 /**
  * The class responsible for importing and exporting

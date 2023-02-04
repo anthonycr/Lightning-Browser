@@ -14,8 +14,8 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 /**
  * Creates the adaptation between a [WebView] and the [TabModel] interface used by the browser.

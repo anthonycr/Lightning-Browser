@@ -6,7 +6,7 @@ import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.WebUtils
 import android.app.Activity
-import io.reactivex.Scheduler
+import io.reactivex.rxjava3.core.Scheduler
 import javax.inject.Inject
 
 /**

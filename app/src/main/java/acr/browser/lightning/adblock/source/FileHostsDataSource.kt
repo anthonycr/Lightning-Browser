@@ -8,7 +8,7 @@ import acr.browser.lightning.preference.UserPreferences
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import java.io.File
 import java.io.InputStreamReader
 

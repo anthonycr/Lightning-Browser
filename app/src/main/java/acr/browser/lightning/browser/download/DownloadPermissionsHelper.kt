@@ -17,8 +17,8 @@ import android.webkit.URLUtil
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.permissionx.guolindev.PermissionX
-import io.reactivex.Scheduler
-import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import javax.inject.Inject
 
 /**

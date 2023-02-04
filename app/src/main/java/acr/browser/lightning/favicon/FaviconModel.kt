@@ -13,8 +13,8 @@ import android.util.LruCache
 import androidx.annotation.ColorInt
 import androidx.annotation.WorkerThread
 import androidx.core.net.toUri
-import io.reactivex.Completable
-import io.reactivex.Maybe
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject

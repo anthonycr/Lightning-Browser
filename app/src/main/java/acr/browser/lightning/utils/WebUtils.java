@@ -9,7 +9,7 @@ import android.webkit.WebViewDatabase;
 
 import acr.browser.lightning.database.history.HistoryRepository;
 import androidx.annotation.NonNull;
-import io.reactivex.Scheduler;
+import io.reactivex.rxjava3.core.Scheduler;
 
 /**
  * Copyright 8/4/2015 Anthony Restaino

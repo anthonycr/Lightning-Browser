@@ -10,7 +10,7 @@ import android.app.Application
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.HttpUrl

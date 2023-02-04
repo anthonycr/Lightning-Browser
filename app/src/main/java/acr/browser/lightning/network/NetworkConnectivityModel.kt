@@ -4,7 +4,7 @@ import acr.browser.lightning.rx.BroadcastReceiverObservable
 import android.app.Application
 import android.net.ConnectivityManager
 import dagger.Reusable
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
 

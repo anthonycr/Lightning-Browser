@@ -1,8 +1,8 @@
 package acr.browser.lightning.database.history
 
 import acr.browser.lightning.database.HistoryEntry
-import io.reactivex.Completable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 
 /**
  * An interface that should be used to communicate with the history database.

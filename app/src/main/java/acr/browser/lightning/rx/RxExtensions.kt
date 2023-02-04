@@ -1,7 +1,7 @@
 package acr.browser.lightning.rx
 
-import io.reactivex.Flowable
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Observable
 import org.reactivestreams.Publisher
 
 /**
@@ -15,7 +15,7 @@ import org.reactivestreams.Publisher
  * type.
  * @see Observable.join
  */
-inline fun <T, R, Selector_T, Selector_R, S : Any> Flowable<T>.join(
+inline fun <T : Any, R : Any, Selector_T : Any, Selector_R : Any, S : Any> Flowable<T>.join(
     other: Flowable<R>,
     crossinline selectorLeft: (T) -> Publisher<Selector_T>,
     crossinline selectorRight: (R) -> Publisher<Selector_R>,

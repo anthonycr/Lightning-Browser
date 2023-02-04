@@ -25,8 +25,8 @@ import android.app.Application
 import android.graphics.Bitmap
 import androidx.core.net.toUri
 import dagger.Reusable
-import io.reactivex.Scheduler
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Single
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FileWriter
