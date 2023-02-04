@@ -50,6 +50,12 @@ class IncognitoNotification @Inject constructor(
         require(number > 0)
         val incognitoIntent = IncognitoBrowserActivity.intent(activity)
 
+        // TODO: Fix incognito notification
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_MUTABLE
+        } else {
+            0
+        }
         val incognitoNotification = NotificationCompat.Builder(activity, channelId)
             .setSmallIcon(R.drawable.ic_notification_incognito)
             .setContentTitle(
@@ -59,7 +65,7 @@ class IncognitoNotification @Inject constructor(
                     number
                 )
             )
-            .setContentIntent(PendingIntent.getActivity(activity, 0, incognitoIntent, 0))
+            .setContentIntent(PendingIntent.getActivity(activity, 0, incognitoIntent, flags))
             .setContentText(activity.getString(R.string.notification_incognito_running_message))
             .setAutoCancel(false)
             .setColor(ThemeUtils.getAccentColor(activity))
