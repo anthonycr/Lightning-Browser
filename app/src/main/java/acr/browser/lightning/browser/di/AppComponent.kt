@@ -18,6 +18,7 @@ import acr.browser.lightning.settings.fragment.DebugSettingsFragment
 import acr.browser.lightning.settings.fragment.DisplaySettingsFragment
 import acr.browser.lightning.settings.fragment.GeneralSettingsFragment
 import acr.browser.lightning.settings.fragment.PrivacySettingsFragment
+import acr.browser.lightning.settings.fragment.RootSettingsFragment
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
@@ -52,8 +53,6 @@ interface AppComponent {
 
     fun inject(activity: ReadingActivity)
 
-    fun inject(activity: SettingsActivity)
-
     fun inject(activity: ThemableSettingsActivity)
 
     fun inject(fragment: PrivacySettingsFragment)
@@ -63,6 +62,8 @@ interface AppComponent {
     fun inject(suggestionsAdapter: SuggestionsAdapter)
 
     fun inject(searchBoxModel: SearchBoxModel)
+
+    fun inject(activity: RootSettingsFragment)
 
     fun inject(generalSettingsFragment: GeneralSettingsFragment)
 

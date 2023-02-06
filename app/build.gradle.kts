@@ -117,6 +117,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.fragment:fragment-ktx:1.5.5")
     implementation("androidx.drawerlayout:drawerlayout:1.1.1")
+    implementation("androidx.preference:preference:1.2.0")
 
     // html parsing for reading mode
     implementation("org.jsoup:jsoup:1.11.3")

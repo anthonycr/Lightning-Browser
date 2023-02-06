@@ -41,10 +41,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
     override fun providePreferencesXmlResource() = R.xml.preference_general
 
-    @Deprecated("Deprecated in Java")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        super.onCreatePreferences(savedInstanceState, rootKey)
         injector.inject(this)
 
         proxyChoices = resources.getStringArray(R.array.proxy_choices_array)
@@ -85,25 +83,25 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             onClick = ::showSearchSuggestionsDialog
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_IMAGES,
             isChecked = userPreferences.blockImagesEnabled,
             onCheckChange = { userPreferences.blockImagesEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_SAVEDATA,
             isChecked = userPreferences.saveDataEnabled,
             onCheckChange = { userPreferences.saveDataEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_JAVASCRIPT,
             isChecked = userPreferences.javaScriptEnabled,
             onCheckChange = { userPreferences.javaScriptEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_COLOR_MODE,
             isChecked = userPreferences.colorModeEnabled,
             onCheckChange = { userPreferences.colorModeEnabled = it }
@@ -135,7 +133,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 )
             }
             withSingleChoiceItems(values, userPreferences.proxyChoice) {
-                updateProxyChoice(it, activity, summaryUpdater)
+                updateProxyChoice(it, requireActivity(), summaryUpdater)
             }
             setPositiveButton(R.string.action_ok, null)
         }

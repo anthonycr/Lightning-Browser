@@ -23,10 +23,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
     override fun providePreferencesXmlResource() = R.xml.preference_advanced
 
-    @Deprecated("Deprecated in Java")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        super.onCreatePreferences(savedInstanceState, rootKey)
         injector.inject(this)
 
         clickableDynamicPreference(
@@ -47,13 +45,13 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             onClick = this::showUrlBoxDialogPicker
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_NEW_WINDOW,
             isChecked = userPreferences.popupsEnabled,
             onCheckChange = { userPreferences.popupsEnabled = it }
         )
 
-        val incognitoCheckboxPreference = checkBoxPreference(
+        val incognitoCheckboxPreference = togglePreference(
             preference = SETTINGS_COOKIES_INCOGNITO,
             isEnabled = !Capabilities.FULL_INCOGNITO.isSupported,
             isChecked = if (Capabilities.FULL_INCOGNITO.isSupported) {
@@ -69,7 +67,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             onCheckChange = { userPreferences.incognitoCookiesEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_ENABLE_COOKIES,
             isChecked = userPreferences.cookiesEnabled,
             onCheckChange = {
@@ -80,7 +78,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_RESTORE_TABS,
             isChecked = userPreferences.restoreLostTabsEnabled,
             onCheckChange = { userPreferences.restoreLostTabsEnabled = it }

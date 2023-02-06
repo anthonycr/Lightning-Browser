@@ -2,21 +2,21 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/settings_advanced">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="allow_new_window"
             android:summary="@string/recommended"
             android:title="@string/window" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="allow_cookies"
             android:summary="@string/recommended"
             android:title="@string/cookies" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="incognito_cookies"
             android:title="@string/incognito_cookies" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="restore_tabs"
             android:title="@string/restore" />

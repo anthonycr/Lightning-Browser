@@ -46,9 +46,8 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
 
     override fun providePreferencesXmlResource() = R.xml.preference_bookmarks
 
-    @Deprecated("Deprecated in Java")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        super.onCreatePreferences(savedInstanceState, rootKey)
         injector.inject(this)
 
         clickablePreference(preference = SETTINGS_EXPORT, onClick = this::showBookmarkExportChooser)
@@ -127,7 +126,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
 
     private fun showDeleteBookmarksDialog() {
         BrowserDialog.showPositiveNegativeDialog(
-            activity = activity,
+            activity = requireActivity(),
             title = R.string.action_delete,
             message = R.string.action_delete_all_bookmarks,
             positiveButton = DialogItem(title = R.string.yes) {

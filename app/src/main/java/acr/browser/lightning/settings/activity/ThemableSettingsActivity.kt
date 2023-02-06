@@ -8,15 +8,15 @@ import acr.browser.lightning.utils.ThemeUtils
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import javax.inject.Inject
 
-abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
+abstract class ThemableSettingsActivity : AppCompatActivity() {
 
     private var themeId: AppTheme = AppTheme.LIGHT
 
     @Inject internal lateinit var userPreferences: UserPreferences
 
-    @Deprecated("Deprecated in Java")
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
         themeId = userPreferences.useTheme

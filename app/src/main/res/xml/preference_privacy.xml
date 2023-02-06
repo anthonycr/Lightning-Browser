@@ -2,44 +2,44 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/settings_privacy">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="location"
             android:title="@string/location"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="third_party"
             android:title="@string/third_party"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="password"
             android:summary="@string/recommended"
             android:title="@string/password"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="do_not_track"
             android:title="@string/do_not_track"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="remove_identifying_headers"
             android:title="@string/remove_identifying_headers"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="webrtc_support"
             android:title="@string/webrtc_support"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="clear_cache_exit"
             android:title="@string/cache"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="clear_history_exit"
             android:title="@string/clear_history_exit"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="clear_cookies_exit"
             android:title="@string/clear_cookies_exit"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="clear_webstorage_exit"
             android:title="@string/clear_web_storage_exit"/>

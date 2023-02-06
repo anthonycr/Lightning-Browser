@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/settings_advanced">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="cb_block_ads"
             android:title="@string/block_ads"/>

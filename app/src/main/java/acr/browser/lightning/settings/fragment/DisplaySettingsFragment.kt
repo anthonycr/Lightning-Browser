@@ -25,10 +25,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
     override fun providePreferencesXmlResource() = R.xml.preference_display
 
-    @Deprecated("Deprecated in Java")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        super.onCreatePreferences(savedInstanceState, rootKey)
         injector.inject(this)
 
         // preferences storage
@@ -43,49 +41,49 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
             onClick = ::showTextSizePicker
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_HIDESTATUSBAR,
             isChecked = userPreferences.hideStatusBarEnabled,
             onCheckChange = { userPreferences.hideStatusBarEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_FULLSCREEN,
             isChecked = userPreferences.fullScreenEnabled,
             onCheckChange = { userPreferences.fullScreenEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_VIEWPORT,
             isChecked = userPreferences.useWideViewPortEnabled,
             onCheckChange = { userPreferences.useWideViewPortEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_OVERVIEWMODE,
             isChecked = userPreferences.overviewModeEnabled,
             onCheckChange = { userPreferences.overviewModeEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_REFLOW,
             isChecked = userPreferences.textReflowEnabled,
             onCheckChange = { userPreferences.textReflowEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_BLACK_STATUS,
             isChecked = userPreferences.useBlackStatusBar,
             onCheckChange = { userPreferences.useBlackStatusBar = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_DRAWERTABS,
             isChecked = userPreferences.showTabsInDrawer,
             onCheckChange = { userPreferences.showTabsInDrawer = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_SWAPTABS,
             isChecked = userPreferences.bookmarksAndTabsSwapped,
             onCheckChange = { userPreferences.bookmarksAndTabsSwapped = it }
@@ -94,8 +92,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
     private fun showTextSizePicker() {
         val maxValue = 5
-        AlertDialog.Builder(activity).apply {
-            val layoutInflater = activity.layoutInflater
+        AlertDialog.Builder(requireActivity()).apply {
+            val layoutInflater = requireActivity().layoutInflater
             val customView =
                 (layoutInflater.inflate(R.layout.dialog_seek_bar, null) as LinearLayout).apply {
                     val text = TextView(activity).apply {
@@ -124,7 +122,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
     private fun showThemePicker(summaryUpdater: SummaryUpdater) {
         val currentTheme = userPreferences.useTheme
-        AlertDialog.Builder(activity).apply {
+        AlertDialog.Builder(requireActivity()).apply {
             setTitle(resources.getString(R.string.theme))
             val values = AppTheme.values().map { Pair(it, it.toDisplayString()) }
             withSingleChoiceItems(values, userPreferences.useTheme) {
@@ -133,12 +131,12 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
             }
             setPositiveButton(resources.getString(R.string.action_ok)) { _, _ ->
                 if (currentTheme != userPreferences.useTheme) {
-                    activity.onBackPressed()
+                    requireActivity().onBackPressed()
                 }
             }
             setOnCancelListener {
                 if (currentTheme != userPreferences.useTheme) {
-                    activity.onBackPressed()
+                    requireActivity().onBackPressed()
                 }
             }
         }.resizeAndShow()

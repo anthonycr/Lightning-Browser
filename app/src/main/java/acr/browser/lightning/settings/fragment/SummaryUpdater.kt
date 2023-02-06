@@ -1,6 +1,6 @@
 package acr.browser.lightning.settings.fragment
 
-import android.preference.Preference
+import androidx.preference.Preference
 
 /**
  * A command that updates the summary of a preference.

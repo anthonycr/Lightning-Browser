@@ -17,7 +17,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.preference.Preference
+import androidx.preference.Preference
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -47,13 +47,11 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     override fun providePreferencesXmlResource(): Int = R.xml.preference_ad_block
 
-    @Deprecated("Deprecated in Java")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        super.onCreatePreferences(savedInstanceState, rootKey)
         injector.inject(this)
 
-        checkBoxPreference(
+        togglePreference(
             preference = "cb_block_ads",
             isChecked = userPreferences.adBlockEnabled,
             onCheckChange = { userPreferences.adBlockEnabled = it }
@@ -100,7 +98,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     private fun showHostsSourceChooser(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showListChoices(
-            activity,
+            requireActivity(),
             R.string.block_ad_source,
             DialogItem(
                 title = R.string.block_source_default,
@@ -140,7 +138,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     private fun showUrlChooser(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showEditText(
-            activity,
+            requireActivity(),
             title = R.string.block_source_remote,
             hint = R.string.hint_url,
             currentText = userPreferences.hostsRemoteFile,
