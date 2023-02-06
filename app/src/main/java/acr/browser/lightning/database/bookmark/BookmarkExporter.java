@@ -14,6 +14,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,6 +106,40 @@ public final class BookmarkExporter {
             try {
                 //noinspection IOResourceOpenedButNotSafelyClosed
                 bookmarkWriter = new BufferedWriter(new FileWriter(file, false));
+
+                JSONObject object = new JSONObject();
+                for (Bookmark.Entry item : bookmarkList) {
+                    object.put(KEY_TITLE, item.getTitle());
+                    object.put(KEY_URL, item.getUrl());
+                    object.put(KEY_FOLDER, item.getFolder().getTitle());
+                    object.put(KEY_ORDER, item.getPosition());
+                    bookmarkWriter.write(object.toString());
+                    bookmarkWriter.newLine();
+                }
+            } finally {
+                Utils.close(bookmarkWriter);
+            }
+        });
+    }
+
+    /**
+     * Exports the list of bookmarks to an output stream.
+     *
+     * @param bookmarkList the bookmarks to export.
+     * @param outputStream the output stream to output to.
+     * @return an observable that emits a completion
+     * event when the export is complete, or an error
+     * event if there is a problem.
+     */
+    @NonNull
+    public static Completable exportBookmarksToOutputStream(@NonNull final List<Bookmark.Entry> bookmarkList,
+                                                            @NonNull final OutputStream outputStream) {
+        return Completable.fromAction(() -> {
+            Preconditions.checkNonNull(bookmarkList);
+            BufferedWriter bookmarkWriter = null;
+            try {
+                //noinspection IOResourceOpenedButNotSafelyClosed
+                bookmarkWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
 
                 JSONObject object = new JSONObject();
                 for (Bookmark.Entry item : bookmarkList) {

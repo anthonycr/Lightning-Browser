@@ -3,8 +3,11 @@
 package acr.browser.lightning.extensions
 
 import android.content.Context
+import android.database.Cursor
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.ColorInt
@@ -13,7 +16,12 @@ import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import io.reactivex.rxjava3.core.Maybe
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.Locale
+
 
 /**
  * Returns the dimension in pixels.
@@ -46,7 +54,10 @@ inline val Context.inflater: LayoutInflater
 inline fun Context.drawable(@DrawableRes drawableRes: Int): Drawable =
     ContextCompat.getDrawable(this, drawableRes)!!
 
-inline fun Context.themedDrawable(@DrawableRes drawableRes: Int, @ColorInt colorInt: Int): Drawable {
+inline fun Context.themedDrawable(
+    @DrawableRes drawableRes: Int,
+    @ColorInt colorInt: Int
+): Drawable {
     val drawable = ContextCompat.getDrawable(this, drawableRes)!!
     drawable.setTint(colorInt)
     return drawable
@@ -62,3 +73,47 @@ val Context.preferredLocale: Locale
         @Suppress("DEPRECATION")
         resources.configuration.locale
     }
+
+/**
+ * Obtain the file name for the provided [Uri].
+ */
+fun Context.fileName(uri: Uri): String? {
+    val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME)
+    val metaCursor: Cursor? = contentResolver.query(uri, projection, null, null, null)
+    metaCursor?.use {
+        if (it.moveToFirst()) {
+            return it.getString(0)
+        }
+    }
+    return null
+}
+
+/**
+ * Create an [OutputStream] from a [Uri]. If the [Uri] cannot be written to, this function emits a
+ * completion signal.
+ */
+fun Context?.fileOutputStream(uri: Uri): Maybe<OutputStream> = Maybe.create {
+    try {
+        val outputStream = this?.contentResolver?.openOutputStream(uri)
+            ?: return@create it.onComplete()
+
+        return@create it.onSuccess(outputStream)
+    } catch (exception: IOException) {
+        return@create it.onComplete()
+    }
+}
+
+/**
+ * Create an [InputStream] from a [Uri]. If the [Uri] cannot be read from, this function emits a
+ * completion signal.
+ */
+fun Context?.fileInputStream(uri: Uri): Maybe<InputStream> = Maybe.create {
+    try {
+        val inputStream = this?.contentResolver?.openInputStream(uri)
+            ?: return@create it.onComplete()
+
+        return@create it.onSuccess(inputStream)
+    } catch (exception: IOException) {
+        return@create it.onComplete()
+    }
+}
