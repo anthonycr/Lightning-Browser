@@ -4,18 +4,11 @@
 package acr.browser.lightning.settings.activity
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.injector
-import acr.browser.lightning.device.BuildInfo
-import acr.browser.lightning.device.BuildType
 import acr.browser.lightning.settings.fragment.RootSettingsFragment
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import javax.inject.Inject
 
 class SettingsActivity : ThemableSettingsActivity(),
     PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {

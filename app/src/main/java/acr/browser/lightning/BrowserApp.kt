@@ -10,7 +10,6 @@ import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
 import acr.browser.lightning.log.Logger
-import acr.browser.lightning.preference.DeveloperPreferences
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.LeakCanaryUtils
 import acr.browser.lightning.utils.MemoryLeakUtils

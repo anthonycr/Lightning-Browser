@@ -197,8 +197,9 @@ class SuggestionsAdapter(
                 .join(
                     other = historyEntries,
                     selectorLeft = { bookmarksEntries },
-                    selectorRight = { historyEntries }
-                ) { t1, t2 -> Pair(t1, t2) }
+                    selectorRight = { historyEntries },
+                    join = ::Pair
+                )
                 .compose { bookmarksAndHistory ->
                     bookmarksAndHistory.join(
                         other = searchEntries,

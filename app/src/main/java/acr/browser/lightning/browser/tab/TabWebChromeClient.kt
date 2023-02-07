@@ -2,6 +2,8 @@ package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.DiskScheduler
+import acr.browser.lightning.browser.webrtc.WebRtcPermissionsModel
+import acr.browser.lightning.browser.webrtc.WebRtcPermissionsView
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.color
@@ -10,10 +12,7 @@ import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.Option
 import acr.browser.lightning.utils.Utils
-import acr.browser.lightning.browser.webrtc.WebRtcPermissionsModel
-import acr.browser.lightning.browser.webrtc.WebRtcPermissionsView
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -30,7 +29,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import androidx.palette.graphics.Palette
 import com.permissionx.guolindev.PermissionX
-import com.permissionx.guolindev.callback.RequestCallback
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject

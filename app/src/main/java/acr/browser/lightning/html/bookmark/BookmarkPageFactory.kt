@@ -1,12 +1,12 @@
 package acr.browser.lightning.html.bookmark
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.bookmark.BookmarkRepository
-import acr.browser.lightning.browser.di.DatabaseScheduler
-import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.favicon.toValidUri
@@ -24,7 +24,6 @@ import acr.browser.lightning.utils.ThemeUtils
 import android.app.Application
 import android.graphics.Bitmap
 import androidx.core.net.toUri
-import dagger.Reusable
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import java.io.File

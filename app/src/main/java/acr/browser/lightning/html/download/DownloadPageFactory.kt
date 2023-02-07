@@ -18,7 +18,6 @@ import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Application
-import dagger.Reusable
 import io.reactivex.rxjava3.core.Single
 import java.io.File
 import java.io.FileWriter

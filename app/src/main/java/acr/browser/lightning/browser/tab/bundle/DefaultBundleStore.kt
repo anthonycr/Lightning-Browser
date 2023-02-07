@@ -91,7 +91,6 @@ class DefaultBundleStore @Inject constructor(
     }
 
     companion object {
-        private const val TAG = "TabsRepository"
         private const val BUNDLE_KEY = "WEBVIEW_"
         private const val TAB_TITLE_KEY = "TITLE_"
         private const val URL_KEY = "URL_KEY"
