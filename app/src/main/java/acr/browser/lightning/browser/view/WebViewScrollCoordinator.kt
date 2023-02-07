@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager
 import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.core.view.doOnLayout
 import javax.inject.Inject
 
 /**
@@ -58,8 +59,10 @@ class WebViewScrollCoordinator @Inject constructor(
                 toolbar.translationY = 0f
             }
 
-            webView.translationY = toolbar.height.toFloat()
-            coordinate(toolbar, webView)
+            toolbar.doOnLayout {
+                webView.translationY = toolbar.height.toFloat()
+                coordinate(toolbar, webView)
+            }
         } else {
             if (toolbar.parent != toolbarRoot) {
                 (toolbar.parent as ViewGroup?)?.removeView(toolbar)
