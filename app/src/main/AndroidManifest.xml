@@ -173,20 +173,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".reading.activity.ReadingActivity"
-            android:colorMode="wideColorGamut"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
-            android:exported="false"
-            android:label="@string/reading_mode"
-            android:parentActivityName="acr.browser.lightning.DefaultBrowserActivity"
-            android:theme="@style/Theme.SettingsTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.READING" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -166,7 +166,6 @@
     <string name="close_other_tabs">Cerrar las demás pestañas</string>
     <string name="third_party">Bloquear cookies de terceras partes</string>
     <string name="color_mode">Habilitar modo de color</string>
-    <string name="reading_mode">Modo de lectura</string>
     <string name="loading">Cargando&#8230;</string>
     <string name="loading_failed">No se pudo cargar la página.</string>
     <string name="snacktory">Snacktory</string>

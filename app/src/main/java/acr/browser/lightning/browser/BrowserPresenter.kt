@@ -394,8 +394,6 @@ class BrowserPresenter @Inject constructor(
             MenuSelection.BOOKMARKS -> view?.openBookmarkDrawer()
             MenuSelection.ADD_BOOKMARK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let { showAddBookmarkDialog() }
-            MenuSelection.READER -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
-                ?.let(navigator::openReaderMode)
             MenuSelection.SETTINGS -> navigator.openSettings()
             MenuSelection.BACK -> onBackClick()
             MenuSelection.FORWARD -> onForwardClick()
@@ -1070,14 +1068,6 @@ class BrowserPresenter @Inject constructor(
                         }
                     }
         }
-    }
-
-    /**
-     * Call when the user clicks on the button to open reading mode..
-     */
-    fun onReadingModeClick() {
-        currentTab?.url?.takeIf { !it.isSpecialUrl() }
-            ?.let(navigator::openReaderMode)
     }
 
     /**

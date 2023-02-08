@@ -82,7 +82,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     private var menuItemCopyLink: MenuItem? = null
     private var menuItemAddToHome: MenuItem? = null
     private var menuItemAddBookmark: MenuItem? = null
-    private var menuItemReaderMode: MenuItem? = null
 
     private val defaultColor by lazy { color(R.color.primary_color) }
     private val backgroundDrawable by lazy { ColorDrawable(defaultColor) }
@@ -288,7 +287,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         binding.actionAddBookmark.setOnClickListener { presenter.onStarClick() }
         binding.actionPageTools.setOnClickListener { presenter.onToolsClick() }
         binding.tabHeaderButton.setOnClickListener { presenter.onTabMenuClick() }
-        binding.actionReading.setOnClickListener { presenter.onReadingModeClick() }
         binding.bookmarkBackButton.setOnClickListener { presenter.onBookmarkMenuClick() }
         binding.searchSslStatus.setOnClickListener { presenter.onSslIconClick() }
 
@@ -321,7 +319,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         menuItemCopyLink = menu.findItem(R.id.action_copy)
         menuItemAddToHome = menu.findItem(R.id.action_add_to_homescreen)
         menuItemAddBookmark = menu.findItem(R.id.action_add_bookmark)
-        menuItemReaderMode = menu.findItem(R.id.action_reading_mode)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -351,7 +348,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             menuItemCopyLink?.isVisible = it
             menuItemAddToHome?.isVisible = it
             menuItemAddBookmark?.isVisible = it
-            menuItemReaderMode?.isVisible = it
         }
         viewState.themeColor?.value()?.let(::animateColorChange)
         viewState.progress?.let { binding.progressView.progress = it }

@@ -217,7 +217,6 @@
     <string name="close_other_tabs">关闭其他标签页</string>
     <string name="third_party">阻止第三方 Cookie</string>
     <string name="color_mode">启用色彩模式</string>
-    <string name="reading_mode">阅读模式</string>
     <string name="loading">加载中&#8230;</string>
     <string name="loading_failed">无法从页面中加载任何内容</string>
     <string name="url_contents">地址栏内容</string>

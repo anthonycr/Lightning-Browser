@@ -195,7 +195,6 @@
     <string name="close_other_tabs">Fermer les autres onglets</string>
     <string name="third_party">Bloquer les cookies tiers</string>    
     <string name="color_mode">Activer le mode couleur</string>
-    <string name="reading_mode">Mode lecteur</string>    
     <string name="loading">Chargement&#8230;</string>
     <string name="loading_failed">Impossible de charger quoi que ce soit depuis la page.</string>
     <string name="snacktory">Snacktory</string>

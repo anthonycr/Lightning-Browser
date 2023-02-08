@@ -65,8 +65,7 @@
 	<string name="snacktory">Snacktory</string>
 	<string name="loading_failed">Nie udało się wczytać tekstu ze strony.</string>
 	<string name="loading">Ładowanie…</string>
-	<string name="reading_mode">Tryb czytania</string>
-	<string name="color_mode">Włącz tryb zmieniania koloru</string>
+    <string name="color_mode">Włącz tryb zmieniania koloru</string>
 	<string name="third_party">Blokuj ciasteczka z innych witryn</string>
 	<string name="close_other_tabs">Zamknij pozostałe karty</string>
 	<string name="close_all_tabs">Zamknij wszystkie karty</string>

@@ -11,7 +11,6 @@
 -keep public class * extends android.content.ContentProvider
 -keep public class * extends android.app.backup.BackupAgentHelper
 -keep public class * extends android.preference.Preference
--keep public class acr.browser.lightning.reading.*
 
 -assumenosideeffects class android.util.Log {
     public static *** d(...);

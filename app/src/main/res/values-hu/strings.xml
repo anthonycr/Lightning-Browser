@@ -192,7 +192,6 @@
     <string name="close_other_tabs">Másik lapok bezárása</string>
     <string name="third_party">Harmadik féltől származó Cookie-k letiltása</string>
     <string name="color_mode">Színes mód engedélyezése</string>
-    <string name="reading_mode">Olvasó mód</string>
     <string name="loading">Betöltés&#8230;</string>
     <string name="loading_failed">Nem sikerült semmit betölteni az oldalról.</string>
     <string name="snacktory">Snacktory</string>

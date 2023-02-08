@@ -153,7 +153,6 @@
     <string name="close_all_tabs">모든 탭 닫기</string>
     <string name="third_party">제3자 쿠키 차단</string>
     <string name="color_mode">색상 모드 사용</string>
-    <string name="reading_mode">읽기 모드</string>
     <string name="loading">불러오는 중&#8230;</string>
     <string name="loading_failed">페이지로부터 아무것도 불러올 수 없습니다.</string>
     <string name="snacktory">Snacktory</string>

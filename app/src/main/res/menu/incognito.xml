@@ -20,8 +20,4 @@
         android:id="@+id/action_bookmarks"
         android:title="@string/action_bookmarks"/>
     
-    <item
-        android:id="@+id/action_reading_mode"
-        android:title="@string/reading_mode"/>
-
 </menu>

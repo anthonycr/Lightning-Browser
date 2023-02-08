@@ -28,7 +28,6 @@ class MenuItemAdapter @Inject constructor() {
             R.id.action_downloads -> MenuSelection.DOWNLOADS
             R.id.action_add_bookmark -> MenuSelection.ADD_BOOKMARK
             R.id.action_find -> MenuSelection.FIND
-            R.id.action_reading_mode -> MenuSelection.READER
             else -> null
         }
     }

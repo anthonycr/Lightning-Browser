@@ -8,7 +8,6 @@ import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.extensions.copyToClipboard
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.log.Logger
-import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.settings.activity.SettingsActivity
 import acr.browser.lightning.utils.IntentUtils
 import acr.browser.lightning.utils.Utils
@@ -31,10 +30,6 @@ class BrowserNavigator @Inject constructor(
 
     override fun openSettings() {
         activity.startActivity(Intent(activity, SettingsActivity::class.java))
-    }
-
-    override fun openReaderMode(url: String) {
-        ReadingActivity.launch(activity, url)
     }
 
     override fun sharePage(url: String, title: String?) {

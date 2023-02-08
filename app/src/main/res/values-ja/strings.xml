@@ -183,7 +183,6 @@
     <string name="close_other_tabs">他のタブを閉じる</string>
     <string name="third_party">サードパーティ Cookie を拒否する</string>
     <string name="color_mode">カラーモードを有効にする</string>
-    <string name="reading_mode">リーダーモード</string>
     <string name="loading">読み込み中&#8230;</string>
     <string name="loading_failed">このページから何も読み出せませんでした</string>
     <string name="snacktory">Snacktory</string>

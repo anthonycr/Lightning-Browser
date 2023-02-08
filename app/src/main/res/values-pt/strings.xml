@@ -193,7 +193,6 @@
     <string name="close_other_tabs">Fechar os outros separadores</string>
     <string name="third_party">Bloquear cookies de terceiros</string>
     <string name="color_mode">Ativar modo de cor</string>
-    <string name="reading_mode">Modo de leitura</string>
     <string name="loading">A carregar&#8230;</string>
     <string name="loading_failed">A página não foi carregada.</string>
     <string name="snacktory">Snacktory</string>

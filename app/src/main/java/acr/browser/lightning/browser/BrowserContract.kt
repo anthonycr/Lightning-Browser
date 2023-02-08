@@ -241,11 +241,6 @@ interface BrowserContract {
         fun openSettings()
 
         /**
-         * Open the reader mode and load the provided [url].
-         */
-        fun openReaderMode(url: String)
-
-        /**
          * Share the web page with the provided [url] and [title].
          */
         fun sharePage(url: String, title: String?)

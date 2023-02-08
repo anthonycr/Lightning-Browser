@@ -205,11 +205,6 @@ class UserPreferences @Inject constructor(
     var invertColors by preferences.booleanPreference(INVERT_COLORS, false)
 
     /**
-     * The index of the reading mode text size.
-     */
-    var readingTextSize by preferences.intPreference(READING_TEXT_SIZE, 2)
-
-    /**
      * The index of the theme used by the application.
      */
     var useTheme by preferences.enumPreference(THEME, AppTheme.LIGHT)

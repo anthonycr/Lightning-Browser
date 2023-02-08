@@ -7,7 +7,6 @@ import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.dialog.LightningDialogBuilder
-import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.ThemableSettingsActivity
 import acr.browser.lightning.settings.fragment.AdBlockSettingsFragment
@@ -49,8 +48,6 @@ interface AppComponent {
     fun inject(advancedSettingsFragment: AdvancedSettingsFragment)
 
     fun inject(app: BrowserApp)
-
-    fun inject(activity: ReadingActivity)
 
     fun inject(activity: ThemableSettingsActivity)
 
