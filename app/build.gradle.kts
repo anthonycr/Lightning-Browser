@@ -120,7 +120,7 @@ dependencies {
     implementation("androidx.preference:preference:1.2.0")
 
     // html parsing for reading mode
-    implementation("org.jsoup:jsoup:1.11.3")
+    implementation("org.jsoup:jsoup:1.13.1")
 
     // file reading
     val mezzanineVersion = "1.1.1"
