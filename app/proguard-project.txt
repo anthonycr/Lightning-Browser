@@ -19,7 +19,6 @@
     public static *** i(...);
 }
 
-# this will fix a force close in ReadingActivity
 -keep public class org.jsoup.** {
     public *;
 }
