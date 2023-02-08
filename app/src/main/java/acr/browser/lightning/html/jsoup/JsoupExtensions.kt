@@ -42,12 +42,8 @@ inline fun Element.clone(edit: Element.() -> Unit): Element {
     return clone().also(edit)
 }
 
-inline fun Element.id(string: String, build: Element.() -> Unit): Element {
-    return getElementById(string).also(build)
-}
-
-inline fun Element.id(string: String): Element {
-    return getElementById(string)
+inline fun Element.id(string: String, build: Element.() -> Unit = {}): Element {
+    return getElementById(string)!!.also(build)
 }
 
 inline fun Element.removeElement(): Element {
