@@ -33,7 +33,7 @@ class NetscapeBookmarkFormatImporter @Inject constructor() : BookmarkImporter {
                 val immediateChild = it.child(0)
                 when {
                     immediateChild.isTag(FOLDER_TAG) ->
-                        immediateChild.nextElementSibling()
+                        immediateChild.nextElementSibling()!!
                             .processFolder(computeFolderName(folderName, immediateChild.text()))
                     immediateChild.isTag(BOOKMARK_TAG) ->
                         listOf(

@@ -15,6 +15,7 @@ import acr.browser.lightning.html.jsoup.andBuild
 import acr.browser.lightning.html.jsoup.body
 import acr.browser.lightning.html.jsoup.clone
 import acr.browser.lightning.html.jsoup.id
+import acr.browser.lightning.html.jsoup.findId
 import acr.browser.lightning.html.jsoup.parse
 import acr.browser.lightning.html.jsoup.removeElement
 import acr.browser.lightning.html.jsoup.style
@@ -119,7 +120,7 @@ class BookmarkPageFactory @Inject constructor(
                     .replace("--box-txt: {COLOR}", "--box-txt: #$textColor;")
             }
             body {
-                val repeatableElement = id("repeated").removeElement()
+                val repeatableElement = findId("repeated").removeElement()
                 id("content") {
                     list.forEach {
                         appendChild(repeatableElement.clone {

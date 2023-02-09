@@ -6,6 +6,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.DataNode
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 
 inline fun parse(string: String): Document = Jsoup.parse(string)
 
@@ -18,8 +19,10 @@ inline fun Document.title(provide: () -> String) {
     this.title(provide())
 }
 
+inline fun Elements.only(): Element = first()!!
+
 inline fun Document.style(mutate: (String) -> String) {
-    head().getElementsByTag("style").first().apply {
+    head().getElementsByTag("style").only().apply {
         childNodes().filterIsInstance<DataNode>().first().apply {
             wholeData = mutate(wholeData)
         }
@@ -35,15 +38,19 @@ inline fun Document.charset(charset: () -> String) {
 }
 
 inline fun Element.tag(tag: String, build: Element.() -> Unit): Element {
-    return getElementsByTag(tag).first().also(build)
+    return getElementsByTag(tag).only().also(build)
 }
 
 inline fun Element.clone(edit: Element.() -> Unit): Element {
     return clone().also(edit)
 }
 
-inline fun Element.id(string: String, build: Element.() -> Unit = {}): Element {
+inline fun Element.id(string: String, build: Element.() -> Unit): Element {
     return getElementById(string)!!.also(build)
+}
+
+inline fun Element.findId(string: String): Element {
+    return getElementById(string)!!
 }
 
 inline fun Element.removeElement(): Element {

@@ -10,6 +10,7 @@ import acr.browser.lightning.html.jsoup.andBuild
 import acr.browser.lightning.html.jsoup.body
 import acr.browser.lightning.html.jsoup.clone
 import acr.browser.lightning.html.jsoup.id
+import acr.browser.lightning.html.jsoup.findId
 import acr.browser.lightning.html.jsoup.parse
 import acr.browser.lightning.html.jsoup.removeElement
 import acr.browser.lightning.html.jsoup.style
@@ -61,7 +62,7 @@ class HistoryPageFactory @Inject constructor(
                         .replace("--subtitle-color: {COLOR}", "--subtitle-color: #$subtitleColor;")
                 }
                 body {
-                    val repeatedElement = id("repeated").removeElement()
+                    val repeatedElement = findId("repeated").removeElement()
                     id("content") {
                         list.forEach {
                             appendChild(repeatedElement.clone {
