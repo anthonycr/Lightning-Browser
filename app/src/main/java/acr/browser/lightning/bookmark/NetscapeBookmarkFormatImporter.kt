@@ -18,7 +18,7 @@ class NetscapeBookmarkFormatImporter @Inject constructor() : BookmarkImporter {
     override fun importBookmarks(inputStream: InputStream): List<Bookmark.Entry> {
         val document = Jsoup.parse(inputStream, UTF8, "")
 
-        val rootList = document.body().children().first { it.isTag(LIST_TAG) }
+        val rootList = document.body().children().first { it.matchesName(LIST_TAG) }
 
         return rootList.processFolder(ROOT_FOLDER_NAME)
     }
@@ -28,14 +28,14 @@ class NetscapeBookmarkFormatImporter @Inject constructor() : BookmarkImporter {
      */
     private fun Element.processFolder(folderName: String): List<Bookmark.Entry> {
         return children()
-            .filter { it.isTag(ITEM_TAG) }
+            .filter { element -> element.matchesName(ITEM_TAG) }
             .flatMap {
                 val immediateChild = it.child(0)
                 when {
-                    immediateChild.isTag(FOLDER_TAG) ->
+                    immediateChild.matchesName(FOLDER_TAG) ->
                         immediateChild.nextElementSibling()!!
                             .processFolder(computeFolderName(folderName, immediateChild.text()))
-                    immediateChild.isTag(BOOKMARK_TAG) ->
+                    immediateChild.matchesName(BOOKMARK_TAG) ->
                         listOf(
                             Bookmark.Entry(
                                 url = immediateChild.attr(HREF),
@@ -53,7 +53,7 @@ class NetscapeBookmarkFormatImporter @Inject constructor() : BookmarkImporter {
      * @return True if the element's tag name matches the [tagName], case insentitive, false
      * otherwise.
      */
-    private fun Element.isTag(tagName: String): Boolean {
+    private fun Element.matchesName(tagName: String): Boolean {
         return tagName().equals(tagName, ignoreCase = true)
     }
 
