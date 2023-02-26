@@ -7,6 +7,7 @@ import acr.browser.lightning.browser.di.NetworkScheduler
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.extensions.themedDrawable
 import acr.browser.lightning.favicon.FaviconModel
+import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -30,7 +31,13 @@ class FaviconImageLoader @Inject constructor(
     themeProvider: ThemeProvider
 ) : ImageLoader {
 
-    private val lruCache: LruCache<String, Any> = LruCache(1 * 1000 * 1000)
+    private val lruCache: LruCache<String, Any> =
+        object : LruCache<String, Any>(FileUtils.megabytesToBytes(5).toInt()) {
+            override fun sizeOf(key: String, value: Any) = when (value) {
+                is Bitmap -> value.allocationByteCount
+                else -> 1
+            }
+        }
     private val folderIcon = application.themedDrawable(
         R.drawable.ic_folder,
         themeProvider.color(R.attr.autoCompleteTitleColor)
