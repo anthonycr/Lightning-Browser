@@ -5,11 +5,9 @@ import acr.browser.lightning.extensions.pad
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.DrawableUtils
-import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.LruCache
 import androidx.annotation.ColorInt
 import androidx.annotation.WorkerThread
 import androidx.core.net.toUri
@@ -21,8 +19,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Reactive model that can fetch favicons
- * from URLs and also cache them.
+ * Reactive model that can fetch favicons from URLs and also cache them to disk.
  */
 @Singleton
 class FaviconModel @Inject constructor(
@@ -33,23 +30,6 @@ class FaviconModel @Inject constructor(
     private val loaderOptions = BitmapFactory.Options()
     private val bookmarkIconSize =
         application.resources.getDimensionPixelSize(R.dimen.material_grid_small_icon)
-    private val faviconCache =
-        object : LruCache<String, Bitmap>(FileUtils.megabytesToBytes(5).toInt()) {
-            override fun sizeOf(key: String, value: Bitmap) = value.allocationByteCount
-        }
-
-    /**
-     * Retrieves a favicon from the memory cache.Bitmap may not be present if no bitmap has been
-     * added for the URL or if it has been evicted from the memory cache.
-     *
-     * @param url the URL to retrieve the bitmap for.
-     * @return the bitmap associated with the URL, may be null.
-     */
-    private fun getFaviconFromMemCache(url: String): Bitmap? {
-        synchronized(faviconCache) {
-            return faviconCache.get(url)
-        }
-    }
 
     /**
      * Create the default favicon for a bookmark with the provided [title].
@@ -69,18 +49,6 @@ class FaviconModel @Inject constructor(
     }
 
     /**
-     * Adds a bitmap to the memory cache for the given URL.
-     *
-     * @param url    the URL to map the bitmap to.
-     * @param bitmap the bitmap to store.
-     */
-    private fun addFaviconToMemCache(url: String, bitmap: Bitmap) {
-        synchronized(faviconCache) {
-            faviconCache.put(url, bitmap)
-        }
-    }
-
-    /**
      * Retrieves the favicon for a URL, may be from network or cache.
      *
      * @param url   The URL that we should retrieve the favicon for.
@@ -90,19 +58,12 @@ class FaviconModel @Inject constructor(
         val uri = url.toUri().toValidUri()
             ?: return@create it.onSuccess(createDefaultBitmapForTitle(title).pad())
 
-        val cachedFavicon = getFaviconFromMemCache(url)
-
-        if (cachedFavicon != null) {
-            return@create it.onSuccess(cachedFavicon.pad())
-        }
-
         val faviconCacheFile = getFaviconCacheFile(application, uri)
 
         if (faviconCacheFile.exists()) {
             val storedFavicon = BitmapFactory.decodeFile(faviconCacheFile.path, loaderOptions)
 
             if (storedFavicon != null) {
-                addFaviconToMemCache(url, storedFavicon)
                 return@create it.onSuccess(storedFavicon.pad())
             }
         }
