@@ -57,8 +57,10 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         currentState = viewState
     }
 
-    override fun renderTabs(tabs: List<TabViewState>) {
-        tabs.takeIf { it != currentTabs }?.let(browserActivity::renderTabs)
+    override fun renderTabs(tabs: List<TabViewState>, scrollPosition: Int?) {
+        tabs.takeIf { it != currentTabs }?.let {
+            browserActivity.renderTabs(it, scrollPosition)
+        }
     }
 
     override fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {

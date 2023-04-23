@@ -14,10 +14,10 @@ import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.search.SearchListener
 import acr.browser.lightning.browser.search.StyleRemovingTextWatcher
 import acr.browser.lightning.browser.tab.DesktopTabRecyclerViewAdapter
-import acr.browser.lightning.browser.tab.DrawerTabRecyclerViewAdapter
 import acr.browser.lightning.browser.tab.TabPager
 import acr.browser.lightning.browser.tab.TabViewHolder
 import acr.browser.lightning.browser.tab.TabViewState
+import acr.browser.lightning.browser.tab.VerticalTabRecyclerViewAdapter
 import acr.browser.lightning.browser.ui.BookmarkConfiguration
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
@@ -28,22 +28,26 @@ import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.downloads.DownloadEntry
-import acr.browser.lightning.databinding.BrowserActivityBinding
+import acr.browser.lightning.databinding.BrowserActivity2Binding
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.resizeAndShow
-import acr.browser.lightning.extensions.takeIfInstance
 import acr.browser.lightning.extensions.tint
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
 import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.utils.value
+import acr.browser.lightning.view.ManualLinearSnapHelper
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
+import android.graphics.Insets
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.KeyEvent
@@ -51,6 +55,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
@@ -65,7 +70,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
 import javax.inject.Inject
 
 /**
@@ -74,7 +78,7 @@ import javax.inject.Inject
  */
 abstract class BrowserActivity : ThemableBrowserActivity() {
 
-    private lateinit var binding: BrowserActivityBinding
+    private lateinit var binding: BrowserActivity2Binding
     private lateinit var tabsAdapter: ListAdapter<TabViewState, TabViewHolder>
     private lateinit var bookmarksAdapter: BookmarkRecyclerViewAdapter
 
@@ -87,6 +91,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     private val backgroundDrawable by lazy { ColorDrawable(defaultColor) }
 
     private var customView: View? = null
+
+    private val manualLinearSnapHelper = ManualLinearSnapHelper()
 
     @Suppress("ConvertLambdaToReference")
     private val launcher = registerForActivityResult(
@@ -140,15 +146,28 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     @DrawableRes
     abstract fun homeIcon(): Int
 
+    private fun WindowInsets.gestureInsets(): Insets? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getInsets(WindowInsets.Type.mandatorySystemGestures())
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            @Suppress("DEPRECATION")
+            mandatorySystemGestureInsets
+        } else {
+            null
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = BrowserActivityBinding.inflate(LayoutInflater.from(this))
+        binding = BrowserActivity2Binding.inflate(LayoutInflater.from(this))
 
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
         injector.browser2ComponentBuilder()
             .activity(this)
+            .binding(binding)
             .browserFrame(binding.contentFrame)
             .toolbarRoot(binding.uiLayout)
             .toolbar(binding.toolbarLayout)
@@ -156,6 +175,16 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             .incognitoMode(isIncognito())
             .build()
             .inject(this)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            binding.root.setOnApplyWindowInsetsListener { _, insets ->
+                val gestureInsets = insets.gestureInsets()
+                if (gestureInsets != null) {
+                    binding.toolbarLayout.setPadding(0, 0, 0, gestureInsets.bottom)
+                }
+                insets
+            }
+        }
 
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
 
@@ -205,31 +234,54 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             )
         }
 
-        if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
-            tabsAdapter = DrawerTabRecyclerViewAdapter(
-                onClick = presenter::onTabClick,
-                onCloseClick = presenter::onTabClose,
-                onLongClick = presenter::onTabLongClick
-            )
-            binding.drawerTabsList.isVisible = true
-            binding.drawerTabsList.adapter = tabsAdapter
-            binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
-            binding.desktopTabsList.isVisible = false
-        } else {
-            tabsAdapter = DesktopTabRecyclerViewAdapter(
-                context = this,
-                onClick = presenter::onTabClick,
-                onCloseClick = presenter::onTabClose,
-                onLongClick = presenter::onTabLongClick
-            )
-            binding.desktopTabsList.isVisible = true
-            binding.desktopTabsList.adapter = tabsAdapter
-            binding.desktopTabsList.layoutManager =
-                LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-            binding.desktopTabsList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
-                ?.supportsChangeAnimations = false
-            binding.drawerTabsList.isVisible = false
+        tabsAdapter = VerticalTabRecyclerViewAdapter(
+            activity = this,
+            onClick = {
+                presenter.onTabClick(it)
+                tabPager.showOtherToolbar()
+            },
+            onCloseClick = presenter::onTabClose,
+            onLongClick = presenter::onTabLongClick,
+            onBackClick = presenter::onBackClick,
+            onForwardClick = presenter::onForwardClick,
+            onHomeClick = presenter::onHomeClick
+        )
+        manualLinearSnapHelper.attachToRecyclerView(binding.drawerList)
+        binding.drawerList.isVisibleListener = { isVisible ->
+            if (isVisible) {
+                presenter.onPrepareBackground()
+            }
         }
+        binding.drawerList.adapter = tabsAdapter
+        binding.drawerList.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        binding.drawerTabsList.isVisible = false
+        binding.desktopTabsList.isVisible = false
+
+//        if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
+//            tabsAdapter = DrawerTabRecyclerViewAdapter(
+//                onClick = presenter::onTabClick,
+//                onCloseClick = presenter::onTabClose,
+//                onLongClick = presenter::onTabLongClick
+//            )
+//            binding.drawerTabsList.isVisible = true
+//            binding.drawerTabsList.adapter = tabsAdapter
+//            binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
+//            binding.desktopTabsList.isVisible = false
+//        } else {
+//            tabsAdapter = DesktopTabRecyclerViewAdapter(
+//                context = this,
+//                onClick = presenter::onTabClick,
+//                onCloseClick = presenter::onTabClose,
+//                onLongClick = presenter::onTabLongClick
+//            )
+//            binding.desktopTabsList.isVisible = true
+//            binding.desktopTabsList.adapter = tabsAdapter
+//            binding.desktopTabsList.layoutManager =
+//                LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+//            binding.desktopTabsList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
+//                ?.supportsChangeAnimations = false
+//            binding.drawerTabsList.isVisible = false
+//        }
 
         bookmarksAdapter = BookmarkRecyclerViewAdapter(
             onClick = presenter::onBookmarkClick,
@@ -274,7 +326,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         binding.findNext.setOnClickListener { presenter.onFindNext() }
         binding.findQuit.setOnClickListener { presenter.onFindDismiss() }
 
-        binding.homeButton.setOnClickListener { presenter.onTabCountViewClick() }
         binding.actionBack.setOnClickListener { presenter.onBackClick() }
         binding.actionForward.setOnClickListener { presenter.onForwardClick() }
         binding.actionHome.setOnClickListener { presenter.onHomeClick() }
@@ -295,6 +346,11 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         onBackPressedDispatcher.addCallback {
             presenter.onNavigateBack()
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        binding.drawerList.adapter = tabsAdapter
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -388,9 +444,14 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     /**
      * @see BrowserContract.View.renderTabs
      */
-    fun renderTabs(tabListState: List<TabViewState>) {
+    fun renderTabs(tabListState: List<TabViewState>, scrollPosition: Int?) {
         binding.tabCountView.updateCount(tabListState.size)
         tabsAdapter.submitList(tabListState)
+
+        if (scrollPosition != null) {
+            binding.drawerList.scrollToPosition(scrollPosition)
+            manualLinearSnapHelper.snapToCurrentPosition()
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.browser.BrowserActivity
+import acr.browser.lightning.databinding.BrowserActivity2Binding
 import android.content.Intent
 import android.view.View
 import android.widget.FrameLayout
@@ -22,6 +23,9 @@ interface Browser2Component {
 
         @BindsInstance
         fun activity(activity: FragmentActivity): Builder
+
+        @BindsInstance
+        fun binding(binding: BrowserActivity2Binding): Builder
 
         @BindsInstance
         fun browserFrame(frameLayout: FrameLayout): Builder
