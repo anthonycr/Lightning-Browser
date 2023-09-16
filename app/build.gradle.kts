@@ -87,6 +87,7 @@ android {
     lint {
         abortOnError = true
     }
+    namespace = "acr.browser.lightning"
 }
 
 jacoco {
@@ -171,25 +172,4 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).all 
             freeCompilerArgs += listOf("-progressive")
         }
     }
-}
-
-tasks.create("jacocoTestReport", JacocoReport::class.java) {
-    dependsOn.add("testLightningPlusDebugUnitTest")
-    dependsOn.add("createLightningPlusDebugCoverageReport")
-
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-
-    executionData(
-        fileTree(
-            mapOf(
-                "dir" to "$buildDir", "includes" to listOf(
-                    "jacoco/testLightningPlusDebugUnitTest.exec",
-                    "outputs/code-coverage/connected/*coverage.ec"
-                )
-            )
-        )
-    )
 }
