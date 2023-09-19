@@ -1,11 +1,14 @@
 package acr.browser.lightning.browser.view
 
+import acr.browser.lightning.R
+import acr.browser.lightning.databinding.BrowserBottomTabsBinding
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.Utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.GestureDetector
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -23,7 +26,8 @@ import javax.inject.Inject
  * Coordinates scrolling behavior between a [WebView] and a toolbar/search box.
  */
 class WebViewScrollCoordinator @Inject constructor(
-    activity: Activity,
+    private val activity: Activity,
+    private val browserLayoutContainer: ViewGroup,
     private val browserFrame: FrameLayout,
     private val toolbarRoot: LinearLayout,
     private val toolbar: View,
@@ -39,6 +43,8 @@ class WebViewScrollCoordinator @Inject constructor(
 
     private var currentToggleListener: ToggleListener? = null
 
+    private var bottomTabsLayout: BrowserBottomTabsBinding? = null
+
     /**
      * Configure the [webView] to match its scrolling behavior with showing an hiding the toolbar.
      */
@@ -48,31 +54,55 @@ class WebViewScrollCoordinator @Inject constructor(
                 inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
             }
         }
-        if (userPreferences.fullScreenEnabled) {
-            if (toolbar.parent != browserFrame) {
-                (toolbar.parent as ViewGroup?)?.removeView(toolbar)
+//        if (userPreferences.fullScreenEnabled) {
+//            if (toolbar.parent != browserFrame) {
+//                (toolbar.parent as ViewGroup?)?.removeView(toolbar)
+//
+//                browserFrame.addView(toolbar)
+//            }
+//
+//            currentToggleListener?.showToolbar() ?: run {
+//                toolbar.translationY = 0f
+//            }
+//
+//            toolbar.doOnLayout {
+//                webView.translationY = toolbar.height.toFloat()
+//                coordinate(toolbar, webView)
+//            }
+//        } else {
+//            if (toolbar.parent != toolbarRoot) {
+//                (toolbar.parent as ViewGroup?)?.removeView(toolbar)
+//
+//                toolbarRoot.addView(toolbar, 0)
+//            }
+//
+//            toolbar.translationY = 0f
+//            webView.translationY = 0f
 
-                browserFrame.addView(toolbar)
+        (toolbar.parent as ViewGroup?)?.removeView(toolbar)
+
+        val tabs = BrowserBottomTabsBinding.inflate(activity.layoutInflater)
+        bottomTabsLayout = tabs
+
+        tabs.bottomTabContainer.addView(toolbar)
+
+        browserLayoutContainer.addView(
+            tabs.root,
+            FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.BOTTOM
             }
-
-            currentToggleListener?.showToolbar() ?: run {
-                toolbar.translationY = 0f
+        )
+        tabs.root.doOnLayout {
+            tabs.root.translationY = tabs.bottomTabList.height.toFloat()
+            val anchor = toolbarRoot.findViewById<View>(R.id.bottom_tabs_anchor)
+            anchor.layoutParams = anchor.layoutParams.apply {
+                height = toolbar.height
             }
-
-            toolbar.doOnLayout {
-                webView.translationY = toolbar.height.toFloat()
-                coordinate(toolbar, webView)
-            }
-        } else {
-            if (toolbar.parent != toolbarRoot) {
-                (toolbar.parent as ViewGroup?)?.removeView(toolbar)
-
-                toolbarRoot.addView(toolbar, 0)
-            }
-
-            toolbar.translationY = 0f
-            webView.translationY = 0f
         }
+//        }
     }
 
     /**
@@ -80,7 +110,27 @@ class WebViewScrollCoordinator @Inject constructor(
      * visible.
      */
     fun showToolbar() {
-        currentToggleListener?.showToolbar()
+//        currentToggleListener?.showToolbar()
+
+    }
+
+    fun yolo() {
+        val bottomTabsLayout = bottomTabsLayout ?: return
+        if (bottomTabsLayout.root.translationY == 0F) {
+            bottomTabsLayout.root.doOnLayout {
+                bottomTabsLayout.root.animate()
+                    .setDuration(250)
+                    .setInterpolator(BezierDecelerateInterpolator())
+                    .translationY(bottomTabsLayout.bottomTabList.height.toFloat())
+            }
+        } else {
+            bottomTabsLayout.root.doOnLayout {
+                bottomTabsLayout.root.animate()
+                    .setDuration(250)
+                    .setInterpolator(BezierDecelerateInterpolator())
+                    .translationY(0F)
+            }
+        }
     }
 
     private fun coordinate(toolbar: View, webView: WebView) {

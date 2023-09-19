@@ -64,6 +64,10 @@ class TabPager @Inject constructor(
         webViewScrollCoordinator.showToolbar()
     }
 
+    fun yolo() {
+        webViewScrollCoordinator.yolo()
+    }
+
     private fun FrameLayout.removeWebViews() {
         children.filterIsInstance<WebView>().forEach(container::removeView)
     }

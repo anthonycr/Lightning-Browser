@@ -151,6 +151,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             .activity(this)
             .browserFrame(binding.contentFrame)
             .toolbarRoot(binding.uiLayout)
+            .browserRoot(binding.browserLayoutContainer)
             .toolbar(binding.toolbarLayout)
             .initialIntent(intent)
             .incognitoMode(isIncognito())
@@ -613,7 +614,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      */
     fun openTabDrawer() {
         binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
-        binding.drawerLayout.openDrawer(binding.tabDrawer)
+        tabPager.yolo()
+//        binding.drawerLayout.openDrawer(binding.tabDrawer)
     }
 
     /**
