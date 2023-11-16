@@ -111,6 +111,12 @@ interface TabModel {
      */
     val favicon: Bitmap?
 
+    fun invalidatePreview()
+
+    val isPreviewInvalid: Boolean
+
+    val preview: () -> Bitmap?
+
     /**
      * Emits changes to the [favicon].
      */

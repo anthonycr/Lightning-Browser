@@ -34,7 +34,7 @@ interface BrowserContract {
         /**
          * Render the [tabs] in the tabs list.
          */
-        fun renderTabs(tabs: List<TabViewState>)
+        fun renderTabs(tabs: List<TabViewState>, scrollPosition: Int?)
 
         /**
          * Show the dialog to add a bookmark for the current page.

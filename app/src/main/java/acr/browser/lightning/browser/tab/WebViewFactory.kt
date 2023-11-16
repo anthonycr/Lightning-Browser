@@ -75,6 +75,7 @@ class WebViewFactory @Inject constructor(
             importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
         }
 
+        this.isForceDarkAllowed
         isScrollbarFadingEnabled = true
         isSaveEnabled = true
         overScrollMode = View.OVER_SCROLL_NEVER

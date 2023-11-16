@@ -2,21 +2,12 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item>
-        <shape android:shape="rectangle">
-
-            <solid android:color="?colorPrimary" />
-        </shape>
-    </item>
-    <item
-        android:top="5dp"
-        android:bottom="5dp"
-        android:right="5dp"
-        android:left="5dp"
-        >
         <shape
             android:dither="true"
             android:shape="rectangle">
-            <corners android:radius="12dp" />
+            <corners
+                android:bottomLeftRadius="8dp"
+                android:bottomRightRadius="8dp" />
 
             <solid android:color="?autoCompleteBackgroundColor" />
         </shape>

@@ -178,6 +178,8 @@ class BrowserPresenter @Inject constructor(
         id = id,
         icon = favicon,
         title = title,
+        isPreviewInvalid = isPreviewInvalid,
+        preview = preview,
         isSelected = isForeground
     )
 
@@ -315,6 +317,17 @@ class BrowserPresenter @Inject constructor(
                     }
                 }
         }
+    }
+
+    /**
+     * Prepare the tab for entering the background
+     */
+    fun onPrepareBackground() {
+        currentTab?.invalidatePreview()
+//        this.view?.updateTabs(
+//            model.tabsList.map { it.asViewState() },
+//            model.tabsList.indexOf(currentTab).takeIf { it != -1 }
+//        )
     }
 
     /**
@@ -564,26 +577,41 @@ class BrowserPresenter @Inject constructor(
     /**
      * Called when the user presses the browser's back button.
      */
-    fun onBackClick() {
-        if (currentTab?.canGoBack() == true) {
-            currentTab?.goBack()
+    fun onBackClick(index: Int? = null) {
+        val tab = if (index != null) {
+            model.tabsList[index]
+        } else {
+            currentTab
+        }
+        if (tab?.canGoBack() == true) {
+            tab.goBack()
         }
     }
 
     /**
      * Called when the user presses the browser's forward button.
      */
-    fun onForwardClick() {
-        if (currentTab?.canGoForward() == true) {
-            currentTab?.goForward()
+    fun onForwardClick(index: Int? = null) {
+        val tab = if (index != null) {
+            model.tabsList[index]
+        } else {
+            currentTab
+        }
+        if (tab?.canGoForward() == true) {
+            tab.goForward()
         }
     }
 
     /**
      * Call when the user clicks on the home button.
      */
-    fun onHomeClick() {
-        currentTab?.loadFromInitializer(homePageInitializer)
+    fun onHomeClick(index: Int? = null) {
+        val tab = if (index != null) {
+            model.tabsList[index]
+        } else {
+            currentTab
+        }
+        tab?.loadFromInitializer(homePageInitializer)
     }
 
     /**
@@ -1263,8 +1291,11 @@ class BrowserPresenter @Inject constructor(
         this?.renderState(viewState)
     }
 
-    private fun BrowserContract.View?.updateTabs(tabs: List<TabViewState>) {
+    private fun BrowserContract.View?.updateTabs(
+        tabs: List<TabViewState>,
+        scrollPosition: Int? = null
+    ) {
         tabListState = tabs
-        this?.renderTabs(tabListState)
+        this?.renderTabs(tabListState, scrollPosition)
     }
 }

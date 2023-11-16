@@ -10,12 +10,18 @@ import acr.browser.lightning.utils.Option
 import acr.browser.lightning.utils.value
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
+import android.view.View.MeasureSpec
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
+import androidx.core.graphics.applyCanvas
+import androidx.core.view.drawToBitmap
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
+
 
 /**
  * Creates the adaptation between a [WebView] and the [TabModel] interface used by the browser.
@@ -129,6 +135,22 @@ class TabAdapter(
     override val favicon: Bitmap?
         get() = latentInitializer?.let { iconFreeze }
             ?: tabWebChromeClient.faviconObservable.value?.value()
+
+    override fun invalidatePreview() {
+        isPreviewInvalid = true
+    }
+
+    override var isPreviewInvalid: Boolean = true
+
+    override val preview: () -> Bitmap?
+        get() = {
+            if (webView.isLaidOut) {
+                isPreviewInvalid = true
+                webView.drawToBitmap()
+            } else {
+                null
+            }
+        }
 
     override fun faviconChanges(): Observable<Option<Bitmap>> = tabWebChromeClient.faviconObservable
 

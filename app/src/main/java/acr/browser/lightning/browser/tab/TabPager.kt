@@ -25,6 +25,10 @@ class TabPager @Inject constructor(
 
     var longPressListener: ((id: Int, longPress: LongPress) -> Unit)? = null
 
+    fun showOtherToolbar() {
+        webViewScrollCoordinator.showBottomToolbar()
+    }
+
     /**
      * Select the tab with the provided [id] to be displayed by the pager.
      */
