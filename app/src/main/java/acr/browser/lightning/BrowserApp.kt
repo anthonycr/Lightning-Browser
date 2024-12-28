@@ -36,7 +36,7 @@ class BrowserApp : Application() {
     internal lateinit var bookmarkModel: BookmarkRepository
 
     @Inject
-    @field:DatabaseScheduler
+    @DatabaseScheduler
     internal lateinit var databaseScheduler: Scheduler
 
     @Inject

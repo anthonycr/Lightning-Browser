@@ -37,8 +37,8 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     @Inject internal lateinit var application: Application
     @Inject internal lateinit var netscapeBookmarkFormatImporter: NetscapeBookmarkFormatImporter
     @Inject internal lateinit var legacyBookmarkImporter: LegacyBookmarkImporter
-    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
-    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
+    @Inject @DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var logger: Logger
 
     private var importSubscription: Disposable? = null

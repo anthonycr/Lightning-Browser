@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     id("com.android.application")
@@ -6,10 +8,12 @@ plugins {
     id("kotlin-kapt")
     id("jacoco")
     id("com.github.ben-manes.versions")
+    id("com.google.devtools.ksp") version "2.1.0-1.0.29"
+    id("com.anthonycr.mezzanine.plugin") version "2.0.0"
 }
 
 android {
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 21
@@ -78,12 +82,6 @@ android {
             excludes += listOf(".readme")
         }
     }
-
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
     lint {
         abortOnError = true
     }
@@ -124,12 +122,12 @@ dependencies {
     implementation("org.jsoup:jsoup:1.15.3")
 
     // file reading
-    val mezzanineVersion = "1.1.1"
-    implementation("com.anthonycr.mezzanine:mezzanine:$mezzanineVersion")
-    kapt("com.anthonycr.mezzanine:mezzanine-compiler:$mezzanineVersion")
+    val mezzanineVersion = "2.0.0"
+    implementation("com.anthonycr.mezzanine:core:$mezzanineVersion")
+    ksp("com.anthonycr.mezzanine:processor:$mezzanineVersion")
 
     // dependency injection
-    val daggerVersion = "2.44.2"
+    val daggerVersion = "2.54"
     implementation("com.google.dagger:dagger:$daggerVersion")
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
     compileOnly("javax.annotation:jsr250-api:1.0")
@@ -144,13 +142,6 @@ dependencies {
     implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
 
-    // tor proxy
-    val netCipherVersion = "2.0.0-alpha1"
-    implementation("info.guardianproject.netcipher:netcipher:$netCipherVersion")
-    implementation("info.guardianproject.netcipher:netcipher-webkit:$netCipherVersion")
-
-    implementation("com.anthonycr.progress:animated-progress:1.0")
-
     // memory leak analysis
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.10")
 
@@ -158,18 +149,26 @@ dependencies {
     implementation(kotlin("stdlib", KotlinCompilerVersion.VERSION))
 }
 
-kapt {
-    arguments {
-        arg("mezzanine.projectPath", project.rootDir)
+mezzanine {
+    files = files(
+        "src/main/html/list.html",
+        "src/main/html/bookmarks.html",
+        "src/main/html/homepage.html",
+        "src/main/js/InvertPage.js",
+        "src/main/js/TextReflow.js",
+        "src/main/js/ThemeColor.js"
+    )
+}
+
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+        languageVersion.set(KotlinVersion.KOTLIN_2_1)
     }
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).all {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        kotlinOptions {
-            freeCompilerArgs += listOf("-XXLanguage:+InlineClasses")
-            freeCompilerArgs += listOf("-progressive")
-        }
-    }
+java {
+    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
 }

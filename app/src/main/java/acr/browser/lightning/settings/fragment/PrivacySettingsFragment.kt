@@ -21,8 +21,8 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var historyRepository: HistoryRepository
     @Inject internal lateinit var userPreferences: UserPreferences
-    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
-    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
+    @Inject @DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
 
     override fun providePreferencesXmlResource() = R.xml.preference_privacy
 
