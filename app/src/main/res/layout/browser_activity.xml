@@ -161,16 +161,18 @@
                         </LinearLayout>
                     </androidx.appcompat.widget.Toolbar>
 
-                    <com.anthonycr.progress.AnimatedProgressBar
+                    <ProgressBar
                         android:id="@+id/progress_view"
+                        style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/progress_bar_height"
                         android:background="@color/transparent"
-                        app:bidirectionalAnimate="false"
+                        android:progressDrawable="@color/accent_color"
                         app:layout_constraintBottom_toBottomOf="@id/toolbar"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:progressColor="?attr/colorAccent" />
+                        />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
