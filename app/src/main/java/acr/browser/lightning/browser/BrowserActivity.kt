@@ -13,11 +13,13 @@ import acr.browser.lightning.browser.menu.MenuItemAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.search.SearchListener
 import acr.browser.lightning.browser.search.StyleRemovingTextWatcher
+import acr.browser.lightning.browser.tab.BottomDrawerTabRecyclerViewAdapter
 import acr.browser.lightning.browser.tab.DesktopTabRecyclerViewAdapter
 import acr.browser.lightning.browser.tab.DrawerTabRecyclerViewAdapter
 import acr.browser.lightning.browser.tab.TabPager
 import acr.browser.lightning.browser.tab.TabViewHolder
 import acr.browser.lightning.browser.tab.TabViewState
+import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.browser.ui.BookmarkConfiguration
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
@@ -29,6 +31,7 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.databinding.BrowserActivityBinding
+import acr.browser.lightning.databinding.BrowserBottomTabsBinding
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
@@ -123,6 +126,12 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     @Inject
     internal lateinit var proxyUtils: ProxyUtils
 
+    @Inject
+    internal lateinit var bottomTabsBinding: BrowserBottomTabsBinding
+
+    @Inject
+    internal lateinit var themeProvider: ThemeProvider
+
     /**
      * True if the activity is operating in incognito mode, false otherwise.
      */
@@ -150,6 +159,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         injector.browser2ComponentBuilder()
             .activity(this)
             .browserFrame(binding.contentFrame)
+            .bottomTabsLayout(BrowserBottomTabsBinding.inflate(layoutInflater))
             .toolbarRoot(binding.uiLayout)
             .browserRoot(binding.browserLayoutContainer)
             .toolbar(binding.toolbarLayout)
@@ -207,14 +217,29 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         }
 
         if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
-            tabsAdapter = DrawerTabRecyclerViewAdapter(
+//            tabsAdapter = DrawerTabRecyclerViewAdapter(
+//                onClick = presenter::onTabClick,
+//                onCloseClick = presenter::onTabClose,
+//                onLongClick = presenter::onTabLongClick
+//            )
+//            binding.drawerTabsList.isVisible = true
+//            binding.drawerTabsList.adapter = tabsAdapter
+//            binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
+//            binding.desktopTabsList.isVisible = false
+
+            tabsAdapter = BottomDrawerTabRecyclerViewAdapter(
+                themeProvider,
+                this,
                 onClick = presenter::onTabClick,
                 onCloseClick = presenter::onTabClose,
-                onLongClick = presenter::onTabLongClick
+                onLongClick = presenter::onTabLongClick,
+                onBackClick = { presenter.onBackClick() },
+                onForwardClick = { presenter.onForwardClick() },
+                onHomeClick = { presenter.onHomeClick() }
             )
-            binding.drawerTabsList.isVisible = true
-            binding.drawerTabsList.adapter = tabsAdapter
-            binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
+            bottomTabsBinding.bottomTabList.adapter = tabsAdapter
+            bottomTabsBinding.bottomTabList.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+            binding.drawerTabsList.isVisible = false
             binding.desktopTabsList.isVisible = false
         } else {
             tabsAdapter = DesktopTabRecyclerViewAdapter(

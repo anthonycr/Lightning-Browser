@@ -65,40 +65,11 @@
                             android:baselineAligned="false"
                             android:orientation="horizontal">
 
-                            <FrameLayout
-                                android:id="@+id/home_button"
-                                android:layout_width="?attr/actionBarSize"
-                                android:layout_height="match_parent"
-                                android:background="?attr/actionBarItemBackground"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:gravity="center">
-
-                                <ImageView
-                                    android:id="@+id/home_image_view"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:contentDescription="@string/home"
-                                    android:visibility="gone"
-                                    app:srcCompat="@drawable/ic_action_home" />
-
-                                <acr.browser.lightning.icon.TabCountView
-                                    android:id="@+id/tab_count_view"
-                                    android:layout_width="@dimen/material_grid_small_icon"
-                                    android:layout_height="@dimen/material_grid_small_icon"
-                                    android:layout_gravity="center"
-                                    app:tabIconBorderRadius="2dp"
-                                    app:tabIconBorderWidth="3dp"
-                                    app:tabIconColor="?attr/iconColor"
-                                    app:tabIconTextSize="14dp" />
-                            </FrameLayout>
-
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:id="@+id/search_container"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_marginLeft="2dp"
+                                android:layout_marginLeft="10dp"
                                 android:layout_marginTop="6dp"
                                 android:layout_marginRight="2dp"
                                 android:layout_marginBottom="6dp"
@@ -158,6 +129,35 @@
                                     app:srcCompat="@drawable/ic_action_refresh" />
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <FrameLayout
+                                android:id="@+id/home_button"
+                                android:layout_width="?attr/actionBarSize"
+                                android:layout_height="match_parent"
+                                android:background="?attr/actionBarItemBackground"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center">
+
+                                <ImageView
+                                    android:id="@+id/home_image_view"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:contentDescription="@string/home"
+                                    android:visibility="gone"
+                                    app:srcCompat="@drawable/ic_action_home" />
+
+                                <acr.browser.lightning.icon.TabCountView
+                                    android:id="@+id/tab_count_view"
+                                    android:layout_width="@dimen/material_grid_small_icon"
+                                    android:layout_height="@dimen/material_grid_small_icon"
+                                    android:layout_gravity="center"
+                                    app:tabIconBorderRadius="2dp"
+                                    app:tabIconBorderWidth="3dp"
+                                    app:tabIconColor="?attr/iconColor"
+                                    app:tabIconTextSize="14dp" />
+                            </FrameLayout>
                         </LinearLayout>
                     </androidx.appcompat.widget.Toolbar>
 

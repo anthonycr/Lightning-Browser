@@ -16,7 +16,7 @@
         android:id="@+id/bottom_tab_list"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@color/black"
+        android:background="?attr/drawerBackground"
         android:divider="@null"
         android:dividerHeight="0dp"
         android:overScrollMode="ifContentScrolls"

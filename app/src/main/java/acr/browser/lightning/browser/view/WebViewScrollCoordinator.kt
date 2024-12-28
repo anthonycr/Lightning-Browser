@@ -27,6 +27,7 @@ import javax.inject.Inject
  */
 class WebViewScrollCoordinator @Inject constructor(
     private val activity: Activity,
+    private val bottomTabsLayout: BrowserBottomTabsBinding,
     private val browserLayoutContainer: ViewGroup,
     private val browserFrame: FrameLayout,
     private val toolbarRoot: LinearLayout,
@@ -42,8 +43,6 @@ class WebViewScrollCoordinator @Inject constructor(
     private val touchListener = TouchListener(GestureDetector(activity, gestureListener))
 
     private var currentToggleListener: ToggleListener? = null
-
-    private var bottomTabsLayout: BrowserBottomTabsBinding? = null
 
     /**
      * Configure the [webView] to match its scrolling behavior with showing an hiding the toolbar.
@@ -79,24 +78,25 @@ class WebViewScrollCoordinator @Inject constructor(
 //            toolbar.translationY = 0f
 //            webView.translationY = 0f
 
-        (toolbar.parent as ViewGroup?)?.removeView(toolbar)
 
-        val tabs = BrowserBottomTabsBinding.inflate(activity.layoutInflater)
-        bottomTabsLayout = tabs
 
-        tabs.bottomTabContainer.addView(toolbar)
+        val tabs = bottomTabsLayout
 
-        browserLayoutContainer.addView(
-            tabs.root,
-            FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                gravity = Gravity.BOTTOM
-            }
-        )
+        if (tabs.root.parent == null) {
+            (toolbar.parent as ViewGroup?)?.removeView(toolbar)
+            tabs.bottomTabContainer.addView(toolbar)
+            browserLayoutContainer.addView(
+                tabs.root,
+                FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.BOTTOM
+                }
+            )
+        }
         tabs.root.doOnLayout {
-            tabs.root.translationY = tabs.bottomTabList.height.toFloat()
+            tabs.root.animateTranslation(tabs.bottomTabList.height.toFloat())
             val anchor = toolbarRoot.findViewById<View>(R.id.bottom_tabs_anchor)
             anchor.layoutParams = anchor.layoutParams.apply {
                 height = toolbar.height
@@ -114,21 +114,21 @@ class WebViewScrollCoordinator @Inject constructor(
 
     }
 
+    private fun View.animateTranslation(y: Float) {
+        animate()
+            .setDuration(250)
+            .setInterpolator(BezierDecelerateInterpolator())
+            .translationY(y)
+    }
+
     fun yolo() {
-        val bottomTabsLayout = bottomTabsLayout ?: return
         if (bottomTabsLayout.root.translationY == 0F) {
             bottomTabsLayout.root.doOnLayout {
-                bottomTabsLayout.root.animate()
-                    .setDuration(250)
-                    .setInterpolator(BezierDecelerateInterpolator())
-                    .translationY(bottomTabsLayout.bottomTabList.height.toFloat())
+                bottomTabsLayout.root.animateTranslation(bottomTabsLayout.bottomTabList.height.toFloat())
             }
         } else {
             bottomTabsLayout.root.doOnLayout {
-                bottomTabsLayout.root.animate()
-                    .setDuration(250)
-                    .setInterpolator(BezierDecelerateInterpolator())
-                    .translationY(0F)
+                bottomTabsLayout.root.animateTranslation(0F)
             }
         }
     }

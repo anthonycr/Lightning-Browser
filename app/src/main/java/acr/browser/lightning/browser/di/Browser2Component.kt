@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.browser.BrowserActivity
+import acr.browser.lightning.databinding.BrowserBottomTabsBinding
 import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,9 @@ interface Browser2Component {
 
         @BindsInstance
         fun browserRoot(viewGroup: ViewGroup): Builder
+
+        @BindsInstance
+        fun bottomTabsLayout(bottomTabsBinding: BrowserBottomTabsBinding): Builder
 
         @BindsInstance
         fun toolbar(toolbar: View): Builder
