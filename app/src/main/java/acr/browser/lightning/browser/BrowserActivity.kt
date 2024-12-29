@@ -23,6 +23,8 @@ import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.browser.ui.BookmarkConfiguration
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
+import acr.browser.lightning.browser.view.ViewDelegate
+import acr.browser.lightning.browser.view.delegates.BottomTabViewDelegate
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.database.Bookmark
@@ -30,7 +32,7 @@ import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.downloads.DownloadEntry
-import acr.browser.lightning.databinding.BrowserActivityBinding
+import acr.browser.lightning.databinding.BrowserActivityBottomBinding
 import acr.browser.lightning.databinding.BrowserBottomTabsBinding
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
@@ -77,7 +79,7 @@ import javax.inject.Inject
  */
 abstract class BrowserActivity : ThemableBrowserActivity() {
 
-    private lateinit var binding: BrowserActivityBinding
+    private lateinit var binding: ViewDelegate
     private lateinit var tabsAdapter: ListAdapter<TabViewState, TabViewHolder>
     private lateinit var bookmarksAdapter: BookmarkRecyclerViewAdapter
 
@@ -127,9 +129,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     internal lateinit var proxyUtils: ProxyUtils
 
     @Inject
-    internal lateinit var bottomTabsBinding: BrowserBottomTabsBinding
-
-    @Inject
     internal lateinit var themeProvider: ThemeProvider
 
     /**
@@ -151,7 +150,13 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = BrowserActivityBinding.inflate(LayoutInflater.from(this))
+        val actualBinding = BrowserActivityBottomBinding.inflate(LayoutInflater.from(this))
+        binding = BottomTabViewDelegate(actualBinding)
+        val bottomTabsBinding = if (binding.browserLayoutContainer != null) {
+            BrowserBottomTabsBinding.inflate(layoutInflater)
+        } else {
+            null
+        }
 
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
@@ -159,7 +164,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         injector.browser2ComponentBuilder()
             .activity(this)
             .browserFrame(binding.contentFrame)
-            .bottomTabsLayout(BrowserBottomTabsBinding.inflate(layoutInflater))
+            .bottomTabsLayout(bottomTabsBinding)
             .toolbarRoot(binding.uiLayout)
             .browserRoot(binding.browserLayoutContainer)
             .toolbar(binding.toolbarLayout)
@@ -217,30 +222,34 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         }
 
         if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
-//            tabsAdapter = DrawerTabRecyclerViewAdapter(
-//                onClick = presenter::onTabClick,
-//                onCloseClick = presenter::onTabClose,
-//                onLongClick = presenter::onTabLongClick
-//            )
-//            binding.drawerTabsList.isVisible = true
-//            binding.drawerTabsList.adapter = tabsAdapter
-//            binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
-//            binding.desktopTabsList.isVisible = false
+            if (binding.browserLayoutContainer == null) {
+                tabsAdapter = DrawerTabRecyclerViewAdapter(
+                    onClick = presenter::onTabClick,
+                    onCloseClick = presenter::onTabClose,
+                    onLongClick = presenter::onTabLongClick
+                )
+                binding.drawerTabsList.isVisible = true
+                binding.drawerTabsList.adapter = tabsAdapter
+                binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
+                binding.desktopTabsList.isVisible = false
+            } else {
 
-            tabsAdapter = BottomDrawerTabRecyclerViewAdapter(
-                themeProvider,
-                this,
-                onClick = presenter::onTabClick,
-                onCloseClick = presenter::onTabClose,
-                onLongClick = presenter::onTabLongClick,
-                onBackClick = { presenter.onBackClick() },
-                onForwardClick = { presenter.onForwardClick() },
-                onHomeClick = { presenter.onHomeClick() }
-            )
-            bottomTabsBinding.bottomTabList.adapter = tabsAdapter
-            bottomTabsBinding.bottomTabList.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-            binding.drawerTabsList.isVisible = false
-            binding.desktopTabsList.isVisible = false
+                tabsAdapter = BottomDrawerTabRecyclerViewAdapter(
+                    themeProvider,
+                    this,
+                    onClick = presenter::onTabClick,
+                    onCloseClick = presenter::onTabClose,
+                    onLongClick = presenter::onTabLongClick,
+                    onBackClick = { presenter.onBackClick() },
+                    onForwardClick = { presenter.onForwardClick() },
+                    onHomeClick = { presenter.onHomeClick() }
+                )
+                bottomTabsBinding!!.bottomTabList.adapter = tabsAdapter
+                bottomTabsBinding.bottomTabList.layoutManager =
+                    LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+                binding.drawerTabsList.isVisible = false
+                binding.desktopTabsList.isVisible = false
+            }
         } else {
             tabsAdapter = DesktopTabRecyclerViewAdapter(
                 context = this,
@@ -639,8 +648,11 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      */
     fun openTabDrawer() {
         binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
-        tabPager.yolo()
-//        binding.drawerLayout.openDrawer(binding.tabDrawer)
+        if (binding.browserLayoutContainer == null) {
+            binding.drawerLayout.openDrawer(binding.tabDrawer)
+        } else {
+            tabPager.openBottomTabDrawer()
+        }
     }
 
     /**

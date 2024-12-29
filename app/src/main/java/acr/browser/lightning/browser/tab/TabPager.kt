@@ -64,8 +64,8 @@ class TabPager @Inject constructor(
         webViewScrollCoordinator.showToolbar()
     }
 
-    fun yolo() {
-        webViewScrollCoordinator.yolo()
+    fun openBottomTabDrawer() {
+        webViewScrollCoordinator.openBottomTabDrawer()
     }
 
     private fun FrameLayout.removeWebViews() {

@@ -32,10 +32,10 @@ interface Browser2Component {
         fun toolbarRoot(linearLayout: LinearLayout): Builder
 
         @BindsInstance
-        fun browserRoot(viewGroup: ViewGroup): Builder
+        fun browserRoot(viewGroup: ViewGroup?): Builder
 
         @BindsInstance
-        fun bottomTabsLayout(bottomTabsBinding: BrowserBottomTabsBinding): Builder
+        fun bottomTabsLayout(bottomTabsBinding: BrowserBottomTabsBinding?): Builder
 
         @BindsInstance
         fun toolbar(toolbar: View): Builder
