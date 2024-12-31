@@ -25,6 +25,8 @@ import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
 import acr.browser.lightning.browser.view.ViewDelegate
 import acr.browser.lightning.browser.view.delegates.BottomTabViewDelegate
+import acr.browser.lightning.browser.view.delegates.DesktopTabViewDelegate
+import acr.browser.lightning.browser.view.delegates.DrawerTabViewDelegate
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.database.Bookmark
@@ -33,6 +35,8 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.databinding.BrowserActivityBottomBinding
+import acr.browser.lightning.databinding.BrowserActivityDesktopBinding
+import acr.browser.lightning.databinding.BrowserActivityDrawerBinding
 import acr.browser.lightning.databinding.BrowserBottomTabsBinding
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
@@ -150,8 +154,23 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val actualBinding = BrowserActivityBottomBinding.inflate(LayoutInflater.from(this))
-        binding = BottomTabViewDelegate(actualBinding)
+        binding = when (userPreferences.tabConfiguration) {
+            TabConfiguration.DESKTOP -> {
+                val actualBinding = BrowserActivityDesktopBinding.inflate(LayoutInflater.from(this))
+                DesktopTabViewDelegate(actualBinding)
+            }
+
+            TabConfiguration.DRAWER_SIDE -> {
+                val actualBinding = BrowserActivityDrawerBinding.inflate(LayoutInflater.from(this))
+                DrawerTabViewDelegate(actualBinding)
+            }
+
+            TabConfiguration.DRAWER_BOTTOM -> {
+                val actualBinding = BrowserActivityBottomBinding.inflate(LayoutInflater.from(this))
+                BottomTabViewDelegate(actualBinding)
+            }
+        }
+
         val bottomTabsBinding = if (binding.browserLayoutContainer != null) {
             BrowserBottomTabsBinding.inflate(layoutInflater)
         } else {
@@ -212,7 +231,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP || isIncognito()
         binding.homeImageView.setImageResource(homeIcon())
         binding.tabCountView.isVisible =
-            uiConfiguration.tabConfiguration == TabConfiguration.DRAWER && !isIncognito()
+            uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP && !isIncognito()
 
         if (uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP) {
             binding.drawerLayout.setDrawerLockMode(
@@ -221,7 +240,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             )
         }
 
-        if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
+        if (uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP) {
             if (binding.browserLayoutContainer == null) {
                 tabsAdapter = DrawerTabRecyclerViewAdapter(
                     onClick = presenter::onTabClick,
@@ -777,13 +796,12 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         if (!userPreferences.colorModeEnabled || userPreferences.useTheme != AppTheme.LIGHT || isIncognito()) {
             return
         }
-        val shouldShowTabsInDrawer = userPreferences.showTabsInDrawer
         val adapter = tabsAdapter as? DesktopTabRecyclerViewAdapter
         val colorAnimator = ColorAnimator(defaultColor)
         binding.toolbar.startAnimation(colorAnimator.animateTo(
             color
         ) { mainColor, secondaryColor ->
-            if (shouldShowTabsInDrawer) {
+            if (userPreferences.tabConfiguration != TabConfiguration.DESKTOP) {
                 backgroundDrawable.color = mainColor
                 window.setBackgroundDrawable(backgroundDrawable)
             } else {

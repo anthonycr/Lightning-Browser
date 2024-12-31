@@ -69,11 +69,7 @@ class Browser2Module {
     fun providesUiConfiguration(
         userPreferences: UserPreferences
     ): UiConfiguration = UiConfiguration(
-        tabConfiguration = if (userPreferences.showTabsInDrawer) {
-            TabConfiguration.DRAWER
-        } else {
-            TabConfiguration.DESKTOP
-        },
+        tabConfiguration = userPreferences.tabConfiguration,
         bookmarkConfiguration = if (userPreferences.bookmarksAndTabsSwapped) {
             BookmarkConfiguration.LEFT
         } else {

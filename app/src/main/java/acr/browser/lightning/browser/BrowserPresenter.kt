@@ -1075,7 +1075,7 @@ class BrowserPresenter @Inject constructor(
      * incognito icon in incognito mode).
      */
     fun onTabCountViewClick() {
-        if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
+        if (uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP) {
             view?.openTabDrawer()
         } else {
             currentTab?.loadFromInitializer(homePageInitializer)

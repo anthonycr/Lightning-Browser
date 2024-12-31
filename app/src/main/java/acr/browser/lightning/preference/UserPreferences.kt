@@ -8,6 +8,7 @@ import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.browser.di.UserPrefs
+import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
@@ -228,6 +229,14 @@ class UserPreferences @Inject constructor(
         !screenSize.isTablet()
     )
 
+    var tabConfiguration by preferences.enumPreference(
+        TAB_CONFIGURATION, if (showTabsInDrawer) {
+            TabConfiguration.DRAWER_BOTTOM
+        } else {
+            TabConfiguration.DESKTOP
+        }
+    )
+
     /**
      * True if the browser should send a do not track (DNT) header with every GET request, false
      * otherwise.
@@ -332,6 +341,7 @@ private const val THEME = "Theme"
 private const val TEXT_ENCODING = "textEncoding"
 private const val CLEAR_WEB_STORAGE_EXIT = "clearWebStorageExit"
 private const val SHOW_TABS_IN_DRAWER = "showTabsInDrawer"
+private const val TAB_CONFIGURATION = "tabConfiguration"
 private const val DO_NOT_TRACK = "doNotTrack"
 private const val SAVE_DATA = "saveData"
 private const val IDENTIFYING_HEADERS = "removeIdentifyingHeaders"
