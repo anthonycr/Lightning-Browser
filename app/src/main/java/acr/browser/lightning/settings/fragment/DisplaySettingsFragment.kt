@@ -6,6 +6,7 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.preference.UserPreferences
@@ -34,6 +35,12 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
             preference = SETTINGS_THEME,
             summary = userPreferences.useTheme.toDisplayString(),
             onClick = ::showThemePicker
+        )
+
+        clickableDynamicPreference(
+            preference = SETTINGS_TAB_STYLE,
+            summary = userPreferences.tabConfiguration.toDisplayString(),
+            onClick = ::showTabStylePicker
         )
 
         clickablePreference(
@@ -75,12 +82,6 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
             preference = SETTINGS_BLACK_STATUS,
             isChecked = userPreferences.useBlackStatusBar,
             onCheckChange = { userPreferences.useBlackStatusBar = it }
-        )
-
-        togglePreference(
-            preference = SETTINGS_DRAWERTABS,
-            isChecked = userPreferences.showTabsInDrawer,
-            onCheckChange = { userPreferences.showTabsInDrawer = it }
         )
 
         togglePreference(
@@ -150,6 +151,36 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
         }
     )
 
+    private fun showTabStylePicker(summaryUpdater: SummaryUpdater) {
+        val tabConfiguration = userPreferences.tabConfiguration
+        AlertDialog.Builder(requireActivity()).apply {
+            setTitle(resources.getString(R.string.tab_style_title))
+            val values = TabConfiguration.values().map { Pair(it, it.toDisplayString()) }
+            withSingleChoiceItems(values, userPreferences.tabConfiguration) {
+                userPreferences.tabConfiguration = it
+                summaryUpdater.updateSummary(it.toDisplayString())
+            }
+            setPositiveButton(resources.getString(R.string.action_ok)) { _, _ ->
+                if (tabConfiguration != userPreferences.tabConfiguration) {
+                    requireActivity().onBackPressed()
+                }
+            }
+            setOnCancelListener {
+                if (tabConfiguration != userPreferences.tabConfiguration) {
+                    requireActivity().onBackPressed()
+                }
+            }
+        }.resizeAndShow()
+    }
+
+    private fun TabConfiguration.toDisplayString(): String = getString(
+        when (this) {
+            TabConfiguration.DESKTOP -> R.string.tab_style_desktop
+            TabConfiguration.DRAWER_SIDE -> R.string.tab_style_side_drawer
+            TabConfiguration.DRAWER_BOTTOM -> R.string.tab_style_bottom_drawer
+        }
+    )
+
     private class TextSeekBarListener(
         private val sampleText: TextView
     ) : SeekBar.OnSeekBarChangeListener {
@@ -173,7 +204,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
         private const val SETTINGS_REFLOW = "text_reflow"
         private const val SETTINGS_THEME = "app_theme"
         private const val SETTINGS_TEXTSIZE = "text_size"
-        private const val SETTINGS_DRAWERTABS = "cb_drawertabs"
+        private const val SETTINGS_TAB_STYLE = "tab_style"
         private const val SETTINGS_SWAPTABS = "cb_swapdrawers"
         private const val SETTINGS_BLACK_STATUS = "black_status_bar"
 

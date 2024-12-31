@@ -224,7 +224,8 @@ class UserPreferences @Inject constructor(
      * True if the app should use the navigation drawer UI, false if it should use the traditional
      * desktop browser tabs UI.
      */
-    var showTabsInDrawer by preferences.booleanPreference(
+    @Deprecated("Superseded by TabConfiguration")
+    private var showTabsInDrawer by preferences.booleanPreference(
         SHOW_TABS_IN_DRAWER,
         !screenSize.isTablet()
     )
