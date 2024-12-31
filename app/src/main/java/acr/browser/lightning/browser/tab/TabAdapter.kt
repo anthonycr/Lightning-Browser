@@ -10,12 +10,15 @@ import acr.browser.lightning.utils.Option
 import acr.browser.lightning.utils.value
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.ReplaySubject
 
 /**
  * Creates the adaptation between a [WebView] and the [TabModel] interface used by the browser.
@@ -37,6 +40,7 @@ class TabAdapter(
     private var findInPageQuery: String? = null
     private var toggleDesktop: Boolean = false
     private val downloadsSubject = PublishSubject.create<PendingDownload>()
+    private val previewObservable: ReplaySubject<Bitmap> = ReplaySubject.createWithSize(1)
 
     init {
         webView.webViewClient = tabWebViewClient
@@ -123,6 +127,11 @@ class TabAdapter(
         findInPageQuery = null
     }
 
+    override val preview: Bitmap?
+        get() = previewObservable.value
+
+    override fun previewChanges(): Observable<Bitmap> = previewObservable.hide()
+
     override val findQuery: String?
         get() = findInPageQuery
 
@@ -168,7 +177,14 @@ class TabAdapter(
     override val loadingProgress: Int
         get() = webView.progress
 
-    override fun loadingProgress(): Observable<Int> = tabWebChromeClient.progressObservable.hide()
+    override fun loadingProgress(): Observable<Int> = tabWebChromeClient.progressObservable
+        .map {
+            if (it == 100) {
+                previewObservable.onNext(renderViewToBitmap(webView))
+            }
+            it
+        }
+        .hide()
 
     override fun downloadRequests(): Observable<PendingDownload> = downloadsSubject.hide()
 
@@ -217,4 +233,32 @@ class TabAdapter(
 
     override fun freeze(): Bundle = latentInitializer?.bundle
         ?: Bundle(ClassLoader.getSystemClassLoader()).also(webView::saveState)
+
+
+    private fun renderViewToBitmap(
+        view: View,
+        width: Int = view.width,
+        height: Int = view.height
+    ): Bitmap {
+        // Ensure the view has been laid out
+        if (width == 0 || height == 0) {
+            throw IllegalArgumentException("View width and height must be greater than 0")
+        }
+
+        // Create a Bitmap with the specified dimensions and ARGB_8888 configuration
+        val bitmap = Bitmap.createBitmap(width / 3, height / 3, Bitmap.Config.ARGB_8888)
+
+        // Create a Canvas to draw on the Bitmap
+        val canvas = Canvas(bitmap)
+
+        canvas.scale(0.33F, 0.33F)
+
+        // Layout the view if it hasn't been laid out yet
+        view.layout(0, 0, width, height)
+
+        // Draw the view onto the canvas
+        view.draw(canvas)
+
+        return bitmap
+    }
 }

@@ -4,6 +4,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.databinding.TabPreviewItemBinding
 import acr.browser.lightning.extensions.dimen
+import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.inflater
 import acr.browser.lightning.extensions.tint
 import android.app.Activity
@@ -89,8 +90,6 @@ class BottomDrawerTabRecyclerViewAdapter(
 //            }
 
 
-
-
         return TabViewHolder(
             tabPreviewItemBinding.root,
             onClick = onClick,
@@ -116,9 +115,11 @@ class BottomDrawerTabRecyclerViewAdapter(
 
         holder.txtTitle.text = tab.title
         if (tab.isSelected) {
-            holder.view.background.tint(themeProvider.color(R.attr.selectedBackground))
+            holder.view.background =
+                holder.view.context.drawable(R.drawable.tab_background_selected)
         } else {
-            holder.view.background.tint(themeProvider.color(R.attr.colorPrimaryDark))
+            holder.view.background = holder.view.context.drawable(R.drawable.tab_background)
+            holder.view.background.tint(themeProvider.color(R.attr.selectedBackground))
         }
 
         tab.icon?.let(holder.favicon::setImageBitmap)
@@ -128,9 +129,12 @@ class BottomDrawerTabRecyclerViewAdapter(
 
     private fun loadImage(imageView: ImageView, tab: TabViewState) {
         imageView.tag = tab.id
-        lruCache[tab.id]?.let(imageView::setImageBitmap) ?: run {
+        tab.preview?.let(imageView::setImageBitmap) ?: run {
             imageView.setImageDrawable(ColorDrawable(Color.BLACK))
         }
+//        lruCache[tab.id]?.let(imageView::setImageBitmap) ?: run {
+//            imageView.setImageDrawable(ColorDrawable(Color.BLACK))
+//        }
 //        if (map[tab.id] != null || !tab.isPreviewInvalid) {
 //            return
 //        }

@@ -116,6 +116,10 @@ interface TabModel {
      */
     fun faviconChanges(): Observable<Option<Bitmap>>
 
+    val preview: Bitmap?
+
+    fun previewChanges(): Observable<Bitmap>
+
     /**
      * The thematic color of the current webpage.
      */

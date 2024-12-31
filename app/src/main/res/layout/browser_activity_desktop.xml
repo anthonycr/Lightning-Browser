@@ -163,6 +163,8 @@
                     android:layout_height="@dimen/progress_bar_height"
                     android:background="@color/transparent"
                     android:progressDrawable="@color/accent_color"
+                    android:indeterminate="false"
+                    android:max="100"
                     app:layout_constraintBottom_toBottomOf="@id/toolbar"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

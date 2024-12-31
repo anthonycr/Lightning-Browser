@@ -178,7 +178,8 @@ class BrowserPresenter @Inject constructor(
         id = id,
         icon = favicon,
         title = title,
-        isSelected = isForeground
+        isSelected = isForeground,
+        preview = preview
     )
 
     private fun List<TabViewState>.updateId(
@@ -302,12 +303,13 @@ class BrowserPresenter @Inject constructor(
             compositeDisposable += Observables.combineLatest(
                 tabModel.titleChanges().startWithItem(tabModel.title),
                 tabModel.faviconChanges()
-                    .startWithItem(Option.fromNullable(tabModel.favicon))
+                    .startWithItem(Option.fromNullable(tabModel.favicon)),
+                tabModel.previewChanges()
             ).distinctUntilChanged()
                 .subscribeOn(mainScheduler)
-                .subscribeBy { (title, bitmap) ->
+                .subscribeBy { (title, bitmap, preview) ->
                     view.updateTabs(tabListState.updateId(tabModel.id) {
-                        it.copy(title = title, icon = bitmap.value())
+                        it.copy(title = title, icon = bitmap.value(), preview = preview)
                     })
 
                     tabModel.url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {
@@ -332,6 +334,7 @@ class BrowserPresenter @Inject constructor(
                     markAsOpenedFromAction = true
                 )
             }
+
             BrowserContract.Action.Panic -> panicClean()
         }
     }
@@ -378,22 +381,28 @@ class BrowserPresenter @Inject constructor(
             MenuSelection.SHARE -> currentTab?.url?.takeIf { !it.isSpecialUrl() }?.let {
                 navigator.sharePage(url = it, title = currentTab?.title)
             }
+
             MenuSelection.HISTORY -> createNewTabAndSelect(
                 historyPageInitializer,
                 shouldSelect = true
             )
+
             MenuSelection.DOWNLOADS -> createNewTabAndSelect(
                 downloadPageInitializer,
                 shouldSelect = true
             )
+
             MenuSelection.FIND -> view?.showFindInPageDialog()
             MenuSelection.COPY_LINK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let(navigator::copyPageLink)
+
             MenuSelection.ADD_TO_HOME -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let { addToHomeScreen() }
+
             MenuSelection.BOOKMARKS -> view?.openBookmarkDrawer()
             MenuSelection.ADD_BOOKMARK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let { showAddBookmarkDialog() }
+
             MenuSelection.SETTINGS -> navigator.openSettings()
             MenuSelection.BACK -> onBackClick()
             MenuSelection.FORWARD -> onForwardClick()
@@ -542,12 +551,14 @@ class BrowserPresenter @Inject constructor(
                 view?.hideCustomView()
                 currentTab?.hideCustomView()
             }
+
             isTabDrawerOpen -> view?.closeTabDrawer()
             isBookmarkDrawerOpen -> if (currentFolder != Bookmark.Folder.Root) {
                 onBookmarkMenuClick()
             } else {
                 view?.closeBookmarkDrawer()
             }
+
             currentTab?.canGoBack() == true -> currentTab?.goBack()
             currentTab?.canGoBack() == false -> if (incognitoMode) {
                 currentTab?.id?.let {
@@ -632,10 +643,13 @@ class BrowserPresenter @Inject constructor(
                         .subscribeBy {
                             currentTab?.reload()
                         }
+
                 currentUrl.isDownloadsUrl() ->
                     currentTab?.loadFromInitializer(downloadPageInitializer)
+
                 currentUrl.isHistoryUrl() ->
                     currentTab?.loadFromInitializer(historyPageInitializer)
+
                 else -> currentTab?.reload()
             }
         } else {
@@ -733,6 +747,7 @@ class BrowserPresenter @Inject constructor(
         val url = when (webPage) {
             is HistoryEntry,
             is Bookmark.Entry -> webPage.url
+
             is SearchSuggestion -> webPage.title
             else -> null
         } ?: error("Other types cannot be search suggestions: $webPage")
@@ -758,6 +773,7 @@ class BrowserPresenter @Inject constructor(
                 currentTab?.loadUrl(bookmark.url)
                 view?.closeBookmarkDrawer()
             }
+
             Bookmark.Folder.Root -> error("Cannot click on root folder")
             is Bookmark.Folder.Entry -> {
                 currentFolder = bookmark
@@ -958,13 +974,17 @@ class BrowserPresenter @Inject constructor(
         when (option) {
             BrowserContract.BookmarkOptionEvent.NEW_TAB ->
                 createNewTabAndSelect(UrlInitializer(bookmark.url), shouldSelect = true)
+
             BrowserContract.BookmarkOptionEvent.BACKGROUND_TAB ->
                 createNewTabAndSelect(UrlInitializer(bookmark.url), shouldSelect = false)
+
             BrowserContract.BookmarkOptionEvent.INCOGNITO_TAB -> navigator.launchIncognito(bookmark.url)
             BrowserContract.BookmarkOptionEvent.SHARE ->
                 navigator.sharePage(url = bookmark.url, title = bookmark.title)
+
             BrowserContract.BookmarkOptionEvent.COPY_LINK ->
                 navigator.copyPageLink(bookmark.url)
+
             BrowserContract.BookmarkOptionEvent.REMOVE ->
                 compositeDisposable += bookmarkRepository.deleteBookmark(bookmark)
                     .flatMap { bookmarkRepository.bookmarksAndFolders(folder = currentFolder) }
@@ -976,6 +996,7 @@ class BrowserPresenter @Inject constructor(
                             reload()
                         }
                     }
+
             BrowserContract.BookmarkOptionEvent.EDIT ->
                 compositeDisposable += bookmarkRepository.getFolderNames()
                     .subscribeOn(databaseScheduler)
@@ -1029,6 +1050,7 @@ class BrowserPresenter @Inject constructor(
                             reload()
                         }
                     }
+
             BrowserContract.DownloadOptionEvent.DELETE_ALL ->
                 compositeDisposable += downloadsRepository.deleteDownload(download.url)
                     .subscribeOn(databaseScheduler)
@@ -1051,12 +1073,16 @@ class BrowserPresenter @Inject constructor(
         when (option) {
             BrowserContract.HistoryOptionEvent.NEW_TAB ->
                 createNewTabAndSelect(UrlInitializer(historyEntry.url), shouldSelect = true)
+
             BrowserContract.HistoryOptionEvent.BACKGROUND_TAB ->
                 createNewTabAndSelect(UrlInitializer(historyEntry.url), shouldSelect = false)
+
             BrowserContract.HistoryOptionEvent.INCOGNITO_TAB ->
                 navigator.launchIncognito(historyEntry.url)
+
             BrowserContract.HistoryOptionEvent.SHARE ->
                 navigator.sharePage(url = historyEntry.url, title = historyEntry.title)
+
             BrowserContract.HistoryOptionEvent.COPY_LINK -> navigator.copyPageLink(historyEntry.url)
             BrowserContract.HistoryOptionEvent.REMOVE ->
                 compositeDisposable += historyRepository.deleteHistoryEntry(historyEntry.url)
@@ -1168,12 +1194,14 @@ class BrowserPresenter @Inject constructor(
         when (closeTabEvent) {
             BrowserContract.CloseTabEvent.CLOSE_CURRENT ->
                 onTabClose(tabListState.tabIndexForId(id))
+
             BrowserContract.CloseTabEvent.CLOSE_OTHERS -> model.tabsList
                 .filter { it.id != id }
                 .toObservable()
                 .flatMapCompletable { model.deleteTab(it.id) }
                 .subscribeOn(mainScheduler)
                 .subscribe()
+
             BrowserContract.CloseTabEvent.CLOSE_ALL ->
                 compositeDisposable += model.deleteAllTabs().subscribeOn(mainScheduler)
                     .subscribeBy(onComplete = navigator::closeBrowser)
@@ -1196,6 +1224,7 @@ class BrowserPresenter @Inject constructor(
                         shouldSelect = true
                     )
                 }
+
             BrowserContract.LinkLongPressEvent.BACKGROUND_TAB ->
                 longPress.targetUrl?.let {
                     createNewTabAndSelect(
@@ -1203,9 +1232,11 @@ class BrowserPresenter @Inject constructor(
                         shouldSelect = false
                     )
                 }
+
             BrowserContract.LinkLongPressEvent.INCOGNITO_TAB -> longPress.targetUrl?.let(navigator::launchIncognito)
             BrowserContract.LinkLongPressEvent.SHARE ->
                 longPress.targetUrl?.let { navigator.sharePage(url = it, title = null) }
+
             BrowserContract.LinkLongPressEvent.COPY_LINK ->
                 longPress.targetUrl?.let(navigator::copyPageLink)
         }
@@ -1227,6 +1258,7 @@ class BrowserPresenter @Inject constructor(
                         shouldSelect = true
                     )
                 }
+
             BrowserContract.ImageLongPressEvent.BACKGROUND_TAB ->
                 longPress.targetUrl?.let {
                     createNewTabAndSelect(
@@ -1234,11 +1266,14 @@ class BrowserPresenter @Inject constructor(
                         shouldSelect = false
                     )
                 }
+
             BrowserContract.ImageLongPressEvent.INCOGNITO_TAB -> longPress.targetUrl?.let(navigator::launchIncognito)
             BrowserContract.ImageLongPressEvent.SHARE ->
                 longPress.targetUrl?.let { navigator.sharePage(url = it, title = null) }
+
             BrowserContract.ImageLongPressEvent.COPY_LINK ->
                 longPress.targetUrl?.let(navigator::copyPageLink)
+
             BrowserContract.ImageLongPressEvent.DOWNLOAD -> navigator.download(
                 PendingDownload(
                     url = longPress.targetUrl.orEmpty(),

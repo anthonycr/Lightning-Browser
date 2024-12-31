@@ -14,5 +14,6 @@ data class TabViewState(
     val id: Int,
     val icon: Bitmap?,
     val title: String,
-    val isSelected: Boolean
+    val isSelected: Boolean,
+    val preview: Bitmap?
 )

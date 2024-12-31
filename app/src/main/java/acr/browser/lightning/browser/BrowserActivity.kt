@@ -404,7 +404,10 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             menuItemAddBookmark?.isVisible = it
         }
         viewState.themeColor?.value()?.let(::animateColorChange)
-        viewState.progress?.let { binding.progressView.progress = it }
+        viewState.progress?.let {
+            binding.progressView.isVisible = it != 100
+            binding.progressView.progress = it
+        }
         viewState.isRefresh?.let {
             binding.searchRefresh.setImageResource(
                 if (it) {
