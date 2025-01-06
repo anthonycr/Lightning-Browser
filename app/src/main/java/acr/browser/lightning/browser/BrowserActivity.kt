@@ -267,7 +267,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 )
                 bottomTabsBinding!!.bottomTabList.adapter = tabsAdapter
                 bottomTabsBinding.bottomTabList.layoutManager =
-                    LinearLayoutManager(this, RecyclerView.HORIZONTAL, true)
+                    LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
                 binding.drawerTabsList.isVisible = false
                 binding.desktopTabsList.isVisible = false
                 activeRecyclerView = bottomTabsBinding.bottomTabList
