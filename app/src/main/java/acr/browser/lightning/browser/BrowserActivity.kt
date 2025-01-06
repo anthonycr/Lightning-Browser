@@ -86,6 +86,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     private lateinit var binding: ViewDelegate
     private lateinit var tabsAdapter: ListAdapter<TabViewState, TabViewHolder>
     private lateinit var bookmarksAdapter: BookmarkRecyclerViewAdapter
+    private var activeRecyclerView: RecyclerView? = null
 
     private var menuItemShare: MenuItem? = null
     private var menuItemCopyLink: MenuItem? = null
@@ -251,6 +252,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 binding.drawerTabsList.adapter = tabsAdapter
                 binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
                 binding.desktopTabsList.isVisible = false
+                activeRecyclerView = binding.desktopTabsList
             } else {
 
                 tabsAdapter = BottomDrawerTabRecyclerViewAdapter(
@@ -265,9 +267,10 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 )
                 bottomTabsBinding!!.bottomTabList.adapter = tabsAdapter
                 bottomTabsBinding.bottomTabList.layoutManager =
-                    LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+                    LinearLayoutManager(this, RecyclerView.HORIZONTAL, true)
                 binding.drawerTabsList.isVisible = false
                 binding.desktopTabsList.isVisible = false
+                activeRecyclerView = bottomTabsBinding.bottomTabList
             }
         } else {
             tabsAdapter = DesktopTabRecyclerViewAdapter(
@@ -283,6 +286,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             binding.desktopTabsList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
                 ?.supportsChangeAnimations = false
             binding.drawerTabsList.isVisible = false
+            activeRecyclerView = binding.desktopTabsList
         }
 
         bookmarksAdapter = BookmarkRecyclerViewAdapter(
@@ -447,7 +451,12 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      */
     fun renderTabs(tabListState: List<TabViewState>) {
         binding.tabCountView.updateCount(tabListState.size)
+        val shouldScroll = tabsAdapter.itemCount < tabListState.size
         tabsAdapter.submitList(tabListState)
+        val nextSelected = tabListState.indexOfFirst { it.isSelected }
+        if (shouldScroll && nextSelected != -1) {
+            activeRecyclerView?.smoothScrollToPosition(nextSelected)
+        }
     }
 
     /**
