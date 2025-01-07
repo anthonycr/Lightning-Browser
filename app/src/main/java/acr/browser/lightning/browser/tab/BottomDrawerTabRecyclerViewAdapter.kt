@@ -3,6 +3,7 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.databinding.TabPreviewItemBinding
+import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.dimen
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.inflater
@@ -97,7 +98,7 @@ class BottomDrawerTabRecyclerViewAdapter(
             onCloseClick = onCloseClick
         ).apply {
             tabPreviewItemBinding.previewImage.setOnClickListener { onClick(bindingAdapterPosition) }
-            tabPreviewItemBinding.bottomHandle.setOnClickListener { onClick(bindingAdapterPosition) }
+//            tabPreviewItemBinding.bottomHandle.setOnClickListener { onClick(bindingAdapterPosition) }
 //            tabPreviewItemBinding.actionBack.setOnClickListener { onBackClick(bindingAdapterPosition) }
 //            tabPreviewItemBinding.actionForward.setOnClickListener {
 //                onForwardClick(
@@ -119,7 +120,6 @@ class BottomDrawerTabRecyclerViewAdapter(
                 holder.view.context.drawable(R.drawable.tab_background_selected)
         } else {
             holder.view.background = holder.view.context.drawable(R.drawable.tab_background)
-            holder.view.background.tint(themeProvider.color(R.attr.selectedBackground))
         }
 
         tab.icon?.let(holder.favicon::setImageBitmap)
@@ -130,7 +130,7 @@ class BottomDrawerTabRecyclerViewAdapter(
     private fun loadImage(imageView: ImageView, tab: TabViewState) {
         imageView.tag = tab.id
         tab.preview?.let(imageView::setImageBitmap) ?: run {
-            imageView.setImageDrawable(ColorDrawable(Color.BLACK))
+            imageView.setImageDrawable(ColorDrawable(themeProvider.color(R.attr.colorPrimary)))
         }
 //        lruCache[tab.id]?.let(imageView::setImageBitmap) ?: run {
 //            imageView.setImageDrawable(ColorDrawable(Color.BLACK))

@@ -61,20 +61,10 @@
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
         android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_handle"
-        app:layout_constraintEnd_toEndOf="@id/tab_item_background"
-        app:layout_constraintStart_toStartOf="@id/tab_item_background"
-        app:layout_constraintTop_toBottomOf="@+id/tab_item_background" />
-
-    <View
-        android:id="@+id/bottom_handle"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/material_grid_small_icon"
-        android:baselineAligned="false"
-        android:orientation="horizontal"
-        android:weightSum="4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/tab_item_background"
-        app:layout_constraintStart_toStartOf="@id/tab_item_background" />
+        app:layout_constraintStart_toStartOf="@id/tab_item_background"
+        app:layout_constraintTop_toBottomOf="@+id/tab_item_background"
+        android:layout_marginBottom="8dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
