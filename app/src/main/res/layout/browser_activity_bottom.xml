@@ -21,7 +21,16 @@
                 android:id="@+id/ui_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="bottom"
                 android:orientation="vertical">
+
+                <FrameLayout
+                    android:id="@+id/content_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/primary_color"
+                    android:clipChildren="true" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/toolbar_layout"
@@ -176,14 +185,6 @@
                         />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <FrameLayout
-                    android:id="@+id/content_frame"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:background="@color/primary_color"
-                    android:clipChildren="true" />
 
                 <LinearLayout
                     android:id="@+id/find_bar"

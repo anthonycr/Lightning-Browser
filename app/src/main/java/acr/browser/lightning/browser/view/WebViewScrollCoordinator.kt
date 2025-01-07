@@ -96,13 +96,16 @@ class WebViewScrollCoordinator @Inject constructor(
                         gravity = Gravity.BOTTOM
                     }
                 )
-            }
-
-            tabs.root.doOnLayout {
-                tabs.root.animateTranslation(tabs.bottomTabList.height.toFloat())
-                val anchor = toolbarRoot.findViewById<View>(R.id.bottom_tabs_anchor)
-                anchor.layoutParams = anchor.layoutParams.apply {
-                    height = toolbar.height
+                tabs.root.doOnLayout {
+                    tabs.root.translationY = tabs.bottomTabList.height.toFloat()
+                    val anchor = toolbarRoot.findViewById<View>(R.id.bottom_tabs_anchor)
+                    anchor.layoutParams = anchor.layoutParams.apply {
+                        height = toolbar.height
+                    }
+                }
+            } else {
+                tabs.root.doOnLayout {
+                    tabs.root.animateTranslation(tabs.bottomTabList.height.toFloat())
                 }
             }
         }
@@ -124,8 +127,7 @@ class WebViewScrollCoordinator @Inject constructor(
     }
 
     fun openBottomTabDrawer() {
-        bottomTabsLayout!!
-        if (bottomTabsLayout.root.translationY == 0F) {
+        if (bottomTabsLayout!!.root.translationY == 0F) {
             bottomTabsLayout.root.doOnLayout {
                 bottomTabsLayout.root.animateTranslation(bottomTabsLayout.bottomTabList.height.toFloat())
             }
