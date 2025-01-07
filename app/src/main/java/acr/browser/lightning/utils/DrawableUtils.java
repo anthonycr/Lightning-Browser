@@ -42,12 +42,13 @@ public final class DrawableUtils {
         paint.setFilterBitmap(true);
         paint.setDither(true);
 
-        final int radius = Utils.dpToPx(2);
+        final int radius = Utils.dpToPx(8);
+        final int padding = Utils.dpToPx(2);
 
         final RectF outer = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
         canvas.drawRoundRect(outer, radius, radius, paint);
 
-        final Rect dest = new Rect(Math.round(outer.left + radius), Math.round(outer.top + radius), Math.round(outer.right - radius), Math.round(outer.bottom - radius));
+        final Rect dest = new Rect(Math.round(outer.left + padding), Math.round(outer.top + padding), Math.round(outer.right - padding), Math.round(outer.bottom - padding));
         canvas.drawBitmap(icon, null, dest, paint);
 
         return image;
@@ -79,7 +80,7 @@ public final class DrawableUtils {
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
 
-        int radius = Utils.dpToPx(2);
+        final int radius = Utils.dpToPx(8);
 
         RectF outer = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
         canvas.drawRoundRect(outer, radius, radius, paint);
