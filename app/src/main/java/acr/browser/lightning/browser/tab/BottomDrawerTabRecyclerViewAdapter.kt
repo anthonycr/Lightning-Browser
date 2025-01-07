@@ -3,31 +3,13 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.databinding.TabPreviewItemBinding
-import acr.browser.lightning.extensions.color
-import acr.browser.lightning.extensions.dimen
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.inflater
-import acr.browser.lightning.extensions.tint
-import android.app.Activity
-import android.content.Context
-import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.collection.LruCache
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.setMargins
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlin.math.roundToInt
 
 
 /**
@@ -39,7 +21,6 @@ import kotlin.math.roundToInt
  */
 class BottomDrawerTabRecyclerViewAdapter(
     private val themeProvider: ThemeProvider,
-    private val activity: Activity,
     private val onClick: (Int) -> Unit,
     private val onLongClick: (Int) -> Unit,
     private val onCloseClick: (Int) -> Unit,
@@ -55,41 +36,10 @@ class BottomDrawerTabRecyclerViewAdapter(
             oldItem == newItem
     }
 ) {
-    private val lruCache = LruCache<Int, Bitmap>(5)
-    private val map = mutableMapOf<Int, Disposable>()
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): TabViewHolder {
         val tabPreviewItemBinding =
             TabPreviewItemBinding.inflate(viewGroup.context.inflater, viewGroup, false)
-        val params = tabPreviewItemBinding.root.layoutParams as RecyclerView.LayoutParams
-        val ratio = 1f
-//        tabPreviewItemBinding.root.layoutParams = params.apply {
-//            setMargins(viewGroup.context.dimen(R.dimen.material_grid_margin))
-//        }
-        val actualWidth = (viewGroup.height * 0.6f).roundToInt() * ratio
-//        params.marginEnd = when (i) {
-//            FIRST, MIDDLE -> (viewGroup.measuredWidth * 0.05f).roundToInt()
-//            ONLY, LAST -> ((viewGroup.measuredWidth - actualWidth) / 2f).roundToInt()
-//            else -> error("Unexpected type: $i")
-//        }
-//        params.marginStart = when (i) {
-//            ONLY, FIRST -> ((viewGroup.measuredWidth - actualWidth) / 2f).roundToInt()
-//            MIDDLE, LAST -> (viewGroup.measuredWidth * 0.05f).roundToInt()
-//            else -> error("Unexpected type: $i")
-//        }
-//        tabPreviewItemBinding.root.layoutParams = params
-
-//        tabPreviewItemBinding.previewImage.layoutParams =
-//            (tabPreviewItemBinding.previewImage.layoutParams as ConstraintLayout.LayoutParams).apply {
-//                dimensionRatio = when (activity.resources.configuration.orientation) {
-//                    Configuration.ORIENTATION_LANDSCAPE -> "1:1"
-//                    Configuration.ORIENTATION_PORTRAIT -> "${viewGroup.measuredWidth}:${viewGroup.measuredHeight}"
-//                    else -> error("Unsupported orientation")
-//                }
-//                height = (viewGroup.height * 0.6f).roundToInt()
-//                verticalChainStyle = ConstraintLayout.LayoutParams.CHAIN_PACKED
-//            }
-
 
         return TabViewHolder(
             tabPreviewItemBinding.root,
@@ -132,26 +82,5 @@ class BottomDrawerTabRecyclerViewAdapter(
         tab.preview?.let(imageView::setImageBitmap) ?: run {
             imageView.setImageDrawable(ColorDrawable(themeProvider.color(R.attr.colorPrimary)))
         }
-//        lruCache[tab.id]?.let(imageView::setImageBitmap) ?: run {
-//            imageView.setImageDrawable(ColorDrawable(Color.BLACK))
-//        }
-//        if (map[tab.id] != null || !tab.isPreviewInvalid) {
-//            return
-//        }
-//        map[tab.id] = Maybe.fromCallable(tab.preview)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribeBy(
-//                onSuccess = {
-//                    lruCache.put(tab.id, it)
-//                    map.remove(tab.id)
-//                    if (imageView.tag == tab.id) {
-//                        imageView.setImageBitmap(it)
-//                    }
-//                },
-//                onComplete = {
-//                    map.remove(tab.id)
-//                }
-//            )
     }
 }

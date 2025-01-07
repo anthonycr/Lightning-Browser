@@ -257,10 +257,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
                 tabsAdapter = BottomDrawerTabRecyclerViewAdapter(
                     themeProvider,
-                    this,
                     onClick = presenter::onTabClick,
-                    onCloseClick = presenter::onTabClose,
                     onLongClick = presenter::onTabLongClick,
+                    onCloseClick = presenter::onTabClose,
                     onBackClick = { presenter.onBackClick() },
                     onForwardClick = { presenter.onForwardClick() },
                     onHomeClick = { presenter.onHomeClick() }
