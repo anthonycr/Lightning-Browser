@@ -42,7 +42,7 @@ public final class DrawableUtils {
         paint.setFilterBitmap(true);
         paint.setDither(true);
 
-        final int radius = Utils.dpToPx(8);
+        final int radius = Utils.dpToPx(6);
         final int padding = Utils.dpToPx(2);
 
         final RectF outer = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -78,9 +78,8 @@ public final class DrawableUtils {
         paint.setTextSize(Utils.dpToPx(14));
         paint.setAntiAlias(true);
         paint.setTextAlign(Paint.Align.CENTER);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
 
-        final int radius = Utils.dpToPx(8);
+        final int radius = Utils.dpToPx(6);
 
         RectF outer = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
         canvas.drawRoundRect(outer, radius, radius, paint);
@@ -89,6 +88,7 @@ public final class DrawableUtils {
         int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
 
         paint.setColor(Color.WHITE);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
         canvas.drawText(character.toString(), xPos, yPos, paint);
 
         return image;

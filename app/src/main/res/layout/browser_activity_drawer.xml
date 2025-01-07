@@ -83,7 +83,7 @@
                                 android:layout_width="@dimen/material_grid_small_icon"
                                 android:layout_height="@dimen/material_grid_small_icon"
                                 android:layout_gravity="center"
-                                app:tabIconBorderRadius="8dp"
+                                app:tabIconBorderRadius="6dp"
                                 app:tabIconBorderWidth="2dp"
                                 app:tabIconColor="?attr/iconColor"
                                 app:tabIconTextSize="14dp" />
