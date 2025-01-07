@@ -130,7 +130,7 @@ class TabAdapter(
     override val preview: Bitmap?
         get() = previewObservable.value
 
-    override fun previewChanges(): Observable<Bitmap> = previewObservable.hide()
+    override fun previewChanges(): Observable<Option<Bitmap>> = previewObservable.map { Option.fromNullable(it) }.hide()
 
     override val findQuery: String?
         get() = findInPageQuery

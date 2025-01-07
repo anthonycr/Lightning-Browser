@@ -118,7 +118,7 @@ interface TabModel {
 
     val preview: Bitmap?
 
-    fun previewChanges(): Observable<Bitmap>
+    fun previewChanges(): Observable<Option<Bitmap>>
 
     /**
      * The thematic color of the current webpage.
