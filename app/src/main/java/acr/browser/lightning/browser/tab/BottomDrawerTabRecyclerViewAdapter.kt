@@ -48,7 +48,6 @@ class BottomDrawerTabRecyclerViewAdapter(
             onCloseClick = onCloseClick
         ).apply {
             tabPreviewItemBinding.previewImage.setOnClickListener { onClick(bindingAdapterPosition) }
-//            tabPreviewItemBinding.bottomHandle.setOnClickListener { onClick(bindingAdapterPosition) }
 //            tabPreviewItemBinding.actionBack.setOnClickListener { onBackClick(bindingAdapterPosition) }
 //            tabPreviewItemBinding.actionForward.setOnClickListener {
 //                onForwardClick(
