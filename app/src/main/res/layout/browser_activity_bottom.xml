@@ -77,7 +77,7 @@
                                 android:id="@+id/search_container"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_marginLeft="10dp"
+                                android:layout_marginLeft="8dp"
                                 android:layout_marginTop="6dp"
                                 android:layout_marginRight="2dp"
                                 android:layout_marginBottom="6dp"
@@ -189,6 +189,15 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/toolbar_divider_bottom"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?attr/dividerColor"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
