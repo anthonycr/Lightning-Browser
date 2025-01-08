@@ -234,7 +234,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         binding.tabCountView.isVisible =
             uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP && !isIncognito()
 
-        if (uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP) {
+        if (uiConfiguration.tabConfiguration != TabConfiguration.DRAWER_SIDE) {
             binding.drawerLayout.setDrawerLockMode(
                 DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
                 binding.tabDrawer
