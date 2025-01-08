@@ -12,8 +12,6 @@ import acr.browser.lightning.device.BuildType
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.LeakCanaryUtils
-import acr.browser.lightning.utils.MemoryLeakUtils
-import android.app.Activity
 import android.app.Application
 import android.os.Build
 import android.os.StrictMode
@@ -116,13 +114,6 @@ class BrowserApp : Application() {
         if (buildInfo.buildType == BuildType.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true)
         }
-
-        registerActivityLifecycleCallbacks(object : MemoryLeakUtils.LifecycleAdapter() {
-            override fun onActivityDestroyed(activity: Activity) {
-                logger.log(TAG, "Cleaning up after the Android framework")
-                MemoryLeakUtils.clearNextServedView(activity, this@BrowserApp)
-            }
-        })
 
         registerActivityLifecycleCallbacks(proxyAdapter)
     }

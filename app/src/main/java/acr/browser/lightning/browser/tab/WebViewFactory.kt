@@ -10,8 +10,6 @@ import acr.browser.lightning.preference.userAgent
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.view.View
 import android.webkit.CookieManager
 import android.webkit.WebSettings
@@ -65,15 +63,9 @@ class WebViewFactory @Inject constructor(
         tag = CompositeTouchListener().also(::setOnTouchListener)
         isFocusableInTouchMode = true
         isFocusable = true
-        if (VERSION.SDK_INT < VERSION_CODES.M) {
-            isAnimationCacheEnabled = false
-            isAlwaysDrawnWithCacheEnabled = false
-        }
         setBackgroundColor(Color.WHITE)
 
-        if (VERSION.SDK_INT >= VERSION_CODES.O) {
-            importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
-        }
+        importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
 
         isScrollbarFadingEnabled = true
         isSaveEnabled = true
