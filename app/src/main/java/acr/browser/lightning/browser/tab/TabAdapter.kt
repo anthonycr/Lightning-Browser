@@ -11,6 +11,7 @@ import acr.browser.lightning.utils.value
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
@@ -216,6 +217,9 @@ class TabAdapter(
             field = value
             if (field) {
                 webView.onResume()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    webView.settings.offscreenPreRaster = true
+                }
                 latentInitializer?.let(::loadFromInitializer)
                 latentInitializer = null
             } else {
