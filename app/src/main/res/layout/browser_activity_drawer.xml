@@ -25,7 +25,6 @@
                 android:background="?attr/colorPrimary"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:elevation="3dp"
                 android:fitsSystemWindows="true">
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -102,7 +101,6 @@
                             android:clipChildren="false"
                             android:clipToPadding="false"
                             android:descendantFocusability="beforeDescendants"
-                            android:elevation="2dp"
                             android:focusableInTouchMode="true"
                             android:gravity="center"
                             android:orientation="horizontal">
@@ -162,12 +160,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/progress_bar_height"
                     android:background="@color/transparent"
-                    android:progressDrawable="@color/accent_color"
                     android:indeterminate="false"
                     android:max="100"
+                    android:progressTint="@color/accent_color"
                     app:layout_constraintBottom_toBottomOf="@id/toolbar"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
+                
+                <View
+                    android:id="@+id/toolbar_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?attr/dividerColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <FrameLayout
