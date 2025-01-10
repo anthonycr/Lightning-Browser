@@ -177,7 +177,7 @@
                         android:indeterminate="false"
                         android:max="100"
                         android:progressTint="@color/accent_color"
-                        app:layout_constraintBottom_toBottomOf="@id/toolbar"
+                        app:layout_constraintTop_toTopOf="@id/toolbar"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
