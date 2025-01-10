@@ -92,6 +92,12 @@ class FaviconModel @Inject constructor(
 
     companion object {
 
+        /**
+         * The folder where favicons are cached.
+         */
+        fun faviconCacheFolder(application: Application): File =
+            File(application.cacheDir, "favicon-cache")
+
         private const val TAG = "FaviconModel"
 
         /**
@@ -105,7 +111,9 @@ class FaviconModel @Inject constructor(
         fun getFaviconCacheFile(app: Application, validUri: ValidUri): File {
             val hash = validUri.host.hashCode().toString()
 
-            return File(app.cacheDir, "$hash.png")
+            val faviconCache = faviconCacheFolder(app)
+            faviconCache.mkdirs()
+            return File(faviconCache, "$hash.png")
         }
     }
 

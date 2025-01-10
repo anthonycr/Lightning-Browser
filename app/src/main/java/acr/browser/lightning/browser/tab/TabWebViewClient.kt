@@ -14,7 +14,6 @@ import acr.browser.lightning.ssl.SslWarningPreferences
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.net.http.SslError
-import android.os.Build
 import android.os.Message
 import android.view.LayoutInflater
 import android.webkit.HttpAuthHandler
@@ -24,8 +23,8 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.webkit.WebViewAssetLoader
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -44,7 +43,8 @@ class TabWebViewClient @AssistedInject constructor(
     private val userPreferences: UserPreferences,
     private val sslWarningPreferences: SslWarningPreferences,
     private val textReflow: TextReflow,
-    private val logger: Logger
+    private val logger: Logger,
+    @Assisted private val webViewAssetLoader: WebViewAssetLoader,
 ) : WebViewClient() {
 
     /**
@@ -225,7 +225,6 @@ class TabWebViewClient @AssistedInject constructor(
             super.shouldOverrideUrlLoading(view, url)
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
         return urlHandler.shouldOverrideLoading(view, request.url.toString(), headers) ||
             super.shouldOverrideUrlLoading(view, request)
@@ -239,7 +238,7 @@ class TabWebViewClient @AssistedInject constructor(
             val empty = ByteArrayInputStream(emptyResponseByteArray)
             return WebResourceResponse(BLOCKED_RESPONSE_MIME_TYPE, BLOCKED_RESPONSE_ENCODING, empty)
         }
-        return null
+        return webViewAssetLoader.shouldInterceptRequest(request.url)
     }
 
     private fun SslError.getAllSslErrorMessageCodes(): List<Int> {
@@ -276,7 +275,10 @@ class TabWebViewClient @AssistedInject constructor(
         /**
          * Create the client.
          */
-        fun create(headers: Map<String, String>): TabWebViewClient
+        fun create(
+            headers: Map<String, String>,
+            webViewAssetLoader: WebViewAssetLoader
+        ): TabWebViewClient
     }
 
     companion object {

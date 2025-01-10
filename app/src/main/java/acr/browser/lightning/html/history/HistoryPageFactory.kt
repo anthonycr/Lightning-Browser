@@ -9,8 +9,8 @@ import acr.browser.lightning.html.ListPageReader
 import acr.browser.lightning.html.jsoup.andBuild
 import acr.browser.lightning.html.jsoup.body
 import acr.browser.lightning.html.jsoup.clone
-import acr.browser.lightning.html.jsoup.id
 import acr.browser.lightning.html.jsoup.findId
+import acr.browser.lightning.html.jsoup.id
 import acr.browser.lightning.html.jsoup.parse
 import acr.browser.lightning.html.jsoup.removeElement
 import acr.browser.lightning.html.jsoup.style
@@ -95,7 +95,11 @@ class HistoryPageFactory @Inject constructor(
         }
     }
 
-    private fun createHistoryPage() = File(application.filesDir, FILENAME)
+    private fun createHistoryPage(): File {
+        val generatedHtml = File(application.filesDir, "generated-html")
+        generatedHtml.mkdirs()
+        return File(generatedHtml, FILENAME)
+    }
 
     companion object {
         const val FILENAME = "history.html"

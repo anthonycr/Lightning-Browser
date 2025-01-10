@@ -14,8 +14,8 @@ import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.jsoup.andBuild
 import acr.browser.lightning.html.jsoup.body
 import acr.browser.lightning.html.jsoup.clone
-import acr.browser.lightning.html.jsoup.id
 import acr.browser.lightning.html.jsoup.findId
+import acr.browser.lightning.html.jsoup.id
 import acr.browser.lightning.html.jsoup.parse
 import acr.browser.lightning.html.jsoup.removeElement
 import acr.browser.lightning.html.jsoup.style
@@ -46,8 +46,12 @@ class BookmarkPageFactory @Inject constructor(
 ) : HtmlPageFactory {
 
     private val title = application.getString(R.string.action_bookmarks)
-    private val folderIconFile by lazy { File(application.cacheDir, FOLDER_ICON) }
-    private val defaultIconFile by lazy { File(application.cacheDir, DEFAULT_ICON) }
+    private val folderIconFile by lazy {
+        File(FaviconModel.faviconCacheFolder(application), FOLDER_ICON)
+    }
+    private val defaultIconFile by lazy {
+        File(FaviconModel.faviconCacheFolder(application), DEFAULT_ICON)
+    }
 
     private fun Int.toColor(): String {
         val string = Integer.toHexString(this)
@@ -183,7 +187,9 @@ class BookmarkPageFactory @Inject constructor(
         } else {
             ""
         }
-        return File(application.filesDir, prefix + FILENAME)
+        val generatedHtml = File(application.filesDir, "generated-html")
+        generatedHtml.mkdirs()
+        return File(generatedHtml, prefix + FILENAME)
     }
 
     companion object {

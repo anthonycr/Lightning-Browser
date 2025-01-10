@@ -4,8 +4,13 @@ import acr.browser.lightning.R
 import acr.browser.lightning.browser.tab.DefaultTabTitle
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
+import acr.browser.lightning.favicon.FaviconCleanup
 import acr.browser.lightning.html.ListPageReader
+import acr.browser.lightning.html.bookmark.BookmarkCleanup
 import acr.browser.lightning.html.bookmark.BookmarkPageReader
+import acr.browser.lightning.html.download.DownloadCleanup
+import acr.browser.lightning.html.history.HistoryCleanup
+import acr.browser.lightning.html.homepage.HomeCleanup
 import acr.browser.lightning.html.homepage.HomePageReader
 import acr.browser.lightning.js.InvertPage
 import acr.browser.lightning.js.TextReflow
@@ -13,6 +18,7 @@ import acr.browser.lightning.js.ThemeColor
 import acr.browser.lightning.log.AndroidLogger
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.log.NoOpLogger
+import acr.browser.lightning.migration.Cleanup
 import acr.browser.lightning.search.suggestions.RequestFactory
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
@@ -211,6 +217,16 @@ class AppModule {
     @Provides
     fun providesDefaultTabTitle(application: Application): String =
         application.getString(R.string.untitled)
+
+    @Provides
+    fun providesCleanupList(
+        faviconCleanup: FaviconCleanup,
+        bookmarkCleanup: BookmarkCleanup,
+        downloadCleanup: DownloadCleanup,
+        historyCleanup: HistoryCleanup,
+        homeCleanup: HomeCleanup
+    ): List<@JvmSuppressWildcards Cleanup.Action> =
+        listOf(faviconCleanup, bookmarkCleanup, downloadCleanup, historyCleanup, homeCleanup)
 
 }
 

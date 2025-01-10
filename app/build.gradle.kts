@@ -117,6 +117,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.8.5")
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
     implementation("androidx.preference:preference:1.2.1")
+    implementation("androidx.webkit:webkit:1.12.1")
 
     // html parsing for reading mode
     implementation("org.jsoup:jsoup:1.15.3")
@@ -147,6 +148,7 @@ dependencies {
 
     // kotlin
     implementation(kotlin("stdlib", KotlinCompilerVersion.VERSION))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
 }
 
 mezzanine {
