@@ -102,6 +102,7 @@ class TabWebViewClient @AssistedInject constructor(
         urlObservable.onNext(url)
         goBackObservable.onNext(view.canGoBack())
         goForwardObservable.onNext(view.canGoForward())
+        view.invalidate()
     }
 
 
