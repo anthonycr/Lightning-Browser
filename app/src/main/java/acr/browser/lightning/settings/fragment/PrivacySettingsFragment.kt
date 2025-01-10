@@ -48,12 +48,6 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         )
 
         togglePreference(
-            preference = SETTINGS_SAVEPASSWORD,
-            isChecked = userPreferences.savePasswordsEnabled,
-            onCheckChange = { userPreferences.savePasswordsEnabled = it }
-        )
-
-        togglePreference(
             preference = SETTINGS_CACHEEXIT,
             isChecked = userPreferences.clearCacheExit,
             onCheckChange = { userPreferences.clearCacheExit = it }
@@ -164,7 +158,6 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
     companion object {
         private const val SETTINGS_LOCATION = "location"
         private const val SETTINGS_THIRDPCOOKIES = "third_party"
-        private const val SETTINGS_SAVEPASSWORD = "password"
         private const val SETTINGS_CACHEEXIT = "clear_cache_exit"
         private const val SETTINGS_HISTORYEXIT = "clear_history_exit"
         private const val SETTINGS_COOKIEEXIT = "clear_cookies_exit"

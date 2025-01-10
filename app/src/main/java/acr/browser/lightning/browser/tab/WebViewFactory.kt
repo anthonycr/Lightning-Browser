@@ -96,10 +96,6 @@ class WebViewFactory @Inject constructor(
             displayZoomControls = false
             allowContentAccess = true
             allowFileAccess = true
-            allowFileAccessFromFileURLs = false
-            allowUniversalAccessFromFileURLs = false
-
-            setGeolocationDatabasePath(activity.getDir("geolocation", 0).path)
         }
 
         updateForPreferences(userPreferences, incognitoMode)
@@ -127,8 +123,6 @@ class WebViewFactory @Inject constructor(
         }
 
         settings.userAgentString = userPreferences.userAgent(activity.application)
-
-        settings.saveFormData = userPreferences.savePasswordsEnabled && !isIncognito
 
         if (userPreferences.javaScriptEnabled) {
             settings.javaScriptEnabled = true
