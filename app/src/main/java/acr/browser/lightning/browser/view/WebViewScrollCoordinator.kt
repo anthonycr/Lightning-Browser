@@ -26,7 +26,7 @@ import javax.inject.Inject
  * Coordinates scrolling behavior between a [WebView] and a toolbar/search box.
  */
 class WebViewScrollCoordinator @Inject constructor(
-    private val activity: Activity,
+    activity: Activity,
     private val bottomTabsLayout: BrowserBottomTabsBinding?,
     private val browserLayoutContainer: ViewGroup?,
     private val browserFrame: FrameLayout,
