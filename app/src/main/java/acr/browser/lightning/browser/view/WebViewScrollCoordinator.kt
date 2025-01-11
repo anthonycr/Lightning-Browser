@@ -103,10 +103,6 @@ class WebViewScrollCoordinator @Inject constructor(
                         height = toolbar.height
                     }
                 }
-            } else {
-                tabs.root.doOnLayout {
-                    tabs.root.animateTranslation(tabs.bottomTabList.height.toFloat())
-                }
             }
         }
     }
@@ -127,13 +123,17 @@ class WebViewScrollCoordinator @Inject constructor(
     }
 
     fun openBottomTabDrawer() {
+        if (bottomTabsLayout!!.root.translationY > 0F) {
+            bottomTabsLayout!!.root.doOnLayout {
+                bottomTabsLayout.root.animateTranslation(0F)
+            }
+        }
+    }
+
+    fun closeBottomTabDrawer() {
         if (bottomTabsLayout!!.root.translationY == 0F) {
             bottomTabsLayout.root.doOnLayout {
                 bottomTabsLayout.root.animateTranslation(bottomTabsLayout.bottomTabList.height.toFloat())
-            }
-        } else {
-            bottomTabsLayout.root.doOnLayout {
-                bottomTabsLayout.root.animateTranslation(0F)
             }
         }
     }

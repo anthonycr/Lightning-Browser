@@ -3,11 +3,11 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.browser.di.Browser2Scope
 import acr.browser.lightning.browser.view.WebViewLongPressHandler
 import acr.browser.lightning.browser.view.WebViewScrollCoordinator
+import acr.browser.lightning.browser.view.targetUrl.LongPress
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.FrameLayout
 import androidx.core.view.children
-import acr.browser.lightning.browser.view.targetUrl.LongPress
 import javax.inject.Inject
 
 /**
@@ -66,6 +66,10 @@ class TabPager @Inject constructor(
 
     fun openBottomTabDrawer() {
         webViewScrollCoordinator.openBottomTabDrawer()
+    }
+
+    fun closeBottomTabDrawer() {
+        webViewScrollCoordinator.closeBottomTabDrawer()
     }
 
     private fun FrameLayout.removeWebViews() {

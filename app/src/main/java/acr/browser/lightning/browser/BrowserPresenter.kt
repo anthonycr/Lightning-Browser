@@ -195,6 +195,7 @@ class BrowserPresenter @Inject constructor(
 
     private fun selectTab(tabModel: TabModel?) {
         if (currentTab == tabModel) {
+            view?.closeTabDrawer()
             return
         }
         currentTab?.isForeground = false
@@ -1101,8 +1102,14 @@ class BrowserPresenter @Inject constructor(
      * incognito icon in incognito mode).
      */
     fun onTabCountViewClick() {
-        if (uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP) {
+        if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER_SIDE) {
             view?.openTabDrawer()
+        } else if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER_BOTTOM) {
+            if (isTabDrawerOpen) {
+                view?.closeTabDrawer()
+            } else {
+                view?.openTabDrawer()
+            }
         } else {
             currentTab?.loadFromInitializer(homePageInitializer)
         }

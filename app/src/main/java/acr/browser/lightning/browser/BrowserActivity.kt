@@ -681,6 +681,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         if (binding.browserLayoutContainer == null) {
             binding.drawerLayout.openDrawer(binding.tabDrawer)
         } else {
+            presenter.onTabDrawerMoved(isOpen = true)
             tabPager.openBottomTabDrawer()
         }
     }
@@ -689,7 +690,12 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      * @see BrowserContract.View.closeTabDrawer
      */
     fun closeTabDrawer() {
-        binding.drawerLayout.closeDrawer(binding.tabDrawer)
+        if (binding.browserLayoutContainer == null) {
+            binding.drawerLayout.closeDrawer(binding.tabDrawer)
+        } else {
+            presenter.onTabDrawerMoved(isOpen = false)
+            tabPager.closeBottomTabDrawer()
+        }
     }
 
     /**
