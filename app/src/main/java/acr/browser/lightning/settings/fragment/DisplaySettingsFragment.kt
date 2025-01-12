@@ -125,7 +125,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
         val currentTheme = userPreferences.useTheme
         AlertDialog.Builder(requireActivity()).apply {
             setTitle(resources.getString(R.string.theme))
-            val values = AppTheme.values().map { Pair(it, it.toDisplayString()) }
+            val values = AppTheme.entries.map { Pair(it, it.toDisplayString()) }
             withSingleChoiceItems(values, userPreferences.useTheme) {
                 userPreferences.useTheme = it
                 summaryUpdater.updateSummary(it.toDisplayString())
@@ -155,7 +155,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
         val tabConfiguration = userPreferences.tabConfiguration
         AlertDialog.Builder(requireActivity()).apply {
             setTitle(resources.getString(R.string.tab_style_title))
-            val values = TabConfiguration.values().map { Pair(it, it.toDisplayString()) }
+            val values = TabConfiguration.entries.map { Pair(it, it.toDisplayString()) }
             withSingleChoiceItems(values, userPreferences.tabConfiguration) {
                 userPreferences.tabConfiguration = it
                 summaryUpdater.updateSummary(it.toDisplayString())

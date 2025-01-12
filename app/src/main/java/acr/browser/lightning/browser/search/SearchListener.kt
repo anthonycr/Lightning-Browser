@@ -28,6 +28,7 @@ class SearchListener(
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
                 true
             }
+
             else -> false
         }
     }

@@ -6,7 +6,6 @@ import android.content.Context
 import android.database.Cursor
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.widget.Toast

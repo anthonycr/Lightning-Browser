@@ -21,6 +21,7 @@ class IntentExtractor @Inject constructor(private val searchEngineProvider: Sear
             INTENT_PANIC_TRIGGER -> BrowserContract.Action.Panic
             Intent.ACTION_WEB_SEARCH ->
                 extractSearchFromIntent(intent)?.let(BrowserContract.Action::LoadUrl)
+
             else -> intent.dataString?.let(BrowserContract.Action::LoadUrl)
         }
     }

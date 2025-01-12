@@ -88,6 +88,7 @@ class DownloadPermissionsHelper @Inject constructor(
                                         }
                                     }
                             }
+
                             DialogInterface.BUTTON_NEGATIVE -> {
                             }
                         }

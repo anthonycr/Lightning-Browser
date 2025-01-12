@@ -1,11 +1,11 @@
 package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.proxy.ProxyChoice
 import acr.browser.lightning.constant.SCHEME_BLANK
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
-import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.preference.UserPreferences
@@ -122,7 +122,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(R.string.http_proxy)
             val stringArray = resources.getStringArray(R.array.proxy_choices_array)
-            val values = ProxyChoice.values().map {
+            val values = ProxyChoice.entries.map {
                 Pair(
                     it, when (it) {
                         ProxyChoice.NONE -> stringArray[0]
@@ -247,6 +247,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                         userPreferences.downloadDirectory = FileUtils.DEFAULT_DOWNLOAD_PATH
                         summaryUpdater.updateSummary(FileUtils.DEFAULT_DOWNLOAD_PATH)
                     }
+
                     1 -> {
                         showCustomDownloadLocationPicker(summaryUpdater)
                     }
@@ -329,14 +330,17 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                         userPreferences.homepage = SCHEME_HOMEPAGE
                         summaryUpdater.updateSummary(resources.getString(R.string.action_homepage))
                     }
+
                     1 -> {
                         userPreferences.homepage = SCHEME_BLANK
                         summaryUpdater.updateSummary(resources.getString(R.string.action_blank))
                     }
+
                     2 -> {
                         userPreferences.homepage = SCHEME_BOOKMARKS
                         summaryUpdater.updateSummary(resources.getString(R.string.action_bookmarks))
                     }
+
                     3 -> {
                         showCustomHomePagePicker(summaryUpdater)
                     }

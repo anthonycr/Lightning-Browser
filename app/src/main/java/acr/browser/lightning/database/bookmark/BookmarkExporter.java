@@ -59,7 +59,6 @@ public final class BookmarkExporter {
         InputStream inputStream = null;
         try {
             inputStream = context.getResources().openRawResource(R.raw.default_bookmarks);
-            //noinspection IOResourceOpenedButNotSafelyClosed
             bookmarksReader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             while ((line = bookmarksReader.readLine()) != null) {
@@ -104,7 +103,6 @@ public final class BookmarkExporter {
             Preconditions.checkNonNull(bookmarkList);
             BufferedWriter bookmarkWriter = null;
             try {
-                //noinspection IOResourceOpenedButNotSafelyClosed
                 bookmarkWriter = new BufferedWriter(new FileWriter(file, false));
 
                 JSONObject object = new JSONObject();
@@ -138,7 +136,6 @@ public final class BookmarkExporter {
             Preconditions.checkNonNull(bookmarkList);
             BufferedWriter bookmarkWriter = null;
             try {
-                //noinspection IOResourceOpenedButNotSafelyClosed
                 bookmarkWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
 
                 JSONObject object = new JSONObject();
@@ -168,7 +165,6 @@ public final class BookmarkExporter {
     public static List<Bookmark.Entry> importBookmarksFromFileStream(@NonNull InputStream inputStream) throws Exception {
         BufferedReader bookmarksReader = null;
         try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
             bookmarksReader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
 

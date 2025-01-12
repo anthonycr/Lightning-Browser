@@ -1,6 +1,5 @@
 package acr.browser.lightning.utils;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -66,7 +65,6 @@ public final class ThemeUtils {
      * @return the status bar color of the current theme.
      */
     @ColorInt
-    @TargetApi(21)
     public static int getStatusBarColor(@NonNull Context context) {
         return getColor(context, android.R.attr.statusBarColor);
     }

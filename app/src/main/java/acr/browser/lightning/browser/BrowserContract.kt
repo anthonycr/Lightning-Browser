@@ -1,20 +1,20 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.browser.download.PendingDownload
+import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.tab.TabViewState
+import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
-import acr.browser.lightning.browser.tab.TabInitializer
 import android.content.Intent
 import android.graphics.Bitmap
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import acr.browser.lightning.browser.view.targetUrl.LongPress
 
 /**
  * The contract for the browser.
@@ -362,7 +362,7 @@ interface BrowserContract {
         /**
          * The action to emergency clean the entire browser contents and stored data.
          */
-        object Panic : Action()
+        data object Panic : Action()
     }
 
 }

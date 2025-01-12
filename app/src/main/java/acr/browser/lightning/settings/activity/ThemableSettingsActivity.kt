@@ -27,10 +27,12 @@ abstract class ThemableSettingsActivity : AppCompatActivity() {
                 setTheme(R.style.Theme_SettingsTheme)
                 window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColor(this)))
             }
+
             AppTheme.DARK -> {
                 setTheme(R.style.Theme_SettingsTheme_Dark)
                 window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColorDark(this)))
             }
+
             AppTheme.BLACK -> {
                 setTheme(R.style.Theme_SettingsTheme_Black)
                 window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColorDark(this)))

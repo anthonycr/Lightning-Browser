@@ -10,12 +10,12 @@ sealed class SslState {
     /**
      * No SSL.
      */
-    object None : SslState()
+    data object None : SslState()
 
     /**
      * Valid SSL connection.
      */
-    object Valid : SslState()
+    data object Valid : SslState()
 
     /**
      * Broken SSL connection.

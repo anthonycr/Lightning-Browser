@@ -33,7 +33,7 @@ fun StringBuilder.inlineReplaceChar(toReplace: Char, replacement: Char) {
  * Returns the index of the provided [char] in the string or -1 if it cannot be found.
  */
 fun StringBuilder.indexOfChar(char: Char): Int {
-    for (i in 0 until length) {
+    for (i in indices) {
         if (this[i] == char) {
             return i
         }
@@ -65,8 +65,8 @@ fun StringBuilder.inlineTrim() {
     }
 
     var newStartIndex = 0
-    for (i in 0 until length) {
-        if (this[i] == SPACE) {
+    for (element in this) {
+        if (element == SPACE) {
             newStartIndex++
         } else {
             break

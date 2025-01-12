@@ -1,7 +1,6 @@
 package acr.browser.lightning.browser.view.delegates
 
 import acr.browser.lightning.browser.view.ViewDelegate
-import acr.browser.lightning.databinding.BrowserActivityBottomBinding
 import acr.browser.lightning.databinding.BrowserActivityDrawerBinding
 import acr.browser.lightning.icon.TabCountView
 import acr.browser.lightning.search.SearchView

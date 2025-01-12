@@ -2,7 +2,6 @@ package acr.browser.lightning.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +10,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
 import acr.browser.lightning.browser.proxy.ProxyChoice;
 import acr.browser.lightning.dialog.BrowserDialog;

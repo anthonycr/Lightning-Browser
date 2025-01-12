@@ -30,12 +30,10 @@ import android.content.SharedPreferences
 import android.content.pm.ShortcutManager
 import android.content.res.AssetManager
 import android.net.ConnectivityManager
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
 import com.anthonycr.mezzanine.mezzanine
 import dagger.Module
@@ -110,7 +108,6 @@ class AppModule {
     fun providesWindowManager(application: Application) =
         application.getSystemService<WindowManager>()!!
 
-    @RequiresApi(Build.VERSION_CODES.N_MR1)
     @Provides
     fun providesShortcutManager(application: Application) =
         application.getSystemService<ShortcutManager>()!!

@@ -452,7 +452,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         binding.tabCountView.updateCount(tabListState.size)
         val shouldScroll = tabsAdapter.itemCount < tabListState.size
         tabsAdapter.submitList(tabListState)
-        val nextSelected = tabListState.indexOfFirst { it.isSelected }
+        val nextSelected = tabListState.indexOfFirst(TabViewState::isSelected)
         if (shouldScroll && nextSelected != -1) {
             activeRecyclerView?.smoothScrollToPosition(nextSelected)
         }

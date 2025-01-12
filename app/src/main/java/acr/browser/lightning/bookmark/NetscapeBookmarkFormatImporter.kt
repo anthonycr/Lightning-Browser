@@ -35,6 +35,7 @@ class NetscapeBookmarkFormatImporter @Inject constructor() : BookmarkImporter {
                     immediateChild.matchesName(FOLDER_TAG) ->
                         immediateChild.nextElementSibling()!!
                             .processFolder(computeFolderName(folderName, immediateChild.text()))
+
                     immediateChild.matchesName(BOOKMARK_TAG) ->
                         listOf(
                             Bookmark.Entry(
@@ -44,6 +45,7 @@ class NetscapeBookmarkFormatImporter @Inject constructor() : BookmarkImporter {
                                 folder = folderName.asFolder()
                             )
                         )
+
                     else -> emptyList()
                 }
             }

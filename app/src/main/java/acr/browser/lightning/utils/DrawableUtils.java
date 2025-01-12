@@ -105,18 +105,13 @@ public final class DrawableUtils {
     @ColorInt
     public static int characterToColorHash(@NonNull Character character, @NonNull Application app) {
         int smallHash = Character.getNumericValue(character) % 4;
-        switch (Math.abs(smallHash)) {
-            case 0:
-                return ContextCompat.getColor(app, R.color.bookmark_default_blue);
-            case 1:
-                return ContextCompat.getColor(app, R.color.bookmark_default_green);
-            case 2:
-                return ContextCompat.getColor(app, R.color.bookmark_default_red);
-            case 3:
-                return ContextCompat.getColor(app, R.color.bookmark_default_orange);
-            default:
-                return Color.BLACK;
-        }
+        return switch (Math.abs(smallHash)) {
+            case 0 -> ContextCompat.getColor(app, R.color.bookmark_default_blue);
+            case 1 -> ContextCompat.getColor(app, R.color.bookmark_default_green);
+            case 2 -> ContextCompat.getColor(app, R.color.bookmark_default_red);
+            case 3 -> ContextCompat.getColor(app, R.color.bookmark_default_orange);
+            default -> Color.BLACK;
+        };
     }
 
 

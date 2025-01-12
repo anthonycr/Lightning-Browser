@@ -78,7 +78,12 @@ class TabCountView @JvmOverloads constructor(
 
 //        paint.xfermode = overMode
 //
-        workingRect.set(0f + borderWidth / 2, 0f + borderWidth /  2, width.toFloat() - borderWidth / 2, height.toFloat() - borderWidth / 2)
+        workingRect.set(
+            0f + borderWidth / 2,
+            0f + borderWidth / 2,
+            width.toFloat() - borderWidth / 2,
+            height.toFloat() - borderWidth / 2
+        )
 //        canvas.drawRoundRect(workingRect, borderRadius, borderRadius, paint)
 
         paint.style = Paint.Style.STROKE

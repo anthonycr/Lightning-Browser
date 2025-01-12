@@ -6,15 +6,15 @@ import acr.browser.lightning.adblock.source.HostsResult
 import acr.browser.lightning.adblock.util.BloomFilter
 import acr.browser.lightning.adblock.util.DefaultBloomFilter
 import acr.browser.lightning.adblock.util.DelegatingBloomFilter
-import acr.browser.lightning.adblock.util.`object`.JvmObjectStore
-import acr.browser.lightning.adblock.util.`object`.ObjectStore
 import acr.browser.lightning.adblock.util.hash.MurmurHashHostAdapter
 import acr.browser.lightning.adblock.util.hash.MurmurHashStringAdapter
+import acr.browser.lightning.adblock.util.`object`.JvmObjectStore
+import acr.browser.lightning.adblock.util.`object`.ObjectStore
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.database.adblock.HostsRepositoryInfo
-import acr.browser.lightning.browser.di.DatabaseScheduler
-import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.log.Logger
 import android.app.Application
@@ -148,6 +148,7 @@ class BloomFilterAdBlocker @Inject constructor(
 
                 isOnBlockList
             }
+
             domain.name.startsWith("www.") -> isAd(domain.name.substring(4))
             else -> false
         }

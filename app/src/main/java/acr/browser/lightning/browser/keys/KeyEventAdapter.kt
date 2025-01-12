@@ -18,22 +18,27 @@ class KeyEventAdapter @Inject constructor() {
                     // Search in page
                     return KeyCombo.CTRL_F
                 }
+
                 KeyEvent.KEYCODE_T -> {
                     // New tab
                     return KeyCombo.CTRL_T
                 }
+
                 KeyEvent.KEYCODE_W -> {
                     // Close current tab
                     return KeyCombo.CTRL_W
                 }
+
                 KeyEvent.KEYCODE_Q -> {
                     // Close browser
                     return KeyCombo.CTRL_Q
                 }
+
                 KeyEvent.KEYCODE_R -> {
                     // Refresh
                     return KeyCombo.CTRL_R
                 }
+
                 KeyEvent.KEYCODE_TAB -> {
                     return if (event.isShiftPressed) {
                         // Go back one tab
@@ -44,10 +49,12 @@ class KeyEventAdapter @Inject constructor() {
                     }
                 }
             }
+
             event.keyCode == KeyEvent.KEYCODE_SEARCH -> {
                 // Highlight search field
                 return KeyCombo.SEARCH
             }
+
             event.isAltPressed -> {
                 // Alt + tab number
                 if (event.keyCode in KeyEvent.KEYCODE_0..KeyEvent.KEYCODE_9) {

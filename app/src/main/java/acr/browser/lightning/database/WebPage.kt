@@ -57,7 +57,7 @@ sealed class Bookmark(
         /**
          * The root folder that contains bookmarks and other folders.
          */
-        object Root : Folder("", "")
+        data object Root : Folder("", "")
 
         /**
          * A folder that contains bookmarks.

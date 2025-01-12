@@ -14,7 +14,7 @@ sealed class HostsSourceType {
     /**
      * The default source, included in the app assets.
      */
-    object Default : HostsSourceType()
+    data object Default : HostsSourceType()
 
     /**
      * A local source, loaded from a local file.
@@ -38,7 +38,7 @@ sealed class HostsSourceType {
 fun UserPreferences.selectedHostsSource(): HostsSourceType {
     val localFile: File? = hostsLocalFile?.let(::File)?.takeIf(File::exists)?.takeIf(File::canRead)
 
-    val remoteUrl: HttpUrl? = hostsRemoteFile?.let { it.toHttpUrlOrNull() }
+    val remoteUrl: HttpUrl? = hostsRemoteFile?.toHttpUrlOrNull()
 
     val source = hostsSource
 

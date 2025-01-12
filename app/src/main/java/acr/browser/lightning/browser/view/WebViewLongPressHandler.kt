@@ -54,6 +54,7 @@ class WebViewLongPressHandler @Inject constructor(private val activity: Activity
     private fun Int.asLongPressCategory(): LongPress.Category = when (this) {
         WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE,
         WebView.HitTestResult.IMAGE_TYPE -> LongPress.Category.IMAGE
+
         WebView.HitTestResult.UNKNOWN_TYPE -> LongPress.Category.UNKNOWN
         else -> LongPress.Category.LINK
     }

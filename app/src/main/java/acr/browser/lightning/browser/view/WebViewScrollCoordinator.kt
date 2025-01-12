@@ -124,7 +124,7 @@ class WebViewScrollCoordinator @Inject constructor(
 
     fun openBottomTabDrawer() {
         if (bottomTabsLayout!!.root.translationY > 0F) {
-            bottomTabsLayout!!.root.doOnLayout {
+            bottomTabsLayout.root.doOnLayout {
                 bottomTabsLayout.root.animateTranslation(0F)
             }
         }

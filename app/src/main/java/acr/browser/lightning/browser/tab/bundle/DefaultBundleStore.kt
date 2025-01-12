@@ -83,7 +83,7 @@ class DefaultBundleStore @Inject constructor(
 
     private fun String.extractNumberFromEnd(): String {
         val underScore = lastIndexOf('_')
-        return if (underScore in 0 until length) {
+        return if (underScore in indices) {
             substring(underScore + 1)
         } else {
             ""
