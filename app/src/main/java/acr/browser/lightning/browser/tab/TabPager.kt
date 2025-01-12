@@ -29,13 +29,15 @@ class TabPager @Inject constructor(
      * Select the tab with the provided [id] to be displayed by the pager.
      */
     fun selectTab(id: Int) {
-        container.removeWebViews()
+        container.removeWebViews(excludeId = id)
         val webView = webViews.forId(id)
-        container.addView(
-            webView,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
+        if (webView.parent != container) {
+            container.addView(
+                webView,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
 
         webViewScrollCoordinator.configure(webView)
         webViewLongPressHandler.configure(webView, onLongClick = {
@@ -72,8 +74,11 @@ class TabPager @Inject constructor(
         webViewScrollCoordinator.closeBottomTabDrawer()
     }
 
-    private fun FrameLayout.removeWebViews() {
-        children.filterIsInstance<WebView>().forEach(container::removeView)
+    private fun FrameLayout.removeWebViews(excludeId: Int = -1) {
+        children
+            .filterIsInstance<WebView>()
+            .filter { it.id != excludeId }
+            .forEach(container::removeView)
     }
 
     private fun List<WebView>.forId(id: Int): WebView = requireNotNull(find { it.id == id })
