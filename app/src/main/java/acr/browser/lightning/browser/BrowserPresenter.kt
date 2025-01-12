@@ -193,7 +193,7 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun selectTab(tabModel: TabModel?) {
+    private fun selectTab(tabModel: TabModel?, focusTab: Boolean = true) {
         if (currentTab == tabModel) {
             view?.closeTabDrawer()
             return
@@ -224,7 +224,9 @@ class BrowserPresenter @Inject constructor(
         }
 
         view?.showToolbar()
-        view?.closeTabDrawer()
+        if (focusTab) {
+            view?.closeTabDrawer()
+        }
 
         view.updateTabs(tabListState.map { it.copy(isSelected = it.id == tab.id) })
 
@@ -510,7 +512,7 @@ class BrowserPresenter @Inject constructor(
             .subscribe {
                 if (needToSelectNextTab) {
                     nextTab?.id?.let {
-                        selectTab(model.selectTab(it))
+                        selectTab(model.selectTab(it), focusTab = false)
                         if (tabIdOpenedFromAction == currentTabId) {
                             tabIdOpenedFromAction = -1
                             navigator.backgroundBrowser()
