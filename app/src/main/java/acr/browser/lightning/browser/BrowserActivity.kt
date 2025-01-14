@@ -193,6 +193,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             .build()
             .inject(this)
 
+        intent = null
+
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
 
             override fun onDrawerOpened(drawerView: View) {
