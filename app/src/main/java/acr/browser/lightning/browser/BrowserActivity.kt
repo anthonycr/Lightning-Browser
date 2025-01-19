@@ -181,6 +181,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
+        val initialIntent = intent.takeIf { savedInstanceState == null }
+
         injector.browser2ComponentBuilder()
             .activity(this)
             .browserFrame(binding.contentFrame)
@@ -188,12 +190,10 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             .toolbarRoot(binding.uiLayout)
             .browserRoot(binding.browserLayoutContainer)
             .toolbar(binding.toolbarLayout)
-            .initialIntent(intent)
+            .initialIntent(initialIntent)
             .incognitoMode(isIncognito())
             .build()
             .inject(this)
-
-        intent = null
 
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
 

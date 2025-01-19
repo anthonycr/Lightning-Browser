@@ -55,7 +55,7 @@ class Browser2Module {
     @Provides
     @InitialUrl
     fun providesInitialUrl(
-        @InitialIntent initialIntent: Intent,
+        @InitialIntent initialIntent: Intent?,
         intentExtractor: IntentExtractor
     ): String? =
         (intentExtractor.extractUrlFromIntent(initialIntent) as? BrowserContract.Action.LoadUrl)?.url

@@ -41,7 +41,7 @@ interface Browser2Component {
         fun toolbar(toolbar: View): Builder
 
         @BindsInstance
-        fun initialIntent(@InitialIntent intent: Intent): Builder
+        fun initialIntent(@InitialIntent intent: Intent?): Builder
 
         @BindsInstance
         fun incognitoMode(@IncognitoMode incognitoMode: Boolean): Builder
