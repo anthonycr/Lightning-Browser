@@ -116,8 +116,14 @@ interface TabModel {
      */
     fun faviconChanges(): Observable<Option<Bitmap>>
 
+    /**
+     * A preview of the tab's content.
+     */
     val preview: Bitmap?
 
+    /**
+     * Emits changes to the [preview].
+     */
     fun previewChanges(): Observable<Option<Bitmap>>
 
     /**
