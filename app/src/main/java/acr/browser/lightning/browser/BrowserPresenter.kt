@@ -310,6 +310,7 @@ class BrowserPresenter @Inject constructor(
                 tabModel.previewChanges().startWithItem(Option.fromNullable(tabModel.preview))
             ).distinctUntilChanged()
                 .subscribeOn(mainScheduler)
+                .observeOn(mainScheduler)
                 .subscribeBy { (title, bitmap, preview) ->
                     view.updateTabs(tabListState.updateId(tabModel.id) {
                         it.copy(title = title, icon = bitmap.value(), preview = preview.value())
