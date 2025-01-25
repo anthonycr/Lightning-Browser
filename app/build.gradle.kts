@@ -79,7 +79,7 @@ android {
             versionCode = 102
         }
     }
-    packagingOptions {
+    packaging {
         resources {
             excludes += listOf(".readme")
         }
