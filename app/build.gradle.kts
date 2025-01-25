@@ -41,7 +41,8 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
             setProguardFiles(listOf("proguard-project.txt"))
-            isTestCoverageEnabled = true
+            enableUnitTestCoverage = false
+            enableAndroidTestCoverage = false
         }
 
         named("release") {
@@ -49,7 +50,8 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             setProguardFiles(listOf("proguard-project.txt"))
-            isTestCoverageEnabled = false
+            enableUnitTestCoverage = false
+            enableAndroidTestCoverage = false
 
             ndk {
                 abiFilters.add("arm64-v8a")
@@ -128,7 +130,7 @@ dependencies {
     ksp("com.anthonycr.mezzanine:processor:$mezzanineVersion")
 
     // dependency injection
-    val daggerVersion = "2.54"
+    val daggerVersion = "2.55"
     implementation("com.google.dagger:dagger:$daggerVersion")
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
     compileOnly("javax.annotation:jsr250-api:1.0")
@@ -160,6 +162,12 @@ mezzanine {
         "src/main/js/TextReflow.js",
         "src/main/js/ThemeColor.js"
     )
+}
+
+kapt {
+    correctErrorTypes = true
+    useBuildCache = true
+    generateStubs = true
 }
 
 kotlin {
