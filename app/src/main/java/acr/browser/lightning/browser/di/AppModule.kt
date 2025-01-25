@@ -21,6 +21,7 @@ import acr.browser.lightning.log.NoOpLogger
 import acr.browser.lightning.migration.Cleanup
 import acr.browser.lightning.search.suggestions.RequestFactory
 import acr.browser.lightning.utils.FileUtils
+import android.app.ActivityManager
 import android.app.Application
 import android.app.DownloadManager
 import android.app.NotificationManager
@@ -111,6 +112,10 @@ class AppModule {
     @Provides
     fun providesShortcutManager(application: Application) =
         application.getSystemService<ShortcutManager>()!!
+
+    @Provides
+    fun providesActivityManager(application: Application) =
+        application.getSystemService<ActivityManager>()!!
 
     @Provides
     @DatabaseScheduler
