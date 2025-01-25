@@ -22,7 +22,8 @@ class IntentExtractor @Inject constructor(private val searchEngineProvider: Sear
             Intent.ACTION_WEB_SEARCH ->
                 extractSearchFromIntent(intent)?.let(BrowserContract.Action::LoadUrl)
 
-            else -> intent?.dataString?.let(BrowserContract.Action::LoadUrl)
+            Intent.ACTION_VIEW -> intent.dataString?.let(BrowserContract.Action::LoadUrl)
+            else -> null
         }
     }
 
