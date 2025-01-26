@@ -6,7 +6,6 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-kapt")
-    id("jacoco")
     id("com.github.ben-manes.versions")
     id("com.google.devtools.ksp") version "2.1.0-1.0.29"
     id("com.anthonycr.mezzanine.plugin") version "2.0.0"
@@ -88,10 +87,6 @@ android {
         abortOnError = true
     }
     namespace = "acr.browser.lightning"
-}
-
-jacoco {
-    toolVersion = "0.8.8" // See http://www.eclemma.org/jacoco/
 }
 
 dependencies {
