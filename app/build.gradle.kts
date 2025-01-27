@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -144,7 +143,7 @@ dependencies {
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.10")
 
     // kotlin
-    implementation(kotlin("stdlib", KotlinCompilerVersion.VERSION))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
 }
 
