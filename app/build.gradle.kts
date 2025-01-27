@@ -132,7 +132,7 @@ dependencies {
     // permissions
     implementation("com.guolindev.permissionx:permissionx:1.7.1")
 
-    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // rx
     implementation("io.reactivex.rxjava3:rxjava:3.1.6")
