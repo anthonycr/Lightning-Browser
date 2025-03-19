@@ -3,7 +3,6 @@ buildscript {
         gradlePluginPortal()
         google()
         mavenCentral()
-        mavenLocal()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.8.2")
@@ -22,6 +21,5 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        mavenLocal()
     }
 }
