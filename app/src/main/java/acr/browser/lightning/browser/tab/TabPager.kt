@@ -66,6 +66,8 @@ class TabPager @Inject constructor(
         webViewScrollCoordinator.showToolbar()
     }
 
+    fun isBottomTabDrawerOpen() = webViewScrollCoordinator.isBottomTabDrawerOpen()
+
     fun openBottomTabDrawer() {
         webViewScrollCoordinator.openBottomTabDrawer()
     }
