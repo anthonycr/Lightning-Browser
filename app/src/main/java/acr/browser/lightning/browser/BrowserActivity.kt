@@ -699,7 +699,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             presenter.onTabDrawerMoved(isOpen = true)
             tabPager.openBottomTabDrawer()
             if (pendingScroll != -1) {
-                activeRecyclerView?.smoothScrollToPosition(pendingScroll)
+                activeRecyclerView?.scrollToPosition(pendingScroll)
                 pendingScroll = -1
             }
         }
