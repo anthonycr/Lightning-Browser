@@ -38,7 +38,9 @@ class WebViewLongPressHandler @Inject constructor(private val activity: Activity
                                 hitUrl = hitTestResult.extra,
                                 hitCategory = hitTestResult.type.asLongPressCategory()
                             )
-                            onLongClick(longPress)
+                            if (longPress.targetUrl != null && longPress.hitUrl != null) {
+                                onLongClick(longPress)
+                            }
                         },
                         webView = webView
                     )
