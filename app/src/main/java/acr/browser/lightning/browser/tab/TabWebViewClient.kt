@@ -67,6 +67,8 @@ class TabWebViewClient @AssistedInject constructor(
      */
     val goForwardObservable: PublishSubject<Boolean> = PublishSubject.create()
 
+    val finishedObservable = PublishSubject.create<Unit>()
+
     /**
      * The current SSL state of the page.
      */
@@ -102,6 +104,7 @@ class TabWebViewClient @AssistedInject constructor(
         urlObservable.onNext(url)
         goBackObservable.onNext(view.canGoBack())
         goForwardObservable.onNext(view.canGoForward())
+        finishedObservable.onNext(Unit)
         view.invalidate()
     }
 

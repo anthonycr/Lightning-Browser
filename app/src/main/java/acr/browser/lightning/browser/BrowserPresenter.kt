@@ -307,13 +307,13 @@ class BrowserPresenter @Inject constructor(
                 tabModel.titleChanges().startWithItem(tabModel.title),
                 tabModel.faviconChanges()
                     .startWithItem(Option.fromNullable(tabModel.favicon)),
-                tabModel.previewChanges().startWithItem(Option.fromNullable(tabModel.preview))
+                tabModel.previewChanges()
             ).distinctUntilChanged()
                 .subscribeOn(mainScheduler)
                 .observeOn(mainScheduler)
-                .subscribeBy { (title, bitmap, preview) ->
+                .subscribeBy { (title, bitmap, _) ->
                     view.updateTabs(tabListState.updateId(tabModel.id) {
-                        it.copy(title = title, icon = bitmap.value(), preview = preview.value())
+                        it.copy(title = title, icon = bitmap.value(), preview = tabModel.preview)
                     })
 
                     tabModel.url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {

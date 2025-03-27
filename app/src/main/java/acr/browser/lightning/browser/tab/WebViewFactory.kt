@@ -59,7 +59,6 @@ class WebViewFactory @Inject constructor(
      * Construct a [WebView] based on the user's preferences.
      */
     fun createWebView(): WebView = WebView(activity).apply {
-        id = View.generateViewId()
         tag = CompositeTouchListener().also(::setOnTouchListener)
         isFocusableInTouchMode = true
         isFocusable = true

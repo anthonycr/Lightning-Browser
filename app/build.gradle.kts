@@ -134,6 +134,9 @@ dependencies {
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
+    implementation("io.coil-kt.coil3:coil:3.0.4")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
+
     // rx
     implementation("io.reactivex.rxjava3:rxjava:3.1.6")
     implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
