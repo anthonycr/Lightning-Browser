@@ -2,7 +2,6 @@ package acr.browser.lightning.browser.tab
 
 import android.app.Application
 import android.webkit.WebView
-import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
 import java.io.File
 import javax.inject.Inject
@@ -28,17 +27,9 @@ class TabFactory @Inject constructor(
             requestHeaders = headers,
             tabWebViewClient = tabWebViewClientFactory.create(
                 headers,
-                WebViewAssetLoader.Builder()
-                    .addPathHandler(
-                        "/favicon-cache/",
-                        InternalStoragePathHandler(app, File(app.cacheDir, "favicon-cache"))
-                    )
-                    .addPathHandler(
-                        "/generated-html/",
-                        InternalStoragePathHandler(app, File(app.filesDir, "generated-html"))
-                    )
-                    .build()
-            ),
+                InternalStoragePathHandler(app, File(app.cacheDir, "favicon-cache")),
+                InternalStoragePathHandler(app, File(app.filesDir, "generated-html"))
+            )
         )
     }
 }
