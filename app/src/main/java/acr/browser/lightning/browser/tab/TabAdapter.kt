@@ -38,6 +38,7 @@ class TabAdapter @AssistedInject constructor(
     @Assisted private val webView: WebView,
     @Assisted private val requestHeaders: Map<String, String>,
     @Assisted private val tabWebViewClient: TabWebViewClient,
+    @Assisted override var isEphemeral: Boolean,
     private val tabWebChromeClient: TabWebChromeClient,
     private val userPreferences: UserPreferences,
     @DefaultUserAgent private val defaultUserAgent: String,
@@ -57,6 +58,7 @@ class TabAdapter @AssistedInject constructor(
             webView: WebView,
             requestHeaders: Map<String, String>,
             tabWebViewClient: TabWebViewClient,
+            isEphemeral: Boolean,
         ): TabAdapter
     }
 

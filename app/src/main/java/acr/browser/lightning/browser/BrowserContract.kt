@@ -190,7 +190,10 @@ interface BrowserContract {
         /**
          * Create a tab that will be initialized with the [tabInitializer].
          */
-        fun createTab(tabInitializer: TabInitializer): Single<TabModel>
+        fun createTab(
+            tabInitializer: TabInitializer,
+            isEphemeral: Boolean = false
+        ): Single<TabModel>
 
         /**
          * Reopen the most recently closed tab if there is a closed tab to re-open.
@@ -207,6 +210,12 @@ interface BrowserContract {
          * initialize any tabs that should be opened from the initial browser action.
          */
         fun initializeTabs(): Maybe<List<TabModel>>
+
+        /**
+         * Mark all tabs as being permanent tabs so that they won't be deleted during navigation
+         * events.
+         */
+        fun markAllNonEphemeral()
 
         /**
          * Notifies the model that all tabs need to be frozen before the browser shuts down.

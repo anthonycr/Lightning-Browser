@@ -64,25 +64,27 @@ class TabsRepository @Inject constructor(
             tabsListObservable.onNext(tabsList)
         }.subscribeOn(mainScheduler)
 
-    override fun createTab(tabInitializer: TabInitializer): Single<TabModel> =
-        afterInitialization().flatMap { createTabUnsafe(tabInitializer) }
+    override fun createTab(tabInitializer: TabInitializer, isEphemeral: Boolean): Single<TabModel> =
+        afterInitialization().flatMap { createTabUnsafe(tabInitializer, isEphemeral) }
             .subscribeOn(mainScheduler)
 
     /**
      * Creates a tab without waiting for the browser to be initialized.
      */
-    private fun createTabUnsafe(tabInitializer: TabInitializer): Single<TabModel> =
-        Single.fromCallable {
-            val webView = webViewFactory.createWebView()
-            tabPager.addTab(webView)
-            val tabAdapter = tabFactory.constructTab(tabInitializer, webView)
+    private fun createTabUnsafe(
+        tabInitializer: TabInitializer,
+        isEphemeral: Boolean
+    ): Single<TabModel> = Single.fromCallable {
+        val webView = webViewFactory.createWebView()
+        tabPager.addTab(webView)
+        val tabAdapter = tabFactory.constructTab(tabInitializer, webView, isEphemeral)
 
-            tabsList = tabsList + tabAdapter
+        tabsList = tabsList + tabAdapter
 
-            return@fromCallable tabAdapter
-        }.doOnSuccess {
-            tabsListObservable.onNext(tabsList)
-        }.subscribeOn(mainScheduler)
+        return@fromCallable tabAdapter
+    }.doOnSuccess {
+        tabsListObservable.onNext(tabsList)
+    }.subscribeOn(mainScheduler)
 
     override fun reopenTab(): Maybe<TabModel> = Maybe.fromCallable(recentTabModel::lastClosed)
         .flatMapSingle { createTab(BundleInitializer(it)) }
@@ -106,19 +108,23 @@ class TabsRepository @Inject constructor(
             .subscribeOn(diskScheduler)
             .observeOn(mainScheduler)
             .flatMapObservable { Observable.fromIterable(it) }
+            .flatMapSingle { createTabUnsafe(it, isEphemeral = false) }
             .concatWith(Maybe.fromCallable { initialUrl }.map {
                 if (it.isFileUrl()) {
                     permissionInitializerFactory.create(it)
                 } else {
                     UrlInitializer(it)
                 }
-            })
-            .flatMapSingle(::createTabUnsafe)
+            }.flatMapSingle { createTabUnsafe(it, isEphemeral = true) })
             .toList()
             .filter(List<TabModel>::isNotEmpty)
             .doAfterTerminate {
                 isInitialized.onNext(true)
             }
+
+    override fun markAllNonEphemeral() {
+        tabsList.forEach { it.isEphemeral = false }
+    }
 
     override fun freeze() {
         if (userPreferences.restoreLostTabsEnabled) {

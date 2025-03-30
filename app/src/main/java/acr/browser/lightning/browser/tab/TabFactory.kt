@@ -19,7 +19,11 @@ class TabFactory @Inject constructor(
     /**
      * Constructs a tab from the [webView] with the provided [tabInitializer].
      */
-    fun constructTab(tabInitializer: TabInitializer, webView: WebView): TabModel {
+    fun constructTab(
+        tabInitializer: TabInitializer,
+        webView: WebView,
+        isEphemeral: Boolean
+    ): TabModel {
         val headers = webViewFactory.createRequestHeaders()
         return tabAdapterFactory.create(
             tabInitializer = tabInitializer,
@@ -29,7 +33,8 @@ class TabFactory @Inject constructor(
                 headers,
                 InternalStoragePathHandler(app, File(app.cacheDir, "favicon-cache")),
                 InternalStoragePathHandler(app, File(app.filesDir, "generated-html"))
-            )
+            ),
+            isEphemeral,
         )
     }
 }

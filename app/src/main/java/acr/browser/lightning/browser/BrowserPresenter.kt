@@ -112,7 +112,6 @@ class BrowserPresenter @Inject constructor(
     private var isTabDrawerOpen = false
     private var isBookmarkDrawerOpen = false
     private var isSearchViewFocused = false
-    private var tabIdOpenedFromAction = -1
     private var pendingAction: BrowserContract.Action.LoadUrl? = null
     private var isCustomViewShowing = false
 
@@ -170,8 +169,8 @@ class BrowserPresenter @Inject constructor(
      * Call when the view is hidden (i.e. the browser is sent to the background).
      */
     fun onViewHidden() {
+        model.markAllNonEphemeral()
         model.freeze()
-        tabIdOpenedFromAction = -1
     }
 
     private fun TabModel.asViewState(): TabViewState = TabViewState(
@@ -276,7 +275,13 @@ class BrowserPresenter @Inject constructor(
 
         tabDisposable += tab.createWindowRequests()
             .subscribeOn(mainScheduler)
-            .subscribeBy { createNewTabAndSelect(it, shouldSelect = true) }
+            .subscribeBy {
+                createNewTabAndSelect(
+                    tabInitializer = it,
+                    shouldSelect = true,
+                    markAsOpenedFromAction = true
+                )
+            }
 
         tabDisposable += tab.closeWindowRequests()
             .subscribeOn(mainScheduler)
@@ -424,14 +429,11 @@ class BrowserPresenter @Inject constructor(
         shouldSelect: Boolean,
         markAsOpenedFromAction: Boolean = false
     ) {
-        compositeDisposable += model.createTab(tabInitializer)
+        compositeDisposable += model.createTab(tabInitializer, isEphemeral = markAsOpenedFromAction)
             .observeOn(mainScheduler)
             .subscribe { tab ->
                 if (shouldSelect) {
                     selectTab(model.selectTab(tab.id))
-                    if (markAsOpenedFromAction) {
-                        tabIdOpenedFromAction = tab.id
-                    }
                 }
             }
     }
@@ -513,9 +515,9 @@ class BrowserPresenter @Inject constructor(
             .subscribe {
                 if (needToSelectNextTab) {
                     nextTab?.id?.let {
+                        val shouldClose = currentTab?.isEphemeral ?: false
                         selectTab(model.selectTab(it), focusTab = false)
-                        if (tabIdOpenedFromAction == currentTabId) {
-                            tabIdOpenedFromAction = -1
+                        if (shouldClose) {
                             navigator.backgroundBrowser()
                         }
                     } ?: run {
@@ -568,7 +570,7 @@ class BrowserPresenter @Inject constructor(
                 currentTab?.id?.let {
                     view?.showCloseBrowserDialog(it)
                 }
-            } else if (tabIdOpenedFromAction == currentTab?.id) {
+            } else if (currentTab?.isEphemeral == true) {
                 onTabClose(tabListState.indexOfCurrentTab())
             } else {
                 navigator.backgroundBrowser()

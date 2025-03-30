@@ -22,6 +22,12 @@ interface TabModel {
      */
     val id: Int
 
+    /**
+     * True if the tab is ephemeral and should be deleted when the browser is closed, false
+     * otherwise.
+     */
+    var isEphemeral: Boolean
+
     // Navigation
 
     /**
