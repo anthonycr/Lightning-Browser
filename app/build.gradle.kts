@@ -6,7 +6,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("com.github.ben-manes.versions")
-    id("com.google.devtools.ksp") version "2.1.10-1.0.31"
+    id("com.google.devtools.ksp") version "2.1.20-1.0.32"
     id("com.anthonycr.plugins.mezzanine") version "2.0.1"
 }
 
@@ -107,13 +107,13 @@ dependencies {
     implementation("androidx.vectordrawable:vectordrawable-animated:1.2.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
-    implementation("androidx.fragment:fragment-ktx:1.8.5")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    implementation("androidx.fragment:fragment-ktx:1.8.6")
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
-    implementation("androidx.preference:preference:1.2.1")
-    implementation("androidx.webkit:webkit:1.12.1")
+    implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("androidx.webkit:webkit:1.13.0")
 
     // html parsing for reading mode
     implementation("org.jsoup:jsoup:1.15.3")
@@ -141,7 +141,7 @@ dependencies {
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.10")
 
     // kotlin
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.20")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
 }
 
