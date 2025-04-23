@@ -99,7 +99,7 @@ dependencies {
     testImplementation("com.nhaarman:mockito-kotlin:1.6.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    testImplementation("org.robolectric:robolectric:4.4")
+    testImplementation("org.robolectric:robolectric:4.14.1")
 
     // support libraries
     implementation("androidx.palette:palette-ktx:1.0.0")
@@ -108,7 +108,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
-    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.fragment:fragment-ktx:1.8.6")
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
@@ -119,21 +119,21 @@ dependencies {
     implementation("org.jsoup:jsoup:1.15.3")
 
     // dependency injection
-    val daggerVersion = "2.55"
+    val daggerVersion = "2.56.2"
     implementation("com.google.dagger:dagger:$daggerVersion")
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
     compileOnly("javax.annotation:jsr250-api:1.0")
 
     // permissions
-    implementation("com.guolindev.permissionx:permissionx:1.7.1")
+    implementation("com.guolindev.permissionx:permissionx:1.8.1")
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
-    implementation("io.coil-kt.coil3:coil:3.0.4")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
+    implementation("io.coil-kt.coil3:coil:3.1.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
 
     // rx
-    implementation("io.reactivex.rxjava3:rxjava:3.1.6")
+    implementation("io.reactivex.rxjava3:rxjava:3.1.10")
     implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
 
@@ -142,7 +142,7 @@ dependencies {
 
     // kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.20")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }
 
 mezzanine {
