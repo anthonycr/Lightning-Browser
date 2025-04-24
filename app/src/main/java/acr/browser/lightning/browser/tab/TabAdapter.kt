@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
+import androidx.core.graphics.createBitmap
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -285,7 +286,7 @@ class TabAdapter @AssistedInject constructor(
         }
 
         // Create a Bitmap with the specified dimensions and ARGB_8888 configuration
-        val bitmap = Bitmap.createBitmap(width / 3, height / 3, Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap(width / 3, height / 3)
 
         // Create a Canvas to draw on the Bitmap
         val canvas = Canvas(bitmap)

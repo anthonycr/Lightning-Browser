@@ -6,9 +6,9 @@ import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toDrawable
 import javax.inject.Inject
 
 abstract class ThemableSettingsActivity : AppCompatActivity() {
@@ -25,17 +25,17 @@ abstract class ThemableSettingsActivity : AppCompatActivity() {
         when (themeId) {
             AppTheme.LIGHT -> {
                 setTheme(R.style.Theme_SettingsTheme)
-                window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColor(this)))
+                window.setBackgroundDrawable(ThemeUtils.getPrimaryColor(this).toDrawable())
             }
 
             AppTheme.DARK -> {
                 setTheme(R.style.Theme_SettingsTheme_Dark)
-                window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColorDark(this)))
+                window.setBackgroundDrawable(ThemeUtils.getPrimaryColorDark(this).toDrawable())
             }
 
             AppTheme.BLACK -> {
                 setTheme(R.style.Theme_SettingsTheme_Black)
-                window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColorDark(this)))
+                window.setBackgroundDrawable(ThemeUtils.getPrimaryColorDark(this).toDrawable())
             }
         }
         super.onCreate(savedInstanceState)

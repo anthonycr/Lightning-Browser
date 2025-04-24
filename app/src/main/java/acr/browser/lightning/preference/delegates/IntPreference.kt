@@ -1,6 +1,7 @@
 package acr.browser.lightning.preference.delegates
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -16,7 +17,7 @@ private class IntPreferenceDelegate(
         preferences.getInt(name, defaultValue)
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
-        preferences.edit().putInt(name, value).apply()
+        preferences.edit() { putInt(name, value) }
     }
 
 }

@@ -19,7 +19,7 @@ fun Bitmap.pad(): Bitmap = let {
     val width = it.width + padding
     val height = it.height + padding
 
-    Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).apply {
+    createBitmap(width, height).apply {
         Canvas(this).apply {
             drawARGB(0x00, 0x00, 0x00, 0x00) // this represents white color
             drawBitmap(

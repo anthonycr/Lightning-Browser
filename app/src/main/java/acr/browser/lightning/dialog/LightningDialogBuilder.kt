@@ -1,8 +1,8 @@
 package acr.browser.lightning.dialog
 
+import acr.browser.lightning.DefaultBrowserActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserContract
-import acr.browser.lightning.DefaultBrowserActivity
 import acr.browser.lightning.databinding.DialogEditBookmarkBinding
 import acr.browser.lightning.extensions.resizeAndShow
 import android.app.Activity
@@ -27,7 +27,8 @@ class LightningDialogBuilder @Inject constructor() {
     fun showLongPressedDialogForBookmarkUrl(
         activity: Activity,
         onClick: (BrowserContract.BookmarkOptionEvent) -> Unit
-    ) = BrowserDialog.show(activity, R.string.action_bookmarks,
+    ) = BrowserDialog.show(
+        activity, R.string.action_bookmarks,
         DialogItem(title = R.string.dialog_open_new_tab) {
             onClick(BrowserContract.BookmarkOptionEvent.NEW_TAB)
         },
@@ -62,7 +63,8 @@ class LightningDialogBuilder @Inject constructor() {
     fun showLongPressedDialogForDownloadUrl(
         activity: Activity,
         onClick: (BrowserContract.DownloadOptionEvent) -> Unit
-    ) = BrowserDialog.show(activity, R.string.action_downloads,
+    ) = BrowserDialog.show(
+        activity, R.string.action_downloads,
         DialogItem(title = R.string.dialog_delete_all_downloads) {
             onClick(BrowserContract.DownloadOptionEvent.DELETE_ALL)
         },
@@ -141,7 +143,8 @@ class LightningDialogBuilder @Inject constructor() {
     fun showBookmarkFolderLongPressedDialog(
         activity: Activity,
         onClick: (BrowserContract.FolderOptionEvent) -> Unit
-    ) = BrowserDialog.show(activity, R.string.action_folder,
+    ) = BrowserDialog.show(
+        activity, R.string.action_folder,
         DialogItem(title = R.string.dialog_rename_folder) {
             onClick(BrowserContract.FolderOptionEvent.RENAME)
         },
@@ -168,7 +171,8 @@ class LightningDialogBuilder @Inject constructor() {
     fun showLongPressedHistoryLinkDialog(
         activity: Activity,
         onClick: (BrowserContract.HistoryOptionEvent) -> Unit
-    ) = BrowserDialog.show(activity, R.string.action_history,
+    ) = BrowserDialog.show(
+        activity, R.string.action_history,
         DialogItem(title = R.string.dialog_open_new_tab) {
             onClick(BrowserContract.HistoryOptionEvent.NEW_TAB)
         },

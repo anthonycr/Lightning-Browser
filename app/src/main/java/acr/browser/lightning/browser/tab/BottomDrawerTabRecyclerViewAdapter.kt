@@ -6,9 +6,9 @@ import acr.browser.lightning.databinding.TabPreviewItemBinding
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.inflater
 import android.graphics.Bitmap
-import android.graphics.drawable.ColorDrawable
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.scale
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -97,7 +97,7 @@ class BottomDrawerTabRecyclerViewAdapter(
         imageView.load(File(tab.preview.first)) {
             transformations(TopCropTransformation)
             memoryCacheKey(tab.preview.second.toString())
-            placeholder(ColorDrawable(themeProvider.color(R.attr.colorPrimary)))
+            placeholder(themeProvider.color(R.attr.colorPrimary).toDrawable())
         }
     }
 

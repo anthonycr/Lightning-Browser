@@ -53,7 +53,6 @@ import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.utils.value
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.view.Gravity
@@ -71,6 +70,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -96,7 +96,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     private var menuItemAddBookmark: MenuItem? = null
 
     private val defaultColor by lazy { color(R.color.primary_color) }
-    private val backgroundDrawable by lazy { ColorDrawable(defaultColor) }
+    private val backgroundDrawable by lazy { defaultColor.toDrawable() }
 
     private var customView: View? = null
 
