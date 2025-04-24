@@ -22,6 +22,7 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -77,6 +78,7 @@ class BrowserApp : Application() {
 
         if (Build.VERSION.SDK_INT >= 28) {
             if (getProcessName() == "$packageName:incognito") {
+                File(dataDir, "app_webview_incognito").deleteRecursively()
                 WebView.setDataDirectorySuffix("incognito")
             }
         }
