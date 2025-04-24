@@ -33,6 +33,8 @@ android {
         viewBinding = true
     }
 
+    val isCi = System.getenv("CI") != "true"
+
     buildTypes {
         named("debug") {
             multiDexEnabled = true
@@ -43,19 +45,21 @@ android {
             enableAndroidTestCoverage = false
         }
 
-        named("release") {
-            multiDexEnabled = false
-            isMinifyEnabled = System.getenv("CI") != "true"
-            isShrinkResources = System.getenv("CI") != "true"
-            setProguardFiles(listOf("proguard-project.txt"))
-            enableUnitTestCoverage = false
-            enableAndroidTestCoverage = false
+        if (!isCi) {
+            named("release") {
+                multiDexEnabled = false
+                isMinifyEnabled = true
+                isShrinkResources = true
+                setProguardFiles(listOf("proguard-project.txt"))
+                enableUnitTestCoverage = false
+                enableAndroidTestCoverage = false
 
-            ndk {
-                abiFilters.add("arm64-v8a")
-                abiFilters.add("armeabi-v7a")
-                abiFilters.add("armeabi")
-                abiFilters.add("mips")
+                ndk {
+                    abiFilters.add("arm64-v8a")
+                    abiFilters.add("armeabi-v7a")
+                    abiFilters.add("armeabi")
+                    abiFilters.add("mips")
+                }
             }
         }
     }
@@ -70,11 +74,13 @@ android {
             versionCode = 101
         }
 
-        create("lightningLite") {
-            dimension = "capabilities"
-            buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")")
-            applicationId = "acr.browser.barebones"
-            versionCode = 102
+        if (!isCi) {
+            create("lightningLite") {
+                dimension = "capabilities"
+                buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")")
+                applicationId = "acr.browser.barebones"
+                versionCode = 102
+            }
         }
     }
     packaging {
