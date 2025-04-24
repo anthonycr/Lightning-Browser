@@ -1,42 +1,79 @@
 package acr.browser.lightning.browser.tab
 
+import acr.browser.lightning.browser.di.DiskScheduler
+import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.download.PendingDownload
+import acr.browser.lightning.browser.image.IconFreeze
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
+import acr.browser.lightning.ids.ViewIdGenerator
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.userAgent
+import acr.browser.lightning.preview.PreviewModel
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.Option
 import acr.browser.lightning.utils.value
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
+import java.util.concurrent.TimeUnit
+
 
 /**
  * Creates the adaptation between a [WebView] and the [TabModel] interface used by the browser.
  */
-class TabAdapter(
-    tabInitializer: TabInitializer,
-    private val webView: WebView,
-    private val requestHeaders: Map<String, String>,
-    private val tabWebViewClient: TabWebViewClient,
+class TabAdapter @AssistedInject constructor(
+    @Assisted tabInitializer: TabInitializer,
+    @Assisted private val webView: WebView,
+    @Assisted private val requestHeaders: Map<String, String>,
+    @Assisted private val tabWebViewClient: TabWebViewClient,
+    @Assisted override var isEphemeral: Boolean,
     private val tabWebChromeClient: TabWebChromeClient,
     private val userPreferences: UserPreferences,
-    private val defaultUserAgent: String,
-    private val defaultTabTitle: String,
-    private val iconFreeze: Bitmap
+    @DefaultUserAgent private val defaultUserAgent: String,
+    @DefaultTabTitle private val defaultTabTitle: String,
+    @IconFreeze private val iconFreeze: Bitmap,
+    private val viewIdGenerator: ViewIdGenerator,
+    private val previewModel: PreviewModel,
+    @DiskScheduler private val diskScheduler: Scheduler,
+    @MainScheduler private val mainScheduler: Scheduler,
 ) : TabModel {
+
+    @AssistedFactory
+    interface Factory {
+
+        fun create(
+            tabInitializer: TabInitializer,
+            webView: WebView,
+            requestHeaders: Map<String, String>,
+            tabWebViewClient: TabWebViewClient,
+            isEphemeral: Boolean,
+        ): TabAdapter
+    }
 
     private var latentInitializer: FreezableBundleInitializer? = null
 
     private var findInPageQuery: String? = null
     private var toggleDesktop: Boolean = false
     private val downloadsSubject = PublishSubject.create<PendingDownload>()
+    private val previewObservable: BehaviorSubject<Long>
+
+    private val previewPath by lazy {
+        previewModel.previewForId(webView.id)
+    }
+
+    private var previewGeneratedTime = System.currentTimeMillis()
 
     init {
         webView.webViewClient = tabWebViewClient
@@ -54,9 +91,15 @@ class TabAdapter(
         }
         if (tabInitializer is FreezableBundleInitializer) {
             latentInitializer = tabInitializer
+            webView.id = tabInitializer.id.takeIf { it != -1 } ?: viewIdGenerator.generateViewId()
+            viewIdGenerator.claimViewId(tabInitializer.id)
         } else {
+            webView.id = viewIdGenerator.generateViewId()
             loadFromInitializer(tabInitializer)
         }
+
+        previewObservable =
+            BehaviorSubject.createDefault(System.currentTimeMillis())
     }
 
     override val id: Int = webView.id
@@ -122,6 +165,16 @@ class TabAdapter(
         webView.clearMatches()
         findInPageQuery = null
     }
+
+    override val preview: Pair<String, Long>
+        get() = previewPath to previewGeneratedTime
+
+    override fun previewChanges(): Observable<Pair<String, Long>> =
+        tabWebViewClient.finishedObservable
+            .debounce(1, TimeUnit.SECONDS)
+            .observeOn(diskScheduler)
+            .map { previewPath to renderViewToBitmap(webView) }
+            .observeOn(mainScheduler)
 
     override val findQuery: String?
         get() = findInPageQuery
@@ -200,6 +253,7 @@ class TabAdapter(
             field = value
             if (field) {
                 webView.onResume()
+                webView.settings.offscreenPreRaster = true
                 latentInitializer?.let(::loadFromInitializer)
                 latentInitializer = null
             } else {
@@ -208,6 +262,8 @@ class TabAdapter(
         }
 
     override fun destroy() {
+        viewIdGenerator.releaseViewId(webView.id)
+        previewModel.prune()
         webView.stopLoading()
         webView.onPause()
         webView.clearHistory()
@@ -217,4 +273,37 @@ class TabAdapter(
 
     override fun freeze(): Bundle = latentInitializer?.bundle
         ?: Bundle(ClassLoader.getSystemClassLoader()).also(webView::saveState)
+
+    private fun renderViewToBitmap(
+        view: View,
+        width: Int = view.width,
+        height: Int = view.height
+    ): Long {
+        // Ensure the view has been laid out
+        if (width == 0 || height == 0) {
+            return 0
+        }
+
+        // Create a Bitmap with the specified dimensions and ARGB_8888 configuration
+        val bitmap = Bitmap.createBitmap(width / 3, height / 3, Bitmap.Config.ARGB_8888)
+
+        // Create a Canvas to draw on the Bitmap
+        val canvas = Canvas(bitmap)
+
+        canvas.scale(0.33F, 0.33F)
+
+        canvas.translate(-webView.scrollX.toFloat(), -webView.scrollY.toFloat())
+
+        // Layout the view if it hasn't been laid out yet
+        view.layout(0, 0, width, height)
+
+        // Draw the view onto the canvas
+        view.draw(canvas)
+
+        previewModel.cachePreviewForId(webView.id, bitmap)
+
+        return System.currentTimeMillis().also {
+            previewGeneratedTime = it
+        }
+    }
 }

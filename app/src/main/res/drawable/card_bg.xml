@@ -5,7 +5,7 @@
         <shape
             android:dither="true"
             android:shape="rectangle" >
-            <corners android:radius="2dp" />
+            <corners android:radius="8dp" />
 
             <solid android:color="?autoCompleteBackgroundColor" />
         </shape>

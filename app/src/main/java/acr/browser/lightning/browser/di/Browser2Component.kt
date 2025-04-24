@@ -1,8 +1,10 @@
 package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.browser.BrowserActivity
+import acr.browser.lightning.databinding.BrowserBottomTabsBinding
 import android.content.Intent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.fragment.app.FragmentActivity
@@ -30,10 +32,16 @@ interface Browser2Component {
         fun toolbarRoot(linearLayout: LinearLayout): Builder
 
         @BindsInstance
+        fun browserRoot(viewGroup: ViewGroup?): Builder
+
+        @BindsInstance
+        fun bottomTabsLayout(bottomTabsBinding: BrowserBottomTabsBinding?): Builder
+
+        @BindsInstance
         fun toolbar(toolbar: View): Builder
 
         @BindsInstance
-        fun initialIntent(@InitialIntent intent: Intent): Builder
+        fun initialIntent(@InitialIntent intent: Intent?): Builder
 
         @BindsInstance
         fun incognitoMode(@IncognitoMode incognitoMode: Boolean): Builder

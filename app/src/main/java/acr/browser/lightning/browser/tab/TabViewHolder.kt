@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
  * @param onCloseClick Invoked when the tab's close button is clicked.
  */
 class TabViewHolder(
-    view: View,
+    val view: View,
     private val onClick: (Int) -> Unit,
     private val onLongClick: (Int) -> Unit,
     private val onCloseClick: (Int) -> Unit,

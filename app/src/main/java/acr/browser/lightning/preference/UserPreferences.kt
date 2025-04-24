@@ -1,22 +1,23 @@
 package acr.browser.lightning.preference
 
 import acr.browser.lightning.AppTheme
+import acr.browser.lightning.browser.di.UserPrefs
 import acr.browser.lightning.browser.proxy.ProxyChoice
 import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.search.SearchBoxModel
+import acr.browser.lightning.browser.ui.TabConfiguration
+import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.device.ScreenSize
-import acr.browser.lightning.browser.di.UserPrefs
-import acr.browser.lightning.search.SearchEngineProvider
-import acr.browser.lightning.search.engine.GoogleSearch
-import acr.browser.lightning.utils.FileUtils
-import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.preference.delegates.booleanPreference
 import acr.browser.lightning.preference.delegates.enumPreference
 import acr.browser.lightning.preference.delegates.intPreference
 import acr.browser.lightning.preference.delegates.nullableStringPreference
 import acr.browser.lightning.preference.delegates.stringPreference
+import acr.browser.lightning.search.SearchEngineProvider
+import acr.browser.lightning.search.engine.GoogleSearch
+import acr.browser.lightning.utils.FileUtils
 import android.content.SharedPreferences
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -115,11 +116,6 @@ class UserPreferences @Inject constructor(
      * is automatically closed by the system.
      */
     var restoreLostTabsEnabled by preferences.booleanPreference(RESTORE_LOST_TABS, true)
-
-    /**
-     * True if the browser should save form input, false otherwise.
-     */
-    var savePasswordsEnabled by preferences.booleanPreference(SAVE_PASSWORDS, true)
 
     /**
      * The index of the chosen search engine.
@@ -223,9 +219,18 @@ class UserPreferences @Inject constructor(
      * True if the app should use the navigation drawer UI, false if it should use the traditional
      * desktop browser tabs UI.
      */
-    var showTabsInDrawer by preferences.booleanPreference(
+    @Deprecated("Superseded by TabConfiguration")
+    private var showTabsInDrawer by preferences.booleanPreference(
         SHOW_TABS_IN_DRAWER,
         !screenSize.isTablet()
+    )
+
+    var tabConfiguration by preferences.enumPreference(
+        TAB_CONFIGURATION, if (showTabsInDrawer) {
+            TabConfiguration.DRAWER_BOTTOM
+        } else {
+            TabConfiguration.DESKTOP
+        }
     )
 
     /**
@@ -332,6 +337,7 @@ private const val THEME = "Theme"
 private const val TEXT_ENCODING = "textEncoding"
 private const val CLEAR_WEB_STORAGE_EXIT = "clearWebStorageExit"
 private const val SHOW_TABS_IN_DRAWER = "showTabsInDrawer"
+private const val TAB_CONFIGURATION = "tabConfiguration"
 private const val DO_NOT_TRACK = "doNotTrack"
 private const val SAVE_DATA = "saveData"
 private const val IDENTIFYING_HEADERS = "removeIdentifyingHeaders"

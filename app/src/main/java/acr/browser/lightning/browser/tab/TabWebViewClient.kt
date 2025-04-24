@@ -12,9 +12,9 @@ import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.ssl.SslWarningPreferences
 import android.annotation.SuppressLint
+import android.app.Application
 import android.graphics.Bitmap
 import android.net.http.SslError
-import android.os.Build
 import android.os.Message
 import android.view.LayoutInflater
 import android.webkit.HttpAuthHandler
@@ -24,19 +24,21 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.io.ByteArrayInputStream
+import java.io.File
 import kotlin.math.abs
 
 /**
  * A [WebViewClient] that supports the tab adaptation.
  */
 class TabWebViewClient @AssistedInject constructor(
+    private val application: Application,
     private val adBlocker: AdBlocker,
     private val allowListModel: AllowListModel,
     private val urlHandler: UrlHandler,
@@ -44,8 +46,18 @@ class TabWebViewClient @AssistedInject constructor(
     private val userPreferences: UserPreferences,
     private val sslWarningPreferences: SslWarningPreferences,
     private val textReflow: TextReflow,
-    private val logger: Logger
+    private val logger: Logger,
+    @Assisted("cache") private val cacheStoragePathHandler: InternalStoragePathHandler,
+    @Assisted("files") private val filesStoragePathHandler: InternalStoragePathHandler,
 ) : WebViewClient() {
+
+    private val cache by lazy {
+        File(application.cacheDir, "favicon-cache")
+    }
+
+    private val files by lazy {
+        File(application.filesDir, "generated-html")
+    }
 
     /**
      * Emits changes to the current URL.
@@ -66,6 +78,8 @@ class TabWebViewClient @AssistedInject constructor(
      * Emits changes to the can go forward state of the browser.
      */
     val goForwardObservable: PublishSubject<Boolean> = PublishSubject.create()
+
+    val finishedObservable = PublishSubject.create<Unit>()
 
     /**
      * The current SSL state of the page.
@@ -102,6 +116,8 @@ class TabWebViewClient @AssistedInject constructor(
         urlObservable.onNext(url)
         goBackObservable.onNext(view.canGoBack())
         goForwardObservable.onNext(view.canGoForward())
+        finishedObservable.onNext(Unit)
+        view.invalidate()
     }
 
 
@@ -225,7 +241,6 @@ class TabWebViewClient @AssistedInject constructor(
             super.shouldOverrideUrlLoading(view, url)
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
         return urlHandler.shouldOverrideLoading(view, request.url.toString(), headers) ||
             super.shouldOverrideUrlLoading(view, request)
@@ -239,7 +254,13 @@ class TabWebViewClient @AssistedInject constructor(
             val empty = ByteArrayInputStream(emptyResponseByteArray)
             return WebResourceResponse(BLOCKED_RESPONSE_MIME_TYPE, BLOCKED_RESPONSE_ENCODING, empty)
         }
-        return null
+        return if (request.url.path?.startsWith(files.path) == true) {
+            filesStoragePathHandler.handle(request.url.path!!.substring(files.path.length))
+        } else if (request.url.path?.startsWith(cache.path) == true) {
+            cacheStoragePathHandler.handle(request.url.path!!.substring(cache.path.length))
+        } else {
+            super.shouldInterceptRequest(view, request)
+        }
     }
 
     private fun SslError.getAllSslErrorMessageCodes(): List<Int> {
@@ -276,7 +297,11 @@ class TabWebViewClient @AssistedInject constructor(
         /**
          * Create the client.
          */
-        fun create(headers: Map<String, String>): TabWebViewClient
+        fun create(
+            headers: Map<String, String>,
+            @Assisted("cache") cacheStoragePathHandler: InternalStoragePathHandler,
+            @Assisted("files") filesStoragePathHandler: InternalStoragePathHandler,
+        ): TabWebViewClient
     }
 
     companion object {

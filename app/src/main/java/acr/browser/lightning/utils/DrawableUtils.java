@@ -42,12 +42,13 @@ public final class DrawableUtils {
         paint.setFilterBitmap(true);
         paint.setDither(true);
 
-        final int radius = Utils.dpToPx(2);
+        final int radius = Utils.dpToPx(6);
+        final int padding = Utils.dpToPx(2);
 
         final RectF outer = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
         canvas.drawRoundRect(outer, radius, radius, paint);
 
-        final Rect dest = new Rect(Math.round(outer.left + radius), Math.round(outer.top + radius), Math.round(outer.right - radius), Math.round(outer.bottom - radius));
+        final Rect dest = new Rect(Math.round(outer.left + padding), Math.round(outer.top + padding), Math.round(outer.right - padding), Math.round(outer.bottom - padding));
         canvas.drawBitmap(icon, null, dest, paint);
 
         return image;
@@ -77,9 +78,8 @@ public final class DrawableUtils {
         paint.setTextSize(Utils.dpToPx(14));
         paint.setAntiAlias(true);
         paint.setTextAlign(Paint.Align.CENTER);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
 
-        int radius = Utils.dpToPx(2);
+        final int radius = Utils.dpToPx(6);
 
         RectF outer = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
         canvas.drawRoundRect(outer, radius, radius, paint);
@@ -88,6 +88,7 @@ public final class DrawableUtils {
         int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
 
         paint.setColor(Color.WHITE);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
         canvas.drawText(character.toString(), xPos, yPos, paint);
 
         return image;
@@ -104,18 +105,13 @@ public final class DrawableUtils {
     @ColorInt
     public static int characterToColorHash(@NonNull Character character, @NonNull Application app) {
         int smallHash = Character.getNumericValue(character) % 4;
-        switch (Math.abs(smallHash)) {
-            case 0:
-                return ContextCompat.getColor(app, R.color.bookmark_default_blue);
-            case 1:
-                return ContextCompat.getColor(app, R.color.bookmark_default_green);
-            case 2:
-                return ContextCompat.getColor(app, R.color.bookmark_default_red);
-            case 3:
-                return ContextCompat.getColor(app, R.color.bookmark_default_orange);
-            default:
-                return Color.BLACK;
-        }
+        return switch (Math.abs(smallHash)) {
+            case 0 -> ContextCompat.getColor(app, R.color.bookmark_default_blue);
+            case 1 -> ContextCompat.getColor(app, R.color.bookmark_default_green);
+            case 2 -> ContextCompat.getColor(app, R.color.bookmark_default_red);
+            case 3 -> ContextCompat.getColor(app, R.color.bookmark_default_orange);
+            default -> Color.BLACK;
+        };
     }
 
 

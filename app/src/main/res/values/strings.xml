@@ -267,6 +267,11 @@
     <string name="upsell_plus_version">Upgrade to Lightning Plus to block ads</string>
     <string name="message_open_download_fail">This file doesn\'t exist anymore</string>
 
+    <string name="tab_style_title">Tab Style</string>
+    <string name="tab_style_desktop">Desktop</string>
+    <string name="tab_style_side_drawer">Side Drawer</string>
+    <string name="tab_style_bottom_drawer">Bottom Drawer</string>
+
     <string name="faq">FAQ</string>
     <string name="faq_description">Frequently asked questions</string>
 

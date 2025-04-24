@@ -6,7 +6,6 @@ import android.content.Context
 import android.database.Cursor
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.widget.Toast
@@ -67,12 +66,7 @@ inline fun Context.themedDrawable(
  * The preferred locale of the user.
  */
 val Context.preferredLocale: Locale
-    get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        resources.configuration.locales[0]
-    } else {
-        @Suppress("DEPRECATION")
-        resources.configuration.locale
-    }
+    get() = resources.configuration.locales[0]
 
 /**
  * Obtain the file name for the provided [Uri].

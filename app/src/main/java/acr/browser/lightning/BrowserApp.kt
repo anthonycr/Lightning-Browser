@@ -10,10 +10,9 @@ import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
 import acr.browser.lightning.log.Logger
+import acr.browser.lightning.migration.Cleanup
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.LeakCanaryUtils
-import acr.browser.lightning.utils.MemoryLeakUtils
-import android.app.Activity
 import android.app.Application
 import android.os.Build
 import android.os.StrictMode
@@ -21,6 +20,8 @@ import android.webkit.WebView
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -36,7 +37,7 @@ class BrowserApp : Application() {
     internal lateinit var bookmarkModel: BookmarkRepository
 
     @Inject
-    @field:DatabaseScheduler
+    @DatabaseScheduler
     internal lateinit var databaseScheduler: Scheduler
 
     @Inject
@@ -47,6 +48,9 @@ class BrowserApp : Application() {
 
     @Inject
     internal lateinit var proxyAdapter: ProxyAdapter
+
+    @Inject
+    internal lateinit var cleanup: Cleanup
 
     lateinit var applicationComponent: AppComponent
 
@@ -65,6 +69,10 @@ class BrowserApp : Application() {
                     .penaltyLog()
                     .build()
             )
+        }
+
+        MainScope().launch {
+            cleanup.cleanup()
         }
 
         if (Build.VERSION.SDK_INT >= 28) {
@@ -116,13 +124,6 @@ class BrowserApp : Application() {
         if (buildInfo.buildType == BuildType.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true)
         }
-
-        registerActivityLifecycleCallbacks(object : MemoryLeakUtils.LifecycleAdapter() {
-            override fun onActivityDestroyed(activity: Activity) {
-                logger.log(TAG, "Cleaning up after the Android framework")
-                MemoryLeakUtils.clearNextServedView(activity, this@BrowserApp)
-            }
-        })
 
         registerActivityLifecycleCallbacks(proxyAdapter)
     }

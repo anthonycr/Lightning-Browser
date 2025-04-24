@@ -2,14 +2,14 @@ package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.Capabilities
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
-import acr.browser.lightning.constant.TEXT_ENCODINGS
 import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
+import acr.browser.lightning.browser.view.RenderingMode
+import acr.browser.lightning.constant.TEXT_ENCODINGS
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.isSupported
 import acr.browser.lightning.preference.UserPreferences
-import acr.browser.lightning.browser.view.RenderingMode
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import javax.inject.Inject
@@ -94,7 +94,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
         activity?.let(AlertDialog::Builder)?.apply {
             setTitle(resources.getString(R.string.rendering_mode))
 
-            val values = RenderingMode.values().map { Pair(it, it.toDisplayString()) }
+            val values = RenderingMode.entries.map { Pair(it, it.toDisplayString()) }
             withSingleChoiceItems(values, userPreferences.renderingMode) {
                 userPreferences.renderingMode = it
                 summaryUpdater.updateSummary(it.toDisplayString())
@@ -135,7 +135,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
         activity?.let(AlertDialog::Builder)?.apply {
             setTitle(resources.getString(R.string.url_contents))
 
-            val items = SearchBoxDisplayChoice.values().map { Pair(it, it.toDisplayString()) }
+            val items = SearchBoxDisplayChoice.entries.map { Pair(it, it.toDisplayString()) }
 
             withSingleChoiceItems(items, userPreferences.urlBoxContentChoice) {
                 userPreferences.urlBoxContentChoice = it

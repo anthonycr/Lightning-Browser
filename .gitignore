@@ -30,6 +30,7 @@ local.properties
 # Gradle
 build
 .gradle
+.kotlin
 
 # https://gist.github.com/AltNico/c581f370b3f88715876b
 *.apk

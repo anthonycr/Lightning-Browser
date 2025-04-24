@@ -2,7 +2,6 @@ package acr.browser.lightning.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +10,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
 import acr.browser.lightning.browser.proxy.ProxyChoice;
 import acr.browser.lightning.dialog.BrowserDialog;
@@ -21,8 +19,6 @@ import acr.browser.lightning.preference.DeveloperPreferences;
 import acr.browser.lightning.preference.UserPreferences;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import info.guardianproject.netcipher.proxy.OrbotHelper;
-import info.guardianproject.netcipher.webkit.WebkitProxy;
 import kotlin.Pair;
 import kotlin.Unit;
 
@@ -48,7 +44,8 @@ public final class ProxyUtils {
     public void checkForProxy(@NonNull final Activity activity) {
         final ProxyChoice currentProxyChoice = userPreferences.getProxyChoice();
 
-        final boolean orbotInstalled = OrbotHelper.isOrbotInstalled(activity);
+        // TODO no more orbot
+        final boolean orbotInstalled = false;
         boolean orbotChecked = developerPreferences.getCheckedForTor();
         boolean orbot = orbotInstalled && !orbotChecked;
 
@@ -91,9 +88,7 @@ public final class ProxyUtils {
                 // We shouldn't be here
                 return;
             case ORBOT:
-                if (!OrbotHelper.isOrbotRunning(activity)) {
-                    OrbotHelper.requestStartTor(activity);
-                }
+                // TODO no more orbot
                 host = "localhost";
                 port = 8118;
                 break;
@@ -104,23 +99,14 @@ public final class ProxyUtils {
                 break;
         }
 
-        try {
-            WebkitProxy.setProxy(BrowserApp.class.getName(), activity.getApplicationContext(), null, host, port);
-        } catch (Exception e) {
-            Log.d(TAG, "error enabling web proxying", e);
-        }
-
+        // TODO no more orbot
     }
 
     public void updateProxySettings(@NonNull Activity activity) {
         if (userPreferences.getProxyChoice() != ProxyChoice.NONE) {
             initializeProxy(activity);
         } else {
-            try {
-                WebkitProxy.resetProxy(BrowserApp.class.getName(), activity.getApplicationContext());
-            } catch (Exception e) {
-                Log.e(TAG, "Unable to reset proxy", e);
-            }
+            // TODO no more orbot
         }
     }
 
@@ -130,10 +116,9 @@ public final class ProxyUtils {
     public static ProxyChoice sanitizeProxyChoice(ProxyChoice choice, @NonNull Activity activity) {
         switch (choice) {
             case ORBOT:
-                if (!OrbotHelper.isOrbotInstalled(activity)) {
-                    choice = ProxyChoice.NONE;
-                    ActivityExtensions.snackbar(activity, R.string.install_orbot);
-                }
+                // TODO no more orbot
+                choice = ProxyChoice.NONE;
+                ActivityExtensions.snackbar(activity, R.string.install_orbot);
                 break;
             case MANUAL:
                 break;

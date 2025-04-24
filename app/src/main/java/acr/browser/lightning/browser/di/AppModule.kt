@@ -4,8 +4,13 @@ import acr.browser.lightning.R
 import acr.browser.lightning.browser.tab.DefaultTabTitle
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
+import acr.browser.lightning.favicon.FaviconCleanup
 import acr.browser.lightning.html.ListPageReader
+import acr.browser.lightning.html.bookmark.BookmarkCleanup
 import acr.browser.lightning.html.bookmark.BookmarkPageReader
+import acr.browser.lightning.html.download.DownloadCleanup
+import acr.browser.lightning.html.history.HistoryCleanup
+import acr.browser.lightning.html.homepage.HomeCleanup
 import acr.browser.lightning.html.homepage.HomePageReader
 import acr.browser.lightning.js.InvertPage
 import acr.browser.lightning.js.TextReflow
@@ -13,8 +18,10 @@ import acr.browser.lightning.js.ThemeColor
 import acr.browser.lightning.log.AndroidLogger
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.log.NoOpLogger
+import acr.browser.lightning.migration.Cleanup
 import acr.browser.lightning.search.suggestions.RequestFactory
 import acr.browser.lightning.utils.FileUtils
+import android.app.ActivityManager
 import android.app.Application
 import android.app.DownloadManager
 import android.app.NotificationManager
@@ -24,14 +31,12 @@ import android.content.SharedPreferences
 import android.content.pm.ShortcutManager
 import android.content.res.AssetManager
 import android.net.ConnectivityManager
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
-import com.anthonycr.mezzanine.MezzanineGenerator
+import com.anthonycr.mezzanine.mezzanine
 import dagger.Module
 import dagger.Provides
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -104,10 +109,13 @@ class AppModule {
     fun providesWindowManager(application: Application) =
         application.getSystemService<WindowManager>()!!
 
-    @RequiresApi(Build.VERSION_CODES.N_MR1)
     @Provides
     fun providesShortcutManager(application: Application) =
         application.getSystemService<ShortcutManager>()!!
+
+    @Provides
+    fun providesActivityManager(application: Application) =
+        application.getSystemService<ActivityManager>()!!
 
     @Provides
     @DatabaseScheduler
@@ -190,27 +198,37 @@ class AppModule {
     }
 
     @Provides
-    fun providesListPageReader(): ListPageReader = MezzanineGenerator.ListPageReader()
+    fun providesListPageReader(): ListPageReader = mezzanine()
 
     @Provides
-    fun providesHomePageReader(): HomePageReader = MezzanineGenerator.HomePageReader()
+    fun providesHomePageReader(): HomePageReader = mezzanine()
 
     @Provides
-    fun providesBookmarkPageReader(): BookmarkPageReader = MezzanineGenerator.BookmarkPageReader()
+    fun providesBookmarkPageReader(): BookmarkPageReader = mezzanine()
 
     @Provides
-    fun providesTextReflow(): TextReflow = MezzanineGenerator.TextReflow()
+    fun providesTextReflow(): TextReflow = mezzanine()
 
     @Provides
-    fun providesThemeColor(): ThemeColor = MezzanineGenerator.ThemeColor()
+    fun providesThemeColor(): ThemeColor = mezzanine()
 
     @Provides
-    fun providesInvertPage(): InvertPage = MezzanineGenerator.InvertPage()
+    fun providesInvertPage(): InvertPage = mezzanine()
 
     @DefaultTabTitle
     @Provides
     fun providesDefaultTabTitle(application: Application): String =
         application.getString(R.string.untitled)
+
+    @Provides
+    fun providesCleanupList(
+        faviconCleanup: FaviconCleanup,
+        bookmarkCleanup: BookmarkCleanup,
+        downloadCleanup: DownloadCleanup,
+        historyCleanup: HistoryCleanup,
+        homeCleanup: HomeCleanup
+    ): List<@JvmSuppressWildcards Cleanup.Action> =
+        listOf(faviconCleanup, bookmarkCleanup, downloadCleanup, historyCleanup, homeCleanup)
 
 }
 

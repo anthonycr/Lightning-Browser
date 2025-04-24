@@ -16,12 +16,14 @@ class IntentExtractor @Inject constructor(private val searchEngineProvider: Sear
     /**
      * Extract the action from the [intent] or return null if no data was extracted.
      */
-    fun extractUrlFromIntent(intent: Intent): BrowserContract.Action? {
-        return when (intent.action) {
+    fun extractUrlFromIntent(intent: Intent?): BrowserContract.Action? {
+        return when (intent?.action) {
             INTENT_PANIC_TRIGGER -> BrowserContract.Action.Panic
             Intent.ACTION_WEB_SEARCH ->
                 extractSearchFromIntent(intent)?.let(BrowserContract.Action::LoadUrl)
-            else -> intent.dataString?.let(BrowserContract.Action::LoadUrl)
+
+            Intent.ACTION_VIEW -> intent.dataString?.let(BrowserContract.Action::LoadUrl)
+            else -> null
         }
     }
 

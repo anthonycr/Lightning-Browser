@@ -3,6 +3,7 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.IncognitoBrowserActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.cleanup.ExitCleanup
+import acr.browser.lightning.browser.di.IncognitoMode
 import acr.browser.lightning.browser.download.DownloadPermissionsHelper
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.extensions.copyToClipboard
@@ -11,6 +12,7 @@ import acr.browser.lightning.log.Logger
 import acr.browser.lightning.settings.activity.SettingsActivity
 import acr.browser.lightning.utils.IntentUtils
 import acr.browser.lightning.utils.Utils
+import android.app.ActivityManager
 import android.content.ClipboardManager
 import android.content.Intent
 import android.graphics.Bitmap
@@ -25,7 +27,9 @@ class BrowserNavigator @Inject constructor(
     private val clipboardManager: ClipboardManager,
     private val logger: Logger,
     private val downloadPermissionsHelper: DownloadPermissionsHelper,
-    private val exitCleanup: ExitCleanup
+    private val exitCleanup: ExitCleanup,
+    @IncognitoMode private val incognitoMode: Boolean,
+    private val activityManager: ActivityManager,
 ) : BrowserContract.Navigator {
 
     override fun openSettings() {
@@ -43,7 +47,13 @@ class BrowserNavigator @Inject constructor(
 
     override fun closeBrowser() {
         exitCleanup.cleanUp()
-        activity.finish()
+        if (incognitoMode) {
+            activityManager.appTasks
+                .first { it.taskInfo.topActivity?.className == IncognitoBrowserActivity::class.java.name }
+                .finishAndRemoveTask()
+        } else {
+            activity.finish()
+        }
     }
 
     override fun addToHomeScreen(url: String, title: String, favicon: Bitmap?) {
@@ -63,7 +73,14 @@ class BrowserNavigator @Inject constructor(
     }
 
     override fun backgroundBrowser() {
-        activity.moveTaskToBack(true)
+        if (incognitoMode) {
+            exitCleanup.cleanUp()
+            activityManager.appTasks
+                .first { it.taskInfo.topActivity?.className == IncognitoBrowserActivity::class.java.name }
+                .finishAndRemoveTask()
+        } else {
+            activity.moveTaskToBack(true)
+        }
     }
 
     override fun launchIncognito(url: String?) {

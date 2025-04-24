@@ -10,8 +10,8 @@ import acr.browser.lightning.html.ListPageReader
 import acr.browser.lightning.html.jsoup.andBuild
 import acr.browser.lightning.html.jsoup.body
 import acr.browser.lightning.html.jsoup.clone
-import acr.browser.lightning.html.jsoup.id
 import acr.browser.lightning.html.jsoup.findId
+import acr.browser.lightning.html.jsoup.id
 import acr.browser.lightning.html.jsoup.parse
 import acr.browser.lightning.html.jsoup.removeElement
 import acr.browser.lightning.html.jsoup.style
@@ -82,7 +82,11 @@ class DownloadPageFactory @Inject constructor(
         .map { (page, _) -> "$FILE$page" }
 
 
-    private fun createDownloadsPageFile(): File = File(application.filesDir, FILENAME)
+    private fun createDownloadsPageFile(): File {
+        val generatedHtml = File(application.filesDir, "generated-html")
+        generatedHtml.mkdirs()
+        return File(generatedHtml, FILENAME)
+    }
 
     private fun createFileUrl(fileName: String): String =
         "$FILE${userPreferences.downloadDirectory}/$fileName"

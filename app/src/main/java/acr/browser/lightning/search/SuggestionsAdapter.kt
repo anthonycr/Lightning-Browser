@@ -42,9 +42,9 @@ class SuggestionsAdapter(
     @Inject internal lateinit var bookmarkRepository: BookmarkRepository
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var historyRepository: HistoryRepository
-    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
-    @Inject @field:NetworkScheduler internal lateinit var networkScheduler: Scheduler
-    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
+    @Inject @DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject @NetworkScheduler internal lateinit var networkScheduler: Scheduler
+    @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
 
     private var allBookmarks: List<Bookmark.Entry> = emptyList()

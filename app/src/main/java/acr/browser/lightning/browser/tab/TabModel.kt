@@ -22,6 +22,12 @@ interface TabModel {
      */
     val id: Int
 
+    /**
+     * True if the tab is ephemeral and should be deleted when the browser is closed, false
+     * otherwise.
+     */
+    var isEphemeral: Boolean
+
     // Navigation
 
     /**
@@ -115,6 +121,16 @@ interface TabModel {
      * Emits changes to the [favicon].
      */
     fun faviconChanges(): Observable<Option<Bitmap>>
+
+    /**
+     * A preview of the tab's content.
+     */
+    val preview: Pair<String, Long>
+
+    /**
+     * Emits changes to the [preview].
+     */
+    fun previewChanges(): Observable<Pair<String, Long>>
 
     /**
      * The thematic color of the current webpage.

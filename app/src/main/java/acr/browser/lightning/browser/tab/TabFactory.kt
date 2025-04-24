@@ -1,40 +1,40 @@
 package acr.browser.lightning.browser.tab
 
-import acr.browser.lightning.browser.image.IconFreeze
-import acr.browser.lightning.preference.UserPreferences
-import android.graphics.Bitmap
+import android.app.Application
 import android.webkit.WebView
+import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
+import java.io.File
 import javax.inject.Inject
-import javax.inject.Provider
 
 /**
  * Constructs a [TabModel].
  */
 class TabFactory @Inject constructor(
+    private val app: Application,
     private val webViewFactory: WebViewFactory,
-    private val userPreferences: UserPreferences,
-    @DefaultUserAgent private val defaultUserAgent: String,
-    @DefaultTabTitle private val defaultTabTitle: String,
-    @IconFreeze private val iconFreeze: Bitmap,
     private val tabWebViewClientFactory: TabWebViewClient.Factory,
-    private val tabWebChromeClientProvider: Provider<TabWebChromeClient>
+    private val tabAdapterFactory: TabAdapter.Factory
 ) {
 
     /**
      * Constructs a tab from the [webView] with the provided [tabInitializer].
      */
-    fun constructTab(tabInitializer: TabInitializer, webView: WebView): TabModel {
+    fun constructTab(
+        tabInitializer: TabInitializer,
+        webView: WebView,
+        isEphemeral: Boolean
+    ): TabModel {
         val headers = webViewFactory.createRequestHeaders()
-        return TabAdapter(
+        return tabAdapterFactory.create(
             tabInitializer = tabInitializer,
             webView = webView,
             requestHeaders = headers,
-            tabWebViewClient = tabWebViewClientFactory.create(headers),
-            tabWebChromeClient = tabWebChromeClientProvider.get(),
-            userPreferences = userPreferences,
-            defaultUserAgent = defaultUserAgent,
-            defaultTabTitle = defaultTabTitle,
-            iconFreeze = iconFreeze
+            tabWebViewClient = tabWebViewClientFactory.create(
+                headers,
+                InternalStoragePathHandler(app, File(app.cacheDir, "favicon-cache")),
+                InternalStoragePathHandler(app, File(app.filesDir, "generated-html"))
+            ),
+            isEphemeral,
         )
     }
 }

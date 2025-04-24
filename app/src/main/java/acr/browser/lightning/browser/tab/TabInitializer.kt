@@ -1,10 +1,10 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.SCHEME_BOOKMARKS
-import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.constant.SCHEME_BOOKMARKS
+import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
@@ -161,7 +161,8 @@ open class BundleInitializer(private val bundle: Bundle) : TabInitializer {
  */
 class FreezableBundleInitializer(
     val bundle: Bundle,
-    val initialTitle: String
+    val initialTitle: String,
+    val id: Int
 ) : BundleInitializer(bundle)
 
 /**

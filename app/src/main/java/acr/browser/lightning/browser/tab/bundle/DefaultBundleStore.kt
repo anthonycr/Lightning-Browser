@@ -39,6 +39,7 @@ class DefaultBundleStore @Inject constructor(
             if (!tab.url.isSpecialUrl()) {
                 outState.putBundle(BUNDLE_KEY + index, tab.freeze())
                 outState.putString(TAB_TITLE_KEY + index, tab.title)
+                outState.putInt(TAB_ID_KEY + index, tab.id)
             } else {
                 outState.putBundle(BUNDLE_KEY + index, Bundle().apply {
                     putString(URL_KEY, tab.url)
@@ -57,13 +58,14 @@ class DefaultBundleStore @Inject constructor(
                 .filter { it.startsWith(BUNDLE_KEY) }
                 .mapNotNull { bundleKey ->
                     bundle.getBundle(bundleKey)?.let {
-                        Pair(
+                        Triple(
                             it,
-                            bundle.getString(TAB_TITLE_KEY + bundleKey.extractNumberFromEnd())
+                            bundle.getString(TAB_TITLE_KEY + bundleKey.extractNumberFromEnd()),
+                            bundle.getInt(TAB_ID_KEY + bundleKey.extractNumberFromEnd(), -1)
                         )
                     }
                 }
-        }?.map { (bundle, title) ->
+        }?.map { (bundle, title, id) ->
             return@map bundle.getString(URL_KEY)?.let { url ->
                 when {
                     url.isBookmarkUrl() -> bookmarkPageInitializer
@@ -73,7 +75,9 @@ class DefaultBundleStore @Inject constructor(
                     else -> homePageInitializer
                 }
             } ?: FreezableBundleInitializer(
-                bundle, title ?: application.getString(R.string.tab_frozen)
+                bundle = bundle,
+                initialTitle = title ?: application.getString(R.string.tab_frozen),
+                id = id
             )
         } ?: emptyList()
 
@@ -83,7 +87,7 @@ class DefaultBundleStore @Inject constructor(
 
     private fun String.extractNumberFromEnd(): String {
         val underScore = lastIndexOf('_')
-        return if (underScore in 0 until length) {
+        return if (underScore in indices) {
             substring(underScore + 1)
         } else {
             ""
@@ -93,6 +97,7 @@ class DefaultBundleStore @Inject constructor(
     companion object {
         private const val BUNDLE_KEY = "WEBVIEW_"
         private const val TAB_TITLE_KEY = "TITLE_"
+        private const val TAB_ID_KEY = "ID_"
         private const val URL_KEY = "URL_KEY"
         private const val BUNDLE_STORAGE = "SAVED_TABS.parcel"
     }

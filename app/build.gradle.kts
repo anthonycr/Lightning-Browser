@@ -1,19 +1,21 @@
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-kapt")
-    id("jacoco")
     id("com.github.ben-manes.versions")
+    id("com.google.devtools.ksp") version "2.1.20-2.0.0"
+    id("com.anthonycr.plugins.mezzanine") version "2.0.2"
 }
 
 android {
-    compileSdk = 33
+    compileSdk = 35
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 33
+        minSdk = 26
+        targetSdk = 35
         versionName = "5.1.0"
         vectorDrawables.useSupportLibrary = true
     }
@@ -37,7 +39,8 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
             setProguardFiles(listOf("proguard-project.txt"))
-            isTestCoverageEnabled = true
+            enableUnitTestCoverage = false
+            enableAndroidTestCoverage = false
         }
 
         named("release") {
@@ -45,7 +48,8 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             setProguardFiles(listOf("proguard-project.txt"))
-            isTestCoverageEnabled = false
+            enableUnitTestCoverage = false
+            enableAndroidTestCoverage = false
 
             ndk {
                 abiFilters.add("arm64-v8a")
@@ -73,25 +77,15 @@ android {
             versionCode = 102
         }
     }
-    packagingOptions {
+    packaging {
         resources {
             excludes += listOf(".readme")
         }
-    }
-
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
     }
     lint {
         abortOnError = true
     }
     namespace = "acr.browser.lightning"
-}
-
-jacoco {
-    toolVersion = "0.8.8" // See http://www.eclemma.org/jacoco/
 }
 
 dependencies {
@@ -105,71 +99,83 @@ dependencies {
     testImplementation("com.nhaarman:mockito-kotlin:1.6.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    testImplementation("org.robolectric:robolectric:4.4")
+    testImplementation("org.robolectric:robolectric:4.14.1")
 
     // support libraries
     implementation("androidx.palette:palette-ktx:1.0.0")
-    implementation("androidx.annotation:annotation:1.5.0")
-    implementation("androidx.vectordrawable:vectordrawable-animated:1.1.0")
-    implementation("androidx.appcompat:appcompat:1.6.0")
-    implementation("com.google.android.material:material:1.8.0")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("androidx.core:core-ktx:1.10.0-alpha02")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.fragment:fragment-ktx:1.5.5")
-    implementation("androidx.drawerlayout:drawerlayout:1.1.1")
-    implementation("androidx.preference:preference:1.2.0")
+    implementation("androidx.annotation:annotation:1.9.1")
+    implementation("androidx.vectordrawable:vectordrawable-animated:1.2.0")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
+    implementation("androidx.core:core-ktx:1.16.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    implementation("androidx.fragment:fragment-ktx:1.8.6")
+    implementation("androidx.drawerlayout:drawerlayout:1.2.0")
+    implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("androidx.webkit:webkit:1.13.0")
 
     // html parsing for reading mode
     implementation("org.jsoup:jsoup:1.15.3")
 
     // file reading
-    val mezzanineVersion = "1.1.1"
-    implementation("com.anthonycr.mezzanine:mezzanine:$mezzanineVersion")
-    kapt("com.anthonycr.mezzanine:mezzanine-compiler:$mezzanineVersion")
+    val mezzanineVersion = "2.0.2"
+    implementation("com.anthonycr.mezzanine:core:$mezzanineVersion")
+    ksp("com.anthonycr.mezzanine:processor:$mezzanineVersion")
 
     // dependency injection
-    val daggerVersion = "2.44.2"
+    val daggerVersion = "2.56.2"
     implementation("com.google.dagger:dagger:$daggerVersion")
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
     compileOnly("javax.annotation:jsr250-api:1.0")
 
     // permissions
-    implementation("com.guolindev.permissionx:permissionx:1.7.1")
+    implementation("com.guolindev.permissionx:permissionx:1.8.1")
 
-    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    implementation("io.coil-kt.coil3:coil:3.1.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
 
     // rx
-    implementation("io.reactivex.rxjava3:rxjava:3.1.6")
+    implementation("io.reactivex.rxjava3:rxjava:3.1.10")
     implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
-
-    // tor proxy
-    val netCipherVersion = "2.0.0-alpha1"
-    implementation("info.guardianproject.netcipher:netcipher:$netCipherVersion")
-    implementation("info.guardianproject.netcipher:netcipher-webkit:$netCipherVersion")
-
-    implementation("com.anthonycr.progress:animated-progress:1.0")
 
     // memory leak analysis
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.10")
 
     // kotlin
-    implementation(kotlin("stdlib", KotlinCompilerVersion.VERSION))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.20")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+}
+
+mezzanine {
+    files = files(
+        "src/main/html/list.html",
+        "src/main/html/bookmarks.html",
+        "src/main/html/homepage.html",
+        "src/main/js/InvertPage.js",
+        "src/main/js/TextReflow.js",
+        "src/main/js/ThemeColor.js"
+    )
 }
 
 kapt {
-    arguments {
-        arg("mezzanine.projectPath", project.rootDir)
+    correctErrorTypes = true
+    useBuildCache = true
+    generateStubs = true
+}
+
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+        languageVersion.set(KotlinVersion.KOTLIN_2_1)
     }
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).all {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        kotlinOptions {
-            freeCompilerArgs += listOf("-XXLanguage:+InlineClasses")
-            freeCompilerArgs += listOf("-progressive")
-        }
-    }
+java {
+    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
 }

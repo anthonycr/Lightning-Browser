@@ -6,6 +6,7 @@ import acr.browser.lightning.ThemableBrowserActivity
 import acr.browser.lightning.animation.AnimationUtils
 import acr.browser.lightning.browser.bookmark.BookmarkRecyclerViewAdapter
 import acr.browser.lightning.browser.color.ColorAnimator
+import acr.browser.lightning.browser.di.MainHandler
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.image.ImageLoader
 import acr.browser.lightning.browser.keys.KeyEventAdapter
@@ -13,14 +14,20 @@ import acr.browser.lightning.browser.menu.MenuItemAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.search.SearchListener
 import acr.browser.lightning.browser.search.StyleRemovingTextWatcher
+import acr.browser.lightning.browser.tab.BottomDrawerTabRecyclerViewAdapter
 import acr.browser.lightning.browser.tab.DesktopTabRecyclerViewAdapter
 import acr.browser.lightning.browser.tab.DrawerTabRecyclerViewAdapter
 import acr.browser.lightning.browser.tab.TabPager
 import acr.browser.lightning.browser.tab.TabViewHolder
 import acr.browser.lightning.browser.tab.TabViewState
+import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.browser.ui.BookmarkConfiguration
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
+import acr.browser.lightning.browser.view.ViewDelegate
+import acr.browser.lightning.browser.view.delegates.BottomTabViewDelegate
+import acr.browser.lightning.browser.view.delegates.DesktopTabViewDelegate
+import acr.browser.lightning.browser.view.delegates.DrawerTabViewDelegate
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.database.Bookmark
@@ -28,7 +35,10 @@ import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.downloads.DownloadEntry
-import acr.browser.lightning.databinding.BrowserActivityBinding
+import acr.browser.lightning.databinding.BrowserActivityBottomBinding
+import acr.browser.lightning.databinding.BrowserActivityDesktopBinding
+import acr.browser.lightning.databinding.BrowserActivityDrawerBinding
+import acr.browser.lightning.databinding.BrowserBottomTabsBinding
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
@@ -45,6 +55,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -74,9 +85,10 @@ import javax.inject.Inject
  */
 abstract class BrowserActivity : ThemableBrowserActivity() {
 
-    private lateinit var binding: BrowserActivityBinding
+    private lateinit var binding: ViewDelegate
     private lateinit var tabsAdapter: ListAdapter<TabViewState, TabViewHolder>
     private lateinit var bookmarksAdapter: BookmarkRecyclerViewAdapter
+    private var activeRecyclerView: RecyclerView? = null
 
     private var menuItemShare: MenuItem? = null
     private var menuItemCopyLink: MenuItem? = null
@@ -87,6 +99,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     private val backgroundDrawable by lazy { ColorDrawable(defaultColor) }
 
     private var customView: View? = null
+
+    private var pendingScroll = -1
 
     @Suppress("ConvertLambdaToReference")
     private val launcher = registerForActivityResult(
@@ -123,6 +137,13 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     @Inject
     internal lateinit var proxyUtils: ProxyUtils
 
+    @Inject
+    internal lateinit var themeProvider: ThemeProvider
+
+    @MainHandler
+    @Inject
+    internal lateinit var mainHandler: Handler
+
     /**
      * True if the activity is operating in incognito mode, false otherwise.
      */
@@ -142,7 +163,28 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = BrowserActivityBinding.inflate(LayoutInflater.from(this))
+        binding = when (userPreferences.tabConfiguration) {
+            TabConfiguration.DESKTOP -> {
+                val actualBinding = BrowserActivityDesktopBinding.inflate(LayoutInflater.from(this))
+                DesktopTabViewDelegate(actualBinding)
+            }
+
+            TabConfiguration.DRAWER_SIDE -> {
+                val actualBinding = BrowserActivityDrawerBinding.inflate(LayoutInflater.from(this))
+                DrawerTabViewDelegate(actualBinding)
+            }
+
+            TabConfiguration.DRAWER_BOTTOM -> {
+                val actualBinding = BrowserActivityBottomBinding.inflate(LayoutInflater.from(this))
+                BottomTabViewDelegate(actualBinding)
+            }
+        }
+
+        val bottomTabsBinding = if (binding.browserLayoutContainer != null) {
+            BrowserBottomTabsBinding.inflate(layoutInflater)
+        } else {
+            null
+        }
 
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
@@ -150,9 +192,11 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         injector.browser2ComponentBuilder()
             .activity(this)
             .browserFrame(binding.contentFrame)
+            .bottomTabsLayout(bottomTabsBinding)
             .toolbarRoot(binding.uiLayout)
+            .browserRoot(binding.browserLayoutContainer)
             .toolbar(binding.toolbarLayout)
-            .initialIntent(intent)
+            .initialIntent(intent.takeIf { savedInstanceState == null })
             .incognitoMode(isIncognito())
             .build()
             .inject(this)
@@ -196,25 +240,44 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP || isIncognito()
         binding.homeImageView.setImageResource(homeIcon())
         binding.tabCountView.isVisible =
-            uiConfiguration.tabConfiguration == TabConfiguration.DRAWER && !isIncognito()
+            uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP && !isIncognito()
 
-        if (uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP) {
+        if (uiConfiguration.tabConfiguration != TabConfiguration.DRAWER_SIDE) {
             binding.drawerLayout.setDrawerLockMode(
                 DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
                 binding.tabDrawer
             )
         }
 
-        if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
-            tabsAdapter = DrawerTabRecyclerViewAdapter(
-                onClick = presenter::onTabClick,
-                onCloseClick = presenter::onTabClose,
-                onLongClick = presenter::onTabLongClick
-            )
-            binding.drawerTabsList.isVisible = true
-            binding.drawerTabsList.adapter = tabsAdapter
-            binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
-            binding.desktopTabsList.isVisible = false
+        if (uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP) {
+            if (binding.browserLayoutContainer == null) {
+                tabsAdapter = DrawerTabRecyclerViewAdapter(
+                    onClick = presenter::onTabClick,
+                    onCloseClick = presenter::onTabClose,
+                    onLongClick = presenter::onTabLongClick
+                )
+                binding.drawerTabsList.isVisible = true
+                binding.drawerTabsList.adapter = tabsAdapter
+                binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
+                binding.desktopTabsList.isVisible = false
+                activeRecyclerView = binding.desktopTabsList
+            } else {
+                tabsAdapter = BottomDrawerTabRecyclerViewAdapter(
+                    themeProvider,
+                    onClick = presenter::onTabClick,
+                    onLongClick = presenter::onTabLongClick,
+                    onCloseClick = presenter::onTabClose,
+                    onBackClick = { presenter.onBackClick() },
+                    onForwardClick = { presenter.onForwardClick() },
+                    onHomeClick = { presenter.onHomeClick() }
+                )
+                bottomTabsBinding!!.bottomTabList.adapter = tabsAdapter
+                bottomTabsBinding.bottomTabList.layoutManager =
+                    LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+                binding.drawerTabsList.isVisible = false
+                binding.desktopTabsList.isVisible = false
+                activeRecyclerView = bottomTabsBinding.bottomTabList
+            }
         } else {
             tabsAdapter = DesktopTabRecyclerViewAdapter(
                 context = this,
@@ -229,6 +292,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             binding.desktopTabsList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
                 ?.supportsChangeAnimations = false
             binding.drawerTabsList.isVisible = false
+            activeRecyclerView = binding.desktopTabsList
         }
 
         bookmarksAdapter = BookmarkRecyclerViewAdapter(
@@ -300,7 +364,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     override fun onNewIntent(intent: Intent?) {
         intent?.let(intentExtractor::extractUrlFromIntent)?.let(presenter::onNewAction)
         super.onNewIntent(intent)
-
     }
 
     override fun onDestroy() {
@@ -350,7 +413,10 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             menuItemAddBookmark?.isVisible = it
         }
         viewState.themeColor?.value()?.let(::animateColorChange)
-        viewState.progress?.let { binding.progressView.progress = it }
+        viewState.progress?.let {
+            binding.progressView.isVisible = it != 100
+            binding.progressView.progress = it
+        }
         viewState.isRefresh?.let {
             binding.searchRefresh.setImageResource(
                 if (it) {
@@ -390,7 +456,18 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      */
     fun renderTabs(tabListState: List<TabViewState>) {
         binding.tabCountView.updateCount(tabListState.size)
+        val shouldScroll = tabsAdapter.itemCount < tabListState.size
         tabsAdapter.submitList(tabListState)
+        val nextSelected = tabListState.indexOfFirst(TabViewState::isSelected)
+        if (shouldScroll && nextSelected != -1) {
+            mainHandler.post {
+                if (tabPager.isBottomTabDrawerOpen()) {
+                    activeRecyclerView?.smoothScrollToPosition(nextSelected)
+                } else {
+                    pendingScroll = nextSelected
+                }
+            }
+        }
     }
 
     /**
@@ -496,7 +573,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      * @see BrowserContract.View.showLinkLongPressDialog
      */
     fun showLinkLongPressDialog(longPress: LongPress) {
-        BrowserDialog.show(this, longPress.targetUrl?.replace(HTTP, ""),
+        BrowserDialog.show(
+            this, longPress.targetUrl?.replace(HTTP, ""),
             DialogItem(title = R.string.dialog_open_new_tab) {
                 presenter.onLinkLongPressEvent(
                     longPress,
@@ -533,7 +611,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      * @see BrowserContract.View.showImageLongPressDialog
      */
     fun showImageLongPressDialog(longPress: LongPress) {
-        BrowserDialog.show(this, longPress.targetUrl?.replace(HTTP, ""),
+        BrowserDialog.show(
+            this, longPress.targetUrl?.replace(HTTP, ""),
             DialogItem(title = R.string.dialog_open_new_tab) {
                 presenter.onImageLongPressEvent(
                     longPress,
@@ -613,14 +692,28 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      */
     fun openTabDrawer() {
         binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
-        binding.drawerLayout.openDrawer(binding.tabDrawer)
+        if (binding.browserLayoutContainer == null) {
+            binding.drawerLayout.openDrawer(binding.tabDrawer)
+        } else {
+            presenter.onTabDrawerMoved(isOpen = true)
+            tabPager.openBottomTabDrawer()
+            if (pendingScroll != -1) {
+                activeRecyclerView?.scrollToPosition(pendingScroll)
+                pendingScroll = -1
+            }
+        }
     }
 
     /**
      * @see BrowserContract.View.closeTabDrawer
      */
     fun closeTabDrawer() {
-        binding.drawerLayout.closeDrawer(binding.tabDrawer)
+        if (binding.browserLayoutContainer == null) {
+            binding.drawerLayout.closeDrawer(binding.tabDrawer)
+        } else {
+            presenter.onTabDrawerMoved(isOpen = false)
+            tabPager.closeBottomTabDrawer()
+        }
     }
 
     /**
@@ -738,21 +831,21 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         if (!userPreferences.colorModeEnabled || userPreferences.useTheme != AppTheme.LIGHT || isIncognito()) {
             return
         }
-        val shouldShowTabsInDrawer = userPreferences.showTabsInDrawer
         val adapter = tabsAdapter as? DesktopTabRecyclerViewAdapter
         val colorAnimator = ColorAnimator(defaultColor)
-        binding.toolbar.startAnimation(colorAnimator.animateTo(
-            color
-        ) { mainColor, secondaryColor ->
-            if (shouldShowTabsInDrawer) {
-                backgroundDrawable.color = mainColor
-                window.setBackgroundDrawable(backgroundDrawable)
-            } else {
-                adapter?.updateForegroundTabColor(mainColor)
-            }
-            binding.toolbar.setBackgroundColor(mainColor)
-            binding.searchContainer.background?.tint(secondaryColor)
-        })
+        binding.toolbar.startAnimation(
+            colorAnimator.animateTo(
+                color
+            ) { mainColor, secondaryColor ->
+                if (userPreferences.tabConfiguration != TabConfiguration.DESKTOP) {
+                    backgroundDrawable.color = mainColor
+                    window.setBackgroundDrawable(backgroundDrawable)
+                } else {
+                    adapter?.updateForegroundTabColor(mainColor)
+                }
+                binding.toolbar.setBackgroundColor(mainColor)
+                binding.searchContainer.background?.tint(secondaryColor)
+            })
     }
 
     private fun ImageView.updateVisibilityForDrawable() {

@@ -1,9 +1,8 @@
 package acr.browser.lightning.browser.notification
 
-import acr.browser.lightning.R
 import acr.browser.lightning.IncognitoBrowserActivity
+import acr.browser.lightning.R
 import acr.browser.lightning.utils.ThemeUtils
-import android.annotation.TargetApi
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -26,12 +25,9 @@ class IncognitoNotification @Inject constructor(
     private val channelId = "channel_incognito"
 
     init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel()
-        }
+        createNotificationChannel()
     }
 
-    @TargetApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
         val channelName = activity.getString(R.string.notification_incognito_running_description)
         val channel =

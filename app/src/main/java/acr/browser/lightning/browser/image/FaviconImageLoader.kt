@@ -1,10 +1,10 @@
 package acr.browser.lightning.browser.image
 
 import acr.browser.lightning.R
-import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.di.NetworkScheduler
 import acr.browser.lightning.browser.theme.ThemeProvider
+import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.extensions.themedDrawable
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.utils.FileUtils
@@ -62,6 +62,7 @@ class FaviconImageLoader @Inject constructor(
                     lruCache.put(bookmark.url, folderIcon)
                     imageView.setImageDrawable(folderIcon)
                 }
+
                 is Bookmark.Entry -> {
                     lruCache.put(bookmark.url, webPageIcon)
                     imageView.setImageDrawable(webPageIcon)

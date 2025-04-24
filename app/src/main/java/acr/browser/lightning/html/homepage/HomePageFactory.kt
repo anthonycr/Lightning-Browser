@@ -79,7 +79,11 @@ class HomePageFactory @Inject constructor(
     /**
      * Create the home page file.
      */
-    fun createHomePage() = File(application.filesDir, FILENAME)
+    fun createHomePage(): File {
+        val generatedHtml = File(application.filesDir, "generated-html")
+        generatedHtml.mkdirs()
+        return File(generatedHtml, FILENAME)
+    }
 
     companion object {
 

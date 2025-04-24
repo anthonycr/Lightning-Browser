@@ -1,6 +1,9 @@
 package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.R
+import acr.browser.lightning.adblock.AdBlocker
+import acr.browser.lightning.adblock.BloomFilterAdBlocker
+import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.BrowserContract
 import acr.browser.lightning.browser.data.CookieAdministrator
 import acr.browser.lightning.browser.data.DefaultCookieAdministrator
@@ -17,11 +20,7 @@ import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.browser.tab.bundle.DefaultBundleStore
 import acr.browser.lightning.browser.tab.bundle.IncognitoBundleStore
 import acr.browser.lightning.browser.ui.BookmarkConfiguration
-import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
-import acr.browser.lightning.adblock.AdBlocker
-import acr.browser.lightning.adblock.BloomFilterAdBlocker
-import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.IntentUtils
@@ -56,7 +55,7 @@ class Browser2Module {
     @Provides
     @InitialUrl
     fun providesInitialUrl(
-        @InitialIntent initialIntent: Intent,
+        @InitialIntent initialIntent: Intent?,
         intentExtractor: IntentExtractor
     ): String? =
         (intentExtractor.extractUrlFromIntent(initialIntent) as? BrowserContract.Action.LoadUrl)?.url
@@ -69,11 +68,7 @@ class Browser2Module {
     fun providesUiConfiguration(
         userPreferences: UserPreferences
     ): UiConfiguration = UiConfiguration(
-        tabConfiguration = if (userPreferences.showTabsInDrawer) {
-            TabConfiguration.DRAWER
-        } else {
-            TabConfiguration.DESKTOP
-        },
+        tabConfiguration = userPreferences.tabConfiguration,
         bookmarkConfiguration = if (userPreferences.bookmarksAndTabsSwapped) {
             BookmarkConfiguration.LEFT
         } else {

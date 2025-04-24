@@ -1,6 +1,7 @@
 package acr.browser.lightning
 
 import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.content.Intent
@@ -23,7 +24,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     internal lateinit var userPreferences: UserPreferences
 
     private var themeId: AppTheme = AppTheme.LIGHT
-    private var showTabsInDrawer: Boolean = false
+    private var tabConfiguration: TabConfiguration = TabConfiguration.DRAWER_BOTTOM
     private var shouldRunOnResumeActions = false
 
     /**
@@ -36,7 +37,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
         themeId = userPreferences.useTheme
-        showTabsInDrawer = userPreferences.showTabsInDrawer
+        tabConfiguration = userPreferences.tabConfiguration
 
         // set the theme
         setTheme(
@@ -68,7 +69,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     }
 
     private fun resetPreferences() {
-        if (userPreferences.useBlackStatusBar || !userPreferences.showTabsInDrawer) {
+        if (userPreferences.useBlackStatusBar || userPreferences.tabConfiguration == TabConfiguration.DESKTOP) {
             window.statusBarColor = Color.BLACK
         } else {
             window.statusBarColor = ThemeUtils.getStatusBarColor(this)
@@ -95,8 +96,8 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         super.onResume()
         resetPreferences()
         shouldRunOnResumeActions = true
-        val drawerTabs = userPreferences.showTabsInDrawer
-        if (themeId != userPreferences.useTheme || showTabsInDrawer != drawerTabs) {
+        val nextTabConfiguration = userPreferences.tabConfiguration
+        if (themeId != userPreferences.useTheme || tabConfiguration != nextTabConfiguration) {
             restart()
         }
     }

@@ -1,11 +1,14 @@
 package acr.browser.lightning.browser.view
 
+import acr.browser.lightning.R
+import acr.browser.lightning.databinding.BrowserBottomTabsBinding
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.Utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.GestureDetector
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -24,6 +27,8 @@ import javax.inject.Inject
  */
 class WebViewScrollCoordinator @Inject constructor(
     activity: Activity,
+    private val bottomTabsLayout: BrowserBottomTabsBinding?,
+    private val browserLayoutContainer: ViewGroup?,
     private val browserFrame: FrameLayout,
     private val toolbarRoot: LinearLayout,
     private val toolbar: View,
@@ -48,30 +53,57 @@ class WebViewScrollCoordinator @Inject constructor(
                 inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
             }
         }
-        if (userPreferences.fullScreenEnabled) {
-            if (toolbar.parent != browserFrame) {
-                (toolbar.parent as ViewGroup?)?.removeView(toolbar)
+        if (browserLayoutContainer == null) {
 
-                browserFrame.addView(toolbar)
-            }
+            if (userPreferences.fullScreenEnabled) {
+                if (toolbar.parent != browserFrame) {
+                    (toolbar.parent as ViewGroup?)?.removeView(toolbar)
 
-            currentToggleListener?.showToolbar() ?: run {
+                    browserFrame.addView(toolbar)
+                }
+
+                currentToggleListener?.showToolbar() ?: run {
+                    toolbar.translationY = 0f
+                }
+
+                toolbar.doOnLayout {
+                    webView.translationY = toolbar.height.toFloat()
+                    coordinate(toolbar, webView)
+                }
+            } else {
+                if (toolbar.parent != toolbarRoot) {
+                    (toolbar.parent as ViewGroup?)?.removeView(toolbar)
+
+                    toolbarRoot.addView(toolbar, 0)
+                }
+
                 toolbar.translationY = 0f
-            }
-
-            toolbar.doOnLayout {
-                webView.translationY = toolbar.height.toFloat()
-                coordinate(toolbar, webView)
+                webView.translationY = 0f
             }
         } else {
-            if (toolbar.parent != toolbarRoot) {
+
+            val tabs = bottomTabsLayout!!
+
+            if (tabs.root.parent == null) {
                 (toolbar.parent as ViewGroup?)?.removeView(toolbar)
-
-                toolbarRoot.addView(toolbar, 0)
+                tabs.bottomTabContainer.addView(toolbar)
+                browserLayoutContainer.addView(
+                    tabs.root,
+                    FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        gravity = Gravity.BOTTOM
+                    }
+                )
+                tabs.root.doOnLayout {
+                    tabs.root.translationY = tabs.bottomTabList.height.toFloat()
+                    val anchor = toolbarRoot.findViewById<View>(R.id.bottom_tabs_anchor)
+                    anchor.layoutParams = anchor.layoutParams.apply {
+                        height = toolbar.height
+                    }
+                }
             }
-
-            toolbar.translationY = 0f
-            webView.translationY = 0f
         }
     }
 
@@ -81,6 +113,31 @@ class WebViewScrollCoordinator @Inject constructor(
      */
     fun showToolbar() {
         currentToggleListener?.showToolbar()
+    }
+
+    private fun View.animateTranslation(y: Float) {
+        animate()
+            .setDuration(250)
+            .setInterpolator(BezierDecelerateInterpolator())
+            .translationY(y)
+    }
+
+    fun isBottomTabDrawerOpen(): Boolean = bottomTabsLayout!!.root.translationY == 0F
+
+    fun openBottomTabDrawer() {
+        if (bottomTabsLayout!!.root.translationY > 0F) {
+            bottomTabsLayout.root.doOnLayout {
+                bottomTabsLayout.root.animateTranslation(0F)
+            }
+        }
+    }
+
+    fun closeBottomTabDrawer() {
+        if (bottomTabsLayout!!.root.translationY == 0F) {
+            bottomTabsLayout.root.doOnLayout {
+                bottomTabsLayout.root.animateTranslation(bottomTabsLayout.bottomTabList.height.toFloat())
+            }
+        }
     }
 
     private fun coordinate(toolbar: View, webView: WebView) {
@@ -192,7 +249,7 @@ class WebViewScrollCoordinator @Inject constructor(
         var toggleListener: ToggleListener? = null
 
         override fun onFling(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             velocityX: Float,
             velocityY: Float

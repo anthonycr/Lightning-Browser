@@ -20,7 +20,7 @@ inline fun <T : Any, R : Any, Selector_T : Any, Selector_R : Any, S : Any> Flowa
     crossinline selectorLeft: (T) -> Publisher<Selector_T>,
     crossinline selectorRight: (R) -> Publisher<Selector_R>,
     crossinline join: (T, R) -> S
-): Flowable<S> = join<R, Selector_T, Selector_R, S>(
+): Flowable<S> = join(
     other,
     { selectorLeft(it) },
     { selectorRight(it) },
