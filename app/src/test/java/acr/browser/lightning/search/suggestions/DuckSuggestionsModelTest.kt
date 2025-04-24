@@ -14,7 +14,6 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 import org.junit.Test
 import java.util.Locale
 
@@ -27,8 +26,13 @@ class DuckSuggestionsModelTest {
     private val requestFactory = object : RequestFactory {
         override fun createSuggestionsRequest(httpUrl: HttpUrl, encoding: String) = unimplemented()
     }
+
+    private val mockLocalList = mock<LocaleList> {
+        on { get(any()) } doReturn Locale.US
+    }
+
     private val mockConfiguration = mock<Configuration> {
-        on { locales } doReturn LocaleList(Locale.US)
+        on { locales } doReturn mockLocalList
     }.apply {
         locale = Locale.US
     }
@@ -41,7 +45,6 @@ class DuckSuggestionsModelTest {
         on { resources } doReturn mockResources
     }
 
-    @Ignore
     @Test
     fun `verify query url`() {
         val suggestionsModel =
