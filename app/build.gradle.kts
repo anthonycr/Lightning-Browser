@@ -20,20 +20,22 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    val isCi = System.getenv("CI") != "true"
+
     sourceSets {
         create("lightningPlus").apply {
             setRoot("src/LightningPlus")
         }
-        create("lightningLite").apply {
-            setRoot("src/LightningLite")
+        if (!isCi) {
+            create("lightningLite").apply {
+                setRoot("src/LightningLite")
+            }
         }
     }
 
     buildFeatures {
         viewBinding = true
     }
-
-    val isCi = System.getenv("CI") != "true"
 
     buildTypes {
         named("debug") {
@@ -45,21 +47,19 @@ android {
             enableAndroidTestCoverage = false
         }
 
-        if (!isCi) {
-            named("release") {
-                multiDexEnabled = false
-                isMinifyEnabled = true
-                isShrinkResources = true
-                setProguardFiles(listOf("proguard-project.txt"))
-                enableUnitTestCoverage = false
-                enableAndroidTestCoverage = false
+        named("release") {
+            multiDexEnabled = false
+            isMinifyEnabled = !isCi
+            isShrinkResources = !isCi
+            setProguardFiles(listOf("proguard-project.txt"))
+            enableUnitTestCoverage = false
+            enableAndroidTestCoverage = false
 
-                ndk {
-                    abiFilters.add("arm64-v8a")
-                    abiFilters.add("armeabi-v7a")
-                    abiFilters.add("armeabi")
-                    abiFilters.add("mips")
-                }
+            ndk {
+                abiFilters.add("arm64-v8a")
+                abiFilters.add("armeabi-v7a")
+                abiFilters.add("armeabi")
+                abiFilters.add("mips")
             }
         }
     }
