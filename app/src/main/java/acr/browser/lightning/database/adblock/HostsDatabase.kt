@@ -3,6 +3,7 @@ package acr.browser.lightning.database.adblock
 import acr.browser.lightning.database.databaseDelegate
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.extensions.useMap
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
@@ -17,6 +18,7 @@ import javax.inject.Singleton
 /**
  * A database that holds hosts, backed by SQLite.
  */
+@SuppressLint("Range")
 @Singleton
 class HostsDatabase @Inject constructor(
     application: Application

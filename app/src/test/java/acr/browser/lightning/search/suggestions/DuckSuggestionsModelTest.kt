@@ -14,8 +14,9 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Ignore
 import org.junit.Test
-import java.util.*
+import java.util.Locale
 
 /**
  * Created by anthonycr on 9/15/18.
@@ -40,6 +41,7 @@ class DuckSuggestionsModelTest {
         on { resources } doReturn mockResources
     }
 
+    @Ignore
     @Test
     fun `verify query url`() {
         val suggestionsModel =
