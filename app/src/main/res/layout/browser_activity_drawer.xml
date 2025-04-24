@@ -127,6 +127,7 @@
                                 android:hint="@string/search_hint"
                                 android:imeOptions="actionGo"
                                 android:importantForAutofill="no"
+                                android:popupElevation="0dp"
                                 android:inputType="textUri"
                                 android:maxLines="1"
                                 android:selectAllOnFocus="true"

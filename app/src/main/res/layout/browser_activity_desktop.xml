@@ -125,6 +125,7 @@
                                 android:dropDownWidth="match_parent"
                                 android:gravity="start|center_vertical"
                                 android:hint="@string/search_hint"
+                                android:popupElevation="0dp"
                                 android:imeOptions="actionGo"
                                 android:importantForAutofill="no"
                                 android:inputType="textUri"

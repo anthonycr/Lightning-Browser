@@ -114,6 +114,7 @@
                                     android:importantForAutofill="no"
                                     android:inputType="textUri"
                                     android:maxLines="1"
+                                    android:popupElevation="0dp"
                                     android:selectAllOnFocus="true"
                                     android:textColor="?attr/autoCompleteTitleColor"
                                     android:textColorHint="?attr/autoCompleteUrlColor"
