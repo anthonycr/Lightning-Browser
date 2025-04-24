@@ -6,8 +6,8 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("com.github.ben-manes.versions")
-    id("com.google.devtools.ksp") version "2.1.20-1.0.32"
-    id("com.anthonycr.plugins.mezzanine") version "2.0.1"
+    id("com.google.devtools.ksp") version "2.1.20-2.0.0"
+    id("com.anthonycr.plugins.mezzanine") version "2.0.2"
 }
 
 android {
@@ -117,6 +117,11 @@ dependencies {
 
     // html parsing for reading mode
     implementation("org.jsoup:jsoup:1.15.3")
+
+    // file reading
+    val mezzanineVersion = "2.0.2"
+    implementation("com.anthonycr.mezzanine:core:$mezzanineVersion")
+    ksp("com.anthonycr.mezzanine:processor:$mezzanineVersion")
 
     // dependency injection
     val daggerVersion = "2.56.2"
