@@ -20,7 +20,7 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
-    val isCi = System.getenv("CI") != "true"
+    val isCi = System.getenv("CI") == "true"
 
     sourceSets {
         create("lightningPlus").apply {
