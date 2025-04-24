@@ -3,10 +3,10 @@ package acr.browser.lightning.browser.tab.view
 import acr.browser.lightning.R
 import acr.browser.lightning.utils.ThemeUtils
 import android.content.Context
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.TransitionDrawable
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 
 /**
  * Create a new transition drawable with the specified list of layers. At least
@@ -16,8 +16,8 @@ class BackgroundDrawable(
     context: Context
 ) : TransitionDrawable(
     arrayOf<Drawable>(
-        ColorDrawable(ContextCompat.getColor(context, R.color.transparent)),
-        ColorDrawable(ThemeUtils.getColor(context, R.attr.selectedBackground))
+        ContextCompat.getColor(context, R.color.transparent).toDrawable(),
+        ThemeUtils.getColor(context, R.attr.selectedBackground).toDrawable()
     )
 ) {
 

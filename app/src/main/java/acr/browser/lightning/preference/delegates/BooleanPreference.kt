@@ -1,6 +1,7 @@
 package acr.browser.lightning.preference.delegates
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -17,7 +18,7 @@ private class BooleanPreferenceDelegate(
         preferences.getBoolean(name, defaultValue)
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Boolean) {
-        preferences.edit().putBoolean(name, value).apply()
+        preferences.edit() { putBoolean(name, value) }
     }
 
 }

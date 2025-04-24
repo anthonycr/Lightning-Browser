@@ -12,10 +12,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -48,24 +49,19 @@ class DesktopTabRecyclerViewAdapter(
     init {
         val backgroundColor =
             Utils.mixTwoColors(ThemeUtils.getPrimaryColor(context), Color.BLACK, 0.75f)
-        val backgroundTabBitmap = Bitmap.createBitmap(
+        val backgroundTabBitmap = createBitmap(
             context.dimen(R.dimen.desktop_tab_width),
-            context.dimen(R.dimen.desktop_tab_height),
-            Bitmap.Config.ARGB_8888
+            context.dimen(R.dimen.desktop_tab_height)
         ).also {
             Canvas(it).drawTrapezoid(backgroundColor, true)
         }
-        backgroundTabDrawable = BitmapDrawable(context.resources, backgroundTabBitmap)
+        backgroundTabDrawable = backgroundTabBitmap.toDrawable(context.resources)
 
         val foregroundColor = ThemeUtils.getPrimaryColor(context)
-        val foregroundTabBitmap = Bitmap.createBitmap(
-            context.dimen(R.dimen.desktop_tab_width),
-            context.dimen(R.dimen.desktop_tab_height),
-            Bitmap.Config.ARGB_8888
-        ).also {
+        val foregroundTabBitmap = createBitmap(context.dimen(R.dimen.desktop_tab_width), context.dimen(R.dimen.desktop_tab_height)).also {
             Canvas(it).drawTrapezoid(foregroundColor, false)
         }
-        foregroundTabDrawable = BitmapDrawable(context.resources, foregroundTabBitmap).mutate()
+        foregroundTabDrawable = foregroundTabBitmap.toDrawable(context.resources).mutate()
     }
 
     fun updateForegroundTabColor(color: Int) {
