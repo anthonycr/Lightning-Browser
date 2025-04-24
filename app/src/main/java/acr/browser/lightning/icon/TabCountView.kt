@@ -3,7 +3,14 @@ package acr.browser.lightning.icon
 import acr.browser.lightning.R
 import acr.browser.lightning.extensions.preferredLocale
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.CornerPathEffect
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.RectF
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.withStyledAttributes
@@ -38,6 +45,7 @@ class TabCountView @JvmOverloads constructor(
     private var borderRadius: Float = 0F
     private var borderWidth: Float = 0F
     private val workingRect = RectF()
+    private val cornerPathEffect: CornerPathEffect
 
     private var count: Int = 0
 
@@ -49,6 +57,7 @@ class TabCountView @JvmOverloads constructor(
             borderRadius = getDimension(R.styleable.TabCountView_tabIconBorderRadius, 0F)
             borderWidth = getDimension(R.styleable.TabCountView_tabIconBorderWidth, 0F)
         }
+        cornerPathEffect = CornerPathEffect(borderRadius)
     }
 
     /**
@@ -67,18 +76,30 @@ class TabCountView @JvmOverloads constructor(
             numberFormat.format(count)
         }
 
-        paint.xfermode = overMode
+//        paint.xfermode = overMode
+//
+        workingRect.set(
+            0f + borderWidth / 2,
+            0f + borderWidth / 2,
+            width.toFloat() - borderWidth / 2,
+            height.toFloat() - borderWidth / 2
+        )
+//        canvas.drawRoundRect(workingRect, borderRadius, borderRadius, paint)
 
-        workingRect.set(0f, 0f, width.toFloat(), height.toFloat())
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = borderWidth
         canvas.drawRoundRect(workingRect, borderRadius, borderRadius, paint)
 
-        paint.xfermode = clearMode
 
-        val innerRadius = borderRadius - 1
-        workingRect.set(borderWidth, borderWidth, (width - borderWidth), (height - borderWidth))
-        canvas.drawRoundRect(workingRect, innerRadius, innerRadius, paint)
+//        paint.xfermode = clearMode
+//
+//        val innerRadius = borderRadius - 1
+//        workingRect.set(borderWidth, borderWidth, (width - borderWidth), (height - borderWidth))
+//        canvas.drawRoundRect(workingRect, innerRadius, innerRadius, paint)
 
-        paint.xfermode = overMode
+//        paint.xfermode = overMode
+
+        paint.style = Paint.Style.FILL
 
         val xPos = width / 2F
         val yPos = height / 2 - (paint.descent() + paint.ascent()) / 2

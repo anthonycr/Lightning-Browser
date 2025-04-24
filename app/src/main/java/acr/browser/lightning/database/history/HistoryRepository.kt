@@ -1,8 +1,8 @@
 package acr.browser.lightning.database.history
 
 import acr.browser.lightning.database.HistoryEntry
-import io.reactivex.Completable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 
 /**
  * An interface that should be used to communicate with the history database.
@@ -34,7 +34,7 @@ interface HistoryRepository {
      * @param title the title of the item that was visited.
      * @return a valid observable.
      */
-    fun visitHistoryEntry(url: String, title: String?): Completable
+    fun visitHistoryEntry(url: String, title: String): Completable
 
     /**
      * An observable that finds all history items containing the given query. If the query is

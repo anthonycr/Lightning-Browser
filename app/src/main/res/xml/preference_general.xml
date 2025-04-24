@@ -2,19 +2,19 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/settings_general">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="cb_images"
             android:title="@string/block"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="savedata"
             android:title="@string/save_data" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="cb_javascript"
             android:title="@string/java"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="cb_colormode"
             android:title="@string/color_mode"/>

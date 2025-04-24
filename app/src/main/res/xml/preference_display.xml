@@ -2,45 +2,44 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/settings_display">
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="cb_drawertabs"
-            android:title="@string/tabs_in_drawer"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="cb_swapdrawers"
             android:title="@string/swap_bookmarks_and_tabs"/>
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="fullScreenOption"
-            android:title="@string/fullScreenOption"/>
-        <CheckBoxPreference
+            android:title="@string/fullScreenOption" />
+        <SwitchPreference
             android:defaultValue="true"
             android:key="fullscreen"
-            android:title="@string/fullscreen"/>
-        <CheckBoxPreference
+            android:title="@string/fullscreen" />
+        <SwitchPreference
             android:defaultValue="false"
             android:key="black_status_bar"
-            android:title="@string/settings_black_status_bar"/>
-        <CheckBoxPreference
+            android:title="@string/settings_black_status_bar" />
+        <SwitchPreference
             android:defaultValue="true"
             android:key="wideViewPort"
             android:summary="@string/recommended"
-            android:title="@string/wideViewPort"/>
-        <CheckBoxPreference
+            android:title="@string/wideViewPort" />
+        <SwitchPreference
             android:defaultValue="true"
             android:key="overViewMode"
             android:summary="@string/recommended"
-            android:title="@string/overViewMode"/>
-        <CheckBoxPreference
+            android:title="@string/overViewMode" />
+        <SwitchPreference
             android:defaultValue="false"
             android:key="text_reflow"
-            android:title="@string/reflow"/>
+            android:title="@string/reflow" />
         <Preference
             android:key="app_theme"
-            android:title="@string/theme"/>
+            android:title="@string/theme" />
+        <Preference
+            android:key="tab_style"
+            android:title="@string/tab_style_title" />
         <Preference
             android:key="text_size"
-            android:title="@string/title_text_size"/>
+            android:title="@string/title_text_size" />
     </PreferenceCategory>
 </PreferenceScreen>

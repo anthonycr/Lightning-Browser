@@ -1,18 +1,23 @@
 package acr.browser.lightning.preference
 
 import acr.browser.lightning.AppTheme
-import acr.browser.lightning.browser.ProxyChoice
-import acr.browser.lightning.browser.SearchBoxDisplayChoice
-import acr.browser.lightning.browser.SearchBoxModel
+import acr.browser.lightning.browser.di.UserPrefs
+import acr.browser.lightning.browser.proxy.ProxyChoice
+import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
+import acr.browser.lightning.browser.search.SearchBoxModel
+import acr.browser.lightning.browser.ui.TabConfiguration
+import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.constant.DEFAULT_ENCODING
-import acr.browser.lightning.constant.SCHEME_HOMEPAGE
+import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.device.ScreenSize
-import acr.browser.lightning.di.UserPrefs
-import acr.browser.lightning.preference.delegates.*
+import acr.browser.lightning.preference.delegates.booleanPreference
+import acr.browser.lightning.preference.delegates.enumPreference
+import acr.browser.lightning.preference.delegates.intPreference
+import acr.browser.lightning.preference.delegates.nullableStringPreference
+import acr.browser.lightning.preference.delegates.stringPreference
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
-import acr.browser.lightning.view.RenderingMode
 import android.content.SharedPreferences
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -54,7 +59,10 @@ class UserPreferences @Inject constructor(
     /**
      * The folder into which files will be downloaded.
      */
-    var downloadDirectory by preferences.stringPreference(DOWNLOAD_DIRECTORY, FileUtils.DEFAULT_DOWNLOAD_PATH)
+    var downloadDirectory by preferences.stringPreference(
+        DOWNLOAD_DIRECTORY,
+        FileUtils.DEFAULT_DOWNLOAD_PATH
+    )
 
     /**
      * True if the browser should hide the navigation bar when scrolling, false if it should be
@@ -71,7 +79,7 @@ class UserPreferences @Inject constructor(
     /**
      * The URL of the selected homepage.
      */
-    var homepage by preferences.stringPreference(HOMEPAGE, SCHEME_HOMEPAGE)
+    var homepage by preferences.stringPreference(HOMEPAGE, SCHEME_BOOKMARKS)
 
     /**
      * True if cookies should be enabled in incognito mode, false otherwise.
@@ -108,11 +116,6 @@ class UserPreferences @Inject constructor(
      * is automatically closed by the system.
      */
     var restoreLostTabsEnabled by preferences.booleanPreference(RESTORE_LOST_TABS, true)
-
-    /**
-     * True if the browser should save form input, false otherwise.
-     */
-    var savePasswordsEnabled by preferences.booleanPreference(SAVE_PASSWORDS, true)
 
     /**
      * The index of the chosen search engine.
@@ -186,18 +189,16 @@ class UserPreferences @Inject constructor(
      *
      * @see SearchBoxModel
      */
-    var urlBoxContentChoice by preferences.enumPreference(URL_BOX_CONTENTS, SearchBoxDisplayChoice.DOMAIN)
+    var urlBoxContentChoice by preferences.enumPreference(
+        URL_BOX_CONTENTS,
+        SearchBoxDisplayChoice.DOMAIN
+    )
 
     /**
      * True if the browser should invert the display colors of the web page content, false
      * otherwise.
      */
     var invertColors by preferences.booleanPreference(INVERT_COLORS, false)
-
-    /**
-     * The index of the reading mode text size.
-     */
-    var readingTextSize by preferences.intPreference(READING_TEXT_SIZE, 2)
 
     /**
      * The index of the theme used by the application.
@@ -218,7 +219,19 @@ class UserPreferences @Inject constructor(
      * True if the app should use the navigation drawer UI, false if it should use the traditional
      * desktop browser tabs UI.
      */
-    var showTabsInDrawer by preferences.booleanPreference(SHOW_TABS_IN_DRAWER, !screenSize.isTablet())
+    @Deprecated("Superseded by TabConfiguration")
+    private var showTabsInDrawer by preferences.booleanPreference(
+        SHOW_TABS_IN_DRAWER,
+        !screenSize.isTablet()
+    )
+
+    var tabConfiguration by preferences.enumPreference(
+        TAB_CONFIGURATION, if (showTabsInDrawer) {
+            TabConfiguration.DRAWER_BOTTOM
+        } else {
+            TabConfiguration.DESKTOP
+        }
+    )
 
     /**
      * True if the browser should send a do not track (DNT) header with every GET request, false
@@ -324,6 +337,7 @@ private const val THEME = "Theme"
 private const val TEXT_ENCODING = "textEncoding"
 private const val CLEAR_WEB_STORAGE_EXIT = "clearWebStorageExit"
 private const val SHOW_TABS_IN_DRAWER = "showTabsInDrawer"
+private const val TAB_CONFIGURATION = "tabConfiguration"
 private const val DO_NOT_TRACK = "doNotTrack"
 private const val SAVE_DATA = "saveData"
 private const val IDENTIFYING_HEADERS = "removeIdentifyingHeaders"

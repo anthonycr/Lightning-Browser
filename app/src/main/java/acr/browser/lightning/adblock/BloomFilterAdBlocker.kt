@@ -6,25 +6,25 @@ import acr.browser.lightning.adblock.source.HostsResult
 import acr.browser.lightning.adblock.util.BloomFilter
 import acr.browser.lightning.adblock.util.DefaultBloomFilter
 import acr.browser.lightning.adblock.util.DelegatingBloomFilter
-import acr.browser.lightning.adblock.util.`object`.JvmObjectStore
-import acr.browser.lightning.adblock.util.`object`.ObjectStore
 import acr.browser.lightning.adblock.util.hash.MurmurHashHostAdapter
 import acr.browser.lightning.adblock.util.hash.MurmurHashStringAdapter
+import acr.browser.lightning.adblock.util.`object`.JvmObjectStore
+import acr.browser.lightning.adblock.util.`object`.ObjectStore
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.database.adblock.HostsRepositoryInfo
-import acr.browser.lightning.di.DatabaseScheduler
-import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.log.Logger
 import android.app.Application
-import io.reactivex.Maybe
-import io.reactivex.Scheduler
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.rxkotlin.subscribeBy
-import java.net.URI
+import android.net.Uri
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.plusAssign
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import java.net.URISyntaxException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -50,7 +50,8 @@ class BloomFilterAdBlocker @Inject constructor(
 ) : AdBlocker {
 
     private val bloomFilter: DelegatingBloomFilter<Host> = DelegatingBloomFilter()
-    private val objectStore: ObjectStore<DefaultBloomFilter<Host>> = JvmObjectStore(application, MurmurHashStringAdapter())
+    private val objectStore: ObjectStore<DefaultBloomFilter<Host>> =
+        JvmObjectStore(application, MurmurHashStringAdapter())
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -83,7 +84,8 @@ class BloomFilterAdBlocker @Inject constructor(
                                 }
                             }
                         }
-                        .flatMapSingleElement {
+                        .flatMapSingle {
+                            logger.log(TAG, "Loaded ${it.size} hosts")
                             // Clear out the old hosts and bloom filter now that we have the new hosts.
                             hostsRepository.removeAllHosts()
                                 .andThen(hostsRepository.addHosts(it))
@@ -115,19 +117,20 @@ class BloomFilterAdBlocker @Inject constructor(
         objectStore.retrieve(BLOOM_FILTER_KEY)
     }
 
-    private fun createAndSaveBloomFilter(hosts: List<Host>): Single<BloomFilter<Host>> = Single.fromCallable {
-        logger.log(TAG, "Constructing bloom filter from list")
+    private fun createAndSaveBloomFilter(hosts: List<Host>): Single<BloomFilter<Host>> =
+        Single.fromCallable {
+            logger.log(TAG, "Constructing bloom filter from list")
 
-        val bloomFilter = DefaultBloomFilter(
-            numberOfElements = hosts.size,
-            falsePositiveRate = 0.01,
-            hashingAlgorithm = MurmurHashHostAdapter()
-        )
-        bloomFilter.putAll(hosts)
-        objectStore.store(BLOOM_FILTER_KEY, bloomFilter)
+            val bloomFilter = DefaultBloomFilter(
+                numberOfElements = hosts.size,
+                falsePositiveRate = 0.01,
+                hashingAlgorithm = MurmurHashHostAdapter()
+            )
+            bloomFilter.putAll(hosts)
+            objectStore.store(BLOOM_FILTER_KEY, bloomFilter)
 
-        bloomFilter
-    }
+            bloomFilter
+        }
 
     override fun isAd(url: String): Boolean {
         val domain = url.host() ?: return false
@@ -145,6 +148,7 @@ class BloomFilterAdBlocker @Inject constructor(
 
                 isOnBlockList
             }
+
             domain.name.startsWith("www.") -> isAd(domain.name.substring(4))
             else -> false
         }
@@ -154,7 +158,7 @@ class BloomFilterAdBlocker @Inject constructor(
      * Extract the [Host] from a [String] representing a URL. Returns null if no host was extracted.
      */
     private fun String.host(): Host? = try {
-        URI(this).host?.let(::Host)
+        Uri.parse(this).host?.let(::Host)
     } catch (exception: URISyntaxException) {
         logger.log(TAG, "Invalid URL: $this", exception)
         null

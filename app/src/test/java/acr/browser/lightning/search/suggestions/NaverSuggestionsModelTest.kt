@@ -9,8 +9,9 @@ import android.os.LocaleList
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -44,9 +45,12 @@ class NaverSuggestionsModelTest {
         val model = NaverSuggestionsModel(httpClient, requestFactory, application, NoOpLogger())
 
         (0..100).forEach {
-            val result = "https://ac.search.naver.com/nx/ac?q=$it&q_enc=UTF-8&st=100&frm=nv&r_format=json&r_enc=UTF-8&r_unicode=0&t_koreng=1&ans=2&run=2&rev=4&con=1"
+            val result =
+                "https://ac.search.naver.com/nx/ac?q=$it&q_enc=UTF-8&st=100&frm=nv&r_format=json&r_enc=UTF-8&r_unicode=0&t_koreng=1&ans=2&run=2&rev=4&con=1"
 
-            assertThat(model.createQueryUrl(it.toString(), "null")).isEqualTo(HttpUrl.parse(result))
+            assertThat(
+                model.createQueryUrl(it.toString(), "null")
+            ).isEqualTo(result.toHttpUrlOrNull())
         }
     }
 }

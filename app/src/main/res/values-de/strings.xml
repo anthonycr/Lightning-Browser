@@ -14,7 +14,6 @@
     <string name="location">Standortzugriff erlauben</string>
     <string name="password">Passwörter speichern</string>
     <string name="agent">User-Agent</string>
-    <string name="flash">Adobe Flash aktivieren</string>
     <string name="home">Startseite</string>
     <string name="fullscreen">Vollbildmodus aktivieren</string>
     <string name="java">JavaScript aktivieren</string>
@@ -97,7 +96,6 @@
     <string name="download_sdcard_busy_dlg_title">USB-Speicher nicht verfügbar</string>
     <string name="download_sdcard_busy_dlg_msg">Speicher in Benutzung. Um das Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
     <string name="incognito_cookies">Cookies im Inkognito-Modus aktivieren</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manuell</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Kontakt</string>
@@ -146,17 +144,13 @@
     <string-array name="proxy_choices_array">
         <item>Kein (Standard)</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>Manuell</item>
     </string-array>
     <string name="manual_proxy">Manueller Proxy</string>
     <string name="host">Host:</string>
     <string name="port">Port:</string>
     <string name="use_tor_prompt">Orbot ist installiert. Soll Tor verwendet werden?</string>
-    <string name="use_i2p_prompt">I2P ist installiert. Soll I2P verwendet werden?</string>
     <string name="install_orbot">Um Tor verwenden zu können, muss Orbot installiert sein!</string>
-    <string name="i2p_not_running">I2P ist nicht gestartet.</string>
-    <string name="i2p_tunnels_not_ready">I2P Tunnel sind noch nicht bereit.</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="clear_cookies_exit">Cookies beim Beenden löschen</string>
@@ -197,7 +191,6 @@
     <string name="close_other_tabs">Andere Tabs schließen</string>
     <string name="third_party">Drittanbieter Cookies blockieren</string>
     <string name="color_mode">Farbmodus aktivieren</string>
-    <string name="reading_mode">Lesemodus</string>
     <string name="loading">Lade…</string>
     <string name="loading_failed">Es konnte nichts von der Seite geladen werden.</string>
     <string name="snacktory">Snacktory</string>
@@ -236,7 +229,6 @@
     <string name="message_added_to_homescreen">Verknüpfung wurde zum Startbildschirm hinzugefügt</string>
     <string name="shortcut_message_failed_to_add">Ihr Launcher unterstützt keine Verknüpfungen!</string>
     <string name="action_delete_all_bookmarks">Alle Lesezeichen löschen</string>
-    <string name="flash_not_supported">Flash Player wird von Ihrem System nicht unterstützt!</string>
     <string name="upsell_plus_version">Upgrade auf Lightning Plus um Werbung zu blockieren!</string>
     <string name="message_open_download_fail">Diese Datei existiert nicht mehr</string>
 	

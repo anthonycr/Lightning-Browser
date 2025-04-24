@@ -1,7 +1,7 @@
 package acr.browser.lightning.database.adblock
 
-import io.reactivex.Completable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -11,17 +11,19 @@ import javax.inject.Singleton
 @Singleton
 class InMemoryHostsRepository @Inject constructor() : HostsRepository {
 
-    private val mutableHostsSet: MutableSet<Host> = hashSetOf()
+    private var mutableHostsSet: Set<Host> = emptySet()
 
     override fun addHosts(hosts: List<Host>): Completable = Completable.fromAction {
-        mutableHostsSet.addAll(hosts)
+        mutableHostsSet = hosts.toSet()
     }
 
-    override fun removeAllHosts(): Completable = Completable.fromAction(mutableHostsSet::clear)
+    override fun removeAllHosts(): Completable = Completable.fromAction {
+        mutableHostsSet = emptySet()
+    }
 
     override fun containsHost(host: Host): Boolean = mutableHostsSet.contains(host)
 
-    override fun hasHosts(): Boolean = mutableHostsSet.size > 0
+    override fun hasHosts(): Boolean = mutableHostsSet.isNotEmpty()
 
     override fun allHosts(): Single<List<Host>> = Single.just(mutableHostsSet.toList())
 }

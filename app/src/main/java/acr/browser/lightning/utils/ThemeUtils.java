@@ -1,6 +1,5 @@
 package acr.browser.lightning.utils;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -10,7 +9,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.TypedValue;
 
 import acr.browser.lightning.R;
@@ -19,7 +17,6 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 
 public final class ThemeUtils {
 
@@ -68,7 +65,6 @@ public final class ThemeUtils {
      * @return the status bar color of the current theme.
      */
     @ColorInt
-    @TargetApi(21)
     public static int getStatusBarColor(@NonNull Context context) {
         return getColor(context, android.R.attr.statusBarColor);
     }
@@ -126,14 +122,7 @@ public final class ThemeUtils {
 
     @NonNull
     private static Drawable getVectorDrawable(@NonNull Context context, int drawableId) {
-        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
-
-        Preconditions.checkNonNull(drawable);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
-        }
-        return drawable;
+        return ContextCompat.getDrawable(context, drawableId);
     }
 
     // http://stackoverflow.com/a/38244327/1499541
@@ -164,6 +153,11 @@ public final class ThemeUtils {
     public static Bitmap createThemedBitmap(@NonNull Context context, @DrawableRes int res, boolean dark) {
         int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
 
+        return createThemedBitmap(context, res, color);
+    }
+
+    @NonNull
+    public static Bitmap createThemedBitmap(@NonNull Context context, @DrawableRes int res, @ColorInt int color) {
         Bitmap sourceBitmap = getBitmapFromVectorDrawable(context, res);
         Bitmap resultBitmap = Bitmap.createBitmap(sourceBitmap.getWidth(), sourceBitmap.getHeight(),
             Bitmap.Config.ARGB_8888);

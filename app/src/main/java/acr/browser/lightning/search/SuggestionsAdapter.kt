@@ -7,10 +7,10 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning.di.DatabaseScheduler
-import acr.browser.lightning.di.MainScheduler
-import acr.browser.lightning.di.NetworkScheduler
-import acr.browser.lightning.di.injector
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.browser.di.NetworkScheduler
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.rx.join
@@ -23,10 +23,13 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Filter
 import android.widget.Filterable
-import io.reactivex.*
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
-import java.util.*
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.subjects.PublishSubject
+import java.util.Locale
 import javax.inject.Inject
 
 class SuggestionsAdapter(
@@ -39,12 +42,12 @@ class SuggestionsAdapter(
     @Inject internal lateinit var bookmarkRepository: BookmarkRepository
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var historyRepository: HistoryRepository
-    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
-    @Inject @field:NetworkScheduler internal lateinit var networkScheduler: Scheduler
-    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
+    @Inject @DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject @NetworkScheduler internal lateinit var networkScheduler: Scheduler
+    @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
 
-    private val allBookmarks = arrayListOf<Bookmark.Entry>()
+    private var allBookmarks: List<Bookmark.Entry> = emptyList()
     private val searchFilter = SearchFilter(this)
 
     private val searchIcon = context.drawable(R.drawable.ic_search)
@@ -92,8 +95,7 @@ class SuggestionsAdapter(
         bookmarkRepository.getAllBookmarksSorted()
             .subscribeOn(databaseScheduler)
             .subscribe { list ->
-                allBookmarks.clear()
-                allBookmarks.addAll(list)
+                allBookmarks = list
             }
     }
 
@@ -156,7 +158,7 @@ class SuggestionsAdapter(
     private fun getBookmarksForQuery(query: String): Single<List<Bookmark.Entry>> =
         Single.fromCallable {
             (allBookmarks.filter {
-                it.title.toLowerCase(Locale.getDefault()).startsWith(query)
+                it.title.lowercase(Locale.getDefault()).startsWith(query)
             } + allBookmarks.filter {
                 it.url.contains(query)
             }).distinct().take(MAX_SUGGESTIONS)
@@ -164,26 +166,26 @@ class SuggestionsAdapter(
 
     private fun Observable<CharSequence>.results(): Flowable<List<WebPage>> = this
         .toFlowable(BackpressureStrategy.LATEST)
-        .map { it.toString().toLowerCase(Locale.getDefault()).trim() }
+        .map { it.toString().lowercase(Locale.getDefault()).trim() }
         .filter(String::isNotEmpty)
         .share()
         .compose { upstream ->
             val searchEntries = upstream
                 .flatMapSingle(suggestionsRepository::resultsForSearch)
                 .subscribeOn(networkScheduler)
-                .startWith(emptyList<List<SearchSuggestion>>())
+                .startWithItem(emptyList())
                 .share()
 
             val bookmarksEntries = upstream
                 .flatMapSingle(::getBookmarksForQuery)
                 .subscribeOn(databaseScheduler)
-                .startWith(emptyList<List<Bookmark.Entry>>())
+                .startWithItem(emptyList())
                 .share()
 
             val historyEntries = upstream
                 .flatMapSingle(historyRepository::findHistoryEntriesContaining)
                 .subscribeOn(databaseScheduler)
-                .startWith(emptyList<HistoryEntry>())
+                .startWithItem(emptyList())
                 .share()
 
             // Entries priority and ideal count:
@@ -193,26 +195,32 @@ class SuggestionsAdapter(
 
             bookmarksEntries
                 .join(
-                    historyEntries,
-                    { bookmarksEntries.map { Unit } },
-                    { historyEntries.map { Unit } }
-                ) { t1, t2 ->
-                    Pair(t1, t2)
-                }
+                    other = historyEntries,
+                    selectorLeft = { bookmarksEntries },
+                    selectorRight = { historyEntries },
+                    join = ::Pair
+                )
                 .compose { bookmarksAndHistory ->
                     bookmarksAndHistory.join(
-                        searchEntries,
-                        { bookmarksAndHistory.map { Unit } },
-                        { searchEntries.map { Unit } }
+                        other = searchEntries,
+                        selectorLeft = { bookmarksAndHistory },
+                        selectorRight = { searchEntries }
                     ) { (bookmarks, history), t2 ->
                         Triple(bookmarks, history, t2)
                     }
                 }
         }
         .map { (bookmarks, history, searches) ->
-            val bookmarkCount = MAX_SUGGESTIONS - 2.coerceAtMost(history.size) - 1.coerceAtMost(searches.size)
-            val historyCount = MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - 1.coerceAtMost(searches.size)
-            val searchCount = MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - historyCount.coerceAtMost(history.size)
+            val bookmarkCount =
+                MAX_SUGGESTIONS - 2.coerceAtMost(history.size) - 1.coerceAtMost(searches.size)
+            val historyCount =
+                MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - 1.coerceAtMost(
+                    searches.size
+                )
+            val searchCount =
+                MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - historyCount.coerceAtMost(
+                    history.size
+                )
 
             bookmarks.take(bookmarkCount) + history.take(historyCount) + searches.take(searchCount)
         }

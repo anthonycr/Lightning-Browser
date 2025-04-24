@@ -6,9 +6,9 @@ import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.source.HostsSourceType
 import acr.browser.lightning.adblock.source.selectedHostsSource
 import acr.browser.lightning.adblock.source.toPreferenceIndex
-import acr.browser.lightning.di.DiskScheduler
-import acr.browser.lightning.di.MainScheduler
-import acr.browser.lightning.di.injector
+import acr.browser.lightning.browser.di.DiskScheduler
+import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.toast
@@ -17,14 +17,16 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.preference.Preference
-import io.reactivex.Maybe
-import io.reactivex.Scheduler
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.rxkotlin.subscribeBy
-import okhttp3.HttpUrl
-import okio.Okio
+import androidx.preference.Preference
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.plusAssign
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okio.buffer
+import okio.sink
+import okio.source
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
@@ -35,8 +37,8 @@ import javax.inject.Inject
 class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var userPreferences: UserPreferences
-    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
-    @Inject @field:DiskScheduler internal lateinit var diskScheduler: Scheduler
+    @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
+    @Inject @DiskScheduler internal lateinit var diskScheduler: Scheduler
     @Inject internal lateinit var bloomFilterAdBlocker: BloomFilterAdBlocker
 
     private var recentSummaryUpdater: SummaryUpdater? = null
@@ -45,12 +47,11 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     override fun providePreferencesXmlResource(): Int = R.xml.preference_ad_block
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        super.onCreatePreferences(savedInstanceState, rootKey)
         injector.inject(this)
 
-        checkBoxPreference(
+        togglePreference(
             preference = "cb_block_ads",
             isChecked = userPreferences.adBlockEnabled,
             onCheckChange = { userPreferences.adBlockEnabled = it }
@@ -80,8 +81,10 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
         forceRefreshHostsPreference?.isEnabled = isRefreshHostsEnabled()
     }
 
-    private fun isRefreshHostsEnabled() = userPreferences.selectedHostsSource() is HostsSourceType.Remote
+    private fun isRefreshHostsEnabled() =
+        userPreferences.selectedHostsSource() is HostsSourceType.Remote
 
+    @Deprecated("Deprecated in Java")
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.clear()
@@ -95,7 +98,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     private fun showHostsSourceChooser(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showListChoices(
-            activity,
+            requireActivity(),
             R.string.block_ad_source,
             DialogItem(
                 title = R.string.block_source_default,
@@ -135,13 +138,13 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     private fun showUrlChooser(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showEditText(
-            activity,
+            requireActivity(),
             title = R.string.block_source_remote,
             hint = R.string.hint_url,
             currentText = userPreferences.hostsRemoteFile,
             action = R.string.action_ok,
             textInputListener = {
-                val url = HttpUrl.parse(it)
+                val url = it.toHttpUrlOrNull()
                     ?: return@showEditText run { activity?.toast(R.string.problem_download) }
                 userPreferences.hostsSource = HostsSourceType.Remote(url).toPreferenceIndex()
                 userPreferences.hostsRemoteFile = it
@@ -151,6 +154,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
         )
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
@@ -161,9 +165,12 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                         .subscribeBy(
                             onComplete = { activity?.toast(R.string.action_message_canceled) },
                             onSuccess = { file ->
-                                userPreferences.hostsSource = HostsSourceType.Local(file).toPreferenceIndex()
+                                userPreferences.hostsSource =
+                                    HostsSourceType.Local(file).toPreferenceIndex()
                                 userPreferences.hostsLocalFile = file.path
-                                recentSummaryUpdater?.updateSummary(userPreferences.selectedHostsSource().toSummary())
+                                recentSummaryUpdater?.updateSummary(
+                                    userPreferences.selectedHostsSource().toSummary()
+                                )
                                 updateForNewHostsSource()
                             }
                         )
@@ -189,8 +196,8 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
         try {
             val outputFile = File(externalFilesDir, AD_HOSTS_FILE)
 
-            val input = Okio.source(inputStream)
-            val output = Okio.buffer(Okio.sink(outputFile))
+            val input = inputStream.source()
+            val output = outputFile.sink().buffer()
             output.writeAll(input)
             return@create it.onSuccess(outputFile)
         } catch (exception: IOException) {

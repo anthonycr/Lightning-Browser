@@ -15,7 +15,7 @@ sealed class Option<out T> {
     /**
      * A type representing the absence of [T].
      */
-    object None : Option<Nothing>()
+    data object None : Option<Nothing>()
 
     companion object {
         /**

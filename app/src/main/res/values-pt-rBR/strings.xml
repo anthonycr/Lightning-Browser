@@ -28,7 +28,6 @@
     <string name="location">Acesso de localização</string>
     <string name="password">Salvar senhas</string>
     <string name="agent">Agente</string>
-    <string name="flash">Ativar Adobe Flash</string>
     <string name="home">Página inicial</string>
     <string name="fullscreen">Modo de tela completa</string>
     <string name="java">Ativar JavaScript</string>
@@ -104,7 +103,6 @@
     <string name="download_sdcard_busy_dlg_title">Cartão SD não disponível</string>
     <string name="download_sdcard_busy_dlg_msg">O cartão SD está ocupado. Para poder transferir arquivos, desative a opção Desativar armazenamento USB na notificação.</string>
     <string name="incognito_cookies">Permitir cookies no modo anônimo</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manual</string>
     <string name="action_auto">Automático</string>
     <string name="action_follow_me">Contato</string>
@@ -135,17 +133,13 @@
     <string-array name="proxy_choices_array">
         <item>Não</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>Manual</item>
     </string-array>
     <string name="manual_proxy">Proxy manual</string>
     <string name="host">Servidor:</string>
     <string name="port">Porta:</string>
     <string name="use_tor_prompt">Parece que você tem o Orbot instalado. Gostaria de utilizar a rede Tor?</string>
-    <string name="use_i2p_prompt">Parece que você tem o I2P instalado. Gostaria de utilizar a rede I2P?</string>
     <string name="install_orbot">Por favor instale o Orbot para poder utilizar a rede Tor.</string>
-    <string name="i2p_not_running">I2P não está em execução.</string>
-    <string name="i2p_tunnels_not_ready">Os canais I2P ainda não estão prontos.</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
     <string name="clear_cookies_exit">Limpar cookies ao sair</string>
@@ -182,7 +176,6 @@
     <string name="close_all_tabs">Fechar todas as abas</string>
     <string name="third_party">Bloquear cookies de terceiros</string>
     <string name="color_mode">Ativar modo de cor</string>
-    <string name="reading_mode">Modo de leitura</string>
     <string name="loading">A carregar&#8230;</string>
     <string name="loading_failed">A página não foi carregada.</string>
     <string name="snacktory">Snacktory</string>

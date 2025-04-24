@@ -4,68 +4,55 @@
 package acr.browser.lightning.settings.activity
 
 import acr.browser.lightning.R
-import acr.browser.lightning.device.BuildInfo
-import acr.browser.lightning.device.BuildType
-import acr.browser.lightning.di.injector
-import android.os.Build
+import acr.browser.lightning.settings.fragment.RootSettingsFragment
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.LinearLayout
-import com.anthonycr.grant.PermissionsManager
-import javax.inject.Inject
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 
-class SettingsActivity : ThemableSettingsActivity() {
-
-    @Inject lateinit var buildInfo: BuildInfo
+class SettingsActivity : ThemableSettingsActivity(),
+    PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injector.inject(this)
         super.onCreate(savedInstanceState)
-        // this is a workaround for the Toolbar in PreferenceActivity
-        val root = findViewById<ViewGroup>(android.R.id.content)
-        val content = root.getChildAt(0) as LinearLayout
-        val toolbarContainer = View.inflate(this, R.layout.toolbar_settings, null) as LinearLayout
+        setContentView(R.layout.settings_root)
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        root.removeAllViews()
-        toolbarContainer.addView(content)
-        root.addView(toolbarContainer)
-
-        // now we can set the Toolbar using AppCompatPreferenceActivity
-        setSupportActionbar(toolbarContainer.findViewById(R.id.toolbar))
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.root, RootSettingsFragment())
+            .commit()
     }
 
-    override fun onBuildHeaders(target: MutableList<Header>) {
-        loadHeadersFromResource(R.xml.preferences_headers, target)
-        fragments.clear()
-
-        if (buildInfo.buildType == BuildType.RELEASE) {
-            target.removeAll { it.titleRes == R.string.debug_title }
-        }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            // Workaround for bug in the AppCompat support library
-            target.forEach { it.iconRes = R.drawable.empty }
-        }
-
-        fragments.addAll(target.map(Header::fragment))
+    override fun onPreferenceStartFragment(
+        caller: PreferenceFragmentCompat,
+        pref: Preference
+    ): Boolean {
+        // Instantiate the new Fragment
+        val args = pref.extras
+        val fragment = supportFragmentManager.fragmentFactory.instantiate(
+            classLoader,
+            pref.fragment!!
+        )
+        fragment.arguments = args
+        fragment.setTargetFragment(caller, 0)
+        // Replace the existing Fragment with the new Fragment
+        supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.slide_in_from_right,
+                R.anim.fade_out_scale,
+                R.anim.fade_in_scale,
+                R.anim.slide_out_to_right
+            )
+            .replace(R.id.root, fragment)
+            .addToBackStack(null)
+            .commit()
+        return true
     }
-
-    override fun isValidFragment(fragmentName: String): Boolean = fragments.contains(fragmentName)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         finish()
         return true
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults)
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    companion object {
-        private val fragments = mutableListOf<String>()
     }
 }

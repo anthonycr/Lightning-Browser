@@ -3,7 +3,7 @@ package acr.browser.lightning.search.suggestions
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.log.Logger
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -11,7 +11,7 @@ import okhttp3.ResponseBody
 import java.io.IOException
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
-import java.util.*
+import java.util.Locale
 
 /**
  * The base search suggestions API. Provides common fetching and caching functionality for each
@@ -56,7 +56,7 @@ abstract class BaseSuggestionsModel internal constructor(
                 }
 
                 return@fromCallable client.downloadSuggestionsForQuery(query, language)
-                    ?.body()
+                    ?.body
                     ?.safeUse(::parseResults)
                     ?.take(MAX_RESULTS) ?: emptyList()
             }
@@ -70,7 +70,10 @@ abstract class BaseSuggestionsModel internal constructor(
      *
      * @return the cache file containing the suggestions
      */
-    private fun OkHttpClient.downloadSuggestionsForQuery(query: String, language: String): Response? {
+    private fun OkHttpClient.downloadSuggestionsForQuery(
+        query: String,
+        language: String
+    ): Response? {
         val queryUrl = createQueryUrl(query, language)
         val request = requestFactory.createSuggestionsRequest(queryUrl, encoding)
         return try {

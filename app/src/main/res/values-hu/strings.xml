@@ -29,7 +29,6 @@
     <string name="location">Hely hozzáférés</string>
     <string name="password">Jelszavak mentése</string>
     <string name="agent">Felhasználó Ügynök</string>
-    <string name="flash">Adobe Flash bekapcsolása</string>
     <string name="home">Főoldal</string>
     <string name="fullscreen">Teljes képernyős mód</string>
     <string name="java">JavaScript bekapcsolása</string>
@@ -110,7 +109,6 @@
     <string name="download_sdcard_busy_dlg_title">USB-tár nem elérhető</string>
     <string name="download_sdcard_busy_dlg_msg" >A tároló dolgozik.Hogy engedélyezze a letöltéseket , érintse meg az USB-tár kikapcsolását az értesítésnél.</string>
     <string name="incognito_cookies">Cookie-k engedélyezése inkognitó módban</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Kézi</string>
     <string name="action_auto">Automata</string>
     <string name="action_follow_me">Vedd fel velem a kapcsolatot</string>
@@ -149,17 +147,13 @@
     <string-array name="proxy_choices_array">
         <item>Egyik sem</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>Manuális</item>
     </string-array>
     <string name="manual_proxy">Manuális proxy</string>
     <string name="host">Hoszt:</string>
     <string name="port">Port:</string>
     <string name="use_tor_prompt">Úgy tűnik, hogy önnek telepítve van az Orbot. Szeretné használni a Tor-t?</string>
-    <string name="use_i2p_prompt">Úgy tűnik, hogy önnek telepítve van az I2P. Szeretné használni az I2P-t?</string>
     <string name="install_orbot">Kérjük telepítse az Orbot-ot annak érdekében, hogy működjön a proxy a Tor-ral.</string>
-    <string name="i2p_not_running">I2P, nem fut.</string>
-    <string name="i2p_tunnels_not_ready">I2P alagútak, nem állnak készen még.</string>
     <string name="yes">Igen</string>
     <string name="no">Nem</string>
     <string name="clear_cookies_exit">Cookie-ek törlése kilépéskor</string>
@@ -198,7 +192,6 @@
     <string name="close_other_tabs">Másik lapok bezárása</string>
     <string name="third_party">Harmadik féltől származó Cookie-k letiltása</string>
     <string name="color_mode">Színes mód engedélyezése</string>
-    <string name="reading_mode">Olvasó mód</string>
     <string name="loading">Betöltés&#8230;</string>
     <string name="loading_failed">Nem sikerült semmit betölteni az oldalról.</string>
     <string name="snacktory">Snacktory</string>

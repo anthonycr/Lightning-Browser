@@ -5,7 +5,10 @@ import acr.browser.lightning.adblock.util.hash.computeMD5
 import acr.browser.lightning.extensions.onIOExceptionResumeNext
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
-import io.reactivex.Single
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import io.reactivex.rxjava3.core.Single
 import java.io.File
 import java.io.InputStreamReader
 
@@ -15,9 +18,9 @@ import java.io.InputStreamReader
  * @param logger The logger used to log information about the loading process.
  * @param file The file from which hosts will be loaded. Must have read access to the file.
  */
-class FileHostsDataSource constructor(
+class FileHostsDataSource @AssistedInject constructor(
     private val logger: Logger,
-    private val file: File
+    @Assisted private val file: File
 ) : HostsDataSource {
 
     /**
@@ -36,12 +39,23 @@ class FileHostsDataSource constructor(
 
         logger.log(TAG, "Loaded ${domains.size} domains")
         emitter.onSuccess(HostsResult.Success(domains))
-    }.onIOExceptionResumeNext { HostsResult.Failure(it) }
+    }.onIOExceptionResumeNext(HostsResult::Failure)
 
     override fun identifier(): String = file.inputStream().computeMD5()
 
     companion object {
         private const val TAG = "FileHostsDataSource"
+    }
+
+    /**
+     * The factory used to construct the data source.
+     */
+    @AssistedFactory
+    interface Factory {
+        /**
+         * Create the data source for the provided file.
+         */
+        fun create(file: File): FileHostsDataSource
     }
 
 }

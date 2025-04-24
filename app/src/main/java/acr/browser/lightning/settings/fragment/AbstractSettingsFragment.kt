@@ -1,16 +1,16 @@
 package acr.browser.lightning.settings.fragment
 
 import android.os.Bundle
-import android.preference.CheckBoxPreference
-import android.preference.Preference
-import android.preference.PreferenceFragment
-import android.preference.SwitchPreference
 import androidx.annotation.XmlRes
+import androidx.preference.CheckBoxPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 
 /**
- * An abstract settings fragment which performs wiring for an instance of [PreferenceFragment].
+ * An abstract settings fragment which performs wiring for an instance of [PreferenceFragmentCompat].
  */
-abstract class AbstractSettingsFragment : PreferenceFragment() {
+abstract class AbstractSettingsFragment : PreferenceFragmentCompat() {
 
     /**
      * Provide the XML resource which holds the preferences.
@@ -18,9 +18,7 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
     @XmlRes
     protected abstract fun providePreferencesXmlResource(): Int
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(providePreferencesXmlResource())
     }
 
@@ -39,7 +37,7 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
         isEnabled: Boolean = true,
         summary: String? = null,
         onCheckChange: (Boolean) -> Unit
-    ): CheckBoxPreference = (findPreference(preference) as CheckBoxPreference).apply {
+    ): CheckBoxPreference = findPreference<CheckBoxPreference>(preference)!!.apply {
         this.isChecked = isChecked
         this.isEnabled = isEnabled
         summary?.let {
@@ -87,7 +85,7 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
         isEnabled: Boolean = true,
         summary: String? = null,
         onClick: (SummaryUpdater) -> Unit
-    ): Preference = findPreference(preference).apply {
+    ): Preference = findPreference<Preference>(preference)!!.apply {
         this.isEnabled = isEnabled
         summary?.let {
             this.summary = summary
@@ -111,10 +109,14 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
         preference: String,
         isChecked: Boolean,
         isEnabled: Boolean = true,
+        summary: String? = null,
         onCheckChange: (Boolean) -> Unit
-    ): SwitchPreference = (findPreference(preference) as SwitchPreference).apply {
+    ): SwitchPreference = findPreference<SwitchPreference>(preference)!!.apply {
         this.isChecked = isChecked
         this.isEnabled = isEnabled
+        summary?.let {
+            this.summary = summary
+        }
         onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, any: Any ->
             onCheckChange(any as Boolean)
             true

@@ -29,7 +29,6 @@
     <string name="location">Posizione</string>
     <string name="password">Salva password</string>
     <string name="agent">User Agent</string>
-    <string name="flash">Abilita Adobe Flash</string>
     <string name="home">Pagina iniziale</string>
     <string name="fullscreen">Schermo intero</string>
     <string name="java">Abilita JavaScript</string>
@@ -110,7 +109,6 @@
     <string name="download_sdcard_busy_dlg_title">Nessuna unità USB disponibile</string>
     <string name="download_sdcard_busy_dlg_msg">Unità USB occupata. Per continuare il download, spegnere l\'unità USB dalla notifica.</string>
     <string name="incognito_cookies">Abilita i cookie nella modalità incognito</string>
-    <string name="title_flash">Adobe Flash Player</string>
     <string name="action_manual">Manuale</string>
     <string name="action_auto">Automatica</string>
     <string name="action_follow_me">Contattami</string>
@@ -151,17 +149,13 @@
     <string-array name="proxy_choices_array">
         <item>Nessuno</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>Manuale</item>
     </string-array>
     <string name="manual_proxy">Proxy manuale</string>
     <string name="host">Host:</string>
     <string name="port">Porta:</string>
     <string name="use_tor_prompt">Sembra che tu abbia Orbot installato. Vorresti usare Tor?</string>
-    <string name="use_i2p_prompt">Sembra che tu abbia I2P installato. Vorresti usare I2P?</string>
     <string name="install_orbot">È necessario installare Orbot per usare un proxy Tor.</string>
-    <string name="i2p_not_running">I2P non è in esecuzione.</string>
-    <string name="i2p_tunnels_not_ready">I tunnel I2P non sono attualmente pronti.</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="clear_cookies_exit">Cancella i cookie all\'uscita</string>
@@ -200,7 +194,6 @@
     <string name="close_other_tabs">Chiudi le altre schede</string>
     <string name="third_party">Blocca cookies di terze parti</string>
     <string name="color_mode">Attiva modalità colore</string>
-    <string name="reading_mode">Modalità lettura</string>
     <string name="loading">Caricamento&#8230;</string>
     <string name="loading_failed">Impossibile caricare la pagina web.</string>
     <string name="snacktory">Snacktory</string>
@@ -236,7 +229,6 @@
     <string name="message_added_to_homescreen">Scorciatoia aggiunta</string>
     <string name="action_delete_all_bookmarks">Cancella tutti i segnalibri</string>
     <string name="swap_bookmarks_and_tabs">Inverti pannello segnalibri con schede</string>
-    <string name="flash_not_supported">Flash Player non è supportato dal tuo sistema</string>
 
     <string name="faq">FAQ</string>
     <string name="faq_description">Domande più frequenti</string>

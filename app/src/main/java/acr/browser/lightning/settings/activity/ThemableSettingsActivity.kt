@@ -2,16 +2,16 @@ package acr.browser.lightning.settings.activity
 
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
-import acr.browser.lightning.di.injector
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import javax.inject.Inject
 
-abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
+abstract class ThemableSettingsActivity : AppCompatActivity() {
 
     private var themeId: AppTheme = AppTheme.LIGHT
 
@@ -27,10 +27,12 @@ abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
                 setTheme(R.style.Theme_SettingsTheme)
                 window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColor(this)))
             }
+
             AppTheme.DARK -> {
                 setTheme(R.style.Theme_SettingsTheme_Dark)
                 window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColorDark(this)))
             }
+
             AppTheme.BLACK -> {
                 setTheme(R.style.Theme_SettingsTheme_Black)
                 window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColorDark(this)))
@@ -42,12 +44,10 @@ abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
     }
 
     private fun resetPreferences() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (userPreferences.useBlackStatusBar) {
-                window.statusBarColor = Color.BLACK
-            } else {
-                window.statusBarColor = ThemeUtils.getStatusBarColor(this)
-            }
+        if (userPreferences.useBlackStatusBar) {
+            window.statusBarColor = Color.BLACK
+        } else {
+            window.statusBarColor = ThemeUtils.getStatusBarColor(this)
         }
     }
 

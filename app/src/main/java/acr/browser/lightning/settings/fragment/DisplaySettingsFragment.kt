@@ -5,7 +5,8 @@ package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
-import acr.browser.lightning.di.injector
+import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.preference.UserPreferences
@@ -21,15 +22,12 @@ import javax.inject.Inject
 
 class DisplaySettingsFragment : AbstractSettingsFragment() {
 
-    private lateinit var themeOptions: Array<String>
-
     @Inject internal lateinit var userPreferences: UserPreferences
 
     override fun providePreferencesXmlResource() = R.xml.preference_display
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        super.onCreatePreferences(savedInstanceState, rootKey)
         injector.inject(this)
 
         // preferences storage
@@ -39,54 +37,54 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
             onClick = ::showThemePicker
         )
 
+        clickableDynamicPreference(
+            preference = SETTINGS_TAB_STYLE,
+            summary = userPreferences.tabConfiguration.toDisplayString(),
+            onClick = ::showTabStylePicker
+        )
+
         clickablePreference(
             preference = SETTINGS_TEXTSIZE,
             onClick = ::showTextSizePicker
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_HIDESTATUSBAR,
             isChecked = userPreferences.hideStatusBarEnabled,
             onCheckChange = { userPreferences.hideStatusBarEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_FULLSCREEN,
             isChecked = userPreferences.fullScreenEnabled,
             onCheckChange = { userPreferences.fullScreenEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_VIEWPORT,
             isChecked = userPreferences.useWideViewPortEnabled,
             onCheckChange = { userPreferences.useWideViewPortEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_OVERVIEWMODE,
             isChecked = userPreferences.overviewModeEnabled,
             onCheckChange = { userPreferences.overviewModeEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_REFLOW,
             isChecked = userPreferences.textReflowEnabled,
             onCheckChange = { userPreferences.textReflowEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_BLACK_STATUS,
             isChecked = userPreferences.useBlackStatusBar,
             onCheckChange = { userPreferences.useBlackStatusBar = it }
         )
 
-        checkBoxPreference(
-            preference = SETTINGS_DRAWERTABS,
-            isChecked = userPreferences.showTabsInDrawer,
-            onCheckChange = { userPreferences.showTabsInDrawer = it }
-        )
-
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_SWAPTABS,
             isChecked = userPreferences.bookmarksAndTabsSwapped,
             onCheckChange = { userPreferences.bookmarksAndTabsSwapped = it }
@@ -95,21 +93,25 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
     private fun showTextSizePicker() {
         val maxValue = 5
-        AlertDialog.Builder(activity).apply {
-            val layoutInflater = activity.layoutInflater
-            val customView = (layoutInflater.inflate(R.layout.dialog_seek_bar, null) as LinearLayout).apply {
-                val text = TextView(activity).apply {
-                    setText(R.string.untitled)
-                    layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
-                    gravity = Gravity.CENTER_HORIZONTAL
+        AlertDialog.Builder(requireActivity()).apply {
+            val layoutInflater = requireActivity().layoutInflater
+            val customView =
+                (layoutInflater.inflate(R.layout.dialog_seek_bar, null) as LinearLayout).apply {
+                    val text = TextView(activity).apply {
+                        setText(R.string.untitled)
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            WindowManager.LayoutParams.WRAP_CONTENT
+                        )
+                        gravity = Gravity.CENTER_HORIZONTAL
+                    }
+                    addView(text)
+                    findViewById<SeekBar>(R.id.text_size_seekbar).apply {
+                        setOnSeekBarChangeListener(TextSeekBarListener(text))
+                        max = maxValue
+                        progress = maxValue - userPreferences.textSize
+                    }
                 }
-                addView(text)
-                findViewById<SeekBar>(R.id.text_size_seekbar).apply {
-                    setOnSeekBarChangeListener(TextSeekBarListener(text))
-                    max = maxValue
-                    progress = maxValue - userPreferences.textSize
-                }
-            }
             setView(customView)
             setTitle(R.string.title_text_size)
             setPositiveButton(android.R.string.ok) { _, _ ->
@@ -121,31 +123,63 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
     private fun showThemePicker(summaryUpdater: SummaryUpdater) {
         val currentTheme = userPreferences.useTheme
-        AlertDialog.Builder(activity).apply {
+        AlertDialog.Builder(requireActivity()).apply {
             setTitle(resources.getString(R.string.theme))
-            val values = AppTheme.values().map { Pair(it, it.toDisplayString()) }
+            val values = AppTheme.entries.map { Pair(it, it.toDisplayString()) }
             withSingleChoiceItems(values, userPreferences.useTheme) {
                 userPreferences.useTheme = it
                 summaryUpdater.updateSummary(it.toDisplayString())
             }
             setPositiveButton(resources.getString(R.string.action_ok)) { _, _ ->
                 if (currentTheme != userPreferences.useTheme) {
-                    activity.onBackPressed()
+                    requireActivity().onBackPressed()
                 }
             }
             setOnCancelListener {
                 if (currentTheme != userPreferences.useTheme) {
-                    activity.onBackPressed()
+                    requireActivity().onBackPressed()
                 }
             }
         }.resizeAndShow()
     }
 
-    private fun AppTheme.toDisplayString(): String = getString(when (this) {
-        AppTheme.LIGHT -> R.string.light_theme
-        AppTheme.DARK -> R.string.dark_theme
-        AppTheme.BLACK -> R.string.black_theme
-    })
+    private fun AppTheme.toDisplayString(): String = getString(
+        when (this) {
+            AppTheme.LIGHT -> R.string.light_theme
+            AppTheme.DARK -> R.string.dark_theme
+            AppTheme.BLACK -> R.string.black_theme
+        }
+    )
+
+    private fun showTabStylePicker(summaryUpdater: SummaryUpdater) {
+        val tabConfiguration = userPreferences.tabConfiguration
+        AlertDialog.Builder(requireActivity()).apply {
+            setTitle(resources.getString(R.string.tab_style_title))
+            val values = TabConfiguration.entries.map { Pair(it, it.toDisplayString()) }
+            withSingleChoiceItems(values, userPreferences.tabConfiguration) {
+                userPreferences.tabConfiguration = it
+                summaryUpdater.updateSummary(it.toDisplayString())
+            }
+            setPositiveButton(resources.getString(R.string.action_ok)) { _, _ ->
+                if (tabConfiguration != userPreferences.tabConfiguration) {
+                    requireActivity().onBackPressed()
+                }
+            }
+            setOnCancelListener {
+                if (tabConfiguration != userPreferences.tabConfiguration) {
+                    requireActivity().onBackPressed()
+                }
+            }
+        }.resizeAndShow()
+    }
+
+    private fun TabConfiguration.toDisplayString(): String = getString(
+        when (this) {
+            TabConfiguration.DESKTOP -> R.string.tab_style_desktop
+            TabConfiguration.DRAWER_SIDE -> R.string.tab_style_side_drawer
+            TabConfiguration.DRAWER_BOTTOM -> R.string.tab_style_bottom_drawer
+        }
+    )
 
     private class TextSeekBarListener(
         private val sampleText: TextView
@@ -170,7 +204,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
         private const val SETTINGS_REFLOW = "text_reflow"
         private const val SETTINGS_THEME = "app_theme"
         private const val SETTINGS_TEXTSIZE = "text_size"
-        private const val SETTINGS_DRAWERTABS = "cb_drawertabs"
+        private const val SETTINGS_TAB_STYLE = "tab_style"
         private const val SETTINGS_SWAPTABS = "cb_swapdrawers"
         private const val SETTINGS_BLACK_STATUS = "black_status_bar"
 

@@ -1,8 +1,7 @@
 package acr.browser.lightning.rx
 
-import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.functions.BiFunction
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Observable
 import org.reactivestreams.Publisher
 
 /**
@@ -16,14 +15,14 @@ import org.reactivestreams.Publisher
  * type.
  * @see Observable.join
  */
-inline fun <T, R, Selector_T, Selector_R, S> Flowable<T>.join(
+inline fun <T : Any, R : Any, Selector_T : Any, Selector_R : Any, S : Any> Flowable<T>.join(
     other: Flowable<R>,
     crossinline selectorLeft: (T) -> Publisher<Selector_T>,
     crossinline selectorRight: (R) -> Publisher<Selector_R>,
     crossinline join: (T, R) -> S
-): Flowable<S> = join<R, Selector_T, Selector_R, S>(
+): Flowable<S> = join(
     other,
-    io.reactivex.functions.Function { selectorLeft(it) },
-    io.reactivex.functions.Function { selectorRight(it) },
-    BiFunction { t1, t2 -> join(t1, t2) }
+    { selectorLeft(it) },
+    { selectorRight(it) },
+    { t1, t2 -> join(t1, t2) }
 )

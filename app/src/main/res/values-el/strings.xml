@@ -13,7 +13,6 @@
     <string name="location">Πρόσβαση σε τοποθεσία</string>
     <string name="password">Αποθήκευση κωδικών</string>
     <string name="agent">User Agent</string>
-    <string name="flash">Ενεργοποίηση Adobe Flash</string>
     <string name="home">Αρχική σελίδα</string>
     <string name="fullscreen">Λειτουργία πλήρης οθόνης</string>
     <string name="java">Ενεργοποίηση JavaScript</string>
@@ -89,7 +88,6 @@
     <string name="download_sdcard_busy_dlg_title">USB storage μη διαθέσιμο</string>
     <string name="download_sdcard_busy_dlg_msg" >Η συσκευή αποθήκευσης είναι απασχολημένη. Για να επιτρέψετε λήψεις πατήστε το Κλείσιμο USB Storage στις ειδοποιήσεις.</string>
     <string name="incognito_cookies">Ενεργοποίηση Cookies στην Ανώνυμη περιήγηση</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Χειροκίνητα</string>
     <string name="action_auto">Αυτόματα</string>
     <string name="action_follow_me">Επικοινωνήστε μαζί μου</string>

@@ -29,7 +29,6 @@
     <string name="location">Приступ локацији</string>
     <string name="password">Сачувај лозинке</string>
     <string name="agent">Идентификација</string>
-    <string name="flash">Адобов Флеш</string>
     <string name="home">Почетна страница</string>
     <string name="fullscreen">Цео екран</string>
     <string name="java">Омогући јаваскрипте</string>
@@ -110,7 +109,6 @@
     <string name="download_sdcard_busy_dlg_title">УСБ складиште није доступно</string>
     <string name="download_sdcard_busy_dlg_msg">Складиште је заузето. Да дозволите преузимања, додирните „Искључи УСБ складиште“ у обавештењу.</string>
     <string name="incognito_cookies">Омогући колачиће у приватном режиму</string>
-    <string name="title_flash">Адобов Флеш</string>
     <string name="action_manual">Ручно</string>
     <string name="action_auto">Аутоматски</string>
     <string name="action_follow_me">Контактирајте ме</string>
@@ -149,17 +147,13 @@
     <string-array name="proxy_choices_array">
         <item>Ништа</item>
         <item>Орбот</item>
-        <item>I2P</item>
         <item>Ручно</item>
     </string-array>
     <string name="manual_proxy">Ручне поставке проксија</string>
     <string name="host">Домаћин:</string>
     <string name="port">Порт:</string>
     <string name="use_tor_prompt">Изгледа да имате Орбот инсталиран. Желите ли да користите Тор?</string>
-    <string name="use_i2p_prompt">Изгледа да имате I2P инсталиран. Желите ли да користите I2P?</string>
     <string name="install_orbot">Инсталирајте Орбот да бисте користили Тор.</string>
-    <string name="i2p_not_running">I2P није покренут.</string>
-    <string name="i2p_tunnels_not_ready">I2P тунели још нису спремни.</string>
     <string name="yes">Да</string>
     <string name="no">Не</string>
     <string name="clear_cookies_exit">Очисти колачиће по затварању</string>
@@ -198,7 +192,6 @@
     <string name="close_other_tabs">Затвори друге језичке</string>
     <string name="third_party">Блокирај колачиће треће стране</string>
     <string name="color_mode">Режим боје</string>
-    <string name="reading_mode">Режим за читање</string>
     <string name="loading">Учитавам&#8230;</string>
     <string name="loading_failed">Нисам могао ништа да учитам са странице.</string>
     <string name="snacktory">Snacktory</string>

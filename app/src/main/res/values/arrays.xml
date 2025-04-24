@@ -27,9 +27,4 @@
         <item>@string/search_suggestions_off</item>
     </string-array>
 
-    <string-array name="themes">
-        <item>@string/light_theme</item>
-        <item>@string/dark_theme</item>
-        <item>@string/black_theme</item>
-    </string-array>
 </resources>

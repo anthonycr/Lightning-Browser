@@ -1,16 +1,25 @@
 package acr.browser.lightning.html.download
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.ListPageReader
-import acr.browser.lightning.html.jsoup.*
+import acr.browser.lightning.html.jsoup.andBuild
+import acr.browser.lightning.html.jsoup.body
+import acr.browser.lightning.html.jsoup.clone
+import acr.browser.lightning.html.jsoup.findId
+import acr.browser.lightning.html.jsoup.id
+import acr.browser.lightning.html.jsoup.parse
+import acr.browser.lightning.html.jsoup.removeElement
+import acr.browser.lightning.html.jsoup.style
+import acr.browser.lightning.html.jsoup.tag
+import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Application
-import dagger.Reusable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import java.io.File
 import java.io.FileWriter
 import javax.inject.Inject
@@ -18,21 +27,42 @@ import javax.inject.Inject
 /**
  * The factory for the downloads page.
  */
-@Reusable
 class DownloadPageFactory @Inject constructor(
     private val application: Application,
     private val userPreferences: UserPreferences,
     private val manager: DownloadsRepository,
-    private val listPageReader: ListPageReader
+    private val listPageReader: ListPageReader,
+    private val themeProvider: ThemeProvider
 ) : HtmlPageFactory {
+
+    private fun Int.toColor(): String {
+        val string = Integer.toHexString(this)
+
+        return string.substring(2) + string.substring(0, 2)
+    }
+
+    private val backgroundColor: String
+        get() = themeProvider.color(R.attr.colorPrimary).toColor()
+    private val dividerColor: String
+        get() = themeProvider.color(R.attr.autoCompleteBackgroundColor).toColor()
+    private val textColor: String
+        get() = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
+    private val subtitleColor: String
+        get() = themeProvider.color(R.attr.autoCompleteUrlColor).toColor()
 
     override fun buildPage(): Single<String> = manager
         .getAllDownloads()
         .map { list ->
             parse(listPageReader.provideHtml()) andBuild {
                 title { application.getString(R.string.action_downloads) }
+                style { content ->
+                    content.replace("--body-bg: {COLOR}", "--body-bg: #$backgroundColor;")
+                        .replace("--divider-color: {COLOR}", "--divider-color: #$dividerColor;")
+                        .replace("--title-color: {COLOR}", "--title-color: #$textColor;")
+                        .replace("--subtitle-color: {COLOR}", "--subtitle-color: #$subtitleColor;")
+                }
                 body {
-                    val repeatableElement = id("repeated").removeElement()
+                    val repeatableElement = findId("repeated").removeElement()
                     id("content") {
                         list.forEach {
                             appendChild(repeatableElement.clone {
@@ -52,9 +82,14 @@ class DownloadPageFactory @Inject constructor(
         .map { (page, _) -> "$FILE$page" }
 
 
-    private fun createDownloadsPageFile(): File = File(application.filesDir, FILENAME)
+    private fun createDownloadsPageFile(): File {
+        val generatedHtml = File(application.filesDir, "generated-html")
+        generatedHtml.mkdirs()
+        return File(generatedHtml, FILENAME)
+    }
 
-    private fun createFileUrl(fileName: String): String = "$FILE${userPreferences.downloadDirectory}/$fileName"
+    private fun createFileUrl(fileName: String): String =
+        "$FILE${userPreferences.downloadDirectory}/$fileName"
 
     private fun createFileTitle(downloadItem: DownloadEntry): String {
         val contentSize = if (downloadItem.contentSize.isNotBlank()) {

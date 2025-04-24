@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/material_grid_touch_large"
     android:clickable="true"
+    android:focusable="true"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:weightSum="1">

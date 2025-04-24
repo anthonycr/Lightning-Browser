@@ -14,7 +14,6 @@
     <string name="location">Konum erişimi</string>
     <string name="password">Şifrelerinizi kaydedin</string>
     <string name="agent">Tarayıcı kimliği</string>
-    <string name="flash">Adobe Flash\'ı etkinleştir</string>
     <string name="home">Ana sayfa</string>
     <string name="fullscreen">Tam ekran modu</string>
     <string name="java">Javascript\'i etkinleştir</string>
@@ -96,7 +95,6 @@
     <string name="download_sdcard_busy_dlg_title">USB depolamasına erişilemez</string>
     <string name="download_sdcard_busy_dlg_msg">Depolama meşgul. İndirmeleri aktif etmek için bildirimler ekranından USB depolamasını kapatın.</string>
     <string name="incognito_cookies">Gizli modda çerezleri etkinleştir</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">El ile</string>
     <string name="action_auto">Otomatik</string>
     <string name="action_follow_me">Benimle iletişim kurun</string>
@@ -179,17 +177,13 @@
     <string-array name="proxy_choices_array">
         <item>Yok</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>El ile</item>
     </string-array>
     <string name="manual_proxy">Elle vekil sunucu</string>
     <string name="host">Host:</string>
     <string name="port">Port:</string>
     <string name="use_tor_prompt">Cihazında Orbot yüklü görünüyor. Tor kullanmak ister misiniz?</string>
-    <string name="use_i2p_prompt">Cihazında I2P yüklü görünüyor. I2P kullanmak ister misiniz?</string>
     <string name="install_orbot">Tor proxy ağı ile gezinmek için Orbot yüklemelisiniz.</string>
-    <string name="i2p_not_running">I2P çalışmıyor.</string>
-    <string name="i2p_tunnels_not_ready">I2P tünelleri henüz hazır değil.</string>
     <string name="yes">Evet</string>
     <string name="no">Hayır</string>
     <string name="clear_cookies_exit">Çıkarken çerezleri temizle</string>
@@ -230,7 +224,6 @@
     <string name="close_other_tabs">Diğer sekmeleri kapat</string>
     <string name="third_party">Üçüncü taraf çerezleri engelle</string>
     <string name="color_mode">Renk modunu etkinleştir</string>
-    <string name="reading_mode">Okuyucu modu</string>
     <string name="loading">Yükleniyor&#8230;</string>
     <string name="loading_failed">Sayfadan bir şey yüklenemedi.</string>
     <string name="snacktory">Snacktory</string>
@@ -270,7 +263,6 @@
     <string name="message_added_to_homescreen">Ana ekrana kısayol eklendi</string>
     <string name="shortcut_message_failed_to_add">Üzgünüz, başlatıcınız kısayolları desteklemiyor.</string>
     <string name="action_delete_all_bookmarks">Tüm yer işaretlerini sil</string>
-    <string name="flash_not_supported">Flash Player, sisteminiz tarafından desteklenmiyor</string>
     <string name="upsell_plus_version">Reklamları engellemek için Lightning Plus\'a geçin</string>
     <string name="message_open_download_fail">Bu dosya artık mevcut değil</string>
 

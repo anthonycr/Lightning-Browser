@@ -16,6 +16,7 @@ fun Context.createSslDrawableForState(sslState: SslState): Drawable? = when (ssl
         val securedDrawable = BitmapDrawable(resources, bitmap)
         securedDrawable
     }
+
     is SslState.Invalid -> {
         val bitmap = DrawableUtils.createImageInsetInRoundedSquare(this, R.drawable.ic_unsecured)
         val unsecuredDrawable = BitmapDrawable(resources, bitmap)

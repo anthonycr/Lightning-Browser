@@ -2,14 +2,14 @@ package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.Capabilities
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.SearchBoxDisplayChoice
+import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
+import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.constant.TEXT_ENCODINGS
-import acr.browser.lightning.di.injector
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.isSupported
 import acr.browser.lightning.preference.UserPreferences
-import acr.browser.lightning.view.RenderingMode
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import javax.inject.Inject
@@ -23,9 +23,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
     override fun providePreferencesXmlResource() = R.xml.preference_advanced
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        super.onCreatePreferences(savedInstanceState, rootKey)
         injector.inject(this)
 
         clickableDynamicPreference(
@@ -46,13 +45,13 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             onClick = this::showUrlBoxDialogPicker
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_NEW_WINDOW,
             isChecked = userPreferences.popupsEnabled,
             onCheckChange = { userPreferences.popupsEnabled = it }
         )
 
-        val incognitoCheckboxPreference = checkBoxPreference(
+        val incognitoCheckboxPreference = togglePreference(
             preference = SETTINGS_COOKIES_INCOGNITO,
             isEnabled = !Capabilities.FULL_INCOGNITO.isSupported,
             isChecked = if (Capabilities.FULL_INCOGNITO.isSupported) {
@@ -68,7 +67,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             onCheckChange = { userPreferences.incognitoCookiesEnabled = it }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_ENABLE_COOKIES,
             isChecked = userPreferences.cookiesEnabled,
             onCheckChange = {
@@ -79,7 +78,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             }
         )
 
-        checkBoxPreference(
+        togglePreference(
             preference = SETTINGS_RESTORE_TABS,
             isChecked = userPreferences.restoreLostTabsEnabled,
             onCheckChange = { userPreferences.restoreLostTabsEnabled = it }
@@ -92,10 +91,10 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
      * @param summaryUpdater the command which allows the summary to be updated.
      */
     private fun showRenderingDialogPicker(summaryUpdater: SummaryUpdater) {
-        activity?.let { AlertDialog.Builder(it) }?.apply {
+        activity?.let(AlertDialog::Builder)?.apply {
             setTitle(resources.getString(R.string.rendering_mode))
 
-            val values = RenderingMode.values().map { Pair(it, it.toDisplayString()) }
+            val values = RenderingMode.entries.map { Pair(it, it.toDisplayString()) }
             withSingleChoiceItems(values, userPreferences.renderingMode) {
                 userPreferences.renderingMode = it
                 summaryUpdater.updateSummary(it.toDisplayString())
@@ -133,10 +132,10 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
      * @param summaryUpdater the command which allows the summary to be updated.
      */
     private fun showUrlBoxDialogPicker(summaryUpdater: SummaryUpdater) {
-        activity?.let { AlertDialog.Builder(it) }?.apply {
+        activity?.let(AlertDialog::Builder)?.apply {
             setTitle(resources.getString(R.string.url_contents))
 
-            val items = SearchBoxDisplayChoice.values().map { Pair(it, it.toDisplayString()) }
+            val items = SearchBoxDisplayChoice.entries.map { Pair(it, it.toDisplayString()) }
 
             withSingleChoiceItems(items, userPreferences.urlBoxContentChoice) {
                 userPreferences.urlBoxContentChoice = it
@@ -155,13 +154,15 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
         }
     }
 
-    private fun RenderingMode.toDisplayString(): String = getString(when (this) {
-        RenderingMode.NORMAL -> R.string.name_normal
-        RenderingMode.INVERTED -> R.string.name_inverted
-        RenderingMode.GRAYSCALE -> R.string.name_grayscale
-        RenderingMode.INVERTED_GRAYSCALE -> R.string.name_inverted_grayscale
-        RenderingMode.INCREASE_CONTRAST -> R.string.name_increase_contrast
-    })
+    private fun RenderingMode.toDisplayString(): String = getString(
+        when (this) {
+            RenderingMode.NORMAL -> R.string.name_normal
+            RenderingMode.INVERTED -> R.string.name_inverted
+            RenderingMode.GRAYSCALE -> R.string.name_grayscale
+            RenderingMode.INVERTED_GRAYSCALE -> R.string.name_inverted_grayscale
+            RenderingMode.INCREASE_CONTRAST -> R.string.name_increase_contrast
+        }
+    )
 
     companion object {
         private const val SETTINGS_NEW_WINDOW = "allow_new_window"

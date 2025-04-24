@@ -12,7 +12,6 @@
     <string name="location">위치 접근</string>
     <string name="password">암호 저장</string>
     <string name="agent">사용자 에이전트</string>
-    <string name="flash">Adobe Flash 사용</string>
     <string name="home">홈페이지</string>
     <string name="fullscreen">전체 화면 모드</string>
     <string name="java">JavaScript 사용</string>
@@ -88,7 +87,6 @@
     <string name="download_sdcard_busy_dlg_title">USB 저장소 사용할 수 없음</string>
     <string name="download_sdcard_busy_dlg_msg" >저장소가 사용중입니다. 다운로드를 하려면 USB 저장소를 끄세요.</string>
     <string name="incognito_cookies">사생활 보호 모드에서 쿠키 사용</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">수동</string>
     <string name="action_auto">자동</string>
     <string name="action_follow_me">개발자에게 연락하기</string>
@@ -155,7 +153,6 @@
     <string name="close_all_tabs">모든 탭 닫기</string>
     <string name="third_party">제3자 쿠키 차단</string>
     <string name="color_mode">색상 모드 사용</string>
-    <string name="reading_mode">읽기 모드</string>
     <string name="loading">불러오는 중&#8230;</string>
     <string name="loading_failed">페이지로부터 아무것도 불러올 수 없습니다.</string>
     <string name="snacktory">Snacktory</string>
@@ -187,9 +184,6 @@
     <string name="manual_proxy">수동 프록시</string>
     <string name="host">호스트:</string>
     <string name="port">포트:</string>
-    <string name="use_i2p_prompt">I2P가 설치되어 있습니다. I2P를 사용할까요?</string>
-    <string name="i2p_not_running">I2P가 실행 중이지 않습니다.</string>
-    <string name="i2p_tunnels_not_ready">I2P 터널이 준비되지 않았습니다.</string>
     <string name="bookmark_export_failure">죄송합니다, 즐겨찾기를 내보내지 못했습니다!</string>
     <string name="message_bookmark_added">즐겨찾기를 추가했습니다.</string>
     <string name="close_other_tabs">다른 탭 닫기</string>
@@ -222,7 +216,6 @@
     <string name="notification_incognito_running_description">사생활 보호 탭 알림</string>
     <string name="message_open_download_fail">파일이 더 이상 존재하지 않습니다</string>
     <string name="action_delete_all_bookmarks">모든 즐겨찾기 삭제</string>
-    <string name="flash_not_supported">기기에서 Flash Player가 지원되지 않습니다</string>
     <string name="upsell_plus_version">광고 차단을 위해 라이트닝 플러스로 업그레이드하세요</string>
     <string name="shortcut_message_failed_to_add">죄송합니다, 홈 화면이 바로가기를 지원하지 않습니다.</string>
     <string name="message_added_to_homescreen">홈 화면에 바로가기를 추가했습니다</string>

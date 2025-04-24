@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_marginVertical="6dp"
+    android:layout_marginHorizontal="@dimen/material_grid_unit"
+    android:background="@drawable/tab_background">
+
+    <LinearLayout
+        android:id="@+id/tab_item_background"
+        android:layout_width="150dp"
+        android:layout_height="@dimen/material_grid_touch_small"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="0"
+        app:layout_constraintBottom_toTopOf="@+id/preview_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/faviconTab"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:contentDescription="@null"
+            android:gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/textTab"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center_vertical|start"
+            android:maxLines="1"
+            android:minHeight="?android:attr/listPreferredItemHeightSmall"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+
+        <ImageView
+            android:id="@+id/deleteAction"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/close_tab"
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_action_delete" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/preview_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/tab_item_background"
+        app:layout_constraintStart_toStartOf="@id/tab_item_background"
+        app:layout_constraintTop_toBottomOf="@+id/tab_item_background"
+        android:layout_marginBottom="8dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

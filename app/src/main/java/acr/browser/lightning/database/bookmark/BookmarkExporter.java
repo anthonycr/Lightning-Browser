@@ -10,11 +10,12 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +26,7 @@ import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
-import io.reactivex.Completable;
-import io.reactivex.Single;
+import io.reactivex.rxjava3.core.Completable;
 
 /**
  * The class responsible for importing and exporting
@@ -59,7 +59,6 @@ public final class BookmarkExporter {
         InputStream inputStream = null;
         try {
             inputStream = context.getResources().openRawResource(R.raw.default_bookmarks);
-            //noinspection IOResourceOpenedButNotSafelyClosed
             bookmarksReader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             while ((line = bookmarksReader.readLine()) != null) {
@@ -104,8 +103,40 @@ public final class BookmarkExporter {
             Preconditions.checkNonNull(bookmarkList);
             BufferedWriter bookmarkWriter = null;
             try {
-                //noinspection IOResourceOpenedButNotSafelyClosed
                 bookmarkWriter = new BufferedWriter(new FileWriter(file, false));
+
+                JSONObject object = new JSONObject();
+                for (Bookmark.Entry item : bookmarkList) {
+                    object.put(KEY_TITLE, item.getTitle());
+                    object.put(KEY_URL, item.getUrl());
+                    object.put(KEY_FOLDER, item.getFolder().getTitle());
+                    object.put(KEY_ORDER, item.getPosition());
+                    bookmarkWriter.write(object.toString());
+                    bookmarkWriter.newLine();
+                }
+            } finally {
+                Utils.close(bookmarkWriter);
+            }
+        });
+    }
+
+    /**
+     * Exports the list of bookmarks to an output stream.
+     *
+     * @param bookmarkList the bookmarks to export.
+     * @param outputStream the output stream to output to.
+     * @return an observable that emits a completion
+     * event when the export is complete, or an error
+     * event if there is a problem.
+     */
+    @NonNull
+    public static Completable exportBookmarksToOutputStream(@NonNull final List<Bookmark.Entry> bookmarkList,
+                                                            @NonNull final OutputStream outputStream) {
+        return Completable.fromAction(() -> {
+            Preconditions.checkNonNull(bookmarkList);
+            BufferedWriter bookmarkWriter = null;
+            try {
+                bookmarkWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
 
                 JSONObject object = new JSONObject();
                 for (Bookmark.Entry item : bookmarkList) {
@@ -127,38 +158,33 @@ public final class BookmarkExporter {
      * given file. If the file is not in a
      * supported format, it will fail.
      *
-     * @param file the file to import from.
-     * @return an observable that emits the
-     * imported bookmarks, or an error if the
-     * file cannot be imported.
+     * @param inputStream The stream to import from.
+     * @return A list of bookmarks, or throws an exception if the bookmarks cannot be imported.
      */
     @NonNull
-    public static Single<List<Bookmark.Entry>> importBookmarksFromFile(@NonNull final File file) {
-        return Single.fromCallable(() -> {
-            BufferedReader bookmarksReader = null;
-            try {
-                //noinspection IOResourceOpenedButNotSafelyClosed
-                bookmarksReader = new BufferedReader(new FileReader(file));
-                String line;
+    public static List<Bookmark.Entry> importBookmarksFromFileStream(@NonNull InputStream inputStream) throws Exception {
+        BufferedReader bookmarksReader = null;
+        try {
+            bookmarksReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
 
-                List<Bookmark.Entry> bookmarks = new ArrayList<>();
-                while ((line = bookmarksReader.readLine()) != null) {
-                    JSONObject object = new JSONObject(line);
-                    final String folderName = object.getString(KEY_FOLDER);
-                    final Bookmark.Entry entry = new Bookmark.Entry(
-                        object.getString(KEY_TITLE),
-                        object.getString(KEY_URL),
-                        object.getInt(KEY_ORDER),
-                        WebPageKt.asFolder(folderName)
-                    );
-                    bookmarks.add(entry);
-                }
-
-                return bookmarks;
-            } finally {
-                Utils.close(bookmarksReader);
+            List<Bookmark.Entry> bookmarks = new ArrayList<>();
+            while ((line = bookmarksReader.readLine()) != null) {
+                JSONObject object = new JSONObject(line);
+                final String folderName = object.getString(KEY_FOLDER);
+                final Bookmark.Entry entry = new Bookmark.Entry(
+                    object.getString(KEY_URL),
+                    object.getString(KEY_TITLE),
+                    object.getInt(KEY_ORDER),
+                    WebPageKt.asFolder(folderName)
+                );
+                bookmarks.add(entry);
             }
-        });
+
+            return bookmarks;
+        } finally {
+            Utils.close(bookmarksReader);
+        }
     }
 
     /**

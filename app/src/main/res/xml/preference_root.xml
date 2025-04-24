@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:fragment="acr.browser.lightning.settings.fragment.AdBlockSettingsFragment"
+        app:title="@string/settings_adblock" />
+    <Preference
+        app:fragment="acr.browser.lightning.settings.fragment.GeneralSettingsFragment"
+        app:title="@string/settings_general" />
+    <Preference
+        app:fragment="acr.browser.lightning.settings.fragment.BookmarkSettingsFragment"
+        app:title="@string/bookmark_settings" />
+    <Preference
+        app:fragment="acr.browser.lightning.settings.fragment.DisplaySettingsFragment"
+        app:title="@string/settings_display" />
+    <Preference
+        app:fragment="acr.browser.lightning.settings.fragment.PrivacySettingsFragment"
+        app:title="@string/settings_privacy" />
+    <Preference
+        app:fragment="acr.browser.lightning.settings.fragment.AdvancedSettingsFragment"
+        app:title="@string/settings_advanced" />
+    <Preference
+        app:fragment="acr.browser.lightning.settings.fragment.AboutSettingsFragment"
+        app:summary="@string/settings_about_explain"
+        app:title="@string/settings_about" />
+    <Preference
+        app:summary="@string/faq_description"
+        app:title="@string/faq">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="http://acrdevelopment.org/lightning/faq">
+            <extra
+                android:name="SOURCE"
+                android:value="SELF" />
+        </intent>
+    </Preference>
+    <Preference
+        app:fragment="acr.browser.lightning.settings.fragment.DebugSettingsFragment"
+        app:key="DEBUG"
+        app:title="@string/debug_title" />
+</PreferenceScreen>

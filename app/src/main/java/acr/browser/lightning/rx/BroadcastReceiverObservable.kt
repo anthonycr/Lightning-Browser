@@ -5,8 +5,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import io.reactivex.Observable
-import io.reactivex.Observer
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Observer
 
 /**
  * An [Observable] of [Intent] emitted from a [BroadcastReceiver] registered with the [Application].

@@ -24,6 +24,7 @@ import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import android.util.Patterns
 import android.webkit.URLUtil
+import java.util.Locale
 import java.util.regex.Pattern
 
 /**
@@ -43,8 +44,8 @@ fun smartUrlFilter(url: String, canBeSearch: Boolean, searchUrl: String): String
     val matcher = ACCEPTED_URI_SCHEMA.matcher(inUrl)
     if (matcher.matches()) {
         // force scheme to lowercase
-        val scheme = matcher.group(1)
-        val lcScheme = scheme.toLowerCase()
+        val scheme = requireNotNull(matcher.group(1)) { "matches() implies this is non null" }
+        val lcScheme = scheme.lowercase(Locale.getDefault())
         if (lcScheme != scheme) {
             inUrl = lcScheme + matcher.group(2)
         }
@@ -66,6 +67,10 @@ fun smartUrlFilter(url: String, canBeSearch: Boolean, searchUrl: String): String
     }
 }
 
+/**
+ * True if the URL is a file URL, false otherwise.
+ */
+fun String?.isFileUrl(): Boolean = this != null && this.startsWith(FILE)
 
 /**
  * Returns whether the given url is the bookmarks/history page or a normal website
@@ -110,6 +115,7 @@ fun String?.isHistoryUrl(): Boolean =
 fun String?.isStartPageUrl(): Boolean =
     this != null && this.startsWith(FILE) && this.endsWith(HomePageFactory.FILENAME)
 
-private val ACCEPTED_URI_SCHEMA = Pattern.compile("(?i)((?:http|https|file)://|(?:inline|data|about|javascript):|(?:.*:.*@))(.*)")
+private val ACCEPTED_URI_SCHEMA =
+    Pattern.compile("(?i)((?:http|https|file)://|(?:inline|data|about|javascript):|(?:.*:.*@))(.*)")
 const val QUERY_PLACE_HOLDER = "%s"
 private const val URL_ENCODED_SPACE = "%20"

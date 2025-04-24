@@ -9,9 +9,9 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.WorkerThread
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,7 +23,8 @@ import javax.inject.Singleton
 @WorkerThread
 class AdBlockAllowListDatabase @Inject constructor(
     application: Application
-) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), AdBlockAllowListRepository {
+) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION),
+    AdBlockAllowListRepository {
 
     private val database: SQLiteDatabase by databaseDelegate()
 
@@ -74,17 +75,19 @@ class AdBlockAllowListDatabase @Inject constructor(
         ).firstOrNullMap { it.bindToAllowListItem() }
     }
 
-    override fun addAllowListItem(whitelistItem: AllowListEntry): Completable = Completable.fromAction {
-        val values = ContentValues().apply {
-            put(KEY_URL, whitelistItem.domain)
-            put(KEY_CREATED, whitelistItem.timeCreated)
+    override fun addAllowListItem(whitelistItem: AllowListEntry): Completable =
+        Completable.fromAction {
+            val values = ContentValues().apply {
+                put(KEY_URL, whitelistItem.domain)
+                put(KEY_CREATED, whitelistItem.timeCreated)
+            }
+            database.insert(TABLE_WHITELIST, null, values)
         }
-        database.insert(TABLE_WHITELIST, null, values)
-    }
 
-    override fun removeAllowListItem(whitelistItem: AllowListEntry): Completable = Completable.fromAction {
-        database.delete(TABLE_WHITELIST, "$KEY_URL = ?", arrayOf(whitelistItem.domain))
-    }
+    override fun removeAllowListItem(whitelistItem: AllowListEntry): Completable =
+        Completable.fromAction {
+            database.delete(TABLE_WHITELIST, "$KEY_URL = ?", arrayOf(whitelistItem.domain))
+        }
 
     override fun clearAllowList(): Completable = Completable.fromAction {
         database.run {

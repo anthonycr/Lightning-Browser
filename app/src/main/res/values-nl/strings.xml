@@ -29,7 +29,6 @@
     <string name="location">Locatie toegang</string>
     <string name="password">Bewaar jouw paswoord</string>
     <string name="agent">Gebruikersagent</string>
-    <string name="flash">Adobe Flash activeren</string>
     <string name="home">Startpagina</string>
     <string name="fullscreen">Volledig scherm modus</string>
     <string name="java">JavaScript activeren</string>
@@ -110,7 +109,6 @@
     <string name="download_sdcard_busy_dlg_title">USB opslag niet beschikbaar</string>
     <string name="download_sdcard_busy_dlg_msg">Opslag is bezet. Om downloads toe te laten, gelieve USB opslag uit te zetten in het notificatiecentrum.</string>
     <string name="incognito_cookies">Cookies activeren in incognito modus</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manueel</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contacteer Mij</string>
@@ -148,17 +146,13 @@
     <string-array name="proxy_choices_array">
         <item>None</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>Manual</item>
     </string-array>
     <string name="manual_proxy">Manuele proxy</string>
     <string name="host">Host:</string>
     <string name="port">Poort:</string>
     <string name="use_tor_prompt">Je lijkt Orbit te hebben geïnstalleerd. Wil je Tor gebruiken?</string>
-    <string name="use_i2p_prompt">Je lijkt I2P te hebben geïnstalleerd. Wil je I2P gebruiken?</string>
     <string name="install_orbot">Gelieve Orbot te installeren om proxies te doen met Tor.</string>
-    <string name="i2p_not_running">I2P draait niet.</string>
-    <string name="i2p_tunnels_not_ready">I2P tunnels zijn niet klaar.</string>
     <string name="yes">Ja</string>
     <string name="no">Nee</string>
     <string name="clear_cookies_exit">Wis cookies bij beëindigen</string>
@@ -197,7 +191,6 @@
     <string name="close_other_tabs">Alle andere tabbladen sluiten</string>
     <string name="third_party">Blokkeer derde partij cookies</string>
     <string name="color_mode">Activeer kleurmodus</string>
-    <string name="reading_mode">Leesmodus</string>
     <string name="loading">Laden&#8230;</string>
     <string name="loading_failed">Kon niets van deze pagina laden.</string>
     <string name="snacktory">Snacktory</string>

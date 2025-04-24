@@ -4,8 +4,6 @@ import android.app.Application;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcel;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.Log;
 
 import java.io.File;
@@ -15,7 +13,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import io.reactivex.Completable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import io.reactivex.rxjava3.core.Completable;
 
 /**
  * A utility class containing helpful methods
@@ -44,7 +44,6 @@ public final class FileUtils {
             File outputFile = new File(app.getFilesDir(), name);
             FileOutputStream outputStream = null;
             try {
-                //noinspection IOResourceOpenedButNotSafelyClosed
                 outputStream = new FileOutputStream(outputFile);
                 Parcel parcel = Parcel.obtain();
                 parcel.writeBundle(bundle);
@@ -89,7 +88,6 @@ public final class FileUtils {
         File inputFile = new File(app.getFilesDir(), name);
         FileInputStream inputStream = null;
         try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
             inputStream = new FileInputStream(inputFile);
             Parcel parcel = Parcel.obtain();
             byte[] data = new byte[(int) inputStream.getChannel().size()];
@@ -126,7 +124,6 @@ public final class FileUtils {
 
         FileOutputStream outputStream = null;
         try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
             outputStream = new FileOutputStream(outputFile);
             throwable.printStackTrace(new PrintStream(outputStream));
             outputStream.flush();

@@ -30,7 +30,7 @@ alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/det
 
 * Google search suggestions
 
-* Orbot Proxy support and I2P support
+* Orbot Proxy support
 
 #### Permissions
 

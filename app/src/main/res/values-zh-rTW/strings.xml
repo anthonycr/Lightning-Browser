@@ -14,7 +14,6 @@
     <string name="location">允許網站存取地理位置</string>
     <string name="password">儲存密碼</string>
     <string name="agent">使用者代理</string>
-    <string name="flash">啟用 Adobe Flash</string>
     <string name="home">首頁</string>
     <string name="fullscreen">全螢幕模式</string>
     <string name="java">啟用 JavaScript</string>
@@ -96,7 +95,6 @@
     <string name="download_sdcard_busy_dlg_title">USB 儲存裝置無法使用</string>
     <string name="download_sdcard_busy_dlg_msg">此儲存裝置處於忙碌中，若要下載請點觸通知中的「關閉 USB 儲存裝置」。</string>
     <string name="incognito_cookies">在無痕模式中啟用 Cookies</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">手動</string>
     <string name="action_auto">自動</string>
     <string name="action_follow_me">聯絡作者</string>
@@ -148,17 +146,13 @@
     <string-array name="proxy_choices_array">
         <item>無</item>
         <item>Orbot</item>
-        <item>I2P</item>
         <item>手動設定</item>
     </string-array>
     <string name="manual_proxy">手動設定代理</string>
     <string name="host">主機位址：</string>
     <string name="port">連線埠：</string>
     <string name="use_tor_prompt">看起來您已經安裝了 Orbot，您想使用 Tor 嗎？</string>
-    <string name="use_i2p_prompt">看起來您已經安裝 I2P。您想使用 I2P 嗎？</string>
     <string name="install_orbot">請安裝 Orbot 以便透過 Tor 使用 Proxy。</string>
-    <string name="i2p_not_running">I2P 非執行中</string>
-    <string name="i2p_tunnels_not_ready">尚未準備好 I2P Tunnel。</string>
     <string name="yes">確定</string>
     <string name="no">取消</string>
     <string name="clear_cookies_exit">結束時清除 Cookies</string>
@@ -199,7 +193,6 @@
     <string name="close_other_tabs">關閉其他分頁</string>
     <string name="third_party">封鎖第三方 Cookie</string>    
     <string name="color_mode">啟用色彩模式</string>
-    <string name="reading_mode">閱讀模式</string>
     <string name="loading">正在載入&#8230;</string>
     <string name="loading_failed">無法載入頁面內容。</string>
     <string name="snacktory">Snacktory</string>
@@ -238,7 +231,6 @@
     <string name="message_added_to_homescreen">捷徑已新增至主畫面</string>
     <string name="shortcut_message_failed_to_add">很抱歉，您的啟動器不支援捷徑功能。</string>
     <string name="action_delete_all_bookmarks">刪除所有書籤</string>
-    <string name="flash_not_supported">Flash Player 不支援您的系統</string>
     <string name="upsell_plus_version">升級至閃電瀏覽器 Plus 即可封鎖廣告</string>
     <string name="message_open_download_fail">此檔案不存在</string>
 

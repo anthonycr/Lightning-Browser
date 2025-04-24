@@ -6,7 +6,7 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.extensions.preferredLocale
 import acr.browser.lightning.log.Logger
 import android.app.Application
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody

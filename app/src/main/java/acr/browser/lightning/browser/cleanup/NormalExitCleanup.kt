@@ -1,13 +1,12 @@
 package acr.browser.lightning.browser.cleanup
 
-import acr.browser.lightning.browser.activity.BrowserActivity
+import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.database.history.HistoryDatabase
-import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.WebUtils
-import android.webkit.WebView
-import io.reactivex.Scheduler
+import android.app.Activity
+import io.reactivex.rxjava3.core.Scheduler
 import javax.inject.Inject
 
 /**
@@ -17,19 +16,20 @@ class NormalExitCleanup @Inject constructor(
     private val userPreferences: UserPreferences,
     private val logger: Logger,
     private val historyDatabase: HistoryDatabase,
-    @DatabaseScheduler private val databaseScheduler: Scheduler
+    @DatabaseScheduler private val databaseScheduler: Scheduler,
+    private val activity: Activity
 ) : ExitCleanup {
-    override fun cleanUp(webView: WebView?, context: BrowserActivity) {
+    override fun cleanUp() {
         if (userPreferences.clearCacheExit) {
-            WebUtils.clearCache(webView)
+            WebUtils.clearCache(activity)
             logger.log(TAG, "Cache Cleared")
         }
         if (userPreferences.clearHistoryExitEnabled) {
-            WebUtils.clearHistory(context, historyDatabase, databaseScheduler)
+            WebUtils.clearHistory(activity, historyDatabase, databaseScheduler)
             logger.log(TAG, "History Cleared")
         }
         if (userPreferences.clearCookiesExitEnabled) {
-            WebUtils.clearCookies(context)
+            WebUtils.clearCookies()
             logger.log(TAG, "Cookies Cleared")
         }
         if (userPreferences.clearWebStorageExitEnabled) {
