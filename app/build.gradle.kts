@@ -149,7 +149,7 @@ dependencies {
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
 
     // memory leak analysis
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.10")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 
     // kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.20")
