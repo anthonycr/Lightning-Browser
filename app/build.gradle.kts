@@ -20,12 +20,16 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    val isCi = System.getenv("CI") == "true"
+
     sourceSets {
         create("lightningPlus").apply {
             setRoot("src/LightningPlus")
         }
-        create("lightningLite").apply {
-            setRoot("src/LightningLite")
+        if (!isCi) {
+            create("lightningLite").apply {
+                setRoot("src/LightningLite")
+            }
         }
     }
 
@@ -45,8 +49,8 @@ android {
 
         named("release") {
             multiDexEnabled = false
-            isMinifyEnabled = System.getenv("CI") != "true"
-            isShrinkResources = System.getenv("CI") != "true"
+            isMinifyEnabled = !isCi
+            isShrinkResources = !isCi
             setProguardFiles(listOf("proguard-project.txt"))
             enableUnitTestCoverage = false
             enableAndroidTestCoverage = false
@@ -70,11 +74,13 @@ android {
             versionCode = 101
         }
 
-        create("lightningLite") {
-            dimension = "capabilities"
-            buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")")
-            applicationId = "acr.browser.barebones"
-            versionCode = 102
+        if (!isCi) {
+            create("lightningLite") {
+                dimension = "capabilities"
+                buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")")
+                applicationId = "acr.browser.barebones"
+                versionCode = 102
+            }
         }
     }
     packaging {
