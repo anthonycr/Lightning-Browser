@@ -3,6 +3,7 @@ package acr.browser.lightning.database.downloads
 import acr.browser.lightning.database.databaseDelegate
 import acr.browser.lightning.extensions.firstOrNullMap
 import acr.browser.lightning.extensions.useMap
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
@@ -18,6 +19,7 @@ import javax.inject.Singleton
 /**
  * The disk backed download database. See [DownloadsRepository] for function documentation.
  */
+@SuppressLint("Range")
 @Singleton
 class DownloadsDatabase @Inject constructor(
     application: Application

@@ -6,6 +6,7 @@ import acr.browser.lightning.database.asFolder
 import acr.browser.lightning.database.databaseDelegate
 import acr.browser.lightning.extensions.firstOrNullMap
 import acr.browser.lightning.extensions.useMap
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
@@ -24,6 +25,7 @@ import javax.inject.Singleton
  *
  * Created by anthonycr on 5/6/17.
  */
+@SuppressLint("Range")
 @Singleton
 class BookmarkDatabase @Inject constructor(
     application: Application
