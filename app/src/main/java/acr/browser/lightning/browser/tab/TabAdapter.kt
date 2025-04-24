@@ -292,6 +292,8 @@ class TabAdapter @AssistedInject constructor(
 
         canvas.scale(0.33F, 0.33F)
 
+        canvas.translate(-webView.scrollX.toFloat(), -webView.scrollY.toFloat())
+
         // Layout the view if it hasn't been laid out yet
         view.layout(0, 0, width, height)
 
