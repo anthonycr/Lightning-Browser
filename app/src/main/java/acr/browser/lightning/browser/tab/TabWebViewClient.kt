@@ -79,6 +79,9 @@ class TabWebViewClient @AssistedInject constructor(
      */
     val goForwardObservable: PublishSubject<Boolean> = PublishSubject.create()
 
+    /**
+     * Emit when the tab has finished rendering its content.
+     */
     val finishedObservable = PublishSubject.create<Unit>()
 
     /**
@@ -116,8 +119,11 @@ class TabWebViewClient @AssistedInject constructor(
         urlObservable.onNext(url)
         goBackObservable.onNext(view.canGoBack())
         goForwardObservable.onNext(view.canGoForward())
-        finishedObservable.onNext(Unit)
-        view.invalidate()
+        view.postVisualStateCallback(1, object : WebView.VisualStateCallback() {
+            override fun onComplete(requestId: Long) {
+                finishedObservable.onNext(Unit)
+            }
+        })
     }
 
 
