@@ -259,6 +259,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 binding.drawerTabsList.isVisible = true
                 binding.drawerTabsList.adapter = tabsAdapter
                 binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
+                binding.drawerTabsList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
+                    ?.supportsChangeAnimations = false
                 binding.desktopTabsList.isVisible = false
                 activeRecyclerView = binding.desktopTabsList
             } else {
@@ -274,6 +276,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 bottomTabsBinding!!.bottomTabList.adapter = tabsAdapter
                 bottomTabsBinding.bottomTabList.layoutManager =
                     LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+                bottomTabsBinding.bottomTabList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
+                    ?.supportsChangeAnimations = false
                 binding.drawerTabsList.isVisible = false
                 binding.desktopTabsList.isVisible = false
                 activeRecyclerView = bottomTabsBinding.bottomTabList
