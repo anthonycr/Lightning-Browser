@@ -172,7 +172,7 @@ class TabAdapter @AssistedInject constructor(
 
     override fun previewChanges(): Observable<Pair<String, Long>> =
         tabWebViewClient.finishedObservable
-            .debounce(1, TimeUnit.SECONDS)
+            .debounce(100, TimeUnit.MILLISECONDS)
             .observeOn(diskScheduler)
             .map { previewPath to renderViewToBitmap(webView) }
             .observeOn(mainScheduler)
