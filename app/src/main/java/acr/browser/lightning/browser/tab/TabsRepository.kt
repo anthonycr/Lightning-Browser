@@ -74,17 +74,15 @@ class TabsRepository @Inject constructor(
     private fun createTabUnsafe(
         tabInitializer: TabInitializer,
         isEphemeral: Boolean
-    ): Single<TabModel> = Single.fromCallable {
-        val webView = webViewFactory.createWebView()
-        tabPager.addTab(webView)
-        val tabAdapter = tabFactory.constructTab(tabInitializer, webView, isEphemeral)
-
-        tabsList = tabsList + tabAdapter
-
-        return@fromCallable tabAdapter
-    }.doOnSuccess {
-        tabsListObservable.onNext(tabsList)
-    }.subscribeOn(mainScheduler)
+    ): Single<TabModel> =
+        Single.fromCallable(webViewFactory::createWebView)
+            .doOnSuccess(tabPager::addTab)
+            .flatMap { tabFactory.constructTab(tabInitializer, it, isEphemeral) }
+            .doOnSuccess {
+                tabsList = tabsList + it
+                tabsListObservable.onNext(tabsList)
+            }
+            .subscribeOn(mainScheduler)
 
     override fun reopenTab(): Maybe<TabModel> = Maybe.fromCallable(recentTabModel::lastClosed)
         .flatMapSingle { createTab(BundleInitializer(it)) }
