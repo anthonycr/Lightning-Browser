@@ -21,6 +21,7 @@ import acr.browser.lightning.log.NoOpLogger
 import acr.browser.lightning.migration.Cleanup
 import acr.browser.lightning.search.suggestions.RequestFactory
 import acr.browser.lightning.utils.FileUtils
+import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.ActivityManager
 import android.app.Application
 import android.app.DownloadManager
@@ -230,6 +231,32 @@ class AppModule {
     ): List<@JvmSuppressWildcards Cleanup.Action> =
         listOf(faviconCleanup, bookmarkCleanup, downloadCleanup, historyCleanup, homeCleanup)
 
+    @FilesDir
+    @Provides
+    fun providesFilesDir(
+        application: Application,
+        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory
+    ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
+        application.filesDir
+    }
+
+    @DataDir
+    @Provides
+    fun providesDataDir(
+        application: Application,
+        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory
+    ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
+        application.dataDir
+    }
+
+    @CacheDir
+    @Provides
+    fun providesCacheDir(
+        application: Application,
+        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory
+    ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
+        application.cacheDir
+    }
 }
 
 @Qualifier
@@ -271,3 +298,15 @@ annotation class NetworkScheduler
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
 annotation class DatabaseScheduler
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class FilesDir
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class DataDir
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class CacheDir

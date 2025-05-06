@@ -1,7 +1,10 @@
 package acr.browser.lightning.browser.tab
 
+import acr.browser.lightning.browser.di.CacheDir
 import acr.browser.lightning.browser.di.DiskScheduler
+import acr.browser.lightning.browser.di.FilesDir
 import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import android.webkit.WebView
 import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
@@ -20,6 +23,8 @@ class TabFactory @Inject constructor(
     private val tabAdapterFactory: TabAdapter.Factory,
     @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler,
+    @CacheDir private val cacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
+    @FilesDir private val filesDirThreadSafeFileProvider: ThreadSafeFileProvider,
 ) {
 
     /**
@@ -30,14 +35,12 @@ class TabFactory @Inject constructor(
         webView: WebView,
         isEphemeral: Boolean
     ): Single<TabModel> {
-        val faviconHandler = Single.fromCallable {
-            InternalStoragePathHandler(app, File(app.cacheDir, "favicon-cache"))
-        }
-        val htmlHandler = Single.fromCallable {
-            InternalStoragePathHandler(app, File(app.filesDir, "generated-html"))
-        }
+        val faviconHandler = cacheDirThreadSafeFileProvider.file()
+            .map { InternalStoragePathHandler(app, File(it, "favicon-cache")) }
+        val htmlHandler = filesDirThreadSafeFileProvider.file()
+            .map { InternalStoragePathHandler(app, File(it, "generated-html")) }
 
-        return faviconHandler.zipWith(htmlHandler) { a, b -> Pair(a, b) }
+        return faviconHandler.zipWith(htmlHandler, ::Pair)
             .subscribeOn(diskScheduler)
             .observeOn(mainScheduler)
             .map { (faviconHandler, htmlHandler) ->
