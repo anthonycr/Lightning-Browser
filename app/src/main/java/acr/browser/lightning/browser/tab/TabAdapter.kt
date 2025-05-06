@@ -28,6 +28,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
+import java.util.Optional
 import java.util.concurrent.TimeUnit
 
 
@@ -70,10 +71,6 @@ class TabAdapter @AssistedInject constructor(
     private val downloadsSubject = PublishSubject.create<PendingDownload>()
     private val previewObservable: BehaviorSubject<Long>
 
-    private val previewPath by lazy {
-        previewModel.previewForId(webView.id)
-    }
-
     private var previewGeneratedTime = System.currentTimeMillis()
 
     init {
@@ -102,6 +99,9 @@ class TabAdapter @AssistedInject constructor(
         previewObservable =
             BehaviorSubject.createDefault(System.currentTimeMillis())
     }
+
+    private var previewPath: String? = null
+    private val previewPathSingle = previewModel.previewForId(webView.id).cache()
 
     override val id: Int = webView.id
 
@@ -167,14 +167,28 @@ class TabAdapter @AssistedInject constructor(
         findInPageQuery = null
     }
 
-    override val preview: Pair<String, Long>
+    override val preview: Pair<String?, Long>
         get() = previewPath to previewGeneratedTime
 
-    override fun previewChanges(): Observable<Pair<String, Long>> =
+    override fun previewChanges(): Observable<Pair<String?, Long>> =
         tabWebViewClient.finishedObservable
             .debounce(100, TimeUnit.MILLISECONDS)
             .observeOn(diskScheduler)
-            .map { previewPath to renderViewToBitmap(webView) }
+            .mapOptional { Optional.ofNullable(renderViewToBitmap(webView)) }
+            .flatMapSingle { bitmap ->
+                previewModel.cachePreviewForId(webView.id, bitmap)
+                    .andThen(previewPathSingle)
+                    .map<Pair<String?, Long>> { path -> path to System.currentTimeMillis() }
+            }
+            .startWith(
+                previewPathSingle.ignoreElement()
+                    .andThen(previewPathSingle)
+                    .map { path -> path to System.currentTimeMillis() }
+            )
+            .doOnNext { (path, time) ->
+                previewPath = path
+                previewGeneratedTime = time
+            }
             .observeOn(mainScheduler)
 
     override val findQuery: String?
@@ -279,10 +293,10 @@ class TabAdapter @AssistedInject constructor(
         view: View,
         width: Int = view.width,
         height: Int = view.height
-    ): Long {
+    ): Bitmap? {
         // Ensure the view has been laid out
         if (width == 0 || height == 0) {
-            return 0
+            return null
         }
 
         // Create a Bitmap with the specified dimensions and ARGB_8888 configuration
@@ -301,10 +315,6 @@ class TabAdapter @AssistedInject constructor(
         // Draw the view onto the canvas
         view.draw(canvas)
 
-        previewModel.cachePreviewForId(webView.id, bitmap)
-
-        return System.currentTimeMillis().also {
-            previewGeneratedTime = it
-        }
+        return bitmap
     }
 }

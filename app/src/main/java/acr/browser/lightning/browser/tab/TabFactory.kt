@@ -1,8 +1,15 @@
 package acr.browser.lightning.browser.tab
 
+import acr.browser.lightning.browser.di.CacheDir
+import acr.browser.lightning.browser.di.DiskScheduler
+import acr.browser.lightning.browser.di.FilesDir
+import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import android.webkit.WebView
 import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Single
 import java.io.File
 import javax.inject.Inject
 
@@ -13,7 +20,11 @@ class TabFactory @Inject constructor(
     private val app: Application,
     private val webViewFactory: WebViewFactory,
     private val tabWebViewClientFactory: TabWebViewClient.Factory,
-    private val tabAdapterFactory: TabAdapter.Factory
+    private val tabAdapterFactory: TabAdapter.Factory,
+    @DiskScheduler private val diskScheduler: Scheduler,
+    @MainScheduler private val mainScheduler: Scheduler,
+    @CacheDir private val cacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
+    @FilesDir private val filesDirThreadSafeFileProvider: ThreadSafeFileProvider,
 ) {
 
     /**
@@ -23,18 +34,28 @@ class TabFactory @Inject constructor(
         tabInitializer: TabInitializer,
         webView: WebView,
         isEphemeral: Boolean
-    ): TabModel {
-        val headers = webViewFactory.createRequestHeaders()
-        return tabAdapterFactory.create(
-            tabInitializer = tabInitializer,
-            webView = webView,
-            requestHeaders = headers,
-            tabWebViewClient = tabWebViewClientFactory.create(
-                headers,
-                InternalStoragePathHandler(app, File(app.cacheDir, "favicon-cache")),
-                InternalStoragePathHandler(app, File(app.filesDir, "generated-html"))
-            ),
-            isEphemeral,
-        )
+    ): Single<TabModel> {
+        val faviconHandler = cacheDirThreadSafeFileProvider.file()
+            .map { InternalStoragePathHandler(app, File(it, "favicon-cache")) }
+        val htmlHandler = filesDirThreadSafeFileProvider.file()
+            .map { InternalStoragePathHandler(app, File(it, "generated-html")) }
+
+        return faviconHandler.zipWith(htmlHandler, ::Pair)
+            .subscribeOn(diskScheduler)
+            .observeOn(mainScheduler)
+            .map { (faviconHandler, htmlHandler) ->
+                val headers = webViewFactory.createRequestHeaders()
+                tabAdapterFactory.create(
+                    tabInitializer = tabInitializer,
+                    webView = webView,
+                    requestHeaders = headers,
+                    tabWebViewClient = tabWebViewClientFactory.create(
+                        headers,
+                        faviconHandler,
+                        htmlHandler
+                    ),
+                    isEphemeral,
+                )
+            }
     }
 }

@@ -125,12 +125,12 @@ interface TabModel {
     /**
      * A preview of the tab's content.
      */
-    val preview: Pair<String, Long>
+    val preview: Pair<String?, Long>
 
     /**
      * Emits changes to the [preview].
      */
-    fun previewChanges(): Observable<Pair<String, Long>>
+    fun previewChanges(): Observable<Pair<String?, Long>>
 
     /**
      * The thematic color of the current webpage.
