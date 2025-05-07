@@ -242,6 +242,10 @@ interface TabModel {
      */
     var isForeground: Boolean
 
+    val hasFocus: Boolean
+
+    fun hasFocusChanges(): Observable<Boolean>
+
     /**
      * Teardown the current tab and release held resources.
      */

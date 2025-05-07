@@ -4,6 +4,8 @@ import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.image.IconFreeze
+import acr.browser.lightning.browser.view.setCompositeOnFocusChangeListener
+import acr.browser.lightning.browser.view.setCompositeTouchListener
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
 import acr.browser.lightning.ids.ViewIdGenerator
 import acr.browser.lightning.preference.UserPreferences
@@ -13,10 +15,12 @@ import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.Option
 import acr.browser.lightning.utils.value
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
@@ -35,6 +39,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Creates the adaptation between a [WebView] and the [TabModel] interface used by the browser.
  */
+@SuppressLint("ClickableViewAccessibility")
 class TabAdapter @AssistedInject constructor(
     @Assisted tabInitializer: TabInitializer,
     @Assisted private val webView: WebView,
@@ -69,7 +74,7 @@ class TabAdapter @AssistedInject constructor(
     private var findInPageQuery: String? = null
     private var toggleDesktop: Boolean = false
     private val downloadsSubject = PublishSubject.create<PendingDownload>()
-    private val previewObservable: BehaviorSubject<Long>
+    private val focusObservable = BehaviorSubject.createDefault(webView.hasFocus())
 
     private var previewGeneratedTime = System.currentTimeMillis()
 
@@ -96,8 +101,16 @@ class TabAdapter @AssistedInject constructor(
             loadFromInitializer(tabInitializer)
         }
 
-        previewObservable =
-            BehaviorSubject.createDefault(System.currentTimeMillis())
+        webView.setCompositeOnFocusChangeListener("focus_change") { _, hasFocus ->
+            focusObservable.onNext(hasFocus)
+        }
+
+        webView.setCompositeTouchListener("focus") { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                focusObservable.onNext(true)
+            }
+            false
+        }
     }
 
     private var previewPath: String? = null
@@ -275,6 +288,11 @@ class TabAdapter @AssistedInject constructor(
                 webView.onPause()
             }
         }
+
+    override val hasFocus: Boolean
+        get() = webView.hasFocus()
+
+    override fun hasFocusChanges(): Observable<Boolean> = focusObservable.hide()
 
     override fun destroy() {
         viewIdGenerator.releaseViewId(webView.id)
