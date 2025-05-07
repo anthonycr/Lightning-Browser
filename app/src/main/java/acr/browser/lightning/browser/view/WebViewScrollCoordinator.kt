@@ -48,11 +48,12 @@ class WebViewScrollCoordinator @Inject constructor(
      * Configure the [webView] to match its scrolling behavior with showing an hiding the toolbar.
      */
     fun configure(webView: WebView) {
-        webView.setOnFocusChangeListener { v, hasFocus ->
+        webView.setCompositeOnFocusChangeListener("keyboard") { v, hasFocus ->
             if (hasFocus) {
                 inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
             }
         }
+
         if (browserLayoutContainer == null) {
 
             if (userPreferences.fullScreenEnabled) {

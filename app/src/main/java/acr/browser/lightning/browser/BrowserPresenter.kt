@@ -304,6 +304,14 @@ class BrowserPresenter @Inject constructor(
                 view?.hideCustomView()
                 isCustomViewShowing = false
             }
+
+        tabDisposable += tab.hasFocusChanges()
+            .subscribeOn(mainScheduler)
+            .subscribeBy {
+                if (it) {
+                    view?.closeTabDrawer()
+                }
+            }
     }
 
     private fun List<TabModel>.subscribeToUpdates(compositeDisposable: CompositeDisposable) {
