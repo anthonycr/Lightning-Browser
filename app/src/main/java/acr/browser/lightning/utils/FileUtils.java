@@ -105,8 +105,6 @@ public final class FileUtils {
         } catch (IOException e) {
             Log.e(TAG, "Unable to read bundle from storage", e);
         } finally {
-            //noinspection ResultOfMethodCallIgnored
-            inputFile.delete();
             Utils.close(inputStream);
         }
         return null;
