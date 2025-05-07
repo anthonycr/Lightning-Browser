@@ -105,8 +105,11 @@ class TabAdapter @AssistedInject constructor(
             focusObservable.onNext(hasFocus)
         }
 
-        webView.setCompositeTouchListener("focus") { _, event ->
+        webView.setCompositeTouchListener("focus") { view, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
+                if (!view.hasFocus()) {
+                    view.requestFocus()
+                }
                 focusObservable.onNext(true)
             }
             false
