@@ -170,7 +170,6 @@ mezzanine {
 kapt {
     correctErrorTypes = true
     useBuildCache = true
-    generateStubs = true
 }
 
 kotlin {
