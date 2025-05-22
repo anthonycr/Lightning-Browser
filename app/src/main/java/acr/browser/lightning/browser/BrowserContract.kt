@@ -192,7 +192,7 @@ interface BrowserContract {
          */
         fun createTab(
             tabInitializer: TabInitializer,
-            isEphemeral: Boolean = false
+            tabType: TabModel.Type = TabModel.Type.NORMAL
         ): Single<TabModel>
 
         /**
