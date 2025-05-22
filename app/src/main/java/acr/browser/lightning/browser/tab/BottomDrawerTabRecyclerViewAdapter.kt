@@ -93,12 +93,13 @@ class BottomDrawerTabRecyclerViewAdapter(
     }
 
     private fun loadImage(imageView: ImageView, tab: TabViewState) {
-        // TODO: placeholder
-        val url = tab.preview.first ?: return
+        val url = tab.preview.first ?: return run {
+            imageView.load(null)
+        }
         imageView.tag = tab.id
         imageView.load(File(url)) {
             transformations(TopCropTransformation)
-            memoryCacheKey(tab.preview.second.toString())
+            memoryCacheKey(tab.preview.first + tab.preview.second.toString())
             placeholder(themeProvider.color(R.attr.colorPrimary).toDrawable())
         }
     }
