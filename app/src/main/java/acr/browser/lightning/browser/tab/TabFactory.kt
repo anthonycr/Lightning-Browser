@@ -33,7 +33,7 @@ class TabFactory @Inject constructor(
     fun constructTab(
         tabInitializer: TabInitializer,
         webView: WebView,
-        isEphemeral: Boolean
+        tabType: TabModel.Type
     ): Single<TabModel> {
         val faviconHandler = cacheDirThreadSafeFileProvider.file()
             .map { InternalStoragePathHandler(app, File(it, "favicon-cache")) }
@@ -54,7 +54,7 @@ class TabFactory @Inject constructor(
                         faviconHandler,
                         htmlHandler
                     ),
-                    isEphemeral,
+                    tabType,
                 )
             }
     }

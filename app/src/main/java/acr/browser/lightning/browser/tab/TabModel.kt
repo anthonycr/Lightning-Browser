@@ -23,10 +23,9 @@ interface TabModel {
     val id: Int
 
     /**
-     * True if the tab is ephemeral and should be deleted when the browser is closed, false
-     * otherwise.
+     * The type of tab this is, defined by its origin.
      */
-    var isEphemeral: Boolean
+    var tabType: Type
 
     // Navigation
 
@@ -255,4 +254,10 @@ interface TabModel {
      * Freeze the current state of the tab and return it as a [Bundle].
      */
     fun freeze(): Bundle
+
+    enum class Type {
+        NORMAL,
+        EPHEMERAL,
+        POP_UP
+    }
 }

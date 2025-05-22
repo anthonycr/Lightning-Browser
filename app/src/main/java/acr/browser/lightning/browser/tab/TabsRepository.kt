@@ -64,20 +64,23 @@ class TabsRepository @Inject constructor(
             tabsListObservable.onNext(tabsList)
         }.subscribeOn(mainScheduler)
 
-    override fun createTab(tabInitializer: TabInitializer, isEphemeral: Boolean): Single<TabModel> =
-        afterInitialization().flatMap { createTabUnsafe(tabInitializer, isEphemeral) }
-            .subscribeOn(mainScheduler)
+    override fun createTab(
+        tabInitializer: TabInitializer,
+        tabType: TabModel.Type
+    ): Single<TabModel> = afterInitialization()
+        .flatMap { createTabUnsafe(tabInitializer, tabType) }
+        .subscribeOn(mainScheduler)
 
     /**
      * Creates a tab without waiting for the browser to be initialized.
      */
     private fun createTabUnsafe(
         tabInitializer: TabInitializer,
-        isEphemeral: Boolean
+        tabType: TabModel.Type
     ): Single<TabModel> =
         Single.fromCallable(webViewFactory::createWebView)
             .doOnSuccess(tabPager::addTab)
-            .flatMap { tabFactory.constructTab(tabInitializer, it, isEphemeral) }
+            .flatMap { tabFactory.constructTab(tabInitializer, it, tabType) }
             .doOnSuccess {
                 tabsList = tabsList + it
                 tabsListObservable.onNext(tabsList)
@@ -106,14 +109,14 @@ class TabsRepository @Inject constructor(
             .subscribeOn(diskScheduler)
             .observeOn(mainScheduler)
             .flatMapObservable { Observable.fromIterable(it) }
-            .flatMapSingle { createTabUnsafe(it, isEphemeral = false) }
+            .flatMapSingle { createTabUnsafe(it, tabType = TabModel.Type.NORMAL) }
             .concatWith(Maybe.fromCallable { initialUrl }.map {
                 if (it.isFileUrl()) {
                     permissionInitializerFactory.create(it)
                 } else {
                     UrlInitializer(it)
                 }
-            }.flatMapSingle { createTabUnsafe(it, isEphemeral = true) })
+            }.flatMapSingle { createTabUnsafe(it, tabType = TabModel.Type.NORMAL) })
             .toList()
             .filter(List<TabModel>::isNotEmpty)
             .doAfterTerminate {
@@ -121,7 +124,7 @@ class TabsRepository @Inject constructor(
             }
 
     override fun markAllNonEphemeral() {
-        tabsList.forEach { it.isEphemeral = false }
+        tabsList.forEach { it.tabType = TabModel.Type.NORMAL }
     }
 
     override fun freeze() {

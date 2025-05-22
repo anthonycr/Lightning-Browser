@@ -279,7 +279,7 @@ class BrowserPresenter @Inject constructor(
                 createNewTabAndSelect(
                     tabInitializer = it,
                     shouldSelect = true,
-                    markAsOpenedFromAction = true
+                    tabType = TabModel.Type.POP_UP
                 )
             }
 
@@ -348,7 +348,7 @@ class BrowserPresenter @Inject constructor(
                 createNewTabAndSelect(
                     tabInitializer = UrlInitializer(action.url),
                     shouldSelect = true,
-                    markAsOpenedFromAction = true
+                    tabType = TabModel.Type.EPHEMERAL
                 )
             }
 
@@ -367,7 +367,7 @@ class BrowserPresenter @Inject constructor(
                 createNewTabAndSelect(
                     tabInitializer = UrlInitializer(it.url),
                     shouldSelect = true,
-                    markAsOpenedFromAction = true
+                    tabType = TabModel.Type.EPHEMERAL
                 )
             }
         }
@@ -435,9 +435,9 @@ class BrowserPresenter @Inject constructor(
     private fun createNewTabAndSelect(
         tabInitializer: TabInitializer,
         shouldSelect: Boolean,
-        markAsOpenedFromAction: Boolean = false
+        tabType: TabModel.Type = TabModel.Type.NORMAL
     ) {
-        compositeDisposable += model.createTab(tabInitializer, isEphemeral = markAsOpenedFromAction)
+        compositeDisposable += model.createTab(tabInitializer, tabType = tabType)
             .observeOn(mainScheduler)
             .subscribe { tab ->
                 if (shouldSelect) {
@@ -523,7 +523,7 @@ class BrowserPresenter @Inject constructor(
             .subscribe {
                 if (needToSelectNextTab) {
                     nextTab?.id?.let {
-                        val shouldClose = currentTab?.isEphemeral ?: false
+                        val shouldClose = currentTab?.tabType == TabModel.Type.EPHEMERAL
                         selectTab(model.selectTab(it), focusTab = false)
                         if (shouldClose) {
                             navigator.backgroundBrowser()
@@ -578,7 +578,7 @@ class BrowserPresenter @Inject constructor(
                 currentTab?.id?.let {
                     view?.showCloseBrowserDialog(it)
                 }
-            } else if (currentTab?.isEphemeral == true) {
+            } else if (currentTab?.tabType in listOf(TabModel.Type.EPHEMERAL, TabModel.Type.POP_UP)) {
                 onTabClose(tabListState.indexOfCurrentTab())
             } else {
                 navigator.backgroundBrowser()
