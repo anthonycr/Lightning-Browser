@@ -116,7 +116,7 @@ class TabsRepository @Inject constructor(
                 } else {
                     UrlInitializer(it)
                 }
-            }.flatMapSingle { createTabUnsafe(it, tabType = TabModel.Type.NORMAL) })
+            }.flatMapSingle { createTabUnsafe(it, tabType = TabModel.Type.EPHEMERAL) })
             .toList()
             .filter(List<TabModel>::isNotEmpty)
             .doAfterTerminate {
