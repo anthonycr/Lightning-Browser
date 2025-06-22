@@ -105,7 +105,7 @@ dependencies {
     testImplementation("com.nhaarman:mockito-kotlin:1.6.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    testImplementation("org.robolectric:robolectric:4.15")
+    testImplementation("org.robolectric:robolectric:4.15.1")
 
     // support libraries
     implementation("androidx.palette:palette-ktx:1.0.0")
