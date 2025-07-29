@@ -140,7 +140,7 @@ dependencies {
 
     implementation("com.squareup.okhttp3:okhttp:5.1.0")
 
-    implementation("io.coil-kt.coil3:coil:3.2.0")
+    implementation("io.coil-kt.coil3:coil:3.3.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.2.0")
 
     // rx
