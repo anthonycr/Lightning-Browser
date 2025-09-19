@@ -100,7 +100,7 @@ dependencies {
 
     // test dependencies
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.assertj:assertj-core:3.27.4")
+    testImplementation("org.assertj:assertj-core:3.27.5")
     testImplementation("org.mockito:mockito-core:5.19.0")
     testImplementation("com.nhaarman:mockito-kotlin:1.6.0") {
         exclude(group = "org.jetbrains.kotlin")
