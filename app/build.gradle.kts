@@ -144,7 +144,7 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
 
     // rx
-    implementation("io.reactivex.rxjava3:rxjava:3.1.11")
+    implementation("io.reactivex.rxjava3:rxjava:3.1.12")
     implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
 
