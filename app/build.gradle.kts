@@ -138,7 +138,7 @@ dependencies {
     // permissions
     implementation("com.guolindev.permissionx:permissionx:1.8.1")
 
-    implementation("com.squareup.okhttp3:okhttp:5.2.0")
+    implementation("com.squareup.okhttp3:okhttp:5.2.1")
 
     implementation("io.coil-kt.coil3:coil:3.3.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
