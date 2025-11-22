@@ -125,7 +125,7 @@ dependencies {
     implementation("org.jsoup:jsoup:1.21.2")
 
     // file reading
-    val mezzanineVersion = "2.1.0"
+    val mezzanineVersion = "2.2.0"
     implementation("com.anthonycr.mezzanine:core:$mezzanineVersion")
     ksp("com.anthonycr.mezzanine:processor:$mezzanineVersion")
 
