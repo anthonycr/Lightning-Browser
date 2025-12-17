@@ -119,7 +119,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.8.9")
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.webkit:webkit:1.14.0")
+    implementation("androidx.webkit:webkit:1.15.0")
 
     // html parsing for reading mode
     implementation("org.jsoup:jsoup:1.21.2")
