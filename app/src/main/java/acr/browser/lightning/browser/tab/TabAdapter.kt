@@ -189,8 +189,9 @@ class TabAdapter @AssistedInject constructor(
     override fun previewChanges(): Observable<Pair<String?, Long>> =
         tabWebViewClient.finishedObservable
             .debounce(100, TimeUnit.MILLISECONDS)
-            .observeOn(diskScheduler)
+            .observeOn(mainScheduler)
             .mapOptional { Optional.ofNullable(renderViewToBitmap(webView)) }
+            .observeOn(diskScheduler)
             .flatMapSingle { bitmap ->
                 previewModel.cachePreviewForId(webView.id, bitmap)
                     .andThen(previewPathSingle)
