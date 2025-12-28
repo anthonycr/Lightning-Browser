@@ -152,7 +152,9 @@ dependencies {
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 
     // kotlin
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.21")
+    val kotlin = "2.3.0"
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
+    kapt("org.jetbrains.kotlin:kotlin-metadata-jvm:$kotlin")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }
 
