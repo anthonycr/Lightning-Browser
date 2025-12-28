@@ -24,11 +24,11 @@ class BookmarkViewHolder(
     }
 
     override fun onClick(v: View) {
-        onItemClickListener(adapterPosition)
+        onItemClickListener(bindingAdapterPosition)
     }
 
     override fun onLongClick(v: View): Boolean {
-        onItemLongClickListener(adapterPosition)
+        onItemLongClickListener(bindingAdapterPosition)
         return true
     }
 }
