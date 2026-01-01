@@ -122,7 +122,7 @@ dependencies {
     implementation("androidx.webkit:webkit:1.15.0")
 
     // html parsing for reading mode
-    implementation("org.jsoup:jsoup:1.21.2")
+    implementation("org.jsoup:jsoup:1.22.1")
 
     // file reading
     val mezzanineVersion = "2.2.0"
