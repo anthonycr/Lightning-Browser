@@ -32,8 +32,9 @@ class DefaultBundleStore @Inject constructor(
     @DiskScheduler private val diskScheduler: Scheduler
 ) : BundleStore {
 
-    override fun save(tabs: List<TabModel>) {
+    override fun save(tabs: List<TabModel>, selectedTabId: Int) {
         val outState = Bundle(ClassLoader.getSystemClassLoader())
+        outState.putInt(SELECTED_TAB_ID_KEY, selectedTabId)
 
         tabs.withIndex().forEach { (index, tab) ->
             if (!tab.url.isSpecialUrl()) {
@@ -52,9 +53,10 @@ class DefaultBundleStore @Inject constructor(
             .subscribe()
     }
 
-    override fun retrieve(): List<TabInitializer> =
+    override fun retrieve(): Pair<List<TabInitializer>, Int> =
         FileUtils.readBundleFromStorage(application, BUNDLE_STORAGE)?.let { bundle ->
-            bundle.keySet()
+            val selectedTabId = bundle.getInt(SELECTED_TAB_ID_KEY, -1)
+            val initializers = bundle.keySet()
                 .filter { it.startsWith(BUNDLE_KEY) }
                 .mapNotNull { bundleKey ->
                     bundle.getBundle(bundleKey)?.let {
@@ -64,22 +66,23 @@ class DefaultBundleStore @Inject constructor(
                             bundle.getInt(TAB_ID_KEY + bundleKey.extractNumberFromEnd(), -1)
                         )
                     }
+                }.map { (bundle, title, id) ->
+                    bundle.getString(URL_KEY)?.let { url ->
+                        when {
+                            url.isBookmarkUrl() -> bookmarkPageInitializer
+                            url.isDownloadsUrl() -> downloadPageInitializer
+                            url.isStartPageUrl() -> homePageInitializer
+                            url.isHistoryUrl() -> historyPageInitializer
+                            else -> homePageInitializer
+                        }
+                    } ?: FreezableBundleInitializer(
+                        bundle = bundle,
+                        initialTitle = title ?: application.getString(R.string.tab_frozen),
+                        id = id
+                    )
                 }
-        }?.map { (bundle, title, id) ->
-            return@map bundle.getString(URL_KEY)?.let { url ->
-                when {
-                    url.isBookmarkUrl() -> bookmarkPageInitializer
-                    url.isDownloadsUrl() -> downloadPageInitializer
-                    url.isStartPageUrl() -> homePageInitializer
-                    url.isHistoryUrl() -> historyPageInitializer
-                    else -> homePageInitializer
-                }
-            } ?: FreezableBundleInitializer(
-                bundle = bundle,
-                initialTitle = title ?: application.getString(R.string.tab_frozen),
-                id = id
-            )
-        } ?: emptyList()
+            initializers to selectedTabId
+        } ?: (emptyList<TabInitializer>() to -1)
 
     override fun deleteAll() {
         FileUtils.deleteBundleInStorage(application, BUNDLE_STORAGE)
@@ -98,6 +101,7 @@ class DefaultBundleStore @Inject constructor(
         private const val BUNDLE_KEY = "WEBVIEW_"
         private const val TAB_TITLE_KEY = "TITLE_"
         private const val TAB_ID_KEY = "ID_"
+        private const val SELECTED_TAB_ID_KEY = "SELECTED_TAB_ID"
         private const val URL_KEY = "URL_KEY"
         private const val BUNDLE_STORAGE = "SAVED_TABS.parcel"
     }
