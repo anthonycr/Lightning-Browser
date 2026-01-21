@@ -130,7 +130,7 @@ dependencies {
     ksp("com.anthonycr.mezzanine:processor:$mezzanineVersion")
 
     // dependency injection
-    val daggerVersion = "2.58"
+    val daggerVersion = "2.59"
     implementation("com.google.dagger:dagger:$daggerVersion")
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
     compileOnly("javax.annotation:jsr250-api:1.0")
