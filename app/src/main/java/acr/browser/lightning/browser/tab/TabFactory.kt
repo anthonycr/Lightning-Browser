@@ -4,6 +4,7 @@ import acr.browser.lightning.browser.di.CacheDir
 import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.di.FilesDir
 import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.webview.interops.InteropInterface
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import android.webkit.WebView
@@ -25,6 +26,7 @@ class TabFactory @Inject constructor(
     @MainScheduler private val mainScheduler: Scheduler,
     @CacheDir private val cacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
     @FilesDir private val filesDirThreadSafeFileProvider: ThreadSafeFileProvider,
+    private val interopInterfaces: List<@JvmSuppressWildcards InteropInterface>,
 ) {
 
     /**
@@ -35,6 +37,7 @@ class TabFactory @Inject constructor(
         webView: WebView,
         tabType: TabModel.Type
     ): Single<TabModel> {
+        interopInterfaces.forEach { it.register(webView) }
         val faviconHandler = cacheDirThreadSafeFileProvider.file()
             .map { InternalStoragePathHandler(app, File(it, "favicon-cache")) }
         val htmlHandler = filesDirThreadSafeFileProvider.file()
