@@ -209,7 +209,7 @@ interface BrowserContract {
          * Initialize all tabs that were previously frozen when the browser was last open, and
          * initialize any tabs that should be opened from the initial browser action.
          */
-        fun initializeTabs(): Maybe<List<TabModel>>
+        fun initializeTabs(): Maybe<Pair<List<TabModel>, Int>>
 
         /**
          * Mark all tabs as being permanent tabs so that they won't be deleted during navigation
