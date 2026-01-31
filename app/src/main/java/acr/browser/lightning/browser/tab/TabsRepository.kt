@@ -104,21 +104,24 @@ class TabsRepository @Inject constructor(
 
     override fun tabsListChanges(): Observable<List<TabModel>> = tabsListObservable.hide()
 
-    override fun initializeTabs(): Maybe<List<TabModel>> =
+    override fun initializeTabs(): Maybe<Pair<List<TabModel>, Int>> =
         Single.fromCallable(bundleStore::retrieve)
             .subscribeOn(diskScheduler)
             .observeOn(mainScheduler)
-            .flatMapObservable { Observable.fromIterable(it) }
-            .flatMapSingle { createTabUnsafe(it, tabType = TabModel.Type.NORMAL) }
-            .concatWith(Maybe.fromCallable { initialUrl }.map {
-                if (it.isFileUrl()) {
-                    permissionInitializerFactory.create(it)
-                } else {
-                    UrlInitializer(it)
-                }
-            }.flatMapSingle { createTabUnsafe(it, tabType = TabModel.Type.EPHEMERAL) })
-            .toList()
-            .filter(List<TabModel>::isNotEmpty)
+            .flatMap { (initializers, restoredSelectedTabId) ->
+                Observable.fromIterable(initializers)
+                    .flatMapSingle { createTabUnsafe(it, tabType = TabModel.Type.NORMAL) }
+                    .concatWith(Maybe.fromCallable { initialUrl }.map {
+                        if (it.isFileUrl()) {
+                            permissionInitializerFactory.create(it)
+                        } else {
+                            UrlInitializer(it)
+                        }
+                    }.flatMapSingle { createTabUnsafe(it, tabType = TabModel.Type.EPHEMERAL) })
+                    .toList()
+                    .map { it to restoredSelectedTabId }
+            }
+            .filter { (list, _) -> list.isNotEmpty() }
             .doAfterTerminate {
                 isInitialized.onNext(true)
             }
@@ -129,7 +132,7 @@ class TabsRepository @Inject constructor(
 
     override fun freeze() {
         if (userPreferences.restoreLostTabsEnabled) {
-            bundleStore.save(tabsList)
+            bundleStore.save(tabsList, selectedTab?.id ?: -1)
         }
     }
 
