@@ -7,7 +7,7 @@ plugins {
     id("kotlin-kapt")
     id("com.github.ben-manes.versions")
     id("com.google.devtools.ksp") version "2.3.5"
-    id("com.anthonycr.plugins.mezzanine") version "2.2.0"
+    id("com.anthonycr.plugins.mezzanine") version "2.3.0"
 }
 
 android {
