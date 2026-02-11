@@ -1,10 +1,5 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
     id("com.github.ben-manes.versions")
     id("com.google.devtools.ksp") version "2.3.5"
     id("com.anthonycr.plugins.mezzanine") version "2.3.0"
@@ -35,6 +30,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     buildTypes {
@@ -95,9 +91,6 @@ android {
 }
 
 dependencies {
-    // multidex debug
-    debugImplementation("androidx.multidex:multidex:2.0.1")
-
     // test dependencies
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.assertj:assertj-core:3.27.7")
@@ -132,7 +125,7 @@ dependencies {
     // dependency injection
     val daggerVersion = "2.59.1"
     implementation("com.google.dagger:dagger:$daggerVersion")
-    kapt("com.google.dagger:dagger-compiler:$daggerVersion")
+    ksp("com.google.dagger:dagger-compiler:$daggerVersion")
     compileOnly("javax.annotation:jsr250-api:1.0")
 
     // permissions
@@ -154,7 +147,7 @@ dependencies {
     // kotlin
     val kotlin = "2.3.10"
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
-    kapt("org.jetbrains.kotlin:kotlin-metadata-jvm:$kotlin")
+//    kapt("org.jetbrains.kotlin:kotlin-metadata-jvm:$kotlin")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }
 
@@ -169,20 +162,6 @@ mezzanine {
     )
 }
 
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
-}
-
 kotlin {
     jvmToolchain(17)
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
-        languageVersion.set(KotlinVersion.KOTLIN_2_1)
-    }
-}
-
-java {
-    targetCompatibility = JavaVersion.VERSION_17
-    sourceCompatibility = JavaVersion.VERSION_17
 }
