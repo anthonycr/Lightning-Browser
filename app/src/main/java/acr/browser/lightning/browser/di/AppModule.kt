@@ -12,9 +12,12 @@ import acr.browser.lightning.html.download.DownloadCleanup
 import acr.browser.lightning.html.history.HistoryCleanup
 import acr.browser.lightning.html.homepage.HomeCleanup
 import acr.browser.lightning.html.homepage.HomePageReader
+import acr.browser.lightning.js.DarkReader
 import acr.browser.lightning.js.InvertPage
 import acr.browser.lightning.js.TextReflow
 import acr.browser.lightning.js.ThemeColor
+import acr.browser.lightning.webview.interops.DarkReaderInterop
+import acr.browser.lightning.webview.interops.InteropInterface
 import acr.browser.lightning.log.AndroidLogger
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.log.NoOpLogger
@@ -215,6 +218,14 @@ class AppModule {
 
     @Provides
     fun providesInvertPage(): InvertPage = mezzanine()
+
+    @Provides
+    fun providesDarkReader(): DarkReader = mezzanine()
+    
+    @Provides
+    fun providesWebViewInterops(
+        darkReaderInterface: DarkReaderInterop
+    ): List<InteropInterface> = listOf(darkReaderInterface)
 
     @DefaultTabTitle
     @Provides

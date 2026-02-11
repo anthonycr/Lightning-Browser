@@ -5,6 +5,7 @@ import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.databinding.DialogAuthRequestBinding
 import acr.browser.lightning.databinding.DialogSslWarningBinding
+import acr.browser.lightning.webview.interops.InteropInterface
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.js.TextReflow
 import acr.browser.lightning.log.Logger
@@ -46,6 +47,7 @@ class TabWebViewClient @AssistedInject constructor(
     private val userPreferences: UserPreferences,
     private val sslWarningPreferences: SslWarningPreferences,
     private val textReflow: TextReflow,
+    private val interopInterfaces: List<@JvmSuppressWildcards InteropInterface>,
     private val logger: Logger,
     @Assisted("cache") private val cacheStoragePathHandler: InternalStoragePathHandler,
     @Assisted("files") private val filesStoragePathHandler: InternalStoragePathHandler,
@@ -124,6 +126,7 @@ class TabWebViewClient @AssistedInject constructor(
                 finishedObservable.onNext(Unit)
             }
         })
+        interopInterfaces.forEach { it.onPageFinished(view, url) }
     }
 
 
