@@ -4,11 +4,6 @@ buildscript {
         google()
         mavenCentral()
     }
-    dependencies {
-        classpath("com.android.tools.build:gradle:9.0.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.10")
-        classpath("com.github.ben-manes:gradle-versions-plugin:0.53.0")
-    }
 
     extra.apply {
         set("minSdkVersion", 21)
@@ -22,4 +17,9 @@ allprojects {
         google()
         mavenCentral()
     }
+}
+
+plugins {
+    id("com.android.application") version "9.0.0" apply false
+    id("com.github.ben-manes.versions") version "0.53.0" apply false
 }
