@@ -9,14 +9,14 @@ import acr.browser.lightning.browser.tab.TabInitializer
 interface BundleStore {
 
     /**
-     * Save the tab data for the list of [tabs].
+     * Save the tab data for the list of [tabs] and the [selectedTabId].
      */
-    fun save(tabs: List<TabModel>)
+    fun save(tabs: List<TabModel>, selectedTabId: Int)
 
     /**
-     * Synchronously previously stored tab data.
+     * Synchronously previously stored tab data and return the tabs and the selected tab ID.
      */
-    fun retrieve(): List<TabInitializer>
+    fun retrieve(): Pair<List<TabInitializer>, Int>
 
     /**
      * Synchronously delete all stored tabs.

@@ -149,9 +149,10 @@ class BrowserPresenter @Inject constructor(
 
         compositeDisposable += model.initializeTabs()
             .observeOn(mainScheduler)
-            .switchIfEmpty(model.createTab(homePageInitializer).map(::listOf))
-            .subscribe { list ->
-                selectTab(model.selectTab(list.last().id))
+            .switchIfEmpty(model.createTab(homePageInitializer).map { listOf(it) to -1 })
+            .subscribe { (list, restoredSelectedTabId) ->
+                val tabToSelect = list.find { it.id == restoredSelectedTabId } ?: list.last()
+                selectTab(model.selectTab(tabToSelect.id))
             }
     }
 

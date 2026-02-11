@@ -30,6 +30,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.Optional
@@ -70,6 +71,8 @@ class TabAdapter @AssistedInject constructor(
     }
 
     private var latentInitializer: FreezableBundleInitializer? = null
+    private var scrollPosition: Pair<Int, Int>? = null
+    private val disposables = CompositeDisposable()
 
     private var findInPageQuery: String? = null
     private var toggleDesktop: Boolean = false
@@ -96,10 +99,24 @@ class TabAdapter @AssistedInject constructor(
             latentInitializer = tabInitializer
             webView.id = tabInitializer.id.takeIf { it != -1 } ?: viewIdGenerator.generateViewId()
             viewIdGenerator.claimViewId(tabInitializer.id)
+            scrollPosition = tabInitializer.bundle.let {
+                val x = it.getInt(SCROLL_X, -1)
+                val y = it.getInt(SCROLL_Y, -1)
+                if (x != -1 && y != -1) x to y else null
+            }
         } else {
             webView.id = viewIdGenerator.generateViewId()
             loadFromInitializer(tabInitializer)
         }
+
+        disposables.add(tabWebViewClient.finishedObservable
+            .observeOn(mainScheduler)
+            .subscribe {
+                scrollPosition?.let { (x, y) ->
+                    webView.scrollTo(x, y)
+                    scrollPosition = null
+                }
+            })
 
         webView.setCompositeOnFocusChangeListener("focus_change") { _, hasFocus ->
             focusObservable.onNext(hasFocus)
@@ -299,6 +316,7 @@ class TabAdapter @AssistedInject constructor(
     override fun hasFocusChanges(): Observable<Boolean> = focusObservable.hide()
 
     override fun destroy() {
+        disposables.dispose()
         viewIdGenerator.releaseViewId(webView.id)
         previewModel.prune()
         webView.stopLoading()
@@ -308,8 +326,11 @@ class TabAdapter @AssistedInject constructor(
         webView.destroy()
     }
 
-    override fun freeze(): Bundle = latentInitializer?.bundle
-        ?: Bundle(ClassLoader.getSystemClassLoader()).also(webView::saveState)
+    override fun freeze(): Bundle = (latentInitializer?.bundle
+        ?: Bundle(ClassLoader.getSystemClassLoader()).also(webView::saveState)).apply {
+        putInt(SCROLL_X, webView.scrollX)
+        putInt(SCROLL_Y, webView.scrollY)
+    }
 
     private fun renderViewToBitmap(
         view: View,
@@ -338,5 +359,10 @@ class TabAdapter @AssistedInject constructor(
         view.draw(canvas)
 
         return bitmap
+    }
+
+    companion object {
+        private const val SCROLL_X = "SCROLL_X"
+        private const val SCROLL_Y = "SCROLL_Y"
     }
 }
