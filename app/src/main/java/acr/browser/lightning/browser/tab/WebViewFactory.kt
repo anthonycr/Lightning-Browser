@@ -58,46 +58,48 @@ class WebViewFactory @Inject constructor(
     /**
      * Construct a [WebView] based on the user's preferences.
      */
-    fun createWebView(): WebView = WebView(activity).apply {
-        tag = CompositeTouchListener().also(::setOnTouchListener)
-        isFocusableInTouchMode = true
-        isFocusable = true
-        setBackgroundColor(Color.WHITE)
+    fun createWebView(): Lazy<WebView> = lazy {
+        WebView(activity).apply {
+            tag = CompositeTouchListener().also(::setOnTouchListener)
+            isFocusableInTouchMode = true
+            isFocusable = true
+            setBackgroundColor(Color.WHITE)
 
-        importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
+            importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
 
-        isScrollbarFadingEnabled = true
-        isSaveEnabled = true
-        overScrollMode = View.OVER_SCROLL_NEVER
-        setNetworkAvailable(true)
+            isScrollbarFadingEnabled = true
+            isSaveEnabled = true
+            overScrollMode = View.OVER_SCROLL_NEVER
+            setNetworkAvailable(true)
 
-        settings.apply {
-            mediaPlaybackRequiresUserGesture = true
+            settings.apply {
+                mediaPlaybackRequiresUserGesture = true
 
-            mixedContentMode = if (!incognitoMode) {
-                WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
-            } else {
-                WebSettings.MIXED_CONTENT_NEVER_ALLOW
+                mixedContentMode = if (!incognitoMode) {
+                    WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+                } else {
+                    WebSettings.MIXED_CONTENT_NEVER_ALLOW
+                }
+
+                if (!incognitoMode || Capabilities.FULL_INCOGNITO.isSupported) {
+                    domStorageEnabled = true
+                    databaseEnabled = true
+                    cacheMode = WebSettings.LOAD_DEFAULT
+                } else {
+                    domStorageEnabled = false
+                    databaseEnabled = false
+                    cacheMode = WebSettings.LOAD_NO_CACHE
+                }
+
+                setSupportZoom(true)
+                builtInZoomControls = true
+                displayZoomControls = false
+                allowContentAccess = true
+                allowFileAccess = true
             }
 
-            if (!incognitoMode || Capabilities.FULL_INCOGNITO.isSupported) {
-                domStorageEnabled = true
-                databaseEnabled = true
-                cacheMode = WebSettings.LOAD_DEFAULT
-            } else {
-                domStorageEnabled = false
-                databaseEnabled = false
-                cacheMode = WebSettings.LOAD_NO_CACHE
-            }
-
-            setSupportZoom(true)
-            builtInZoomControls = true
-            displayZoomControls = false
-            allowContentAccess = true
-            allowFileAccess = true
+            updateForPreferences(userPreferences, incognitoMode)
         }
-
-        updateForPreferences(userPreferences, incognitoMode)
     }
 
     @SuppressLint("SetJavaScriptEnabled")

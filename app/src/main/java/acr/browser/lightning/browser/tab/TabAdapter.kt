@@ -41,8 +41,8 @@ import java.util.concurrent.TimeUnit
  */
 @SuppressLint("ClickableViewAccessibility")
 class TabAdapter @AssistedInject constructor(
-    @Assisted tabInitializer: TabInitializer,
-    @Assisted private val webView: WebView,
+    @Assisted private val tabInitializer: TabInitializer,
+    @Assisted private val webViewLazy: Lazy<WebView>,
     @Assisted private val requestHeaders: Map<String, String>,
     @Assisted private val tabWebViewClient: TabWebViewClient,
     @Assisted override var tabType: TabModel.Type,
@@ -62,7 +62,7 @@ class TabAdapter @AssistedInject constructor(
 
         fun create(
             tabInitializer: TabInitializer,
-            webView: WebView,
+            webView: Lazy<WebView>,
             requestHeaders: Map<String, String>,
             tabWebViewClient: TabWebViewClient,
             tabType: TabModel.Type,
@@ -74,52 +74,59 @@ class TabAdapter @AssistedInject constructor(
     private var findInPageQuery: String? = null
     private var toggleDesktop: Boolean = false
     private val downloadsSubject = PublishSubject.create<PendingDownload>()
-    private val focusObservable = BehaviorSubject.createDefault(webView.hasFocus())
+    private val focusObservable = BehaviorSubject.createDefault(false)
 
     private var previewGeneratedTime = System.currentTimeMillis()
 
-    init {
-        webView.webViewClient = tabWebViewClient
-        webView.webChromeClient = tabWebChromeClient
-        webView.setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
-            downloadsSubject.onNext(
-                PendingDownload(
-                    url = url,
-                    userAgent = userAgent,
-                    contentDisposition = contentDisposition,
-                    mimeType = mimetype,
-                    contentLength = contentLength
+    override val id: Int = if (tabInitializer is FreezableBundleInitializer) {
+        latentInitializer = tabInitializer
+        val frozenId = tabInitializer.id.takeIf { it != -1 } ?: viewIdGenerator.generateViewId()
+        viewIdGenerator.claimViewId(frozenId)
+        frozenId
+    } else {
+        viewIdGenerator.generateViewId()
+    }
+
+    private val webView: WebView
+        get() = webViewLazy.value.apply {
+            webViewClient = tabWebViewClient
+            webChromeClient = tabWebChromeClient
+            setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
+                downloadsSubject.onNext(
+                    PendingDownload(
+                        url = url,
+                        userAgent = userAgent,
+                        contentDisposition = contentDisposition,
+                        mimeType = mimetype,
+                        contentLength = contentLength
+                    )
                 )
-            )
-        }
-        if (tabInitializer is FreezableBundleInitializer) {
-            latentInitializer = tabInitializer
-            webView.id = tabInitializer.id.takeIf { it != -1 } ?: viewIdGenerator.generateViewId()
-            viewIdGenerator.claimViewId(tabInitializer.id)
-        } else {
-            webView.id = viewIdGenerator.generateViewId()
-            loadFromInitializer(tabInitializer)
-        }
-
-        webView.setCompositeOnFocusChangeListener("focus_change") { _, hasFocus ->
-            focusObservable.onNext(hasFocus)
-        }
-
-        webView.setCompositeTouchListener("focus") { view, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                if (!view.hasFocus()) {
-                    view.requestFocus()
-                }
-                focusObservable.onNext(true)
             }
-            false
+            id = this@TabAdapter.id
+
+            setCompositeOnFocusChangeListener("focus_change") { _, hasFocus ->
+                focusObservable.onNext(hasFocus)
+            }
+
+            setCompositeTouchListener("focus") { view, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    if (!view.hasFocus()) {
+                        view.requestFocus()
+                    }
+                    focusObservable.onNext(true)
+                }
+                false
+            }
+        }
+
+    init {
+        if (tabInitializer !is FreezableBundleInitializer) {
+            loadFromInitializer(tabInitializer)
         }
     }
 
     private var previewPath: String? = null
-    private val previewPathSingle = previewModel.previewForId(webView.id).cache()
-
-    override val id: Int = webView.id
+    private val previewPathSingle = previewModel.previewForId(id).cache()
 
     override fun loadUrl(url: String) {
         webView.loadUrl(url, requestHeaders)
@@ -193,7 +200,7 @@ class TabAdapter @AssistedInject constructor(
             .mapOptional { Optional.ofNullable(renderViewToBitmap(webView)) }
             .observeOn(diskScheduler)
             .flatMapSingle { bitmap ->
-                previewModel.cachePreviewForId(webView.id, bitmap)
+                previewModel.cachePreviewForId(id, bitmap)
                     .andThen(previewPathSingle)
                     .map<Pair<String?, Long>> { path -> path to System.currentTimeMillis() }
             }
@@ -299,7 +306,7 @@ class TabAdapter @AssistedInject constructor(
     override fun hasFocusChanges(): Observable<Boolean> = focusObservable.hide()
 
     override fun destroy() {
-        viewIdGenerator.releaseViewId(webView.id)
+        viewIdGenerator.releaseViewId(id)
         previewModel.prune()
         webView.stopLoading()
         webView.onPause()

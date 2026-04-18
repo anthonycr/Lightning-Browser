@@ -79,8 +79,14 @@ class TabsRepository @Inject constructor(
         tabType: TabModel.Type
     ): Single<TabModel> =
         Single.fromCallable(webViewFactory::createWebView)
-            .doOnSuccess(tabPager::addTab)
-            .flatMap { tabFactory.constructTab(tabInitializer, it, tabType) }
+            .flatMap { webViewLazy ->
+                tabFactory.constructTab(tabInitializer, webViewLazy, tabType)
+                    .map { webViewLazy to it }
+            }
+            .doOnSuccess { (webViewLazy, tabModel) ->
+                tabPager.addTab(tabModel.id, webViewLazy)
+            }
+            .map { (_, tabModel) -> tabModel }
             .doOnSuccess {
                 tabsList = tabsList + it
                 tabsListObservable.onNext(tabsList)

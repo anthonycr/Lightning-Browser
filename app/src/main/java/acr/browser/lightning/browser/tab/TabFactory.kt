@@ -32,7 +32,7 @@ class TabFactory @Inject constructor(
      */
     fun constructTab(
         tabInitializer: TabInitializer,
-        webView: WebView,
+        webView: Lazy<WebView>,
         tabType: TabModel.Type
     ): Single<TabModel> {
         val faviconHandler = cacheDirThreadSafeFileProvider.file()

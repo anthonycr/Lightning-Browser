@@ -271,7 +271,12 @@ class BrowserPresenter @Inject constructor(
         tabDisposable += tab.urlChanges()
             .distinctUntilChanged()
             .subscribeOn(mainScheduler)
-            .subscribeBy { view?.showToolbar() }
+            .subscribeBy { url ->
+                url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {
+                    historyRecord.visit(tab.title, it)
+                }
+                view?.showToolbar()
+            }
 
         tabDisposable += tab.createWindowRequests()
             .subscribeOn(mainScheduler)
@@ -328,10 +333,6 @@ class BrowserPresenter @Inject constructor(
                     view.updateTabs(tabListState.updateId(tabModel.id) {
                         it.copy(title = title, icon = bitmap.value(), preview = tabModel.preview)
                     })
-
-                    tabModel.url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {
-                        historyRecord.visit(title, it)
-                    }
                 }
         }
     }
@@ -578,7 +579,11 @@ class BrowserPresenter @Inject constructor(
                 currentTab?.id?.let {
                     view?.showCloseBrowserDialog(it)
                 }
-            } else if (currentTab?.tabType in listOf(TabModel.Type.EPHEMERAL, TabModel.Type.POP_UP)) {
+            } else if (currentTab?.tabType in listOf(
+                    TabModel.Type.EPHEMERAL,
+                    TabModel.Type.POP_UP
+                )
+            ) {
                 onTabClose(tabListState.indexOfCurrentTab())
             } else {
                 navigator.backgroundBrowser()
