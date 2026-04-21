@@ -3,6 +3,8 @@ plugins {
     id("com.github.ben-manes.versions")
     id("com.google.devtools.ksp") version "2.3.6"
     id("com.anthonycr.plugins.mezzanine") version "2.3.0"
+    id("com.autonomousapps.dependency-analysis") version "3.9.0"
+    id("com.squareup.sort-dependencies") version "0.16"
 }
 
 android {
@@ -91,64 +93,60 @@ android {
 }
 
 dependencies {
-    // test dependencies
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.assertj:assertj-core:3.27.7")
-    testImplementation("org.mockito:mockito-core:5.23.0")
+    val robolectric = "4.16.1"
+    val mezzanineVersion = "2.3.0"
+    val daggerVersion = "2.59.2"
+    val kotlin = "2.3.20"
+
+    implementation("androidx.activity:activity:1.13.0")
+    implementation("androidx.annotation:annotation:1.10.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    implementation("androidx.coordinatorlayout:coordinatorlayout:1.3.0")
+    implementation("androidx.core:core:1.18.0")
+    implementation("androidx.core:core-ktx:1.18.0")
+    implementation("androidx.drawerlayout:drawerlayout:1.2.0")
+    implementation("androidx.fragment:fragment:1.8.9")
+    implementation("androidx.lifecycle:lifecycle-common:2.10.0")
+    implementation("androidx.palette:palette:1.0.0")
+    implementation("androidx.preference:preference:1.2.1")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
+    implementation("androidx.webkit:webkit:1.15.0")
+    implementation("com.anthonycr.mezzanine:core:$mezzanineVersion")
+    implementation("com.google.android.material:material:1.13.0")
+    implementation("com.google.dagger:dagger:$daggerVersion")
+    implementation("com.guolindev.permissionx:permissionx:1.8.1")
+    implementation("com.squareup.okhttp3:okhttp:5.3.2")
+    implementation("com.squareup.okio:okio:3.17.0")
+    implementation("io.coil-kt.coil3:coil:3.4.0")
+    implementation("io.coil-kt.coil3:coil-core:3.4.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.4.0")
+    implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
+    implementation("io.reactivex.rxjava3:rxjava:3.1.12")
+    implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
+    implementation("javax.inject:javax.inject:1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jsoup:jsoup:1.22.2")
+    implementation("org.jspecify:jspecify:1.0.0")
+    implementation("org.reactivestreams:reactive-streams:1.0.4")
+
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
+
+    compileOnly("javax.annotation:jsr250-api:1.0")
+
     testImplementation("com.nhaarman:mockito-kotlin:1.6.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    testImplementation("org.robolectric:robolectric:4.16.1")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.assertj:assertj-core:3.27.7")
+    testImplementation("org.mockito:mockito-core:5.23.0")
+    testImplementation("org.robolectric:annotations:$robolectric")
+    testImplementation("org.robolectric:robolectric:$robolectric")
+    testImplementation("org.robolectric:shadows-framework:$robolectric")
 
-    // support libraries
-    implementation("androidx.palette:palette-ktx:1.0.0")
-    implementation("androidx.annotation:annotation:1.10.0")
-    implementation("androidx.vectordrawable:vectordrawable-animated:1.2.0")
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("com.google.android.material:material:1.13.0")
-    implementation("androidx.recyclerview:recyclerview:1.4.0")
-    implementation("androidx.core:core-ktx:1.18.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("androidx.fragment:fragment-ktx:1.8.9")
-    implementation("androidx.drawerlayout:drawerlayout:1.2.0")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.webkit:webkit:1.15.0")
-
-    // html parsing for reading mode
-    implementation("org.jsoup:jsoup:1.22.2")
-
-    // file reading
-    val mezzanineVersion = "2.3.0"
-    implementation("com.anthonycr.mezzanine:core:$mezzanineVersion")
     ksp("com.anthonycr.mezzanine:processor:$mezzanineVersion")
-
-    // dependency injection
-    val daggerVersion = "2.59.2"
-    implementation("com.google.dagger:dagger:$daggerVersion")
     ksp("com.google.dagger:dagger-compiler:$daggerVersion")
-    compileOnly("javax.annotation:jsr250-api:1.0")
-
-    // permissions
-    implementation("com.guolindev.permissionx:permissionx:1.8.1")
-
-    implementation("com.squareup.okhttp3:okhttp:5.3.2")
-
-    implementation("io.coil-kt.coil3:coil:3.4.0")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.4.0")
-
-    // rx
-    implementation("io.reactivex.rxjava3:rxjava:3.1.12")
-    implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
-    implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
-
-    // memory leak analysis
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
-
-    // kotlin
-    val kotlin = "2.3.20"
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
-//    kapt("org.jetbrains.kotlin:kotlin-metadata-jvm:$kotlin")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }
 
 mezzanine {

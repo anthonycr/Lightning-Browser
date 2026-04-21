@@ -365,8 +365,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        intent?.let(intentExtractor::extractUrlFromIntent)?.let(presenter::onNewAction)
+    override fun onNewIntent(intent: Intent) {
+        intentExtractor.extractUrlFromIntent(intent)?.let(presenter::onNewAction)
         super.onNewIntent(intent)
     }
 

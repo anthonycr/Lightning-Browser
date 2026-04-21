@@ -22,3 +22,5 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
       - name: Build
         run: ./gradlew build
+      - name: Check
+        run: ./gradlew checkSortDependencies
