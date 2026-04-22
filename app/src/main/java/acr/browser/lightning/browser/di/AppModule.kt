@@ -2,6 +2,8 @@ package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.tab.DefaultTabTitle
+import acr.browser.lightning.concurrency.CoroutineDispatcherProvider
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
 import acr.browser.lightning.favicon.FaviconCleanup
@@ -44,6 +46,11 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import okhttp3.Cache
 import okhttp3.CacheControl
 import okhttp3.HttpUrl
@@ -257,6 +264,31 @@ class AppModule {
     ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
         application.cacheDir
     }
+
+    @Singleton
+    @OptIn(DelicateCoroutinesApi::class)
+    @Provides
+    fun providesAppCoroutineScope(): CoroutineScope = GlobalScope
+
+    @Singleton
+    @Provides
+    fun providesDispatchers(): CoroutineDispatchers = CoroutineDispatcherProvider(
+        main = Dispatchers.Main,
+        io = Dispatchers.IO,
+        default = Dispatchers.Default
+    )
+
+    @DatabaseScheduler
+    @Provides
+    fun providesDatabaseDispatcher(
+        coroutineDispatchers: CoroutineDispatchers
+    ): CoroutineDispatcher = coroutineDispatchers.io.limitedParallelism(1)
+
+    @NetworkScheduler
+    @Provides
+    fun providesNetworkDispatcher(
+        coroutineDispatchers: CoroutineDispatchers
+    ): CoroutineDispatcher = coroutineDispatchers.io.limitedParallelism(4)
 }
 
 @Qualifier
