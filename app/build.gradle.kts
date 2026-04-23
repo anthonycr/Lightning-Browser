@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("com.github.ben-manes.versions")
-    id("com.google.devtools.ksp") version "2.3.6"
+    id("com.google.devtools.ksp") version "2.3.7"
     id("com.anthonycr.plugins.mezzanine") version "2.3.0"
     id("com.autonomousapps.dependency-analysis") version "3.9.0"
     id("com.squareup.sort-dependencies") version "0.16"
