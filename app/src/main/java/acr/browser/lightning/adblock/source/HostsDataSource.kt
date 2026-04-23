@@ -10,11 +10,11 @@ interface HostsDataSource {
     /**
      * Load the hosts and emit them as a [Single] [HostsResult].
      */
-    fun loadHosts(): Single<HostsResult>
+    suspend fun loadHosts(): HostsResult
 
     /**
      * The unique [String] identifier for this source.
      */
-    fun identifier(): String
+    suspend fun identifier(): String
 
 }

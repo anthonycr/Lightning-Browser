@@ -1,8 +1,5 @@
 package acr.browser.lightning.database.adblock
 
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
-
 /**
  * A repository that stores [Host].
  */
@@ -10,17 +7,13 @@ interface HostsRepository {
 
     /**
      * Add the [List] of [Host] to the repository.
-     *
-     * @return A [Completable] that completes when the addition finishes.
      */
-    fun addHosts(hosts: List<Host>): Completable
+    suspend fun addHosts(hosts: List<Host>)
 
     /**
      * Remove all hosts in the repository.
-     *
-     * @return A [Completable] that completes when the removal finishes.
      */
-    fun removeAllHosts(): Completable
+    suspend fun removeAllHosts()
 
     /**
      * @return `true` if the repository contains the [Host], `false` otherwise.
@@ -33,8 +26,8 @@ interface HostsRepository {
     fun hasHosts(): Boolean
 
     /**
-     * @return A [Single] that emits a list of all hosts in the repository.
+     * @return A list of all hosts in the repository.
      */
-    fun allHosts(): Single<List<Host>>
+    suspend fun allHosts(): List<Host>
 
 }

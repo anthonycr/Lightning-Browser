@@ -97,6 +97,8 @@ dependencies {
     val mezzanineVersion = "2.3.0"
     val daggerVersion = "2.59.2"
     val kotlin = "2.3.20"
+    val datastore = "1.2.1"
+    val coil = "3.4.0"
 
     implementation("androidx.activity:activity:1.13.0")
     implementation("androidx.annotation:annotation:1.10.0")
@@ -105,6 +107,10 @@ dependencies {
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.3.0")
     implementation("androidx.core:core:1.18.0")
     implementation("androidx.core:core-ktx:1.18.0")
+    implementation("androidx.datastore:datastore:$datastore")
+    implementation("androidx.datastore:datastore-core:$datastore")
+    implementation("androidx.datastore:datastore-preferences:$datastore")
+    implementation("androidx.datastore:datastore-preferences-core:$datastore")
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
     implementation("androidx.fragment:fragment:1.8.9")
     implementation("androidx.lifecycle:lifecycle-common:2.10.0")
@@ -118,9 +124,9 @@ dependencies {
     implementation("com.guolindev.permissionx:permissionx:1.8.1")
     implementation("com.squareup.okhttp3:okhttp:5.3.2")
     implementation("com.squareup.okio:okio:3.17.0")
-    implementation("io.coil-kt.coil3:coil:3.4.0")
-    implementation("io.coil-kt.coil3:coil-core:3.4.0")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.4.0")
+    implementation("io.coil-kt.coil3:coil:$coil")
+    implementation("io.coil-kt.coil3:coil-core:$coil")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:$coil")
     implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
     implementation("io.reactivex.rxjava3:rxjava:3.1.12")
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")

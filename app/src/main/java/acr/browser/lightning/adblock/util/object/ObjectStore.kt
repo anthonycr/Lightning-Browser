@@ -3,23 +3,23 @@ package acr.browser.lightning.adblock.util.`object`
 import java.io.Serializable
 
 /**
- * A store of objects matched to keys.
+ * A store of an object.
  */
 interface ObjectStore<T> where T : Any, T : Serializable {
 
     /**
-     * Retrieve the value held for [key] or `null` if it is absent.
+     * Retrieve the value held `null` if it is absent.
      */
-    fun retrieve(key: String): T?
+    suspend fun retrieve(): T?
 
     /**
-     * Stores the [value] matched to the provided [key].
+     * Stores the [value].
      */
-    fun store(key: String, value: T)
+    suspend fun store(value: T)
 
     /**
-     * Clears the value held for [key].
+     * Clears the value held.
      */
-    fun clear(key: String)
+    suspend fun clear()
 
 }

@@ -2,14 +2,16 @@ package acr.browser.lightning.adblock.source
 
 import acr.browser.lightning.adblock.parser.HostsFileParser
 import acr.browser.lightning.adblock.util.hash.computeMD5
-import acr.browser.lightning.extensions.onIOExceptionResumeNext
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 import java.io.InputStreamReader
 
 /**
@@ -20,7 +22,8 @@ import java.io.InputStreamReader
  */
 class FileHostsDataSource @AssistedInject constructor(
     private val logger: Logger,
-    @Assisted private val file: File
+    @Assisted private val file: File,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) : HostsDataSource {
 
     /**
@@ -31,17 +34,24 @@ class FileHostsDataSource @AssistedInject constructor(
      *
      * @see HostsDataSource.loadHosts
      */
-    override fun loadHosts(): Single<HostsResult> = Single.create<HostsResult> { emitter ->
-        val reader = InputStreamReader(file.inputStream())
-        val hostsFileParser = HostsFileParser(logger)
+    override suspend fun loadHosts(): HostsResult = withContext(coroutineDispatchers.io) {
+        try {
+            val reader = InputStreamReader(file.inputStream())
+            val hostsFileParser = HostsFileParser(logger)
 
-        val domains = hostsFileParser.parseInput(reader)
+            val domains = hostsFileParser.parseInput(reader)
 
-        logger.log(TAG, "Loaded ${domains.size} domains")
-        emitter.onSuccess(HostsResult.Success(domains))
-    }.onIOExceptionResumeNext(HostsResult::Failure)
+            logger.log(TAG, "Loaded ${domains.size} domains")
 
-    override fun identifier(): String = file.inputStream().computeMD5()
+            HostsResult.Success(domains)
+        } catch (exception: IOException) {
+            HostsResult.Failure(exception)
+        }
+    }
+
+    override suspend fun identifier(): String = withContext(coroutineDispatchers.io) {
+        file.inputStream().computeMD5()
+    }
 
     companion object {
         private const val TAG = "FileHostsDataSource"

@@ -5,6 +5,8 @@ import acr.browser.lightning.adblock.parser.HostsFileParser
 import acr.browser.lightning.log.Logger
 import android.content.res.AssetManager
 import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.InputStreamReader
 import javax.inject.Inject
 import javax.inject.Provider
@@ -19,7 +21,7 @@ import javax.inject.Provider
 class AssetsHostsDataSource @Inject constructor(
     private val assetManager: AssetManager,
     private val hostsFileParserProvider: Provider<HostsFileParser>,
-    private val logger: Logger
+    private val logger: Logger,
 ) : HostsDataSource {
 
     /**
@@ -30,17 +32,18 @@ class AssetsHostsDataSource @Inject constructor(
      *
      * @see HostsDataSource.loadHosts
      */
-    override fun loadHosts(): Single<HostsResult> = Single.create { emitter ->
+    override suspend fun loadHosts(): HostsResult = withContext(Dispatchers.IO) {
         val reader = InputStreamReader(assetManager.open(BLOCKED_DOMAINS_LIST_FILE_NAME))
         val hostsFileParser = hostsFileParserProvider.get()
 
         val domains = hostsFileParser.parseInput(reader)
 
         logger.log(TAG, "Loaded ${domains.size} domains")
-        emitter.onSuccess(HostsResult.Success(domains))
+
+        HostsResult.Success(domains)
     }
 
-    override fun identifier(): String = "assets:${BuildConfig.VERSION_CODE}"
+    override suspend fun identifier(): String = "assets:${BuildConfig.VERSION_CODE}"
 
     companion object {
         private const val TAG = "AssetsHostsDataSource"

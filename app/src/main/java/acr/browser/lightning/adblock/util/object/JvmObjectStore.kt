@@ -3,6 +3,8 @@ package acr.browser.lightning.adblock.util.`object`
 import acr.browser.lightning.adblock.util.hash.HashingAlgorithm
 import acr.browser.lightning.extensions.safeUse
 import android.app.Application
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -18,33 +20,35 @@ import java.io.Serializable
  */
 class JvmObjectStore<T>(
     private val application: Application,
-    private val hashingAlgorithm: HashingAlgorithm<String>
+    private val hashingAlgorithm: HashingAlgorithm<String>,
+    private val key: String,
+    private val objectStoreDispatcher: CoroutineDispatcher,
 ) : ObjectStore<T> where T : Any, T : Serializable {
 
     /**
      * Create the file in which to store the object, using the cache directory.
      */
-    private fun createStorageFile(key: String) = File(
+    private fun createStorageFile() = File(
         application.cacheDir,
         "object-store-${hashingAlgorithm.hash(key)}"
     )
 
     @Suppress("UNCHECKED_CAST")
-    override fun retrieve(key: String): T? {
-        val storageFile = createStorageFile(key)
+    override suspend fun retrieve(): T? = withContext(objectStoreDispatcher) {
+        val storageFile = createStorageFile()
         if (storageFile.exists()) {
             val fileInputStream = FileInputStream(storageFile)
             val objectInputStream = ObjectInputStream(fileInputStream)
-            return objectInputStream.safeUse {
+            return@withContext objectInputStream.safeUse {
                 it.readObject() as T
             }
         }
 
-        return null
+        return@withContext null
     }
 
-    override fun store(key: String, value: T) {
-        val storageFile = createStorageFile(key)
+    override suspend fun store(value: T): Unit = withContext(objectStoreDispatcher) {
+        val storageFile = createStorageFile()
         val fileOutputStream = FileOutputStream(storageFile, false)
         val objectOutputStream = ObjectOutputStream(fileOutputStream)
 
@@ -53,8 +57,8 @@ class JvmObjectStore<T>(
         }
     }
 
-    override fun clear(key: String) {
-        val storageFile = createStorageFile(key)
+    override suspend fun clear(): Unit = withContext(objectStoreDispatcher) {
+        val storageFile = createStorageFile()
         storageFile.delete()
     }
 }
