@@ -49,7 +49,6 @@ import acr.browser.lightning.extensions.takeIfInstance
 import acr.browser.lightning.extensions.tint
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
-import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.utils.value
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -133,9 +132,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     @Inject
     internal lateinit var uiConfiguration: UiConfiguration
-
-    @Inject
-    internal lateinit var proxyUtils: ProxyUtils
 
     @Inject
     internal lateinit var themeProvider: ThemeProvider

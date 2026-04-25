@@ -19,9 +19,6 @@
             android:key="cb_colormode"
             android:title="@string/color_mode"/>
         <Preference
-            android:key="proxy"
-            android:title="@string/http_proxy"/>
-        <Preference
             android:key="agent"
             android:title="@string/agent"/>
         <Preference

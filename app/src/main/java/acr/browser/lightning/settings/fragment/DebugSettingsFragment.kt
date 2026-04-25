@@ -3,13 +3,14 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.extensions.snackbar
-import acr.browser.lightning.preference.DeveloperPreferences
+import acr.browser.lightning.preference.DeveloperPreferenceStore
 import android.os.Bundle
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class DebugSettingsFragment : AbstractSettingsFragment() {
 
-    @Inject internal lateinit var developerPreferences: DeveloperPreferences
+    @Inject internal lateinit var developerPreferenceStore: DeveloperPreferenceStore
 
     override fun providePreferencesXmlResource() = R.xml.preference_debug
 
@@ -17,14 +18,18 @@ class DebugSettingsFragment : AbstractSettingsFragment() {
         super.onCreatePreferences(savedInstanceState, rootKey)
         injector.inject(this)
 
-        togglePreference(
-            preference = LEAK_CANARY,
-            isChecked = developerPreferences.useLeakCanary,
-            onCheckChange = { change ->
-                activity?.snackbar(R.string.app_restart)
-                developerPreferences.useLeakCanary = change
-            }
-        )
+        runBlocking {
+            togglePreference(
+                preference = LEAK_CANARY,
+                isChecked = developerPreferenceStore.useLeakCanary.get(),
+                onCheckChange = { change ->
+                    activity?.snackbar(R.string.app_restart)
+                    runBlocking {
+                        developerPreferenceStore.useLeakCanary.set(change)
+                    }
+                }
+            )
+        }
     }
 
     companion object {

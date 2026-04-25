@@ -2,30 +2,24 @@ package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.injector
-import acr.browser.lightning.browser.proxy.ProxyChoice
 import acr.browser.lightning.constant.SCHEME_BLANK
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.dialog.BrowserDialog
-import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.Suggestions
 import acr.browser.lightning.search.engine.BaseSearchEngine
 import acr.browser.lightning.search.engine.CustomSearch
 import acr.browser.lightning.utils.FileUtils
-import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.utils.ThemeUtils
-import android.app.Activity
 import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
-import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.webkit.URLUtil
 import android.widget.EditText
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import javax.inject.Inject
 
@@ -37,21 +31,11 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     @Inject lateinit var searchEngineProvider: SearchEngineProvider
     @Inject lateinit var userPreferences: UserPreferences
 
-    private lateinit var proxyChoices: Array<String>
-
     override fun providePreferencesXmlResource() = R.xml.preference_general
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         super.onCreatePreferences(savedInstanceState, rootKey)
         injector.inject(this)
-
-        proxyChoices = resources.getStringArray(R.array.proxy_choices_array)
-
-        clickableDynamicPreference(
-            preference = SETTINGS_PROXY,
-            summary = userPreferences.proxyChoice.toSummary(),
-            onClick = ::showProxyPicker
-        )
 
         clickableDynamicPreference(
             preference = SETTINGS_USER_AGENT,
@@ -106,85 +90,6 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             isChecked = userPreferences.colorModeEnabled,
             onCheckChange = { userPreferences.colorModeEnabled = it }
         )
-    }
-
-    private fun ProxyChoice.toSummary(): String {
-        val stringArray = resources.getStringArray(R.array.proxy_choices_array)
-        return when (this) {
-            ProxyChoice.NONE -> stringArray[0]
-            ProxyChoice.ORBOT -> stringArray[1]
-            // ProxyChoice.I2P -> stringArray[2]
-            ProxyChoice.MANUAL -> "${userPreferences.proxyHost}:${userPreferences.proxyPort}"
-        }
-    }
-
-    private fun showProxyPicker(summaryUpdater: SummaryUpdater) {
-        BrowserDialog.showCustomDialog(activity) {
-            setTitle(R.string.http_proxy)
-            val stringArray = resources.getStringArray(R.array.proxy_choices_array)
-            val values = ProxyChoice.entries.map {
-                Pair(
-                    it, when (it) {
-                        ProxyChoice.NONE -> stringArray[0]
-                        ProxyChoice.ORBOT -> stringArray[1]
-                        // ProxyChoice.I2P -> stringArray[2]
-                        ProxyChoice.MANUAL -> stringArray[2]
-                    }
-                )
-            }
-            withSingleChoiceItems(values, userPreferences.proxyChoice) {
-                updateProxyChoice(it, requireActivity(), summaryUpdater)
-            }
-            setPositiveButton(R.string.action_ok, null)
-        }
-    }
-
-    private fun updateProxyChoice(
-        choice: ProxyChoice,
-        activity: Activity,
-        summaryUpdater: SummaryUpdater
-    ) {
-        val sanitizedChoice = ProxyUtils.sanitizeProxyChoice(choice, activity)
-        if (sanitizedChoice == ProxyChoice.MANUAL) {
-            showManualProxyPicker(activity, summaryUpdater)
-        }
-
-        userPreferences.proxyChoice = sanitizedChoice
-        summaryUpdater.updateSummary(sanitizedChoice.toSummary())
-    }
-
-    private fun showManualProxyPicker(activity: Activity, summaryUpdater: SummaryUpdater) {
-        val v = activity.layoutInflater.inflate(R.layout.dialog_manual_proxy, null)
-        val eProxyHost = v.findViewById<TextView>(R.id.proxyHost)
-        val eProxyPort = v.findViewById<TextView>(R.id.proxyPort)
-
-        // Limit the number of characters since the port needs to be of type int
-        // Use input filters to limit the EditText length and determine the max
-        // length by using length of integer MAX_VALUE
-        val maxCharacters = Integer.MAX_VALUE.toString().length
-        eProxyPort.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(maxCharacters - 1))
-
-        eProxyHost.text = userPreferences.proxyHost
-        eProxyPort.text = userPreferences.proxyPort.toString()
-
-        BrowserDialog.showCustomDialog(activity) {
-            setTitle(R.string.manual_proxy)
-            setView(v)
-            setPositiveButton(R.string.action_ok) { _, _ ->
-                val proxyHost = eProxyHost.text.toString()
-                val proxyPort = try {
-                    // Try/Catch in case the user types an empty string or a number
-                    // larger than max integer
-                    Integer.parseInt(eProxyPort.text.toString())
-                } catch (ignored: NumberFormatException) {
-                    userPreferences.proxyPort
-                }
-
-                userPreferences.proxyHost = proxyHost
-                userPreferences.proxyPort = proxyPort
-                summaryUpdater.updateSummary("$proxyHost:$proxyPort")
-            }
-        }
     }
 
     private fun choiceToUserAgent(index: Int) = when (index) {

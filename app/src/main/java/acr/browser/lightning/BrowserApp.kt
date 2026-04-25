@@ -4,7 +4,6 @@ import acr.browser.lightning.browser.di.AppComponent
 import acr.browser.lightning.browser.di.DaggerAppComponent
 import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.browser.di.injector
-import acr.browser.lightning.browser.proxy.ProxyAdapter
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.device.BuildInfo
@@ -46,9 +45,6 @@ class BrowserApp : Application() {
 
     @Inject
     internal lateinit var buildInfo: BuildInfo
-
-    @Inject
-    internal lateinit var proxyAdapter: ProxyAdapter
 
     @Inject
     internal lateinit var cleanup: Cleanup
@@ -126,8 +122,6 @@ class BrowserApp : Application() {
         if (buildInfo.buildType == BuildType.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true)
         }
-
-        registerActivityLifecycleCallbacks(proxyAdapter)
     }
 
     /**
