@@ -81,11 +81,6 @@ class AppModule {
         application.getSharedPreferences("settings", 0)
 
     @Provides
-    @DevPrefs
-    fun provideDebugPreferences(application: Application): SharedPreferences =
-        application.getSharedPreferences("developer_settings", 0)
-
-    @Provides
     fun providesAssetManager(application: Application): AssetManager = application.assets
 
     @Provides
@@ -301,14 +296,6 @@ annotation class MainHandler
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
 annotation class UserPrefs
-
-@Qualifier
-@Retention(AnnotationRetention.SOURCE)
-annotation class AdBlockPrefs
-
-@Qualifier
-@Retention(AnnotationRetention.SOURCE)
-annotation class DevPrefs
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
