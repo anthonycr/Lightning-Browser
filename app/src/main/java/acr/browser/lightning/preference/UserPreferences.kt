@@ -2,7 +2,6 @@ package acr.browser.lightning.preference
 
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.browser.di.UserPrefs
-import acr.browser.lightning.browser.proxy.ProxyChoice
 import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.browser.ui.TabConfiguration
@@ -262,21 +261,6 @@ class UserPreferences @Inject constructor(
      * the theme of the app.
      */
     var useBlackStatusBar by preferences.booleanPreference(BLACK_STATUS_BAR, false)
-
-    /**
-     * The index of the proxy choice.
-     */
-    var proxyChoice by preferences.enumPreference(PROXY_CHOICE, ProxyChoice.NONE)
-
-    /**
-     * The proxy host used when [proxyChoice] is [ProxyChoice.MANUAL].
-     */
-    var proxyHost by preferences.stringPreference(USE_PROXY_HOST, "localhost")
-
-    /**
-     * The proxy port used when [proxyChoice] is [ProxyChoice.MANUAL].
-     */
-    var proxyPort by preferences.intPreference(USE_PROXY_PORT, 8118)
 
     /**
      * The index of the search suggestion choice.
