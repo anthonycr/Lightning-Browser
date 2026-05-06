@@ -194,12 +194,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the browser should invert the display colors of the web page content, false
-     * otherwise.
-     */
-    var invertColors by preferences.booleanPreference(INVERT_COLORS, false)
-
-    /**
      * The index of the theme used by the application.
      */
     var useTheme by preferences.enumPreference(THEME, AppTheme.LIGHT)
