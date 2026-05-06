@@ -1,6 +1,7 @@
 package acr.browser.lightning.preference
 
 import acr.browser.lightning.preference.datastore.NonNullPreferenceStore
+import acr.browser.lightning.preference.datastore.PreferenceStore
 import android.app.Application
 import androidx.datastore.migrations.SharedPreferencesMigration
 import androidx.datastore.migrations.SharedPreferencesView
@@ -40,25 +41,23 @@ class DeveloperPreferenceStore @Inject constructor(
     // private val keyCheckedForTor = booleanPreferencesKey(INITIAL_CHECK_FOR_TOR)
     // private val keyCheckedForI2P = booleanPreferencesKey(INITIAL_CHECK_FOR_I2P)
 
-    val useLeakCanary = NonNullPreferenceStore(
-        keyUseLeakCanary,
-        dataStore,
-        false
+    val useLeakCanary: PreferenceStore<Boolean> = NonNullPreferenceStore(
+        key = keyUseLeakCanary,
+        dataStore = dataStore,
+        defaultValue = false
     )
 
     // val checkedForTor = NonNullPreferenceStore(
-    //     keyCheckedForTor,
-    //     dataStore,
-    //     false
+    //     key = keyCheckedForTor,
+    //     dataStore = dataStore,
+    //     defaultValue = false
     // )
 
     // val checkedForI2P = NonNullPreferenceStore(
     //     keyCheckedForI2P,
-    //     dataStore,
-    //     false
+    //     dataStore = dataStore,
+    //     defaultValue = false
     // )
-
-    // var checkedForI2P by preferences.booleanPreference(INITIAL_CHECK_FOR_I2P, false)
 
     companion object {
         private const val FILE_NAME = "developer_settings"
