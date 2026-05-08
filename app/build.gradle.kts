@@ -132,7 +132,7 @@ dependencies {
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
     implementation("javax.inject:javax.inject:1")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
     implementation("org.jsoup:jsoup:1.22.2")
     implementation("org.jspecify:jspecify:1.0.0")
     implementation("org.reactivestreams:reactive-streams:1.0.4")
