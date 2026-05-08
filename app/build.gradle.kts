@@ -117,7 +117,7 @@ dependencies {
     implementation("androidx.palette:palette:1.0.0")
     implementation("androidx.preference:preference:1.2.1")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
-    implementation("androidx.webkit:webkit:1.15.0")
+    implementation("androidx.webkit:webkit:1.16.0")
     implementation("com.anthonycr.mezzanine:core:$mezzanineVersion")
     implementation("com.google.android.material:material:1.13.0")
     implementation("com.google.dagger:dagger:$daggerVersion")
