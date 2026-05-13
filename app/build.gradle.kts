@@ -119,7 +119,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.webkit:webkit:1.16.0")
     implementation("com.anthonycr.mezzanine:core:$mezzanineVersion")
-    implementation("com.google.android.material:material:1.13.0")
+    implementation("com.google.android.material:material:1.14.0")
     implementation("com.google.dagger:dagger:$daggerVersion")
     implementation("com.guolindev.permissionx:permissionx:1.8.1")
     implementation("com.squareup.okhttp3:okhttp:5.3.2")
