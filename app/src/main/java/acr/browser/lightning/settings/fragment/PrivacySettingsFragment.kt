@@ -65,8 +65,8 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_COOKIEEXIT,
-            isChecked = userPreferences.clearCookiesExitEnabled,
-            onCheckChange = { userPreferences.clearCookiesExitEnabled = it }
+            isChecked = userPreferencesDataStore.clearCookiesExitEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.clearCookiesExitEnabled.setUnsafe(it) }
         )
 
         togglePreference(

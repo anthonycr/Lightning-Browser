@@ -49,11 +49,6 @@ class UserPreferences @Inject constructor(
     var userAgentString by preferences.stringPreference(USER_AGENT_STRING, "")
 
     /**
-     * True if the browser should clear the browser cookies on app exit, false otherwise.
-     */
-    var clearCookiesExitEnabled by preferences.booleanPreference(CLEAR_COOKIES_EXIT, false)
-
-    /**
      * The index of the rendering mode that should be used by the browser.
      */
     var renderingMode by preferences.enumPreference(RENDERING_MODE, RenderingMode.NORMAL)
