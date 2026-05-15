@@ -48,12 +48,6 @@ class UserPreferences @Inject constructor(
     var userAgentString by preferences.stringPreference(USER_AGENT_STRING, "")
 
     /**
-     * True if third party cookies should be disallowed by the browser, false if they should be
-     * allowed.
-     */
-    var blockThirdPartyCookiesEnabled by preferences.booleanPreference(BLOCK_THIRD_PARTY, false)
-
-    /**
      * True if the browser should extract the theme color from a website and color the UI with it,
      * false otherwise.
      */

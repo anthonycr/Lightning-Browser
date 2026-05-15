@@ -170,7 +170,7 @@ class WebViewFactory @Inject constructor(
 
         CookieManager.getInstance().setAcceptThirdPartyCookies(
             this,
-            !userPreferences.blockThirdPartyCookiesEnabled
+            !userPreferencesDataStore.blockThirdPartyCookiesEnabled.getUnsafe()
         )
     }
 

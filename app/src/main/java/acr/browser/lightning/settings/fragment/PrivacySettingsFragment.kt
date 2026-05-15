@@ -47,8 +47,8 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_THIRDPCOOKIES,
-            isChecked = userPreferences.blockThirdPartyCookiesEnabled,
-            onCheckChange = { userPreferences.blockThirdPartyCookiesEnabled = it }
+            isChecked = userPreferencesDataStore.blockThirdPartyCookiesEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.blockThirdPartyCookiesEnabled.setUnsafe(it) }
         )
 
         togglePreference(
