@@ -14,7 +14,6 @@ import acr.browser.lightning.preference.delegates.intPreference
 import acr.browser.lightning.preference.delegates.nullableStringPreference
 import acr.browser.lightning.preference.delegates.stringPreference
 import acr.browser.lightning.search.SearchEngineProvider
-import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
 import android.content.SharedPreferences
 import javax.inject.Inject
@@ -36,11 +35,6 @@ class UserPreferences @Inject constructor(
         DOWNLOAD_DIRECTORY,
         FileUtils.DEFAULT_DOWNLOAD_PATH
     )
-
-    /**
-     * The custom URL which should be used for making searches.
-     */
-    var searchUrl by preferences.stringPreference(SEARCH_URL, GoogleSearch().queryUrl)
 
     /**
      * True if the browser should attempt to reflow the text on a web page after zooming in or out

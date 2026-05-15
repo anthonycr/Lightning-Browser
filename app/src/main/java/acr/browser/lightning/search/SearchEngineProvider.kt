@@ -63,7 +63,7 @@ class SearchEngineProvider @Inject constructor(
      */
     fun provideSearchEngine(): BaseSearchEngine =
         when (userPreferencesDataStore.searchChoice.getUnsafe()) {
-            0 -> CustomSearch(userPreferences.searchUrl)
+            0 -> CustomSearch(userPreferencesDataStore.searchUrl.getUnsafe())
             1 -> GoogleSearch()
             2 -> AskSearch()
             3 -> BingSearch()
@@ -102,7 +102,7 @@ class SearchEngineProvider @Inject constructor(
      * Provide a list of all supported search engines.
      */
     fun provideAllSearchEngines(): List<BaseSearchEngine> = listOf(
-        CustomSearch(userPreferences.searchUrl),
+        CustomSearch(userPreferencesDataStore.searchUrl.getUnsafe()),
         GoogleSearch(),
         AskSearch(),
         BingSearch(),

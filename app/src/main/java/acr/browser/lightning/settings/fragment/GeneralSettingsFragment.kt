@@ -327,10 +327,10 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 it,
                 R.string.search_engine_custom,
                 R.string.search_engine_custom,
-                userPreferences.searchUrl,
+                userPreferencesDataStore.searchUrl.getUnsafe(),
                 R.string.action_ok
             ) { searchUrl ->
-                userPreferences.searchUrl = searchUrl
+                userPreferencesDataStore.searchUrl.setUnsafe(searchUrl)
                 summaryUpdater.updateSummary(getSearchEngineSummary(customSearch))
             }
 
