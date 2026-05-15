@@ -66,8 +66,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_VIEWPORT,
-            isChecked = userPreferences.useWideViewPortEnabled,
-            onCheckChange = { userPreferences.useWideViewPortEnabled = it }
+            isChecked = userPreferencesDataStore.useWideViewPortEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.useWideViewPortEnabled.setUnsafe(it) }
         )
 
         togglePreference(

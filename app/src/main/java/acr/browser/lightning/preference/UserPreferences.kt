@@ -37,11 +37,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the browser should fit web pages to the view port, false otherwise.
-     */
-    var useWideViewPortEnabled by preferences.booleanPreference(USE_WIDE_VIEWPORT, true)
-
-    /**
      * The index of the user agent choice that should be used by the browser.
      *
      * @see UserPreferences.userAgent

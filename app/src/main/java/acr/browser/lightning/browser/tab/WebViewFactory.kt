@@ -152,7 +152,7 @@ class WebViewFactory @Inject constructor(
         // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
         settings.setSupportMultipleWindows(userPreferencesDataStore.popupsEnabled.getUnsafe() && !modifiesHeaders)
 
-        settings.useWideViewPort = userPreferences.useWideViewPortEnabled
+        settings.useWideViewPort = userPreferencesDataStore.useWideViewPortEnabled.getUnsafe()
         settings.loadWithOverviewMode = userPreferencesDataStore.overviewModeEnabled.getUnsafe()
         settings.textZoom = when (userPreferencesDataStore.textSize.getUnsafe()) {
             0 -> 200
