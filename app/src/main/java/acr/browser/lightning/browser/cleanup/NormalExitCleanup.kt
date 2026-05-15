@@ -3,7 +3,6 @@ package acr.browser.lightning.browser.cleanup
 import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.database.history.HistoryDatabase
 import acr.browser.lightning.log.Logger
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.WebUtils
@@ -15,7 +14,6 @@ import javax.inject.Inject
  * Exit cleanup that should run whenever the main browser process is exiting.
  */
 class NormalExitCleanup @Inject constructor(
-    private val userPreferences: UserPreferences,
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val logger: Logger,
     private val historyDatabase: HistoryDatabase,
@@ -35,7 +33,7 @@ class NormalExitCleanup @Inject constructor(
             WebUtils.clearCookies()
             logger.log(TAG, "Cookies Cleared")
         }
-        if (userPreferences.clearWebStorageExitEnabled) {
+        if (userPreferencesDataStore.clearWebStorageExitEnabled.getUnsafe()) {
             WebUtils.clearWebStorage()
             logger.log(TAG, "WebStorage Cleared")
         }

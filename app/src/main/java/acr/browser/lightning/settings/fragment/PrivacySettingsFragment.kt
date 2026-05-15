@@ -71,8 +71,8 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_WEBSTORAGEEXIT,
-            isChecked = userPreferences.clearWebStorageExitEnabled,
-            onCheckChange = { userPreferences.clearWebStorageExitEnabled = it }
+            isChecked = userPreferencesDataStore.clearWebStorageExitEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.clearWebStorageExitEnabled.setUnsafe(it) }
         )
 
         togglePreference(

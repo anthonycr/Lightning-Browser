@@ -50,11 +50,6 @@ class UserPreferences @Inject constructor(
     var useTheme by preferences.enumPreference(THEME, AppTheme.LIGHT)
 
     /**
-     * True if the web page storage should be cleared when the app exits, false otherwise.
-     */
-    var clearWebStorageExitEnabled by preferences.booleanPreference(CLEAR_WEB_STORAGE_EXIT, false)
-
-    /**
      * True if the app should use the navigation drawer UI, false if it should use the traditional
      * desktop browser tabs UI.
      */
