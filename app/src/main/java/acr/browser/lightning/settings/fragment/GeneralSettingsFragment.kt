@@ -55,7 +55,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
             preference = SETTINGS_HOME,
-            summary = homePageUrlToDisplayTitle(userPreferences.homepage),
+            summary = homePageUrlToDisplayTitle(userPreferencesDataStore.homepage.getUnsafe()),
             onClick = ::showHomePageDialog
         )
 
@@ -226,7 +226,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     private fun showHomePageDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(R.string.home)
-            val n = when (userPreferences.homepage) {
+            val n = when (userPreferencesDataStore.homepage.getUnsafe()) {
                 SCHEME_HOMEPAGE -> 0
                 SCHEME_BLANK -> 1
                 SCHEME_BOOKMARKS -> 2
@@ -236,17 +236,17 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             setSingleChoiceItems(R.array.homepage, n) { _, which ->
                 when (which) {
                     0 -> {
-                        userPreferences.homepage = SCHEME_HOMEPAGE
+                        userPreferencesDataStore.homepage.setUnsafe(SCHEME_HOMEPAGE)
                         summaryUpdater.updateSummary(resources.getString(R.string.action_homepage))
                     }
 
                     1 -> {
-                        userPreferences.homepage = SCHEME_BLANK
+                        userPreferencesDataStore.homepage.setUnsafe(SCHEME_BLANK)
                         summaryUpdater.updateSummary(resources.getString(R.string.action_blank))
                     }
 
                     2 -> {
-                        userPreferences.homepage = SCHEME_BOOKMARKS
+                        userPreferencesDataStore.homepage.setUnsafe(SCHEME_BOOKMARKS)
                         summaryUpdater.updateSummary(resources.getString(R.string.action_bookmarks))
                     }
 
@@ -260,8 +260,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun showCustomHomePagePicker(summaryUpdater: SummaryUpdater) {
-        val currentHomepage: String = if (!URLUtil.isAboutUrl(userPreferences.homepage)) {
-            userPreferences.homepage
+        val currentHomepage: String = if (!URLUtil.isAboutUrl(userPreferencesDataStore.homepage.getUnsafe())) {
+            userPreferencesDataStore.homepage.getUnsafe()
         } else {
             "https://www.google.com"
         }
@@ -274,7 +274,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 currentHomepage,
                 R.string.action_ok
             ) { url ->
-                userPreferences.homepage = url
+                userPreferencesDataStore.homepage.setUnsafe(url)
                 summaryUpdater.updateSummary(url)
             }
         }

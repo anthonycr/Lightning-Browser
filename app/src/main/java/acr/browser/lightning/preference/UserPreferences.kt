@@ -7,7 +7,6 @@ import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.constant.DEFAULT_ENCODING
-import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.preference.delegates.booleanPreference
 import acr.browser.lightning.preference.delegates.enumPreference
@@ -37,11 +36,6 @@ class UserPreferences @Inject constructor(
         DOWNLOAD_DIRECTORY,
         FileUtils.DEFAULT_DOWNLOAD_PATH
     )
-
-    /**
-     * The URL of the selected homepage.
-     */
-    var homepage by preferences.stringPreference(HOMEPAGE, SCHEME_BOOKMARKS)
 
     /**
      * True if cookies should be enabled in incognito mode, false otherwise.

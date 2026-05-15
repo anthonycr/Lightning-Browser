@@ -11,7 +11,8 @@ import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.download.DownloadPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
-import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
 import android.app.Activity
 import android.os.Bundle
 import android.os.Message
@@ -54,13 +55,13 @@ class UrlInitializer(private val url: String) : TabInitializer {
  */
 @Reusable
 class HomePageInitializer @Inject constructor(
-    private val userPreferences: UserPreferences,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     private val startPageInitializer: StartPageInitializer,
     private val bookmarkPageInitializer: BookmarkPageInitializer
 ) : TabInitializer {
 
     override fun initialize(webView: WebView, headers: Map<String, String>) {
-        val homepage = userPreferences.homepage
+        val homepage = userPreferencesDataStore.homepage.getUnsafe()
 
         when (homepage) {
             SCHEME_HOMEPAGE -> startPageInitializer
