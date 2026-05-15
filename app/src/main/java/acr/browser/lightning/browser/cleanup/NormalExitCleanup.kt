@@ -4,6 +4,8 @@ import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.database.history.HistoryDatabase
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.WebUtils
 import android.app.Activity
 import io.reactivex.rxjava3.core.Scheduler
@@ -14,13 +16,14 @@ import javax.inject.Inject
  */
 class NormalExitCleanup @Inject constructor(
     private val userPreferences: UserPreferences,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     private val logger: Logger,
     private val historyDatabase: HistoryDatabase,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     private val activity: Activity
 ) : ExitCleanup {
     override fun cleanUp() {
-        if (userPreferences.clearCacheExit) {
+        if (userPreferencesDataStore.clearCacheExit.getUnsafe()) {
             WebUtils.clearCache(activity)
             logger.log(TAG, "Cache Cleared")
         }

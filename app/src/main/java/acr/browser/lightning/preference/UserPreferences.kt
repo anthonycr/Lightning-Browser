@@ -31,11 +31,6 @@ class UserPreferences @Inject constructor(
 ) {
 
     /**
-     * True if the browser should clear the browser cache when the app is exited, false otherwise.
-     */
-    var clearCacheExit by preferences.booleanPreference(CLEAR_CACHE_EXIT, false)
-
-    /**
      * True if the browser should allow websites to store and access cookies, false otherwise.
      */
     var cookiesEnabled by preferences.booleanPreference(COOKIES, true)

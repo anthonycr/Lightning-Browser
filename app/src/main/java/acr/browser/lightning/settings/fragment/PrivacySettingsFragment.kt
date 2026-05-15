@@ -53,8 +53,8 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_CACHEEXIT,
-            isChecked = userPreferences.clearCacheExit,
-            onCheckChange = { userPreferences.clearCacheExit = it }
+            isChecked = userPreferencesDataStore.clearCacheExit.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.clearCacheExit.setUnsafe(it) }
         )
 
         togglePreference(
