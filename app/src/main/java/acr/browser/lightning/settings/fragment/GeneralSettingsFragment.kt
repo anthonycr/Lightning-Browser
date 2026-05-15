@@ -85,8 +85,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_JAVASCRIPT,
-            isChecked = userPreferences.javaScriptEnabled,
-            onCheckChange = { userPreferences.javaScriptEnabled = it }
+            isChecked = userPreferencesDataStore.javaScriptEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.javaScriptEnabled.setUnsafe(it) }
         )
 
         togglePreference(

@@ -38,11 +38,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the browser should allow execution of javascript, false otherwise.
-     */
-    var javaScriptEnabled by preferences.booleanPreference(JAVASCRIPT, true)
-
-    /**
      * True if the device location should be accessible by websites, false otherwise.
      *
      * NOTE: If this is enabled, permission will still need to be granted on a per-site basis.

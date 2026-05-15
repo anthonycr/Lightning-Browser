@@ -127,7 +127,7 @@ class WebViewFactory @Inject constructor(
 
         settings.userAgentString = userPreferences.userAgent(activity.application)
 
-        if (userPreferences.javaScriptEnabled) {
+        if (userPreferencesDataStore.javaScriptEnabled.getUnsafe()) {
             settings.javaScriptEnabled = true
             settings.javaScriptCanOpenWindowsAutomatically = true
         } else {
