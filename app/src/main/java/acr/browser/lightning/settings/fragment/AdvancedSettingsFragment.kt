@@ -33,7 +33,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
             preference = SETTINGS_RENDERING_MODE,
-            summary = userPreferences.renderingMode.toDisplayString(),
+            summary = userPreferencesDataStore.renderingMode.getUnsafe().toDisplayString(),
             onClick = this::showRenderingDialogPicker
         )
 
@@ -99,8 +99,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             setTitle(resources.getString(R.string.rendering_mode))
 
             val values = RenderingMode.entries.map { Pair(it, it.toDisplayString()) }
-            withSingleChoiceItems(values, userPreferences.renderingMode) {
-                userPreferences.renderingMode = it
+            withSingleChoiceItems(values, userPreferencesDataStore.renderingMode.getUnsafe()) {
+                userPreferencesDataStore.renderingMode.setUnsafe(it)
                 summaryUpdater.updateSummary(it.toDisplayString())
 
             }

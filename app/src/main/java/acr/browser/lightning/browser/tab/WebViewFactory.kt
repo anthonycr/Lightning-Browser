@@ -3,6 +3,7 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.Capabilities
 import acr.browser.lightning.browser.di.IncognitoMode
 import acr.browser.lightning.browser.view.CompositeTouchListener
+import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.isSupported
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
@@ -12,6 +13,9 @@ import acr.browser.lightning.preference.userAgent
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
 import android.view.View
 import android.webkit.CookieManager
 import android.webkit.WebSettings
@@ -117,7 +121,7 @@ class WebViewFactory @Inject constructor(
             || userPreferences.removeIdentifyingHeadersEnabled
 
         settings.defaultTextEncodingName = userPreferences.textEncoding
-//        setColorMode(userPreferences.renderingMode)
+        setColorMode(Paint(), userPreferencesDataStore.renderingMode.getUnsafe())
 
         if (!isIncognito) {
             settings.setGeolocationEnabled(userPreferencesDataStore.locationEnabled.getUnsafe())
@@ -170,6 +174,52 @@ class WebViewFactory @Inject constructor(
         )
     }
 
+    private fun WebView.setColorMode(paint: Paint, mode: RenderingMode) {
+        when (mode) {
+            RenderingMode.NORMAL -> {
+                paint.colorFilter = null
+                // setLayerType(View.LAYER_TYPE_SOFTWARE, null) // Some devices get segfaults
+                // in the WebView with Hardware Acceleration enabled,
+                // the only fix is to disable hardware rendering
+                setLayerType(View.LAYER_TYPE_NONE, null)
+            }
+
+            RenderingMode.INVERTED -> {
+                val filterInvert = ColorMatrixColorFilter(
+                    negativeColorArray
+                )
+                paint.colorFilter = filterInvert
+                setLayerType(View.LAYER_TYPE_HARDWARE, null)
+            }
+
+            RenderingMode.GRAYSCALE -> {
+                val cm = ColorMatrix()
+                cm.setSaturation(0f)
+                val filterGray = ColorMatrixColorFilter(cm)
+                paint.colorFilter = filterGray
+                setLayerType(View.LAYER_TYPE_HARDWARE, null)
+            }
+
+            RenderingMode.INVERTED_GRAYSCALE -> {
+                val matrix = ColorMatrix()
+                matrix.set(negativeColorArray)
+                val matrixGray = ColorMatrix()
+                matrixGray.setSaturation(0f)
+                val concat = ColorMatrix()
+                concat.setConcat(matrix, matrixGray)
+                val filterInvertGray = ColorMatrixColorFilter(concat)
+                paint.colorFilter = filterInvertGray
+                setLayerType(View.LAYER_TYPE_HARDWARE, null)
+            }
+
+            RenderingMode.INCREASE_CONTRAST -> {
+                val increaseHighContrast = ColorMatrixColorFilter(increaseContrastColorArray)
+                paint.colorFilter = increaseHighContrast
+                setLayerType(View.LAYER_TYPE_HARDWARE, null)
+            }
+        }
+    }
+
     companion object {
         private const val TAG = "WebViewFactory"
 
@@ -177,6 +227,19 @@ class WebViewFactory @Inject constructor(
         const val HEADER_WAP_PROFILE = "X-Wap-Profile"
         private const val HEADER_DNT = "DNT"
         private const val HEADER_SAVEDATA = "Save-Data"
+
+        private val negativeColorArray = floatArrayOf(
+            -1.0f, 0f, 0f, 0f, 255f, // red
+            0f, -1.0f, 0f, 0f, 255f, // green
+            0f, 0f, -1.0f, 0f, 255f, // blue
+            0f, 0f, 0f, 1.0f, 0f // alpha
+        )
+        private val increaseContrastColorArray = floatArrayOf(
+            2.0f, 0f, 0f, 0f, -160f, // red
+            0f, 2.0f, 0f, 0f, -160f, // green
+            0f, 0f, 2.0f, 0f, -160f, // blue
+            0f, 0f, 0f, 1.0f, 0f // alpha
+        )
     }
 
 }
