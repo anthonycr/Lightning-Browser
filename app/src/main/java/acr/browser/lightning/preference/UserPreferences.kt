@@ -38,12 +38,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the app should remember which browser tabs were open and restore them if the browser
-     * is automatically closed by the system.
-     */
-    var restoreLostTabsEnabled by preferences.booleanPreference(RESTORE_LOST_TABS, true)
-
-    /**
      * The index of the chosen search engine.
      *
      * @see SearchEngineProvider

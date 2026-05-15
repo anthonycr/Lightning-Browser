@@ -84,8 +84,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_RESTORE_TABS,
-            isChecked = userPreferences.restoreLostTabsEnabled,
-            onCheckChange = { userPreferences.restoreLostTabsEnabled = it }
+            isChecked = userPreferencesDataStore.restoreLostTabsEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.restoreLostTabsEnabled.setUnsafe(it) }
         )
     }
 

@@ -5,7 +5,8 @@ import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.di.InitialUrl
 import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.tab.bundle.BundleStore
-import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.isFileUrl
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
@@ -28,7 +29,7 @@ class TabsRepository @Inject constructor(
     private val bundleStore: BundleStore,
     private val recentTabModel: RecentTabModel,
     private val tabFactory: TabFactory,
-    private val userPreferences: UserPreferences,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     @InitialUrl private val initialUrl: String?,
     private val permissionInitializerFactory: PermissionInitializer.Factory
 ) : BrowserContract.Model {
@@ -134,7 +135,7 @@ class TabsRepository @Inject constructor(
     }
 
     override fun freeze() {
-        if (userPreferences.restoreLostTabsEnabled) {
+        if (userPreferencesDataStore.restoreLostTabsEnabled.getUnsafe()) {
             bundleStore.save(tabsList)
         }
     }
