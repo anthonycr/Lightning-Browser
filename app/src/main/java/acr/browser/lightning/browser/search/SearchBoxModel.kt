@@ -1,7 +1,8 @@
 package acr.browser.lightning.browser.search
 
 import acr.browser.lightning.R
-import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.Utils
 import acr.browser.lightning.utils.isSpecialUrl
 import android.app.Application
@@ -13,7 +14,7 @@ import javax.inject.Inject
  */
 @Reusable
 class SearchBoxModel @Inject constructor(
-    private val userPreferences: UserPreferences,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     application: Application
 ) {
 
@@ -38,7 +39,7 @@ class SearchBoxModel @Inject constructor(
         when {
             url.isSpecialUrl() -> ""
             isLoading -> url
-            else -> when (userPreferences.urlBoxContentChoice) {
+            else -> when (userPreferencesDataStore.urlBoxContentChoice.getUnsafe()) {
                 SearchBoxDisplayChoice.DOMAIN -> safeDomain(url)
                 SearchBoxDisplayChoice.URL -> url
                 SearchBoxDisplayChoice.TITLE ->

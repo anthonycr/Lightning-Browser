@@ -2,8 +2,6 @@ package acr.browser.lightning.preference
 
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.browser.di.UserPrefs
-import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
-import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.device.ScreenSize
@@ -46,16 +44,6 @@ class UserPreferences @Inject constructor(
      * The custom user agent that should be used by the browser.
      */
     var userAgentString by preferences.stringPreference(USER_AGENT_STRING, "")
-
-    /**
-     * The index of the URL/search box display choice/
-     *
-     * @see SearchBoxModel
-     */
-    var urlBoxContentChoice by preferences.enumPreference(
-        URL_BOX_CONTENTS,
-        SearchBoxDisplayChoice.DOMAIN
-    )
 
     /**
      * The index of the theme used by the application.

@@ -45,7 +45,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
             preference = SETTINGS_URL_CONTENT,
-            summary = userPreferences.urlBoxContentChoice.toDisplayString(),
+            summary = userPreferencesDataStore.urlBoxContentChoice.getUnsafe().toDisplayString(),
             onClick = this::showUrlBoxDialogPicker
         )
 
@@ -141,8 +141,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
             val items = SearchBoxDisplayChoice.entries.map { Pair(it, it.toDisplayString()) }
 
-            withSingleChoiceItems(items, userPreferences.urlBoxContentChoice) {
-                userPreferences.urlBoxContentChoice = it
+            withSingleChoiceItems(items, userPreferencesDataStore.urlBoxContentChoice.getUnsafe()) {
+                userPreferencesDataStore.urlBoxContentChoice.setUnsafe(it)
                 summaryUpdater.updateSummary(it.toDisplayString())
             }
             setPositiveButton(resources.getString(R.string.action_ok), null)
