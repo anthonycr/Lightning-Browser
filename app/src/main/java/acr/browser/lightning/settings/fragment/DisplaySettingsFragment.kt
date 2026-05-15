@@ -72,8 +72,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_OVERVIEWMODE,
-            isChecked = userPreferences.overviewModeEnabled,
-            onCheckChange = { userPreferences.overviewModeEnabled = it }
+            isChecked = userPreferencesDataStore.overviewModeEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.overviewModeEnabled.setUnsafe(it) }
         )
 
         togglePreference(

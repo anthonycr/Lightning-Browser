@@ -38,12 +38,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the browser should load pages zoomed out instead of zoomed in so that the text is
-     * legible, false otherwise.
-     */
-    var overviewModeEnabled by preferences.booleanPreference(OVERVIEW_MODE, true)
-
-    /**
      * True if the browser should allow websites to open new windows, false otherwise.
      */
     var popupsEnabled by preferences.booleanPreference(POPUPS, true)

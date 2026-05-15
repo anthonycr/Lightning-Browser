@@ -153,7 +153,7 @@ class WebViewFactory @Inject constructor(
         settings.setSupportMultipleWindows(userPreferences.popupsEnabled && !modifiesHeaders)
 
         settings.useWideViewPort = userPreferences.useWideViewPortEnabled
-        settings.loadWithOverviewMode = userPreferences.overviewModeEnabled
+        settings.loadWithOverviewMode = userPreferencesDataStore.overviewModeEnabled.getUnsafe()
         settings.textZoom = when (userPreferences.textSize) {
             0 -> 200
             1 -> 150
