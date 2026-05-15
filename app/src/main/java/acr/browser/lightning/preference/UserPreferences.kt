@@ -38,13 +38,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * The index of the chosen search engine.
-     *
-     * @see SearchEngineProvider
-     */
-    var searchChoice by preferences.intPreference(SEARCH, 1)
-
-    /**
      * The custom URL which should be used for making searches.
      */
     var searchUrl by preferences.stringPreference(SEARCH_URL, GoogleSearch().queryUrl)

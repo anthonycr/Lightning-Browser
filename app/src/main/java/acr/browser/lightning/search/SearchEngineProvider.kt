@@ -3,6 +3,8 @@ package acr.browser.lightning.search
 import acr.browser.lightning.browser.di.SuggestionsClient
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.search.engine.AskSearch
 import acr.browser.lightning.search.engine.BaiduSearch
 import acr.browser.lightning.search.engine.BaseSearchEngine
@@ -36,6 +38,7 @@ import javax.inject.Inject
 @Reusable
 class SearchEngineProvider @Inject constructor(
     private val userPreferences: UserPreferences,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     @SuggestionsClient private val okHttpClient: Single<OkHttpClient>,
     private val requestFactory: RequestFactory,
     private val application: Application,
@@ -59,7 +62,7 @@ class SearchEngineProvider @Inject constructor(
      * Provide the [BaseSearchEngine] that maps to the user's current preference.
      */
     fun provideSearchEngine(): BaseSearchEngine =
-        when (userPreferences.searchChoice) {
+        when (userPreferencesDataStore.searchChoice.getUnsafe()) {
             0 -> CustomSearch(userPreferences.searchUrl)
             1 -> GoogleSearch()
             2 -> AskSearch()
