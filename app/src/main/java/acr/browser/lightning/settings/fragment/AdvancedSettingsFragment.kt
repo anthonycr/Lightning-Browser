@@ -51,8 +51,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_NEW_WINDOW,
-            isChecked = userPreferences.popupsEnabled,
-            onCheckChange = { userPreferences.popupsEnabled = it }
+            isChecked = userPreferencesDataStore.popupsEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.popupsEnabled.setUnsafe(it) }
         )
 
         val incognitoCheckboxPreference = togglePreference(

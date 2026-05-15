@@ -150,7 +150,7 @@ class WebViewFactory @Inject constructor(
 
         settings.blockNetworkImage = userPreferencesDataStore.blockImagesEnabled.getUnsafe()
         // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
-        settings.setSupportMultipleWindows(userPreferences.popupsEnabled && !modifiesHeaders)
+        settings.setSupportMultipleWindows(userPreferencesDataStore.popupsEnabled.getUnsafe() && !modifiesHeaders)
 
         settings.useWideViewPort = userPreferences.useWideViewPortEnabled
         settings.loadWithOverviewMode = userPreferencesDataStore.overviewModeEnabled.getUnsafe()

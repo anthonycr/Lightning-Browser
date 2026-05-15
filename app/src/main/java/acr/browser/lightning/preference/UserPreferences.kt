@@ -38,11 +38,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the browser should allow websites to open new windows, false otherwise.
-     */
-    var popupsEnabled by preferences.booleanPreference(POPUPS, true)
-
-    /**
      * True if the app should remember which browser tabs were open and restore them if the browser
      * is automatically closed by the system.
      */
