@@ -61,14 +61,14 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             isChecked = if (Capabilities.FULL_INCOGNITO.isSupported) {
                 userPreferencesDataStore.cookiesEnabled.getUnsafe()
             } else {
-                userPreferences.incognitoCookiesEnabled
+                userPreferencesDataStore.incognitoCookiesEnabled.getUnsafe()
             },
             summary = if (Capabilities.FULL_INCOGNITO.isSupported) {
                 getString(R.string.incognito_cookies_pie)
             } else {
                 null
             },
-            onCheckChange = { userPreferences.incognitoCookiesEnabled = it }
+            onCheckChange = { userPreferencesDataStore.incognitoCookiesEnabled.setUnsafe(it) }
         )
 
         togglePreference(

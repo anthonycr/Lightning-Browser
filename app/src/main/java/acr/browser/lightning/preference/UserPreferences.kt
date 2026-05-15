@@ -38,13 +38,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if cookies should be enabled in incognito mode, false otherwise.
-     *
-     * WARNING: Cookies will be shared between regular and incognito modes if this is enabled.
-     */
-    var incognitoCookiesEnabled by preferences.booleanPreference(INCOGNITO_COOKIES, false)
-
-    /**
      * True if the browser should allow execution of javascript, false otherwise.
      */
     var javaScriptEnabled by preferences.booleanPreference(JAVASCRIPT, true)
