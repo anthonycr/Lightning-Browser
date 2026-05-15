@@ -6,6 +6,8 @@ import acr.browser.lightning.browser.view.CompositeTouchListener
 import acr.browser.lightning.isSupported
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.preference.userAgent
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -24,6 +26,7 @@ class WebViewFactory @Inject constructor(
     private val activity: Activity,
     private val logger: Logger,
     private val userPreferences: UserPreferences,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     @IncognitoMode private val incognitoMode: Boolean
 ) {
 
@@ -98,13 +101,12 @@ class WebViewFactory @Inject constructor(
                 allowFileAccess = true
             }
 
-            updateForPreferences(userPreferences, incognitoMode)
+            updateForPreferences(incognitoMode)
         }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun WebView.updateForPreferences(
-        userPreferences: UserPreferences,
         isIncognito: Boolean
     ) {
 
@@ -146,7 +148,7 @@ class WebViewFactory @Inject constructor(
             settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
         }
 
-        settings.blockNetworkImage = userPreferences.blockImagesEnabled
+        settings.blockNetworkImage = userPreferencesDataStore.blockImagesEnabled.getUnsafe()
         // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
         settings.setSupportMultipleWindows(userPreferences.popupsEnabled && !modifiesHeaders)
 

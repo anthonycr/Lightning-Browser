@@ -31,11 +31,6 @@ class UserPreferences @Inject constructor(
 ) {
 
     /**
-     * True if the browser should block images from being loaded, false otherwise.
-     */
-    var blockImagesEnabled by preferences.booleanPreference(BLOCK_IMAGES, false)
-
-    /**
      * True if the browser should clear the browser cache when the app is exited, false otherwise.
      */
     var clearCacheExit by preferences.booleanPreference(CLEAR_CACHE_EXIT, false)
