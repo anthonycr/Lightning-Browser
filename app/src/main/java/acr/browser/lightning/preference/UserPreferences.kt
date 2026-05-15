@@ -31,11 +31,6 @@ class UserPreferences @Inject constructor(
 ) {
 
     /**
-     * True if the browser should allow websites to store and access cookies, false otherwise.
-     */
-    var cookiesEnabled by preferences.booleanPreference(COOKIES, true)
-
-    /**
      * The folder into which files will be downloaded.
      */
     var downloadDirectory by preferences.stringPreference(

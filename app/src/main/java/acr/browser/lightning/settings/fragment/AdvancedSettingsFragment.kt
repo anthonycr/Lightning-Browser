@@ -10,6 +10,9 @@ import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.isSupported
 import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
+import acr.browser.lightning.preference.datastore.setUnsafe
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import javax.inject.Inject
@@ -20,6 +23,7 @@ import javax.inject.Inject
 class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var userPreferences: UserPreferences
+    @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
 
     override fun providePreferencesXmlResource() = R.xml.preference_advanced
 
@@ -55,7 +59,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             preference = SETTINGS_COOKIES_INCOGNITO,
             isEnabled = !Capabilities.FULL_INCOGNITO.isSupported,
             isChecked = if (Capabilities.FULL_INCOGNITO.isSupported) {
-                userPreferences.cookiesEnabled
+                userPreferencesDataStore.cookiesEnabled.getUnsafe()
             } else {
                 userPreferences.incognitoCookiesEnabled
             },
@@ -69,9 +73,9 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_ENABLE_COOKIES,
-            isChecked = userPreferences.cookiesEnabled,
+            isChecked = userPreferencesDataStore.cookiesEnabled.getUnsafe(),
             onCheckChange = {
-                userPreferences.cookiesEnabled = it
+                userPreferencesDataStore.cookiesEnabled.setUnsafe(it)
                 if (Capabilities.FULL_INCOGNITO.isSupported) {
                     incognitoCheckboxPreference.isChecked = it
                 }
