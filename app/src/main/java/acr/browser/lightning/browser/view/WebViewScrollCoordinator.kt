@@ -4,6 +4,8 @@ import acr.browser.lightning.R
 import acr.browser.lightning.databinding.BrowserBottomTabsBinding
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.Utils
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -33,6 +35,7 @@ class WebViewScrollCoordinator @Inject constructor(
     private val toolbarRoot: LinearLayout,
     private val toolbar: View,
     private val userPreferences: UserPreferences,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     private val inputMethodManager: InputMethodManager
 ) {
 
@@ -56,7 +59,7 @@ class WebViewScrollCoordinator @Inject constructor(
 
         if (browserLayoutContainer == null) {
 
-            if (userPreferences.fullScreenEnabled) {
+            if (userPreferencesDataStore.fullScreenEnabled.getUnsafe()) {
                 if (toolbar.parent != browserFrame) {
                     (toolbar.parent as ViewGroup?)?.removeView(toolbar)
 

@@ -39,12 +39,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the browser should hide the navigation bar when scrolling, false if it should be
-     * immobile.
-     */
-    var fullScreenEnabled by preferences.booleanPreference(FULL_SCREEN, true)
-
-    /**
      * True if the system status bar should be hidden throughout the app, false if it should be
      * visible.
      */

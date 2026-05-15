@@ -10,6 +10,9 @@ import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
+import acr.browser.lightning.preference.datastore.setUnsafe
 import android.os.Bundle
 import android.view.Gravity
 import android.view.ViewGroup
@@ -23,6 +26,7 @@ import javax.inject.Inject
 class DisplaySettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var userPreferences: UserPreferences
+    @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
 
     override fun providePreferencesXmlResource() = R.xml.preference_display
 
@@ -56,8 +60,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_FULLSCREEN,
-            isChecked = userPreferences.fullScreenEnabled,
-            onCheckChange = { userPreferences.fullScreenEnabled = it }
+            isChecked = userPreferencesDataStore.fullScreenEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.fullScreenEnabled.setUnsafe(it) }
         )
 
         togglePreference(
