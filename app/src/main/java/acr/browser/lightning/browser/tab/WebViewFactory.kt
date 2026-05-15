@@ -120,7 +120,7 @@ class WebViewFactory @Inject constructor(
             || userPreferences.saveDataEnabled
             || userPreferences.removeIdentifyingHeadersEnabled
 
-        settings.defaultTextEncodingName = userPreferences.textEncoding
+        settings.defaultTextEncodingName = userPreferencesDataStore.textEncoding.getUnsafe()
         setColorMode(Paint(), userPreferencesDataStore.renderingMode.getUnsafe())
 
         if (!isIncognito) {

@@ -39,7 +39,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
             preference = SETTINGS_TEXT_ENCODING,
-            summary = userPreferences.textEncoding,
+            summary = userPreferencesDataStore.textEncoding.getUnsafe(),
             onClick = this::showTextEncodingDialogPicker
         )
 
@@ -119,10 +119,10 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             AlertDialog.Builder(it).apply {
                 setTitle(resources.getString(R.string.text_encoding))
 
-                val currentChoice = TEXT_ENCODINGS.indexOf(userPreferences.textEncoding)
+                val currentChoice = TEXT_ENCODINGS.indexOf(userPreferencesDataStore.textEncoding.getUnsafe())
 
                 setSingleChoiceItems(TEXT_ENCODINGS, currentChoice) { _, which ->
-                    userPreferences.textEncoding = TEXT_ENCODINGS[which]
+                    userPreferencesDataStore.textEncoding.setUnsafe(TEXT_ENCODINGS[which])
                     summaryUpdater.updateSummary(TEXT_ENCODINGS[which])
                 }
                 setPositiveButton(resources.getString(R.string.action_ok), null)

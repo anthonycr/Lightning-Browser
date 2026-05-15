@@ -3,7 +3,6 @@ package acr.browser.lightning.preference
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.browser.di.UserPrefs
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.preference.delegates.booleanPreference
 import acr.browser.lightning.preference.delegates.enumPreference
@@ -49,11 +48,6 @@ class UserPreferences @Inject constructor(
      * The index of the theme used by the application.
      */
     var useTheme by preferences.enumPreference(THEME, AppTheme.LIGHT)
-
-    /**
-     * The text encoding used by the browser.
-     */
-    var textEncoding by preferences.stringPreference(TEXT_ENCODING, DEFAULT_ENCODING)
 
     /**
      * True if the web page storage should be cleared when the app exits, false otherwise.
