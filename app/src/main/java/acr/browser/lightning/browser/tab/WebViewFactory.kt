@@ -154,7 +154,7 @@ class WebViewFactory @Inject constructor(
 
         settings.useWideViewPort = userPreferences.useWideViewPortEnabled
         settings.loadWithOverviewMode = userPreferencesDataStore.overviewModeEnabled.getUnsafe()
-        settings.textZoom = when (userPreferences.textSize) {
+        settings.textZoom = when (userPreferencesDataStore.textSize.getUnsafe()) {
             0 -> 200
             1 -> 150
             2 -> 125

@@ -113,14 +113,14 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
                     findViewById<SeekBar>(R.id.text_size_seekbar).apply {
                         setOnSeekBarChangeListener(TextSeekBarListener(text))
                         max = maxValue
-                        progress = maxValue - userPreferences.textSize
+                        progress = maxValue - userPreferencesDataStore.textSize.getUnsafe()
                     }
                 }
             setView(customView)
             setTitle(R.string.title_text_size)
             setPositiveButton(android.R.string.ok) { _, _ ->
                 val seekBar = customView.findViewById<SeekBar>(R.id.text_size_seekbar)
-                userPreferences.textSize = maxValue - seekBar.progress
+                userPreferencesDataStore.textSize.setUnsafe(maxValue - seekBar.progress)
             }
         }.resizeAndShow()
     }

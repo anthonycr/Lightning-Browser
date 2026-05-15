@@ -37,11 +37,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * The index of the text size that should be used in the browser.
-     */
-    var textSize by preferences.intPreference(TEXT_SIZE, 3)
-
-    /**
      * True if the browser should fit web pages to the view port, false otherwise.
      */
     var useWideViewPortEnabled by preferences.booleanPreference(USE_WIDE_VIEWPORT, true)
