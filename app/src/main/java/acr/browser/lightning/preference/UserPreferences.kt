@@ -39,12 +39,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the system status bar should be hidden throughout the app, false if it should be
-     * visible.
-     */
-    var hideStatusBarEnabled by preferences.booleanPreference(HIDE_STATUS_BAR, false)
-
-    /**
      * The URL of the selected homepage.
      */
     var homepage by preferences.stringPreference(HOMEPAGE, SCHEME_BOOKMARKS)

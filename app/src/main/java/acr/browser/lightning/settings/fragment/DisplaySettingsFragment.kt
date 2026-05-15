@@ -54,8 +54,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_HIDESTATUSBAR,
-            isChecked = userPreferences.hideStatusBarEnabled,
-            onCheckChange = { userPreferences.hideStatusBarEnabled = it }
+            isChecked = userPreferencesDataStore.hideStatusBarEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.hideStatusBarEnabled.setUnsafe(it) }
         )
 
         togglePreference(
