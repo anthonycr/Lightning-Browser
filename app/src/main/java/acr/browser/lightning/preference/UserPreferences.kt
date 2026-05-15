@@ -49,11 +49,6 @@ class UserPreferences @Inject constructor(
     var userAgentString by preferences.stringPreference(USER_AGENT_STRING, "")
 
     /**
-     * True if the browser should clear the navigation history on app exit, false otherwise.
-     */
-    var clearHistoryExitEnabled by preferences.booleanPreference(CLEAR_HISTORY_EXIT, false)
-
-    /**
      * True if the browser should clear the browser cookies on app exit, false otherwise.
      */
     var clearCookiesExitEnabled by preferences.booleanPreference(CLEAR_COOKIES_EXIT, false)

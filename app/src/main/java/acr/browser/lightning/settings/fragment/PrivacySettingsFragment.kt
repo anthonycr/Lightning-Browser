@@ -59,8 +59,8 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_HISTORYEXIT,
-            isChecked = userPreferences.clearHistoryExitEnabled,
-            onCheckChange = { userPreferences.clearHistoryExitEnabled = it }
+            isChecked = userPreferencesDataStore.clearHistoryExitEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.clearHistoryExitEnabled.setUnsafe(it) }
         )
 
         togglePreference(
