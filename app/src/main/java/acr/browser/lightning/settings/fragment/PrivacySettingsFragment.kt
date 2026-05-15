@@ -41,8 +41,8 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_LOCATION,
-            isChecked = userPreferences.locationEnabled,
-            onCheckChange = { userPreferences.locationEnabled = it }
+            isChecked = userPreferencesDataStore.locationEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.locationEnabled.setUnsafe(it) }
         )
 
         togglePreference(

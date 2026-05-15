@@ -120,7 +120,7 @@ class WebViewFactory @Inject constructor(
 //        setColorMode(userPreferences.renderingMode)
 
         if (!isIncognito) {
-            settings.setGeolocationEnabled(userPreferences.locationEnabled)
+            settings.setGeolocationEnabled(userPreferencesDataStore.locationEnabled.getUnsafe())
         } else {
             settings.setGeolocationEnabled(false)
         }

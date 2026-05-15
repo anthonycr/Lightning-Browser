@@ -38,13 +38,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the device location should be accessible by websites, false otherwise.
-     *
-     * NOTE: If this is enabled, permission will still need to be granted on a per-site basis.
-     */
-    var locationEnabled by preferences.booleanPreference(LOCATION, false)
-
-    /**
      * True if the browser should load pages zoomed out instead of zoomed in so that the text is
      * legible, false otherwise.
      */
