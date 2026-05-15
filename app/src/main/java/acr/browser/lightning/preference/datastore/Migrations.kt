@@ -29,6 +29,17 @@ fun Pair<MutablePreferences, SharedPreferencesView>.migrateString(
 }
 
 /**
+ * Migrate a nullable string shared preference to preferences.
+ */
+fun Pair<MutablePreferences, SharedPreferencesView>.migrateNullableString(
+    preferenceStore: NullablePreferenceStore<String>
+) {
+    val (mutablePreference, sharedPreferences) = this
+    val key = preferenceStore.key
+    sharedPreferences.getString(key.name)?.let { mutablePreference[key] = it }
+}
+
+/**
  * Migrate an int shared preference to preferences.
  */
 fun Pair<MutablePreferences, SharedPreferencesView>.migrateInt(
