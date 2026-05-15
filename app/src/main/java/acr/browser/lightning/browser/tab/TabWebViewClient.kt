@@ -8,7 +8,8 @@ import acr.browser.lightning.databinding.DialogSslWarningBinding
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.js.TextReflow
 import acr.browser.lightning.log.Logger
-import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.ssl.SslWarningPreferences
 import android.annotation.SuppressLint
@@ -43,7 +44,7 @@ class TabWebViewClient @AssistedInject constructor(
     private val allowListModel: AllowListModel,
     private val urlHandler: UrlHandler,
     @Assisted private val headers: Map<String, String>,
-    private val userPreferences: UserPreferences,
+    userPreferencesDataStore: UserPreferencesDataStore,
     private val sslWarningPreferences: SslWarningPreferences,
     private val textReflow: TextReflow,
     private val logger: Logger,
@@ -58,6 +59,8 @@ class TabWebViewClient @AssistedInject constructor(
     private val files by lazy {
         File(application.filesDir, "generated-html")
     }
+
+    private val textReflowEnabled = userPreferencesDataStore.textReflowEnabled.getUnsafe()
 
     /**
      * Emits changes to the current URL.
@@ -128,7 +131,7 @@ class TabWebViewClient @AssistedInject constructor(
 
 
     override fun onScaleChanged(view: WebView, oldScale: Float, newScale: Float) {
-        if (view.isShown && userPreferences.textReflowEnabled) {
+        if (view.isShown && textReflowEnabled) {
             if (isReflowRunning)
                 return
             val changeInPercent = abs(100 - 100 / zoomScale * newScale)

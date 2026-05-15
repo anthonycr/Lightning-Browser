@@ -37,12 +37,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the browser should attempt to reflow the text on a web page after zooming in or out
-     * of the page.
-     */
-    var textReflowEnabled by preferences.booleanPreference(TEXT_REFLOW, false)
-
-    /**
      * The index of the text size that should be used in the browser.
      */
     var textSize by preferences.intPreference(TEXT_SIZE, 3)

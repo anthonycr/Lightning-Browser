@@ -135,7 +135,7 @@ class WebViewFactory @Inject constructor(
             settings.javaScriptCanOpenWindowsAutomatically = false
         }
 
-        if (userPreferences.textReflowEnabled) {
+        if (userPreferencesDataStore.textReflowEnabled.getUnsafe()) {
             settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
             try {
                 settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING

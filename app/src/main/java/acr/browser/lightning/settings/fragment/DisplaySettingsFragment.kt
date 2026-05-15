@@ -78,8 +78,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_REFLOW,
-            isChecked = userPreferences.textReflowEnabled,
-            onCheckChange = { userPreferences.textReflowEnabled = it }
+            isChecked = userPreferencesDataStore.textReflowEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.textReflowEnabled.setUnsafe(it) }
         )
 
         togglePreference(
