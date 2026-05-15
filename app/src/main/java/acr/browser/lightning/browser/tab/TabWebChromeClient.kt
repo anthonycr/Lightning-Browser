@@ -9,7 +9,8 @@ import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.favicon.FaviconModel
-import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.Option
 import acr.browser.lightning.utils.Utils
 import android.Manifest
@@ -41,7 +42,7 @@ class TabWebChromeClient @Inject constructor(
     private val activity: FragmentActivity,
     private val faviconModel: FaviconModel,
     @DiskScheduler private val diskScheduler: Scheduler,
-    private val userPreferences: UserPreferences,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     private val webRtcPermissionsModel: WebRtcPermissionsModel
 ) : WebChromeClient(), WebRtcPermissionsView {
 
@@ -230,7 +231,7 @@ class TabWebChromeClient @Inject constructor(
     }
 
     override fun onPermissionRequest(request: PermissionRequest) {
-        if (userPreferences.webRtcEnabled) {
+        if (userPreferencesDataStore.webRtcEnabled.getUnsafe()) {
             webRtcPermissionsModel.requestPermission(request, this)
         } else {
             request.deny()

@@ -10,6 +10,9 @@ import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
+import acr.browser.lightning.preference.datastore.setUnsafe
 import acr.browser.lightning.utils.WebUtils
 import android.os.Bundle
 import android.webkit.WebView
@@ -21,6 +24,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var historyRepository: HistoryRepository
     @Inject internal lateinit var userPreferences: UserPreferences
+    @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
     @Inject @DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
 
@@ -79,8 +83,8 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_WEBRTC,
-            isChecked = userPreferences.webRtcEnabled,
-            onCheckChange = { userPreferences.webRtcEnabled = it }
+            isChecked = userPreferencesDataStore.webRtcEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.webRtcEnabled.setUnsafe(it) }
         )
 
         togglePreference(

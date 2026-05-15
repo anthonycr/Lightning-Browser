@@ -31,11 +31,6 @@ class UserPreferences @Inject constructor(
 ) {
 
     /**
-     * True if Web RTC is enabled in the browser, false otherwise.
-     */
-    var webRtcEnabled by preferences.booleanPreference(WEB_RTC, false)
-
-    /**
      * True if the browser should block ads, false otherwise.
      */
     var adBlockEnabled by preferences.booleanPreference(BLOCK_ADS, false)
