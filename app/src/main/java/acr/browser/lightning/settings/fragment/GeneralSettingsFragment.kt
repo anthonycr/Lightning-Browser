@@ -91,8 +91,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_COLOR_MODE,
-            isChecked = userPreferences.colorModeEnabled,
-            onCheckChange = { userPreferences.colorModeEnabled = it }
+            isChecked = userPreferencesDataStore.colorModeEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.colorModeEnabled.setUnsafe(it) }
         )
     }
 

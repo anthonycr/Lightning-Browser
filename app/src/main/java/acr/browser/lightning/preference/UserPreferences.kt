@@ -48,12 +48,6 @@ class UserPreferences @Inject constructor(
     var userAgentString by preferences.stringPreference(USER_AGENT_STRING, "")
 
     /**
-     * True if the browser should extract the theme color from a website and color the UI with it,
-     * false otherwise.
-     */
-    var colorModeEnabled by preferences.booleanPreference(ENABLE_COLOR_MODE, true)
-
-    /**
      * The index of the URL/search box display choice/
      *
      * @see SearchBoxModel

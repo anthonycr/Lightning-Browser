@@ -47,6 +47,7 @@ import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.takeIfInstance
 import acr.browser.lightning.extensions.tint
+import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
 import acr.browser.lightning.utils.value
@@ -828,7 +829,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     }
 
     private fun animateColorChange(color: Int) {
-        if (!userPreferences.colorModeEnabled || userPreferences.useTheme != AppTheme.LIGHT || isIncognito()) {
+        if (!userPreferencesDataStore.colorModeEnabled.getUnsafe() || userPreferences.useTheme != AppTheme.LIGHT || isIncognito()) {
             return
         }
         val adapter = tabsAdapter as? DesktopTabRecyclerViewAdapter

@@ -3,6 +3,7 @@ package acr.browser.lightning
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.utils.ThemeUtils
 import android.content.Intent
 import android.graphics.Color
@@ -22,6 +23,9 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
 
     @Inject
     internal lateinit var userPreferences: UserPreferences
+
+    @Inject
+    internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
 
     private var themeId: AppTheme = AppTheme.LIGHT
     private var tabConfiguration: TabConfiguration = TabConfiguration.DRAWER_BOTTOM
