@@ -2,9 +2,7 @@ package acr.browser.lightning.preference
 
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.browser.di.UserPrefs
-import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.device.ScreenSize
-import acr.browser.lightning.preference.delegates.booleanPreference
 import acr.browser.lightning.preference.delegates.enumPreference
 import acr.browser.lightning.preference.delegates.intPreference
 import acr.browser.lightning.preference.delegates.stringPreference
@@ -46,24 +44,6 @@ class UserPreferences @Inject constructor(
      * The index of the theme used by the application.
      */
     var useTheme by preferences.enumPreference(THEME, AppTheme.LIGHT)
-
-    /**
-     * True if the app should use the navigation drawer UI, false if it should use the traditional
-     * desktop browser tabs UI.
-     */
-    @Deprecated("Superseded by TabConfiguration")
-    private var showTabsInDrawer by preferences.booleanPreference(
-        SHOW_TABS_IN_DRAWER,
-        !screenSize.isTablet()
-    )
-
-    var tabConfiguration by preferences.enumPreference(
-        TAB_CONFIGURATION, if (showTabsInDrawer) {
-            TabConfiguration.DRAWER_BOTTOM
-        } else {
-            TabConfiguration.DESKTOP
-        }
-    )
 
 }
 

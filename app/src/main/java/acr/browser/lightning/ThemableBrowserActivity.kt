@@ -42,7 +42,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
         themeId = userPreferences.useTheme
-        tabConfiguration = userPreferences.tabConfiguration
+        tabConfiguration = userPreferencesDataStore.tabConfiguration.getUnsafe()
 
         // set the theme
         setTheme(
@@ -75,7 +75,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
 
     private fun resetPreferences() {
         if (userPreferencesDataStore.useBlackStatusBar.getUnsafe() ||
-            userPreferences.tabConfiguration == TabConfiguration.DESKTOP
+            userPreferencesDataStore.tabConfiguration.getUnsafe() == TabConfiguration.DESKTOP
         ) {
             window.statusBarColor = Color.BLACK
         } else {
@@ -103,7 +103,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         super.onResume()
         resetPreferences()
         shouldRunOnResumeActions = true
-        val nextTabConfiguration = userPreferences.tabConfiguration
+        val nextTabConfiguration = userPreferencesDataStore.tabConfiguration.getUnsafe()
         if (themeId != userPreferences.useTheme || tabConfiguration != nextTabConfiguration) {
             restart()
         }

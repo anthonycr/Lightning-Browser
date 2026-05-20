@@ -22,7 +22,6 @@ import acr.browser.lightning.browser.tab.bundle.IncognitoBundleStore
 import acr.browser.lightning.browser.ui.BookmarkConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
 import acr.browser.lightning.extensions.drawable
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.IntentUtils
@@ -68,10 +67,9 @@ class Browser2Module {
 
     @Provides
     fun providesUiConfiguration(
-        userPreferences: UserPreferences,
         userPreferencesDataStore: UserPreferencesDataStore,
     ): UiConfiguration = UiConfiguration(
-        tabConfiguration = userPreferences.tabConfiguration,
+        tabConfiguration = userPreferencesDataStore.tabConfiguration.getUnsafe(),
         bookmarkConfiguration = if (userPreferencesDataStore.bookmarksAndTabsSwapped.getUnsafe()) {
             BookmarkConfiguration.LEFT
         } else {

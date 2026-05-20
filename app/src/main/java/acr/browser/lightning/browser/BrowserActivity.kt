@@ -160,7 +160,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = when (userPreferences.tabConfiguration) {
+        binding = when (userPreferencesDataStore.tabConfiguration.getUnsafe()) {
             TabConfiguration.DESKTOP -> {
                 val actualBinding = BrowserActivityDesktopBinding.inflate(LayoutInflater.from(this))
                 DesktopTabViewDelegate(actualBinding)
@@ -838,7 +838,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             colorAnimator.animateTo(
                 color
             ) { mainColor, secondaryColor ->
-                if (userPreferences.tabConfiguration != TabConfiguration.DESKTOP) {
+                if (userPreferencesDataStore.tabConfiguration.getUnsafe() != TabConfiguration.DESKTOP) {
                     backgroundDrawable.color = mainColor
                     window.setBackgroundDrawable(backgroundDrawable)
                 } else {

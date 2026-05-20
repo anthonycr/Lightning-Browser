@@ -43,7 +43,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
             preference = SETTINGS_TAB_STYLE,
-            summary = userPreferences.tabConfiguration.toDisplayString(),
+            summary = userPreferencesDataStore.tabConfiguration.getUnsafe().toDisplayString(),
             onClick = ::showTabStylePicker
         )
 
@@ -156,21 +156,21 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
     )
 
     private fun showTabStylePicker(summaryUpdater: SummaryUpdater) {
-        val tabConfiguration = userPreferences.tabConfiguration
+        val tabConfiguration = userPreferencesDataStore.tabConfiguration.getUnsafe()
         AlertDialog.Builder(requireActivity()).apply {
             setTitle(resources.getString(R.string.tab_style_title))
             val values = TabConfiguration.entries.map { Pair(it, it.toDisplayString()) }
-            withSingleChoiceItems(values, userPreferences.tabConfiguration) {
-                userPreferences.tabConfiguration = it
+            withSingleChoiceItems(values, userPreferencesDataStore.tabConfiguration.getUnsafe()) {
+                userPreferencesDataStore.tabConfiguration.setUnsafe(it)
                 summaryUpdater.updateSummary(it.toDisplayString())
             }
             setPositiveButton(resources.getString(R.string.action_ok)) { _, _ ->
-                if (tabConfiguration != userPreferences.tabConfiguration) {
+                if (tabConfiguration != userPreferencesDataStore.tabConfiguration.getUnsafe()) {
                     requireActivity().onBackPressed()
                 }
             }
             setOnCancelListener {
-                if (tabConfiguration != userPreferences.tabConfiguration) {
+                if (tabConfiguration != userPreferencesDataStore.tabConfiguration.getUnsafe()) {
                     requireActivity().onBackPressed()
                 }
             }
