@@ -90,8 +90,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_SWAPTABS,
-            isChecked = userPreferences.bookmarksAndTabsSwapped,
-            onCheckChange = { userPreferences.bookmarksAndTabsSwapped = it }
+            isChecked = userPreferencesDataStore.bookmarksAndTabsSwapped.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.bookmarksAndTabsSwapped.setUnsafe(it) }
         )
     }
 

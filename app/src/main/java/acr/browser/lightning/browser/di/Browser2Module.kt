@@ -68,10 +68,11 @@ class Browser2Module {
 
     @Provides
     fun providesUiConfiguration(
-        userPreferences: UserPreferences
+        userPreferences: UserPreferences,
+        userPreferencesDataStore: UserPreferencesDataStore,
     ): UiConfiguration = UiConfiguration(
         tabConfiguration = userPreferences.tabConfiguration,
-        bookmarkConfiguration = if (userPreferences.bookmarksAndTabsSwapped) {
+        bookmarkConfiguration = if (userPreferencesDataStore.bookmarksAndTabsSwapped.getUnsafe()) {
             BookmarkConfiguration.LEFT
         } else {
             BookmarkConfiguration.RIGHT

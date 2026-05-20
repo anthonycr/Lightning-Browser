@@ -68,13 +68,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the bookmarks tab should be on the opposite side of the screen, false otherwise. If
-     * the navigation drawer UI is used, the tab drawer will be displayed on the opposite side as
-     * well.
-     */
-    var bookmarksAndTabsSwapped by preferences.booleanPreference(SWAP_BOOKMARKS_AND_TABS, false)
-
-    /**
      * True if the status bar of the app should always be high contrast, false if it should follow
      * the theme of the app.
      */
