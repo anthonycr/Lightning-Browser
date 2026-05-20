@@ -41,12 +41,12 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
-        themeId = userPreferences.useTheme
+        themeId = userPreferencesDataStore.useTheme.getUnsafe()
         tabConfiguration = userPreferencesDataStore.tabConfiguration.getUnsafe()
 
         // set the theme
         setTheme(
-            provideThemeOverride() ?: when (userPreferences.useTheme) {
+            provideThemeOverride() ?: when (userPreferencesDataStore.useTheme.getUnsafe()) {
                 AppTheme.LIGHT -> R.style.Theme_LightTheme
                 AppTheme.DARK -> R.style.Theme_DarkTheme
                 AppTheme.BLACK -> R.style.Theme_BlackTheme
@@ -104,7 +104,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         resetPreferences()
         shouldRunOnResumeActions = true
         val nextTabConfiguration = userPreferencesDataStore.tabConfiguration.getUnsafe()
-        if (themeId != userPreferences.useTheme || tabConfiguration != nextTabConfiguration) {
+        if (themeId != userPreferencesDataStore.useTheme.getUnsafe() || tabConfiguration != nextTabConfiguration) {
             restart()
         }
     }

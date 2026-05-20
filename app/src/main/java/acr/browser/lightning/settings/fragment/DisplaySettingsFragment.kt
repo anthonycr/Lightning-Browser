@@ -37,7 +37,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
         // preferences storage
         clickableDynamicPreference(
             preference = SETTINGS_THEME,
-            summary = userPreferences.useTheme.toDisplayString(),
+            summary = userPreferencesDataStore.useTheme.getUnsafe().toDisplayString(),
             onClick = ::showThemePicker
         )
 
@@ -126,21 +126,21 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun showThemePicker(summaryUpdater: SummaryUpdater) {
-        val currentTheme = userPreferences.useTheme
+        val currentTheme = userPreferencesDataStore.useTheme.getUnsafe()
         AlertDialog.Builder(requireActivity()).apply {
             setTitle(resources.getString(R.string.theme))
             val values = AppTheme.entries.map { Pair(it, it.toDisplayString()) }
-            withSingleChoiceItems(values, userPreferences.useTheme) {
-                userPreferences.useTheme = it
+            withSingleChoiceItems(values, userPreferencesDataStore.useTheme.getUnsafe()) {
+                userPreferencesDataStore.useTheme.setUnsafe(it)
                 summaryUpdater.updateSummary(it.toDisplayString())
             }
             setPositiveButton(resources.getString(R.string.action_ok)) { _, _ ->
-                if (currentTheme != userPreferences.useTheme) {
+                if (currentTheme != userPreferencesDataStore.useTheme.getUnsafe()) {
                     requireActivity().onBackPressed()
                 }
             }
             setOnCancelListener {
-                if (currentTheme != userPreferences.useTheme) {
+                if (currentTheme != userPreferencesDataStore.useTheme.getUnsafe()) {
                     requireActivity().onBackPressed()
                 }
             }

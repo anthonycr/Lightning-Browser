@@ -43,7 +43,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
             preference = SETTINGS_USER_AGENT,
-            summary = choiceToUserAgent(userPreferences.userAgentChoice),
+            summary = choiceToUserAgent(userPreferencesDataStore.userAgentChoice.getUnsafe()),
             onClick = ::showUserAgentChooserDialog
         )
 
@@ -109,10 +109,10 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             setTitle(resources.getString(R.string.title_user_agent))
             setSingleChoiceItems(
                 R.array.user_agent,
-                userPreferences.userAgentChoice - 1
+                userPreferencesDataStore.userAgentChoice.getUnsafe() - 1
             ) { _, which ->
-                userPreferences.userAgentChoice = which + 1
-                summaryUpdater.updateSummary(choiceToUserAgent(userPreferences.userAgentChoice))
+                userPreferencesDataStore.userAgentChoice.setUnsafe(which + 1)
+                summaryUpdater.updateSummary(choiceToUserAgent(userPreferencesDataStore.userAgentChoice.getUnsafe()))
                 when (which) {
                     in 0..2 -> Unit
                     3 -> {
@@ -131,10 +131,10 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 it,
                 R.string.title_user_agent,
                 R.string.title_user_agent,
-                userPreferences.userAgentString,
+                userPreferencesDataStore.userAgentString.getUnsafe(),
                 R.string.action_ok
             ) { s ->
-                userPreferences.userAgentString = s
+                userPreferencesDataStore.userAgentString.setUnsafe(s)
                 summaryUpdater.updateSummary(it.getString(R.string.agent_custom))
             }
         }

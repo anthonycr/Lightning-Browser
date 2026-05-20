@@ -8,7 +8,7 @@ import acr.browser.lightning.browser.view.setCompositeOnFocusChangeListener
 import acr.browser.lightning.browser.view.setCompositeTouchListener
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
 import acr.browser.lightning.ids.ViewIdGenerator
-import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.userAgent
 import acr.browser.lightning.preview.PreviewModel
 import acr.browser.lightning.ssl.SslCertificateInfo
@@ -47,7 +47,7 @@ class TabAdapter @AssistedInject constructor(
     @Assisted private val tabWebViewClient: TabWebViewClient,
     @Assisted override var tabType: TabModel.Type,
     private val tabWebChromeClient: TabWebChromeClient,
-    private val userPreferences: UserPreferences,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     @DefaultUserAgent private val defaultUserAgent: String,
     @DefaultTabTitle private val defaultTabTitle: String,
     @IconFreeze private val iconFreeze: Bitmap,
@@ -157,7 +157,7 @@ class TabAdapter @AssistedInject constructor(
         if (!toggleDesktop) {
             webView.settings.userAgentString = DESKTOP_USER_AGENT
         } else {
-            webView.settings.userAgentString = userPreferences.userAgent(defaultUserAgent)
+            webView.settings.userAgentString = userPreferencesDataStore.userAgent(defaultUserAgent)
 
         }
 

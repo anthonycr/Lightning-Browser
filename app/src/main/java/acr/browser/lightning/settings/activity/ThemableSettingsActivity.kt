@@ -23,7 +23,7 @@ abstract class ThemableSettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
-        themeId = userPreferences.useTheme
+        themeId = userPreferencesDataStore.useTheme.getUnsafe()
 
         // set the theme
         when (themeId) {
@@ -58,7 +58,7 @@ abstract class ThemableSettingsActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         resetPreferences()
-        if (userPreferences.useTheme != themeId) {
+        if (userPreferencesDataStore.useTheme.getUnsafe() != themeId) {
             recreate()
         }
     }

@@ -4,7 +4,7 @@ import acr.browser.lightning.adblock.parser.HostsFileParser
 import acr.browser.lightning.browser.di.HostsClient
 import acr.browser.lightning.browser.di.NetworkScheduler
 import acr.browser.lightning.log.Logger
-import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.userAgent
 import android.app.Application
 import dagger.assisted.Assisted
@@ -31,7 +31,7 @@ class UrlHostsDataSource @AssistedInject constructor(
     @Assisted private val url: HttpUrl,
     @HostsClient private val okHttpClient: Single<OkHttpClient>,
     private val logger: Logger,
-    private val userPreferences: UserPreferences,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     private val application: Application,
     @NetworkScheduler
     private val networkDispatcher: CoroutineDispatcher,
@@ -42,7 +42,7 @@ class UrlHostsDataSource @AssistedInject constructor(
             val client = okHttpClient.blockingGet()
             val request = Request.Builder()
                 .url(url)
-                .header("User-Agent", userPreferences.userAgent(application))
+                .header("User-Agent", userPreferencesDataStore.userAgent(application))
                 .get()
                 .build()
 

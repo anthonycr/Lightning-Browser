@@ -1,10 +1,7 @@
 package acr.browser.lightning.preference
 
-import acr.browser.lightning.AppTheme
 import acr.browser.lightning.browser.di.UserPrefs
 import acr.browser.lightning.device.ScreenSize
-import acr.browser.lightning.preference.delegates.enumPreference
-import acr.browser.lightning.preference.delegates.intPreference
 import acr.browser.lightning.preference.delegates.stringPreference
 import acr.browser.lightning.utils.FileUtils
 import android.content.SharedPreferences
@@ -27,23 +24,6 @@ class UserPreferences @Inject constructor(
         DOWNLOAD_DIRECTORY,
         FileUtils.DEFAULT_DOWNLOAD_PATH
     )
-
-    /**
-     * The index of the user agent choice that should be used by the browser.
-     *
-     * @see UserPreferences.userAgent
-     */
-    var userAgentChoice by preferences.intPreference(USER_AGENT, 1)
-
-    /**
-     * The custom user agent that should be used by the browser.
-     */
-    var userAgentString by preferences.stringPreference(USER_AGENT_STRING, "")
-
-    /**
-     * The index of the theme used by the application.
-     */
-    var useTheme by preferences.enumPreference(THEME, AppTheme.LIGHT)
 
 }
 

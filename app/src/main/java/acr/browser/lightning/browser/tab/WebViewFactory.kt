@@ -129,7 +129,7 @@ class WebViewFactory @Inject constructor(
             settings.setGeolocationEnabled(false)
         }
 
-        settings.userAgentString = userPreferences.userAgent(activity.application)
+        settings.userAgentString = userPreferencesDataStore.userAgent(activity.application)
 
         if (userPreferencesDataStore.javaScriptEnabled.getUnsafe()) {
             settings.javaScriptEnabled = true

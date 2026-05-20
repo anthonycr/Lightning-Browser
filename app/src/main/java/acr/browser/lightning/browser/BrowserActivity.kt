@@ -829,7 +829,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     }
 
     private fun animateColorChange(color: Int) {
-        if (!userPreferencesDataStore.colorModeEnabled.getUnsafe() || userPreferences.useTheme != AppTheme.LIGHT || isIncognito()) {
+        if (!userPreferencesDataStore.colorModeEnabled.getUnsafe() || userPreferencesDataStore.useTheme.getUnsafe() != AppTheme.LIGHT || isIncognito()) {
             return
         }
         val adapter = tabsAdapter as? DesktopTabRecyclerViewAdapter
