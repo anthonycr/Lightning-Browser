@@ -2,8 +2,6 @@ package acr.browser.lightning.preference
 
 import acr.browser.lightning.browser.di.UserPrefs
 import acr.browser.lightning.device.ScreenSize
-import acr.browser.lightning.preference.delegates.stringPreference
-import acr.browser.lightning.utils.FileUtils
 import android.content.SharedPreferences
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,14 +14,6 @@ class UserPreferences @Inject constructor(
     @UserPrefs preferences: SharedPreferences,
     screenSize: ScreenSize
 ) {
-
-    /**
-     * The folder into which files will be downloaded.
-     */
-    var downloadDirectory by preferences.stringPreference(
-        DOWNLOAD_DIRECTORY,
-        FileUtils.DEFAULT_DOWNLOAD_PATH
-    )
 
 }
 

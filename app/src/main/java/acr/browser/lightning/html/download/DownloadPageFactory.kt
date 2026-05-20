@@ -17,7 +17,8 @@ import acr.browser.lightning.html.jsoup.removeElement
 import acr.browser.lightning.html.jsoup.style
 import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
-import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
 import android.app.Application
 import io.reactivex.rxjava3.core.Single
 import java.io.File
@@ -29,7 +30,7 @@ import javax.inject.Inject
  */
 class DownloadPageFactory @Inject constructor(
     private val application: Application,
-    private val userPreferences: UserPreferences,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     private val manager: DownloadsRepository,
     private val listPageReader: ListPageReader,
     private val themeProvider: ThemeProvider
@@ -89,7 +90,7 @@ class DownloadPageFactory @Inject constructor(
     }
 
     private fun createFileUrl(fileName: String): String =
-        "$FILE${userPreferences.downloadDirectory}/$fileName"
+        "$FILE${userPreferencesDataStore.downloadDirectory.getUnsafe()}/$fileName"
 
     private fun createFileTitle(downloadItem: DownloadEntry): String {
         val contentSize = if (downloadItem.contentSize.isNotBlank()) {

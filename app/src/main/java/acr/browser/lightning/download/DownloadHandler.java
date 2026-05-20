@@ -24,8 +24,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.BuildConfig;
-import acr.browser.lightning.R;
 import acr.browser.lightning.DefaultBrowserActivity;
+import acr.browser.lightning.R;
 import acr.browser.lightning.browser.di.MainScheduler;
 import acr.browser.lightning.browser.di.NetworkScheduler;
 import acr.browser.lightning.constant.Constants;
@@ -224,7 +224,7 @@ public class DownloadHandler {
         // set downloaded file destination to /sdcard/Download.
         // or, should it be set to one of several Environment.DIRECTORY* dirs
         // depending on mimetype?
-        String location = preferences.getDownloadDirectory();
+        String location = "TODO"; // TODO: preferences.getDownloadDirectory();
         location = FileUtils.addNecessarySlashes(location);
         Uri downloadFolder = Uri.parse(location);
 

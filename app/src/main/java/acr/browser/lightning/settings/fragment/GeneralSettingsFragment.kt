@@ -49,7 +49,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
             preference = SETTINGS_DOWNLOAD,
-            summary = userPreferences.downloadDirectory,
+            summary = userPreferencesDataStore.downloadDirectory.getUnsafe(),
             onClick = ::showDownloadLocationDialog
         )
 
@@ -144,7 +144,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(resources.getString(R.string.title_download_location))
             val n: Int =
-                if (userPreferences.downloadDirectory.contains(Environment.DIRECTORY_DOWNLOADS)) {
+                if (userPreferencesDataStore.downloadDirectory.getUnsafe().contains(Environment.DIRECTORY_DOWNLOADS)) {
                     0
                 } else {
                     1
@@ -153,7 +153,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             setSingleChoiceItems(R.array.download_folder, n) { _, which ->
                 when (which) {
                     0 -> {
-                        userPreferences.downloadDirectory = FileUtils.DEFAULT_DOWNLOAD_PATH
+                        userPreferencesDataStore.downloadDirectory.setUnsafe(FileUtils.DEFAULT_DOWNLOAD_PATH)
                         summaryUpdater.updateSummary(FileUtils.DEFAULT_DOWNLOAD_PATH)
                     }
 
@@ -182,7 +182,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     regularColor
                 )
             )
-            getDownload.setText(userPreferences.downloadDirectory)
+            getDownload.setText(userPreferencesDataStore.downloadDirectory.getUnsafe())
 
             BrowserDialog.showCustomDialog(activity) {
                 setTitle(R.string.title_download_location)
@@ -190,7 +190,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 setPositiveButton(R.string.action_ok) { _, _ ->
                     var text = getDownload.text.toString()
                     text = FileUtils.addNecessarySlashes(text)
-                    userPreferences.downloadDirectory = text
+                    userPreferencesDataStore.downloadDirectory.setUnsafe(text)
                     summaryUpdater.updateSummary(text)
                 }
             }
