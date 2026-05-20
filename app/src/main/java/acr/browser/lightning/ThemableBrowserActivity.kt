@@ -4,6 +4,7 @@ import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.ThemeUtils
 import android.content.Intent
 import android.graphics.Color
@@ -73,7 +74,9 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     }
 
     private fun resetPreferences() {
-        if (userPreferences.useBlackStatusBar || userPreferences.tabConfiguration == TabConfiguration.DESKTOP) {
+        if (userPreferencesDataStore.useBlackStatusBar.getUnsafe() ||
+            userPreferences.tabConfiguration == TabConfiguration.DESKTOP
+        ) {
             window.statusBarColor = Color.BLACK
         } else {
             window.statusBarColor = ThemeUtils.getStatusBarColor(this)

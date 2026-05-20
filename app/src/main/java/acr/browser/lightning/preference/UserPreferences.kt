@@ -68,12 +68,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the status bar of the app should always be high contrast, false if it should follow
-     * the theme of the app.
-     */
-    var useBlackStatusBar by preferences.booleanPreference(BLACK_STATUS_BAR, false)
-
-    /**
      * The index of the search suggestion choice.
      *
      * @see SearchEngineProvider

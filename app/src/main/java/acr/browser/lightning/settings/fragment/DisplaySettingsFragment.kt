@@ -84,8 +84,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_BLACK_STATUS,
-            isChecked = userPreferences.useBlackStatusBar,
-            onCheckChange = { userPreferences.useBlackStatusBar = it }
+            isChecked = userPreferencesDataStore.useBlackStatusBar.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.useBlackStatusBar.setUnsafe(it) }
         )
 
         togglePreference(
