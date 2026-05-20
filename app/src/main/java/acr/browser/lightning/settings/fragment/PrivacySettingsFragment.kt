@@ -89,9 +89,9 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_IDENTIFYINGHEADERS,
-            isChecked = userPreferences.removeIdentifyingHeadersEnabled,
+            isChecked = userPreferencesDataStore.removeIdentifyingHeadersEnabled.getUnsafe(),
             summary = "${WebViewFactory.HEADER_REQUESTED_WITH}, ${WebViewFactory.HEADER_WAP_PROFILE}",
-            onCheckChange = { userPreferences.removeIdentifyingHeadersEnabled = it }
+            onCheckChange = { userPreferencesDataStore.removeIdentifyingHeadersEnabled.setUnsafe(it) }
         )
 
     }

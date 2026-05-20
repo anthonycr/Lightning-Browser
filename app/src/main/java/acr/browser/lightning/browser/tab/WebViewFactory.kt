@@ -51,7 +51,7 @@ class WebViewFactory @Inject constructor(
             requestHeaders.remove(HEADER_SAVEDATA)
         }
 
-        if (userPreferences.removeIdentifyingHeadersEnabled) {
+        if (userPreferencesDataStore.removeIdentifyingHeadersEnabled.getUnsafe()) {
             requestHeaders[HEADER_REQUESTED_WITH] = ""
             requestHeaders[HEADER_WAP_PROFILE] = ""
         } else {
@@ -117,8 +117,8 @@ class WebViewFactory @Inject constructor(
 //        lightningWebClient.updatePreferences()
 //
         val modifiesHeaders = userPreferencesDataStore.doNotTrackEnabled.getUnsafe()
-            || userPreferences.removeIdentifyingHeadersEnabled
             || userPreferencesDataStore.saveDataEnabled.getUnsafe()
+            || userPreferencesDataStore.removeIdentifyingHeadersEnabled.getUnsafe()
 
         settings.defaultTextEncodingName = userPreferencesDataStore.textEncoding.getUnsafe()
         setColorMode(Paint(), userPreferencesDataStore.renderingMode.getUnsafe())

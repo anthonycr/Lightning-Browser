@@ -68,12 +68,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the browser should attempt to remove identifying headers in GET requests, false if
-     * the default headers should be left along.
-     */
-    var removeIdentifyingHeadersEnabled by preferences.booleanPreference(IDENTIFYING_HEADERS, false)
-
-    /**
      * True if the bookmarks tab should be on the opposite side of the screen, false otherwise. If
      * the navigation drawer UI is used, the tab drawer will be displayed on the opposite side as
      * well.
