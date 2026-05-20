@@ -287,7 +287,7 @@ class UserPreferencesDataStore @Inject constructor(
     /**
      * The index of the user agent choice that should be used by the browser.
      *
-     * @see UserPreferences.userAgent
+     * @see userAgent
      */
     val userAgentChoice: NonNullPreferenceStore<Int> = NonNullPreferenceStore(
         key = intPreferencesKey(USER_AGENT),

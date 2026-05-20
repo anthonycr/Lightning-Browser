@@ -4,7 +4,7 @@ import acr.browser.lightning.adblock.parser.HostsFileParser
 import acr.browser.lightning.adblock.util.hash.computeMD5
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.log.Logger
-import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -15,7 +15,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 
 /**
- * A [HostsDataSource] that loads hosts from the file found in [UserPreferences].
+ * A [HostsDataSource] that loads hosts from the file found in [UserPreferencesDataStore].
  *
  * @param logger The logger used to log information about the loading process.
  * @param file The file from which hosts will be loaded. Must have read access to the file.

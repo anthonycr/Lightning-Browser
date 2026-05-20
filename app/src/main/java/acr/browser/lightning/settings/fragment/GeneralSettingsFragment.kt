@@ -6,7 +6,6 @@ import acr.browser.lightning.constant.SCHEME_BLANK
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.dialog.BrowserDialog
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.preference.datastore.setUnsafe
@@ -32,7 +31,6 @@ import javax.inject.Inject
 class GeneralSettingsFragment : AbstractSettingsFragment() {
 
     @Inject lateinit var searchEngineProvider: SearchEngineProvider
-    @Inject lateinit var userPreferences: UserPreferences
     @Inject lateinit var userPreferencesDataStore: UserPreferencesDataStore
 
     override fun providePreferencesXmlResource() = R.xml.preference_general

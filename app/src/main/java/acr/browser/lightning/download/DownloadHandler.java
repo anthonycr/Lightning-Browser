@@ -32,7 +32,7 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.extensions.ActivityExtensions;
 import acr.browser.lightning.log.Logger;
-import acr.browser.lightning.preference.UserPreferences;
+import acr.browser.lightning.preference.UserPreferencesDataStore;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Utils;
 import androidx.annotation.NonNull;
@@ -79,7 +79,7 @@ public class DownloadHandler {
      * @param contentSize        The size of the content
      */
     public void onDownloadStart(@NonNull Activity context,
-                                @NonNull UserPreferences manager,
+                                @NonNull UserPreferencesDataStore manager,
                                 @NonNull String url, String userAgent,
                                 @Nullable String contentDisposition,
                                 @Nullable String mimeType,
@@ -168,7 +168,7 @@ public class DownloadHandler {
      */
     /* package */
     private void onDownloadStartNoStream(@NonNull final Activity context,
-                                         @NonNull UserPreferences preferences,
+                                         @NonNull UserPreferencesDataStore preferences,
                                          @NonNull String url, String userAgent,
                                          @Nullable String contentDisposition,
                                          @Nullable String mimetype,

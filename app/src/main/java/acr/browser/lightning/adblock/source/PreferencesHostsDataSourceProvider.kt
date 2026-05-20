@@ -1,12 +1,11 @@
 package acr.browser.lightning.adblock.source
 
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import dagger.Reusable
 import javax.inject.Inject
 
 /**
- * A [HostsDataSourceProvider] backed by [UserPreferences].
+ * A [HostsDataSourceProvider] backed by [UserPreferencesDataStore].
  */
 @Reusable
 class PreferencesHostsDataSourceProvider @Inject constructor(

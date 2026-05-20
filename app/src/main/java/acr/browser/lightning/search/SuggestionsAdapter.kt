@@ -1,18 +1,17 @@
 package acr.browser.lightning.search
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.browser.di.NetworkScheduler
+import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning.browser.di.DatabaseScheduler
-import acr.browser.lightning.browser.di.MainScheduler
-import acr.browser.lightning.browser.di.NetworkScheduler
-import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.extensions.drawable
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.rx.join
 import acr.browser.lightning.search.suggestions.NoOpSuggestionsRepository
 import acr.browser.lightning.search.suggestions.SuggestionsRepository
@@ -40,7 +39,6 @@ class SuggestionsAdapter(
     private var filteredList: List<WebPage> = emptyList()
 
     @Inject internal lateinit var bookmarkRepository: BookmarkRepository
-    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var historyRepository: HistoryRepository
     @Inject @DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject @NetworkScheduler internal lateinit var networkScheduler: Scheduler

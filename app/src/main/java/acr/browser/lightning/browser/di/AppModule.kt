@@ -30,7 +30,6 @@ import android.app.DownloadManager
 import android.app.NotificationManager
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.ShortcutManager
 import android.content.res.AssetManager
 import android.net.ConnectivityManager
@@ -74,11 +73,6 @@ class AppModule {
 
     @Provides
     fun provideContext(application: Application): Context = application.applicationContext
-
-    @Provides
-    @UserPrefs
-    fun provideUserPreferences(application: Application): SharedPreferences =
-        application.getSharedPreferences("settings", 0)
 
     @Provides
     fun providesAssetManager(application: Application): AssetManager = application.assets
@@ -292,10 +286,6 @@ annotation class HostsClient
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
 annotation class MainHandler
-
-@Qualifier
-@Retention(AnnotationRetention.SOURCE)
-annotation class UserPrefs
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)

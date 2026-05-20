@@ -7,7 +7,7 @@ import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.dialog.BrowserDialog.setDialogSize
 import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.log.Logger
-import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.UserPreferencesDataStore
 import android.Manifest
 import android.app.Dialog
 import android.content.DialogInterface
@@ -26,7 +26,7 @@ import javax.inject.Inject
  */
 class DownloadPermissionsHelper @Inject constructor(
     private val downloadHandler: DownloadHandler,
-    private val userPreferences: UserPreferences,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     private val logger: Logger,
     private val downloadsRepository: DownloadsRepository,
     @DatabaseScheduler private val databaseScheduler: Scheduler
@@ -68,7 +68,7 @@ class DownloadPermissionsHelper @Inject constructor(
                             DialogInterface.BUTTON_POSITIVE -> {
                                 downloadHandler.onDownloadStart(
                                     activity,
-                                    userPreferences,
+                                    userPreferencesDataStore,
                                     url,
                                     userAgent,
                                     contentDisposition,

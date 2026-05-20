@@ -2,7 +2,6 @@ package acr.browser.lightning.search
 
 import acr.browser.lightning.browser.di.SuggestionsClient
 import acr.browser.lightning.log.Logger
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.search.engine.AskSearch
@@ -37,7 +36,6 @@ import javax.inject.Inject
  */
 @Reusable
 class SearchEngineProvider @Inject constructor(
-    private val userPreferences: UserPreferences,
     private val userPreferencesDataStore: UserPreferencesDataStore,
     @SuggestionsClient private val okHttpClient: Single<OkHttpClient>,
     private val requestFactory: RequestFactory,

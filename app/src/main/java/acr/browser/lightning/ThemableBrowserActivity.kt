@@ -2,7 +2,6 @@ package acr.browser.lightning
 
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.ThemeUtils
@@ -21,9 +20,6 @@ import javax.inject.Inject
  * A theme aware activity that updates its theme based on the user preferences.
  */
 abstract class ThemableBrowserActivity : AppCompatActivity() {
-
-    @Inject
-    internal lateinit var userPreferences: UserPreferences
 
     @Inject
     internal lateinit var userPreferencesDataStore: UserPreferencesDataStore

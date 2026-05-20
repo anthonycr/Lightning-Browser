@@ -9,7 +9,6 @@ import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.preference.datastore.setUnsafe
@@ -23,7 +22,6 @@ import javax.inject.Inject
 class PrivacySettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var historyRepository: HistoryRepository
-    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
     @Inject @DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler

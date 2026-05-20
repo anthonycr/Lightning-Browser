@@ -6,7 +6,6 @@ import acr.browser.lightning.browser.view.CompositeTouchListener
 import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.isSupported
 import acr.browser.lightning.log.Logger
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.preference.userAgent
@@ -29,7 +28,6 @@ import javax.inject.Inject
 class WebViewFactory @Inject constructor(
     private val activity: Activity,
     private val logger: Logger,
-    private val userPreferences: UserPreferences,
     private val userPreferencesDataStore: UserPreferencesDataStore,
     @IncognitoMode private val incognitoMode: Boolean
 ) {

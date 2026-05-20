@@ -3,7 +3,6 @@ package acr.browser.lightning.settings.activity
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.injector
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.ThemeUtils
@@ -16,8 +15,6 @@ import javax.inject.Inject
 abstract class ThemableSettingsActivity : AppCompatActivity() {
 
     private var themeId: AppTheme = AppTheme.LIGHT
-
-    @Inject internal lateinit var userPreferences: UserPreferences
 
     @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
 

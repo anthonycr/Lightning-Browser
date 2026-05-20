@@ -9,7 +9,6 @@ import acr.browser.lightning.constant.TEXT_ENCODINGS
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.isSupported
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.preference.datastore.setUnsafe
@@ -22,7 +21,6 @@ import javax.inject.Inject
  */
 class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
-    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
 
     override fun providePreferencesXmlResource() = R.xml.preference_advanced
