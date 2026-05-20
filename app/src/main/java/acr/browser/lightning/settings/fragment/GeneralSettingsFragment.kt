@@ -79,8 +79,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_SAVEDATA,
-            isChecked = userPreferences.saveDataEnabled,
-            onCheckChange = { userPreferences.saveDataEnabled = it }
+            isChecked = userPreferencesDataStore.saveDataEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.saveDataEnabled.setUnsafe(it) }
         )
 
         togglePreference(

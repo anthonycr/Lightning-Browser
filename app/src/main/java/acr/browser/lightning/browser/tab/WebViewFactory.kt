@@ -45,7 +45,7 @@ class WebViewFactory @Inject constructor(
             requestHeaders.remove(HEADER_DNT)
         }
 
-        if (userPreferences.saveDataEnabled) {
+        if (userPreferencesDataStore.saveDataEnabled.getUnsafe()) {
             requestHeaders[HEADER_SAVEDATA] = "on"
         } else {
             requestHeaders.remove(HEADER_SAVEDATA)
@@ -117,8 +117,8 @@ class WebViewFactory @Inject constructor(
 //        lightningWebClient.updatePreferences()
 //
         val modifiesHeaders = userPreferencesDataStore.doNotTrackEnabled.getUnsafe()
-            || userPreferences.saveDataEnabled
             || userPreferences.removeIdentifyingHeadersEnabled
+            || userPreferencesDataStore.saveDataEnabled.getUnsafe()
 
         settings.defaultTextEncodingName = userPreferencesDataStore.textEncoding.getUnsafe()
         setColorMode(Paint(), userPreferencesDataStore.renderingMode.getUnsafe())

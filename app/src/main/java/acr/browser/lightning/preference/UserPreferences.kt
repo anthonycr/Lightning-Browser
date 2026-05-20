@@ -68,11 +68,6 @@ class UserPreferences @Inject constructor(
     )
 
     /**
-     * True if the browser should save form data, false otherwise.
-     */
-    var saveDataEnabled by preferences.booleanPreference(SAVE_DATA, false)
-
-    /**
      * True if the browser should attempt to remove identifying headers in GET requests, false if
      * the default headers should be left along.
      */
