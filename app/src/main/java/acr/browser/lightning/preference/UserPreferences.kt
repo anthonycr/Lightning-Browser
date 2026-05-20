@@ -7,7 +7,6 @@ import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.preference.delegates.booleanPreference
 import acr.browser.lightning.preference.delegates.enumPreference
 import acr.browser.lightning.preference.delegates.intPreference
-import acr.browser.lightning.preference.delegates.nullableStringPreference
 import acr.browser.lightning.preference.delegates.stringPreference
 import acr.browser.lightning.utils.FileUtils
 import android.content.SharedPreferences
@@ -66,20 +65,6 @@ class UserPreferences @Inject constructor(
         }
     )
 
-    /**
-     * The index of the ad blocking hosts file source.
-     */
-    var hostsSource by preferences.intPreference(HOSTS_SOURCE, 0)
-
-    /**
-     * The local file from which ad blocking hosts should be read, depending on the [hostsSource].
-     */
-    var hostsLocalFile by preferences.nullableStringPreference(HOSTS_LOCAL_FILE)
-
-    /**
-     * The remote URL from which ad blocking hosts should be read, depending on the [hostsSource].
-     */
-    var hostsRemoteFile by preferences.nullableStringPreference(HOSTS_REMOTE_FILE)
 }
 
 private const val WEB_RTC = "webRtc"

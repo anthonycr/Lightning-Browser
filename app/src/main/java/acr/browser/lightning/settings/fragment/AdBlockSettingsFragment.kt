@@ -65,7 +65,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
             preference = "preference_hosts_source",
             isEnabled = BuildConfig.FULL_VERSION,
             summary = if (BuildConfig.FULL_VERSION) {
-                userPreferences.selectedHostsSource().toSummary()
+                userPreferencesDataStore.selectedHostsSource().toSummary()
             } else {
                 getString(R.string.block_ads_upsell_source)
             },
@@ -86,7 +86,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun isRefreshHostsEnabled() =
-        userPreferences.selectedHostsSource() is HostsSourceType.Remote
+        userPreferencesDataStore.selectedHostsSource() is HostsSourceType.Remote
 
     @Deprecated("Deprecated in Java")
     override fun onDestroy() {
@@ -106,23 +106,23 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
             R.string.block_ad_source,
             DialogItem(
                 title = R.string.block_source_default,
-                isConditionMet = userPreferences.selectedHostsSource() == HostsSourceType.Default,
+                isConditionMet = userPreferencesDataStore.selectedHostsSource() == HostsSourceType.Default,
                 onClick = {
-                    userPreferences.hostsSource = HostsSourceType.Default.toPreferenceIndex()
-                    summaryUpdater.updateSummary(userPreferences.selectedHostsSource().toSummary())
+                    userPreferencesDataStore.hostsSource.setUnsafe(HostsSourceType.Default.toPreferenceIndex())
+                    summaryUpdater.updateSummary(userPreferencesDataStore.selectedHostsSource().toSummary())
                     updateForNewHostsSource()
                 }
             ),
             DialogItem(
                 title = R.string.block_source_local,
-                isConditionMet = userPreferences.selectedHostsSource() is HostsSourceType.Local,
+                isConditionMet = userPreferencesDataStore.selectedHostsSource() is HostsSourceType.Local,
                 onClick = {
                     showFileChooser(summaryUpdater)
                 }
             ),
             DialogItem(
                 title = R.string.block_source_remote,
-                isConditionMet = userPreferences.selectedHostsSource() is HostsSourceType.Remote,
+                isConditionMet = userPreferencesDataStore.selectedHostsSource() is HostsSourceType.Remote,
                 onClick = {
                     showUrlChooser(summaryUpdater)
                 }
@@ -145,13 +145,15 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
             requireActivity(),
             title = R.string.block_source_remote,
             hint = R.string.hint_url,
-            currentText = userPreferences.hostsRemoteFile,
+            currentText = userPreferencesDataStore.hostsRemoteFile.getUnsafe(),
             action = R.string.action_ok,
             textInputListener = {
                 val url = it.toHttpUrlOrNull()
                     ?: return@showEditText run { activity?.toast(R.string.problem_download) }
-                userPreferences.hostsSource = HostsSourceType.Remote(url).toPreferenceIndex()
-                userPreferences.hostsRemoteFile = it
+                userPreferencesDataStore.hostsSource.setUnsafe(
+                    HostsSourceType.Remote(url).toPreferenceIndex()
+                )
+                userPreferencesDataStore.hostsRemoteFile.setUnsafe(it)
                 summaryUpdater.updateSummary(it)
                 updateForNewHostsSource()
             }
@@ -169,11 +171,10 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                         .subscribeBy(
                             onComplete = { activity?.toast(R.string.action_message_canceled) },
                             onSuccess = { file ->
-                                userPreferences.hostsSource =
-                                    HostsSourceType.Local(file).toPreferenceIndex()
-                                userPreferences.hostsLocalFile = file.path
+                                userPreferencesDataStore.hostsSource.setUnsafe(HostsSourceType.Local(file).toPreferenceIndex())
+                                userPreferencesDataStore.hostsLocalFile.setUnsafe(file.path)
                                 recentSummaryUpdater?.updateSummary(
-                                    userPreferences.selectedHostsSource().toSummary()
+                                    userPreferencesDataStore.selectedHostsSource().toSummary()
                                 )
                                 updateForNewHostsSource()
                             }
