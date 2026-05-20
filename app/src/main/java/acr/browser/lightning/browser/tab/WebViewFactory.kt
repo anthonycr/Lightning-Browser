@@ -39,7 +39,7 @@ class WebViewFactory @Inject constructor(
      */
     fun createRequestHeaders(): Map<String, String> {
         val requestHeaders = mutableMapOf<String, String>()
-        if (userPreferences.doNotTrackEnabled) {
+        if (userPreferencesDataStore.doNotTrackEnabled.getUnsafe()) {
             requestHeaders[HEADER_DNT] = "1"
         } else {
             requestHeaders.remove(HEADER_DNT)
@@ -116,7 +116,7 @@ class WebViewFactory @Inject constructor(
 
 //        lightningWebClient.updatePreferences()
 //
-        val modifiesHeaders = userPreferences.doNotTrackEnabled
+        val modifiesHeaders = userPreferencesDataStore.doNotTrackEnabled.getUnsafe()
             || userPreferences.saveDataEnabled
             || userPreferences.removeIdentifyingHeadersEnabled
 

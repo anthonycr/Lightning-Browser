@@ -77,8 +77,8 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         togglePreference(
             preference = SETTINGS_DONOTTRACK,
-            isChecked = userPreferences.doNotTrackEnabled,
-            onCheckChange = { userPreferences.doNotTrackEnabled = it }
+            isChecked = userPreferencesDataStore.doNotTrackEnabled.getUnsafe(),
+            onCheckChange = { userPreferencesDataStore.doNotTrackEnabled.setUnsafe(it) }
         )
 
         togglePreference(
