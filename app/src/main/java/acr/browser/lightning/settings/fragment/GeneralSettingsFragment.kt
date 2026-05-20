@@ -67,7 +67,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
             preference = SETTINGS_SUGGESTIONS,
-            summary = searchSuggestionChoiceToTitle(Suggestions.from(userPreferences.searchSuggestionChoice)),
+            summary = searchSuggestionChoiceToTitle(Suggestions.from(userPreferencesDataStore.searchSuggestionChoice.getUnsafe())),
             onClick = ::showSearchSuggestionsDialog
         )
 
@@ -350,7 +350,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(resources.getString(R.string.search_suggestions))
 
-            val currentChoice = when (Suggestions.from(userPreferences.searchSuggestionChoice)) {
+            val currentChoice = when (Suggestions.from(userPreferencesDataStore.searchSuggestionChoice.getUnsafe())) {
                 Suggestions.GOOGLE -> 0
                 Suggestions.DUCK -> 1
                 Suggestions.BAIDU -> 2
@@ -367,7 +367,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     4 -> Suggestions.NONE
                     else -> Suggestions.GOOGLE
                 }
-                userPreferences.searchSuggestionChoice = suggestionsProvider.index
+                userPreferencesDataStore.searchSuggestionChoice.setUnsafe(suggestionsProvider.index)
                 summaryUpdater.updateSummary(searchSuggestionChoiceToTitle(suggestionsProvider))
             }
             setPositiveButton(resources.getString(R.string.action_ok), null)

@@ -9,7 +9,6 @@ import acr.browser.lightning.preference.delegates.enumPreference
 import acr.browser.lightning.preference.delegates.intPreference
 import acr.browser.lightning.preference.delegates.nullableStringPreference
 import acr.browser.lightning.preference.delegates.stringPreference
-import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.utils.FileUtils
 import android.content.SharedPreferences
 import javax.inject.Inject
@@ -66,13 +65,6 @@ class UserPreferences @Inject constructor(
             TabConfiguration.DESKTOP
         }
     )
-
-    /**
-     * The index of the search suggestion choice.
-     *
-     * @see SearchEngineProvider
-     */
-    var searchSuggestionChoice by preferences.intPreference(SEARCH_SUGGESTIONS, 1)
 
     /**
      * The index of the ad blocking hosts file source.
