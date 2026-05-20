@@ -109,6 +109,6 @@ fun <T> PreferenceStore<T>.getUnsafe(): T = runBlocking {
 }
 
 @Deprecated("Use coroutines")
-fun <T> PreferenceStore<T>.setUnsafe(value: T): T = runBlocking {
-    setUnsafe(value)
+fun <T> PreferenceStore<T>.setUnsafe(value: T) = runBlocking {
+    set(value)
 }
