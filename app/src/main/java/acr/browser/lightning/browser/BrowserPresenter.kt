@@ -24,6 +24,7 @@ import acr.browser.lightning.browser.tab.UrlInitializer
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
 import acr.browser.lightning.browser.view.targetUrl.LongPress
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
@@ -56,6 +57,10 @@ import io.reactivex.rxjava3.kotlin.Observables
 import io.reactivex.rxjava3.kotlin.plusAssign
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.kotlin.toObservable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -87,8 +92,11 @@ class BrowserPresenter @Inject constructor(
     private val allowListModel: AllowListModel,
     private val cookieAdministrator: CookieAdministrator,
     private val tabCountNotifier: TabCountNotifier,
-    @IncognitoMode private val incognitoMode: Boolean
+    @IncognitoMode private val incognitoMode: Boolean,
+    coroutineDispatchers: CoroutineDispatchers,
 ) {
+
+    private val browserCoroutineScope = CoroutineScope(coroutineDispatchers.main + SupervisorJob())
 
     private var view: BrowserContract.View? = null
     private var viewState: BrowserViewState = BrowserViewState(
@@ -163,6 +171,7 @@ class BrowserPresenter @Inject constructor(
 
         compositeDisposable.dispose()
         tabDisposable.dispose()
+        browserCoroutineScope.cancel()
     }
 
     /**
@@ -845,8 +854,10 @@ class BrowserPresenter @Inject constructor(
      * Call when the user chooses to toggle the desktop user agent on/off.
      */
     fun onToggleDesktopAgent() {
-        currentTab?.toggleDesktopAgent()
-        currentTab?.reload()
+        browserCoroutineScope.launch {
+            currentTab?.toggleDesktopAgent()
+            currentTab?.reload()
+        }
     }
 
     /**

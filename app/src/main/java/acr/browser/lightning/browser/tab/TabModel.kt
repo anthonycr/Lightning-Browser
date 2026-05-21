@@ -72,7 +72,7 @@ interface TabModel {
     /**
      * Toggle the user agent used by the browser to a desktop one or back to the default one.
      */
-    fun toggleDesktopAgent()
+    suspend fun toggleDesktopAgent()
 
     /**
      * Reload the page the browser is currently showing.

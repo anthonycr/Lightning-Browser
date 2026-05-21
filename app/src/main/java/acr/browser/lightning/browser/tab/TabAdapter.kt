@@ -153,12 +153,11 @@ class TabAdapter @AssistedInject constructor(
     override fun canGoForwardChanges(): Observable<Boolean> =
         tabWebViewClient.goForwardObservable.hide()
 
-    override fun toggleDesktopAgent() {
-        if (!toggleDesktop) {
-            webView.settings.userAgentString = DESKTOP_USER_AGENT
+    override suspend fun toggleDesktopAgent() {
+        webView.settings.userAgentString = if (!toggleDesktop) {
+            DESKTOP_USER_AGENT
         } else {
-            webView.settings.userAgentString = userPreferencesDataStore.userAgent(defaultUserAgent)
-
+            userPreferencesDataStore.userAgent(defaultUserAgent)
         }
 
         toggleDesktop = !toggleDesktop

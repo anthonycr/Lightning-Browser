@@ -18,11 +18,11 @@ fun UserPreferencesDataStore.userAgent(application: Application): String =
         else -> throw UnsupportedOperationException("Unknown userAgentChoice: $choice")
     }
 
-fun UserPreferencesDataStore.userAgent(defaultUserAgent: String): String =
-    when (val choice = userAgentChoice.getUnsafe()) {
+suspend fun UserPreferencesDataStore.userAgent(defaultUserAgent: String): String =
+    when (val choice = userAgentChoice.get()) {
         1 -> defaultUserAgent
         2 -> DESKTOP_USER_AGENT
         3 -> MOBILE_USER_AGENT
-        4 -> userAgentString.getUnsafe().takeIf(String::isNotEmpty) ?: " "
+        4 -> userAgentString.get().takeIf(String::isNotEmpty).orEmpty()
         else -> throw UnsupportedOperationException("Unknown userAgentChoice: $choice")
     }
