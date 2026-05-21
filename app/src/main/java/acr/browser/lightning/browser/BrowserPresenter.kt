@@ -48,7 +48,6 @@ import acr.browser.lightning.utils.smartUrlFilter
 import acr.browser.lightning.utils.value
 import androidx.activity.result.ActivityResult
 import androidx.core.net.toUri
-import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
@@ -61,6 +60,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -137,12 +137,10 @@ class BrowserPresenter @Inject constructor(
         cookieAdministrator.adjustCookieSettings()
 
         currentFolder = Bookmark.Folder.Root
-        compositeDisposable += bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribe { list ->
-                this.view?.updateState(viewState.copy(bookmarks = list, isRootFolder = true))
-            }
+        browserCoroutineScope.launch {
+            val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
+            view.updateState(viewState.copy(bookmarks = bookmarks, isRootFolder = true))
+        }
 
         compositeDisposable += model.tabsListChanges()
             .observeOn(mainScheduler)
@@ -248,7 +246,9 @@ class BrowserPresenter @Inject constructor(
             tab.canGoBackChanges().startWithItem(tab.canGoBack()),
             tab.canGoForwardChanges().startWithItem(tab.canGoForward()),
             tab.urlChanges().startWithItem(tab.url).observeOn(diskScheduler)
-                .flatMapSingle(bookmarkRepository::isBookmark).observeOn(mainScheduler),
+                .flatMapSingle {
+                    Single.just(runBlocking { bookmarkRepository.isBookmark(it) })
+                }.observeOn(mainScheduler),
             tab.urlChanges().startWithItem(tab.url).map(String::isSpecialUrl),
             tab.themeColorChanges().startWithItem(tab.themeColor)
         ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl, themeColor ->
@@ -665,12 +665,10 @@ class BrowserPresenter @Inject constructor(
         if (currentUrl?.isSpecialUrl() == true) {
             when {
                 currentUrl.isBookmarkUrl() ->
-                    compositeDisposable += bookmarkPageFactory.buildPage()
-                        .subscribeOn(diskScheduler)
-                        .observeOn(mainScheduler)
-                        .subscribeBy {
-                            currentTab?.reload()
-                        }
+                    browserCoroutineScope.launch {
+                        bookmarkPageFactory.buildPage()
+                        currentTab?.reload()
+                    }
 
                 currentUrl.isDownloadsUrl() ->
                     currentTab?.loadFromInitializer(downloadPageInitializer)
@@ -805,28 +803,22 @@ class BrowserPresenter @Inject constructor(
             Bookmark.Folder.Root -> error("Cannot click on root folder")
             is Bookmark.Folder.Entry -> {
                 currentFolder = bookmark
-                compositeDisposable += bookmarkRepository
-                    .bookmarksAndFolders(folder = bookmark)
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribe { list ->
-                        view?.updateState(viewState.copy(bookmarks = list, isRootFolder = false))
-                    }
+                browserCoroutineScope.launch {
+                    val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = bookmark)
+                    view?.updateState(viewState.copy(bookmarks = bookmarks, isRootFolder = false))
+                }
             }
         }
     }
 
-    private fun BookmarkRepository.bookmarksAndFolders(folder: Bookmark.Folder): Single<List<Bookmark>> =
-        getBookmarksFromFolderSorted(folder = folder.title)
-            .concatWith(Single.defer {
-                if (folder == Bookmark.Folder.Root) {
-                    getFoldersSorted()
-                } else {
-                    Single.just(emptyList())
-                }
-            })
-            .toList()
-            .map(MutableList<List<Bookmark>>::flatten)
+    private suspend fun BookmarkRepository.bookmarksAndFolders(folder: Bookmark.Folder): List<Bookmark> {
+        val bookmarks = getBookmarksFromFolderSorted(folder = folder.title)
+        return if (folder == Bookmark.Folder.Root) {
+            bookmarks + getFoldersSorted()
+        } else {
+            bookmarks
+        }
+    }
 
     /**
      * Call when the user long presses on a bookmark in the bookmark list at the provided [index].
@@ -883,41 +875,34 @@ class BrowserPresenter @Inject constructor(
         if (url.isSpecialUrl()) {
             return
         }
-        compositeDisposable += bookmarkRepository.isBookmark(url)
-            .flatMapMaybe {
-                if (it) {
-                    bookmarkRepository.deleteBookmark(
-                        Bookmark.Entry(
-                            url = url,
-                            title = title,
-                            position = 0,
-                            folder = Bookmark.Folder.Root
-                        )
-                    ).toMaybe()
-                } else {
-                    Maybe.empty()
-                }
+        browserCoroutineScope.launch {
+            val isBookmark = bookmarkRepository.isBookmark(url)
+            if (isBookmark) {
+                bookmarkRepository.deleteBookmark(
+                    Bookmark.Entry(
+                        url = url,
+                        title = title,
+                        position = 0,
+                        folder = Bookmark.Folder.Root
+                    )
+                )
+                val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
+                view?.updateState(viewState.copy(bookmarks = bookmarks))
+            } else {
+                showAddBookmarkDialog()
             }
-            .doOnComplete(::showAddBookmarkDialog)
-            .flatMapSingle { bookmarkRepository.bookmarksAndFolders(folder = currentFolder) }
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribeBy { list ->
-                this.view?.updateState(viewState.copy(bookmarks = list))
-            }
+        }
     }
 
     private fun showAddBookmarkDialog() {
-        compositeDisposable += bookmarkRepository.getFolderNames()
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribeBy {
-                view?.showAddBookmarkDialog(
-                    title = currentTab?.title.orEmpty(),
-                    url = currentTab?.url.orEmpty(),
-                    folders = it
-                )
-            }
+        browserCoroutineScope.launch {
+            val folders = bookmarkRepository.getFolderNames()
+            view?.showAddBookmarkDialog(
+                title = currentTab?.title.orEmpty(),
+                url = currentTab?.url.orEmpty(),
+                folders = folders
+            )
+        }
     }
 
     /**
@@ -928,19 +913,18 @@ class BrowserPresenter @Inject constructor(
      * @param folder The name of the folder the bookmark is in.
      */
     fun onBookmarkConfirmed(title: String, url: String, folder: String) {
-        compositeDisposable += bookmarkRepository.addBookmarkIfNotExists(
-            Bookmark.Entry(
-                url = url,
-                title = title,
-                position = 0,
-                folder = folder.asFolder()
+        browserCoroutineScope.launch {
+            bookmarkRepository.addBookmarkIfNotExists(
+                Bookmark.Entry(
+                    url = url,
+                    title = title,
+                    position = 0,
+                    folder = folder.asFolder()
+                )
             )
-        ).flatMap { bookmarkRepository.bookmarksAndFolders(folder = currentFolder) }
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribeBy { list ->
-                this.view?.updateState(viewState.copy(bookmarks = list))
-            }
+            val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
+            view?.updateState(viewState.copy(bookmarks = bookmarks))
+        }
     }
 
     /**
@@ -951,28 +935,27 @@ class BrowserPresenter @Inject constructor(
      * @param folder The name of the folder the bookmark is in.
      */
     fun onBookmarkEditConfirmed(title: String, url: String, folder: String) {
-        compositeDisposable += bookmarkRepository.editBookmark(
-            oldBookmark = Bookmark.Entry(
-                url = url,
-                title = "",
-                position = 0,
-                folder = Bookmark.Folder.Root
-            ),
-            newBookmark = Bookmark.Entry(
-                url = url,
-                title = title,
-                position = 0,
-                folder = folder.asFolder()
+        browserCoroutineScope.launch {
+            bookmarkRepository.editBookmark(
+                oldBookmark = Bookmark.Entry(
+                    url = url,
+                    title = "",
+                    position = 0,
+                    folder = Bookmark.Folder.Root
+                ),
+                newBookmark = Bookmark.Entry(
+                    url = url,
+                    title = title,
+                    position = 0,
+                    folder = folder.asFolder()
+                )
             )
-        ).andThen(bookmarkRepository.bookmarksAndFolders(folder = currentFolder))
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribeBy { list ->
-                this.view?.updateState(viewState.copy(bookmarks = list))
-                if (currentTab?.url?.isBookmarkUrl() == true) {
-                    reload()
-                }
+            val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
+            view?.updateState(viewState.copy(bookmarks = bookmarks))
+            if (currentTab?.url?.isBookmarkUrl() == true) {
+                reload()
             }
+        }
     }
 
     /**
@@ -982,16 +965,14 @@ class BrowserPresenter @Inject constructor(
      * @param newTitle The new title of the folder.
      */
     fun onBookmarkFolderRenameConfirmed(oldTitle: String, newTitle: String) {
-        compositeDisposable += bookmarkRepository.renameFolder(oldTitle, newTitle)
-            .andThen(bookmarkRepository.bookmarksAndFolders(folder = currentFolder))
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribe { list ->
-                this.view?.updateState(viewState.copy(bookmarks = list))
-                if (currentTab?.url?.isBookmarkUrl() == true) {
-                    reload()
-                }
+        browserCoroutineScope.launch {
+            bookmarkRepository.renameFolder(oldTitle, newTitle)
+            val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
+            view?.updateState(viewState.copy(bookmarks = bookmarks))
+            if (currentTab?.url?.isBookmarkUrl() == true) {
+                reload()
             }
+        }
     }
 
     /**
@@ -1016,29 +997,25 @@ class BrowserPresenter @Inject constructor(
                 navigator.copyPageLink(bookmark.url)
 
             BrowserContract.BookmarkOptionEvent.REMOVE ->
-                compositeDisposable += bookmarkRepository.deleteBookmark(bookmark)
-                    .flatMap { bookmarkRepository.bookmarksAndFolders(folder = currentFolder) }
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribe { list ->
-                        view?.updateState(viewState.copy(bookmarks = list))
-                        if (currentTab?.url?.isBookmarkUrl() == true) {
-                            reload()
-                        }
+                browserCoroutineScope.launch {
+                    bookmarkRepository.deleteBookmark(bookmark)
+                    val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
+                    view?.updateState(viewState.copy(bookmarks = bookmarks))
+                    if (currentTab?.url?.isBookmarkUrl() == true) {
+                        reload()
                     }
+                }
 
             BrowserContract.BookmarkOptionEvent.EDIT ->
-                compositeDisposable += bookmarkRepository.getFolderNames()
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribeBy { folders ->
-                        view?.showEditBookmarkDialog(
-                            bookmark.title,
-                            bookmark.url,
-                            bookmark.folder.title,
-                            folders
-                        )
-                    }
+                browserCoroutineScope.launch {
+                    val folders = bookmarkRepository.getFolderNames()
+                    view?.showEditBookmarkDialog(
+                        bookmark.title,
+                        bookmark.url,
+                        bookmark.folder.title,
+                        folders
+                    )
+                }
         }
     }
 
@@ -1049,17 +1026,15 @@ class BrowserPresenter @Inject constructor(
         when (option) {
             BrowserContract.FolderOptionEvent.RENAME -> view?.showEditFolderDialog(folder.title)
             BrowserContract.FolderOptionEvent.REMOVE ->
-                compositeDisposable += bookmarkRepository.deleteFolder(folder.title)
-                    .andThen(bookmarkRepository.bookmarksAndFolders(folder = currentFolder))
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribe { list ->
-                        view?.updateState(viewState.copy(bookmarks = list))
-                        if (currentTab?.url?.isBookmarkUrl() == true) {
-                            reload()
-                            currentTab?.goBack()
-                        }
+                browserCoroutineScope.launch {
+                    bookmarkRepository.deleteFolder(folder.title)
+                    val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
+                    view?.updateState(viewState.copy(bookmarks = bookmarks))
+                    if (currentTab?.url?.isBookmarkUrl() == true) {
+                        reload()
+                        currentTab?.goBack()
                     }
+                }
         }
     }
 
@@ -1072,24 +1047,20 @@ class BrowserPresenter @Inject constructor(
     ) {
         when (option) {
             BrowserContract.DownloadOptionEvent.DELETE ->
-                compositeDisposable += downloadsRepository.deleteAllDownloads()
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribeBy {
-                        if (currentTab?.url?.isDownloadsUrl() == true) {
-                            reload()
-                        }
+                browserCoroutineScope.launch {
+                    downloadsRepository.deleteAllDownloads()
+                    if (currentTab?.url?.isDownloadsUrl() == true) {
+                        reload()
                     }
+                }
 
             BrowserContract.DownloadOptionEvent.DELETE_ALL ->
-                compositeDisposable += downloadsRepository.deleteDownload(download.url)
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribeBy {
-                        if (currentTab?.url?.isDownloadsUrl() == true) {
-                            reload()
-                        }
+                browserCoroutineScope.launch {
+                    downloadsRepository.deleteDownload(download.url)
+                    if (currentTab?.url?.isDownloadsUrl() == true) {
+                        reload()
                     }
+                }
         }
     }
 
@@ -1115,14 +1086,12 @@ class BrowserPresenter @Inject constructor(
 
             BrowserContract.HistoryOptionEvent.COPY_LINK -> navigator.copyPageLink(historyEntry.url)
             BrowserContract.HistoryOptionEvent.REMOVE ->
-                compositeDisposable += historyRepository.deleteHistoryEntry(historyEntry.url)
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribeBy {
-                        if (currentTab?.url?.isHistoryUrl() == true) {
-                            reload()
-                        }
+                browserCoroutineScope.launch {
+                    historyRepository.deleteHistoryEntry(historyEntry.url)
+                    if (currentTab?.url?.isHistoryUrl() == true) {
+                        reload()
                     }
+                }
         }
     }
 
@@ -1160,13 +1129,11 @@ class BrowserPresenter @Inject constructor(
     fun onBookmarkMenuClick() {
         if (currentFolder != Bookmark.Folder.Root) {
             currentFolder = Bookmark.Folder.Root
-            compositeDisposable += bookmarkRepository
-                .bookmarksAndFolders(folder = Bookmark.Folder.Root)
-                .subscribeOn(databaseScheduler)
-                .observeOn(mainScheduler)
-                .subscribeBy { list ->
-                    view?.updateState(viewState.copy(bookmarks = list, isRootFolder = true))
-                }
+            browserCoroutineScope.launch {
+                val bookmarks =
+                    bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
+                view?.updateState(viewState.copy(bookmarks = bookmarks, isRootFolder = true))
+            }
         }
     }
 
@@ -1188,30 +1155,27 @@ class BrowserPresenter @Inject constructor(
                     )
                     view?.showFolderOptionsDialog(folderTitle.asFolder())
                 } else {
-                    compositeDisposable += bookmarkRepository.findBookmarkForUrl(url)
-                        .subscribeOn(databaseScheduler)
-                        .observeOn(mainScheduler)
-                        .subscribeBy {
-                            view?.showBookmarkOptionsDialog(it)
+                    browserCoroutineScope.launch {
+                        val bookmark = bookmarkRepository.findBookmarkForUrl(url)
+                        if (bookmark != null) {
+                            view?.showBookmarkOptionsDialog(bookmark)
                         }
+                    }
                 }
             } else if (pageUrl.isDownloadsUrl()) {
-                compositeDisposable += downloadsRepository.findDownloadForUrl(url)
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribeBy {
-                        view?.showDownloadOptionsDialog(it)
+                browserCoroutineScope.launch {
+                    val download = downloadsRepository.findDownloadForUrl(url)
+                    if (download != null) {
+                        view?.showDownloadOptionsDialog(download)
                     }
+                }
             } else if (pageUrl.isHistoryUrl()) {
-                compositeDisposable += historyRepository.findHistoryEntriesContaining(url)
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribeBy { entries ->
-                        entries.firstOrNull()?.let {
-                            view?.showHistoryOptionsDialog(it)
-                        } ?: view?.showHistoryOptionsDialog(HistoryEntry(url = url, title = ""))
-                    }
-
+                browserCoroutineScope.launch {
+                    val entries = historyRepository.findHistoryEntriesContaining(url)
+                    entries.firstOrNull()?.let {
+                        view?.showHistoryOptionsDialog(it)
+                    } ?: view?.showHistoryOptionsDialog(HistoryEntry(url = url, title = ""))
+                }
             }
         } else {
             when (longPress.hitCategory) {

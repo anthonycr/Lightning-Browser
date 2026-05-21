@@ -18,7 +18,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.permissionx.guolindev.PermissionX
 import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.kotlin.subscribeBy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -29,7 +30,8 @@ class DownloadPermissionsHelper @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val logger: Logger,
     private val downloadsRepository: DownloadsRepository,
-    @DatabaseScheduler private val databaseScheduler: Scheduler
+    @DatabaseScheduler private val databaseScheduler: Scheduler,
+    private val appCoroutineScope: CoroutineScope,
 ) {
 
     /**
@@ -75,18 +77,18 @@ class DownloadPermissionsHelper @Inject constructor(
                                     mimeType,
                                     downloadSize
                                 )
-                                downloadsRepository.addDownloadIfNotExists(
-                                    DownloadEntry(
-                                        url = url,
-                                        title = fileName,
-                                        contentSize = downloadSize
+                                appCoroutineScope.launch {
+                                    val result = downloadsRepository.addDownloadIfNotExists(
+                                        DownloadEntry(
+                                            url = url,
+                                            title = fileName,
+                                            contentSize = downloadSize
+                                        )
                                     )
-                                ).subscribeOn(databaseScheduler)
-                                    .subscribeBy {
-                                        if (!it) {
-                                            logger.log(TAG, "error saving download to database")
-                                        }
+                                    if (!result) {
+                                        logger.log(TAG, "error saving download to database")
                                     }
+                                }
                             }
 
                             DialogInterface.BUTTON_NEGATIVE -> {

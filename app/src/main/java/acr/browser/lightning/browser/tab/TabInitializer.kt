@@ -1,8 +1,7 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.DiskScheduler
-import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.extensions.resizeAndShow
@@ -22,8 +21,8 @@ import dagger.Reusable
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.kotlin.subscribeBy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -78,9 +77,9 @@ class HomePageInitializer @Inject constructor(
 @Reusable
 class StartPageInitializer @Inject constructor(
     homePageFactory: HomePageFactory,
-    @DiskScheduler diskScheduler: Scheduler,
-    @MainScheduler foregroundScheduler: Scheduler
-) : HtmlPageFactoryInitializer(homePageFactory, diskScheduler, foregroundScheduler)
+    appCoroutineScope: CoroutineScope,
+    coroutineDispatchers: CoroutineDispatchers,
+) : HtmlPageFactoryInitializer(homePageFactory, appCoroutineScope, coroutineDispatchers)
 
 /**
  * An initializer that displays the bookmark page.
@@ -88,9 +87,9 @@ class StartPageInitializer @Inject constructor(
 @Reusable
 class BookmarkPageInitializer @Inject constructor(
     bookmarkPageFactory: BookmarkPageFactory,
-    @DiskScheduler diskScheduler: Scheduler,
-    @MainScheduler foregroundScheduler: Scheduler
-) : HtmlPageFactoryInitializer(bookmarkPageFactory, diskScheduler, foregroundScheduler)
+    appCoroutineScope: CoroutineScope,
+    coroutineDispatchers: CoroutineDispatchers,
+) : HtmlPageFactoryInitializer(bookmarkPageFactory, appCoroutineScope, coroutineDispatchers)
 
 /**
  * An initializer that displays the download page.
@@ -98,9 +97,9 @@ class BookmarkPageInitializer @Inject constructor(
 @Reusable
 class DownloadPageInitializer @Inject constructor(
     downloadPageFactory: DownloadPageFactory,
-    @DiskScheduler diskScheduler: Scheduler,
-    @MainScheduler foregroundScheduler: Scheduler
-) : HtmlPageFactoryInitializer(downloadPageFactory, diskScheduler, foregroundScheduler)
+    appCoroutineScope: CoroutineScope,
+    coroutineDispatchers: CoroutineDispatchers,
+) : HtmlPageFactoryInitializer(downloadPageFactory, appCoroutineScope, coroutineDispatchers)
 
 /**
  * An initializer that displays the history page.
@@ -108,25 +107,24 @@ class DownloadPageInitializer @Inject constructor(
 @Reusable
 class HistoryPageInitializer @Inject constructor(
     historyPageFactory: HistoryPageFactory,
-    @DiskScheduler diskScheduler: Scheduler,
-    @MainScheduler foregroundScheduler: Scheduler
-) : HtmlPageFactoryInitializer(historyPageFactory, diskScheduler, foregroundScheduler)
+    appCoroutineScope: CoroutineScope,
+    coroutineDispatchers: CoroutineDispatchers,
+) : HtmlPageFactoryInitializer(historyPageFactory, appCoroutineScope, coroutineDispatchers)
 
 /**
  * An initializer that loads the url built by the [HtmlPageFactory].
  */
 abstract class HtmlPageFactoryInitializer(
     private val htmlPageFactory: HtmlPageFactory,
-    @DiskScheduler private val diskScheduler: Scheduler,
-    @MainScheduler private val foregroundScheduler: Scheduler
+    private val coroutineScope: CoroutineScope,
+    private val coroutineDispatchers: CoroutineDispatchers
 ) : TabInitializer {
 
     override fun initialize(webView: WebView, headers: Map<String, String>) {
-        htmlPageFactory
-            .buildPage()
-            .subscribeOn(diskScheduler)
-            .observeOn(foregroundScheduler)
-            .subscribeBy(onSuccess = { webView.loadUrl(it, headers) })
+        coroutineScope.launch(coroutineDispatchers.main) {
+            val page = htmlPageFactory.buildPage()
+            webView.loadUrl(page, headers)
+        }
     }
 
 }

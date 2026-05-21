@@ -1,10 +1,6 @@
 package acr.browser.lightning.database.bookmark
 
 import acr.browser.lightning.database.Bookmark
-import androidx.annotation.WorkerThread
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Single
 
 /**
  * The interface that should be used to communicate with the bookmark database.
@@ -19,7 +15,7 @@ interface BookmarkRepository {
      * @param url the URL to look for.
      * @return an observable that will emit either the bookmark associated with the URL or null.
      */
-    fun findBookmarkForUrl(url: String): Maybe<Bookmark.Entry>
+    suspend fun findBookmarkForUrl(url: String): Bookmark.Entry?
 
     /**
      * Determines if a URL is associated with a bookmark.
@@ -27,7 +23,7 @@ interface BookmarkRepository {
      * @param url the URL to check.
      * @return an observable that will emit true if the URL is a bookmark, false otherwise.
      */
-    fun isBookmark(url: String): Single<Boolean>
+    suspend fun isBookmark(url: String): Boolean
 
     /**
      * Adds a bookmark if one does not already exist with the same URL.
@@ -35,7 +31,7 @@ interface BookmarkRepository {
      * @param entry the bookmark to add.
      * @return an observable that emits true if the bookmark was added, false otherwise.
      */
-    fun addBookmarkIfNotExists(entry: Bookmark.Entry): Single<Boolean>
+    suspend fun addBookmarkIfNotExists(entry: Bookmark.Entry): Boolean
 
     /**
      * Adds a list of bookmarks to the database.
@@ -43,7 +39,7 @@ interface BookmarkRepository {
      * @param bookmarkItems the bookmarks to add.
      * @return an observable that emits a complete event when all the bookmarks have been added.
      */
-    fun addBookmarkList(bookmarkItems: List<Bookmark.Entry>): Completable
+    suspend fun addBookmarkList(bookmarkItems: List<Bookmark.Entry>)
 
     /**
      * Deletes a bookmark from the database. The [Bookmark.Entry.url] is used to delete the
@@ -52,7 +48,7 @@ interface BookmarkRepository {
      * @param entry the bookmark to delete.
      * @return an observable that emits true when the entry is deleted, false otherwise.
      */
-    fun deleteBookmark(entry: Bookmark.Entry): Single<Boolean>
+    suspend fun deleteBookmark(entry: Bookmark.Entry): Boolean
 
     /**
      * Moves all bookmarks in the old folder to the new folder.
@@ -61,7 +57,7 @@ interface BookmarkRepository {
      * @param newName the name of the new folder.
      * @return an observable that emits a completion event when the folder is renamed.
      */
-    fun renameFolder(oldName: String, newName: String): Completable
+    suspend fun renameFolder(oldName: String, newName: String)
 
     /**
      * Deletes a folder from the database, all bookmarks in that folder will be moved to the root
@@ -70,14 +66,14 @@ interface BookmarkRepository {
      * @param folderToDelete the folder to delete.
      * @return an observable that emits a completion event when the folder has been deleted.
      */
-    fun deleteFolder(folderToDelete: String): Completable
+    suspend fun deleteFolder(folderToDelete: String)
 
     /**
      * Deletes all bookmarks in the database.
      *
      * @return an observable that emits a completion event when all bookmarks have been deleted.
      */
-    fun deleteAllBookmarks(): Completable
+    suspend fun deleteAllBookmarks()
 
     /**
      * Changes the bookmark with the original URL with all the data from the new bookmark.
@@ -86,14 +82,14 @@ interface BookmarkRepository {
      * @param newBookmark the new bookmark.
      * @return an observable that emits a completion event when the bookmark edit is done.
      */
-    fun editBookmark(oldBookmark: Bookmark.Entry, newBookmark: Bookmark.Entry): Completable
+    suspend fun editBookmark(oldBookmark: Bookmark.Entry, newBookmark: Bookmark.Entry)
 
     /**
      * Emits a list of all bookmarks, sorted by folder, position, title, and url.
      *
      * @return an observable that emits a list of all bookmarks.
      */
-    fun getAllBookmarksSorted(): Single<List<Bookmark.Entry>>
+    suspend fun getAllBookmarksSorted(): List<Bookmark.Entry>
 
     /**
      * Emits all bookmarks in a certain folder. If the folder chosen is null, then all bookmarks
@@ -102,21 +98,21 @@ interface BookmarkRepository {
      * @param folder gets the bookmarks from this folder, may be null.
      * @return an observable that emits a list of bookmarks in the given folder.
      */
-    fun getBookmarksFromFolderSorted(folder: String?): Single<List<Bookmark>>
+    suspend fun getBookmarksFromFolderSorted(folder: String?): List<Bookmark>
 
     /**
      * Returns all folders as [Bookmark.Folder]. The root folder is omitted.
      *
      * @return an observable that emits a list of folders.
      */
-    fun getFoldersSorted(): Single<List<Bookmark.Folder>>
+    suspend fun getFoldersSorted(): List<Bookmark.Folder>
 
     /**
      * Returns the names of all folders. The root folder is omitted.
      *
      * @return an observable that emits a list of folder names.
      */
-    fun getFolderNames(): Single<List<String>>
+    suspend fun getFolderNames(): List<String>
 
     /**
      * A synchronous call to the model that returns the number of bookmarks. Should be called from a
@@ -124,6 +120,5 @@ interface BookmarkRepository {
      *
      * @return the number of bookmarks in the database.
      */
-    @WorkerThread
-    fun count(): Long
+    suspend fun count(): Long
 }

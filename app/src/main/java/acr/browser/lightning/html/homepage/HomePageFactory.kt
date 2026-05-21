@@ -2,6 +2,7 @@ package acr.browser.lightning.html.homepage
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.theme.ThemeProvider
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.html.HtmlPageFactory
@@ -15,7 +16,7 @@ import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.search.SearchEngineProvider
 import android.app.Application
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileWriter
 import javax.inject.Inject
@@ -27,7 +28,8 @@ class HomePageFactory @Inject constructor(
     private val application: Application,
     private val searchEngineProvider: SearchEngineProvider,
     private val homePageReader: HomePageReader,
-    private val themeProvider: ThemeProvider
+    private val themeProvider: ThemeProvider,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) : HtmlPageFactory {
 
     private val title = application.getString(R.string.home)
@@ -45,36 +47,34 @@ class HomePageFactory @Inject constructor(
     private val textColor: String
         get() = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
 
-    override fun buildPage(): Single<String> = Single
-        .just(searchEngineProvider.provideSearchEngine())
-        .map { (iconUrl, queryUrl, _) ->
-            parse(homePageReader.provideHtml()) andBuild {
-                title { title }
-                style { content ->
-                    content.replace("--body-bg: {COLOR}", "--body-bg: #$backgroundColor;")
-                        .replace("--box-bg: {COLOR}", "--box-bg: #$cardColor;")
-                        .replace("--box-txt: {COLOR}", "--box-txt: #$textColor;")
-                }
-                charset { UTF8 }
-                body {
-                    id("image_url") { attr("src", iconUrl) }
-                    tag("script") {
-                        html(
-                            html()
-                                .replace("\${BASE_URL}", queryUrl)
-                                .replace("&", "\\u0026")
-                        )
-                    }
+    override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
+        val (iconUrl, queryUrl, _) = searchEngineProvider.provideSearchEngine()
+        val content = parse(homePageReader.provideHtml()) andBuild {
+            title { title }
+            style { content ->
+                content.replace("--body-bg: {COLOR}", "--body-bg: #$backgroundColor;")
+                    .replace("--box-bg: {COLOR}", "--box-bg: #$cardColor;")
+                    .replace("--box-txt: {COLOR}", "--box-txt: #$textColor;")
+            }
+            charset { UTF8 }
+            body {
+                id("image_url") { attr("src", iconUrl) }
+                tag("script") {
+                    html(
+                        html()
+                            .replace("\${BASE_URL}", queryUrl)
+                            .replace("&", "\\u0026")
+                    )
                 }
             }
         }
-        .map { content -> Pair(createHomePage(), content) }
-        .doOnSuccess { (page, content) ->
-            FileWriter(page, false).use {
-                it.write(content)
-            }
+        val page = createHomePage()
+        FileWriter(page, false).use {
+            it.write(content)
         }
-        .map { (page, _) -> "$FILE$page" }
+
+        "$FILE$page"
+    }
 
     /**
      * Create the home page file.

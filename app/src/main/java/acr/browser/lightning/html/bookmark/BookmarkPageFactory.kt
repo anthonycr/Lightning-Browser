@@ -1,9 +1,9 @@
 package acr.browser.lightning.html.bookmark
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.theme.ThemeProvider
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.bookmark.BookmarkRepository
@@ -26,7 +26,7 @@ import android.app.Application
 import android.graphics.Bitmap
 import androidx.core.net.toUri
 import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FileWriter
@@ -39,8 +39,8 @@ class BookmarkPageFactory @Inject constructor(
     private val application: Application,
     private val bookmarkModel: BookmarkRepository,
     private val faviconModel: FaviconModel,
-    @DatabaseScheduler private val databaseScheduler: Scheduler,
     @DiskScheduler private val diskScheduler: Scheduler,
+    private val coroutineDispatchers: CoroutineDispatchers,
     private val bookmarkPageReader: BookmarkPageReader,
     private val themeProvider: ThemeProvider
 ) : HtmlPageFactory {
@@ -66,49 +66,33 @@ class BookmarkPageFactory @Inject constructor(
     private val textColor: String
         get() = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
 
-    override fun buildPage(): Single<String> = bookmarkModel
-        .getAllBookmarksSorted()
-        .flattenAsObservable { it }
-        .groupBy<Bookmark.Folder, Bookmark>(Bookmark.Entry::folder) { it }
-        .flatMapSingle { bookmarksInFolder ->
-            val folder = bookmarksInFolder.key
-            return@flatMapSingle bookmarksInFolder
-                .toList()
-                .concatWith(
-                    if (folder == Bookmark.Folder.Root) {
-                        bookmarkModel.getFoldersSorted()
-                            .map { it.filterIsInstance<Bookmark.Folder.Entry>() }
-                    } else {
-                        Single.just(emptyList())
-                    }
-                )
-                .toList()
-                .map { bookmarksAndFolders ->
-                    Pair(folder, bookmarksAndFolders.flatten().map { it.asViewModel() })
+    override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
+        val bookmarks = bookmarkModel.getAllBookmarksSorted()
+        bookmarks.groupBy { it.folder }
+            .mapValues { (folder, bookmarks) ->
+                if (folder == Bookmark.Folder.Root) {
+                    construct((bookmarks + bookmarkModel.getFoldersSorted()).map { it.asViewModel() })
+                } else {
+                    construct(bookmarks.map { it.asViewModel() })
                 }
-        }
-        .map { (folder, viewModels) -> Pair(folder, construct(viewModels)) }
-        .subscribeOn(databaseScheduler)
-        .observeOn(diskScheduler)
-        .doOnNext { (folder, content) ->
-            FileWriter(createBookmarkPage(folder), false).use {
-                it.write(content)
+            }.forEach { (folder, content) ->
+                FileWriter(createBookmarkPage(folder), false).use {
+                    it.write(content)
+                }
             }
-        }
-        .ignoreElements()
-        .toSingle {
-            cacheIcon(
-                ThemeUtils.createThemedBitmap(
-                    application,
-                    R.drawable.ic_folder,
-                    themeProvider.color(R.attr.autoCompleteTitleColor)
-                ),
-                folderIconFile
-            )
-            cacheIcon(faviconModel.createDefaultBitmapForTitle(null), defaultIconFile)
 
-            "$FILE${createBookmarkPage(null)}"
-        }
+        cacheIcon(
+            ThemeUtils.createThemedBitmap(
+                application,
+                R.drawable.ic_folder,
+                themeProvider.color(R.attr.autoCompleteTitleColor)
+            ),
+            folderIconFile
+        )
+        cacheIcon(faviconModel.createDefaultBitmapForTitle(null), defaultIconFile)
+
+        "$FILE${createBookmarkPage(null)}"
+    }
 
     private fun cacheIcon(icon: Bitmap, file: File) = FileOutputStream(file).safeUse {
         icon.compress(Bitmap.CompressFormat.PNG, 100, it)
@@ -126,11 +110,11 @@ class BookmarkPageFactory @Inject constructor(
             body {
                 val repeatableElement = findId("repeated").removeElement()
                 id("content") {
-                    list.forEach {
+                    list.forEach { (title, url, iconUrl) ->
                         appendChild(repeatableElement.clone {
-                            tag("a") { attr("href", it.url) }
-                            tag("img") { attr("src", it.iconUrl) }
-                            id("title") { appendText(it.title) }
+                            tag("a") { attr("href", url) }
+                            tag("img") { attr("src", iconUrl) }
+                            id("title") { appendText(title) }
                         })
                     }
                 }

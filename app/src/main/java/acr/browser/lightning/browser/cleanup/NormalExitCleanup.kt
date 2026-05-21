@@ -1,13 +1,12 @@
 package acr.browser.lightning.browser.cleanup
 
-import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.database.history.HistoryDatabase
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.WebUtils
 import android.app.Activity
-import io.reactivex.rxjava3.core.Scheduler
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
 /**
@@ -17,8 +16,8 @@ class NormalExitCleanup @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val logger: Logger,
     private val historyDatabase: HistoryDatabase,
-    @DatabaseScheduler private val databaseScheduler: Scheduler,
-    private val activity: Activity
+    private val activity: Activity,
+    private val appCoroutineScope: CoroutineScope,
 ) : ExitCleanup {
     override fun cleanUp() {
         if (userPreferencesDataStore.clearCacheExit.getUnsafe()) {
@@ -26,7 +25,7 @@ class NormalExitCleanup @Inject constructor(
             logger.log(TAG, "Cache Cleared")
         }
         if (userPreferencesDataStore.clearHistoryExitEnabled.getUnsafe()) {
-            WebUtils.clearHistory(activity, historyDatabase, databaseScheduler)
+            WebUtils.clearHistory(activity, historyDatabase, appCoroutineScope)
             logger.log(TAG, "History Cleared")
         }
         if (userPreferencesDataStore.clearCookiesExitEnabled.getUnsafe()) {

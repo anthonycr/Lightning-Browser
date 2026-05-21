@@ -4,6 +4,7 @@ import acr.browser.lightning.browser.di.AppComponent
 import acr.browser.lightning.browser.di.DaggerAppComponent
 import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.device.BuildInfo
@@ -17,10 +18,11 @@ import android.os.Build
 import android.os.StrictMode
 import android.webkit.WebView
 import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -48,6 +50,12 @@ class BrowserApp : Application() {
 
     @Inject
     internal lateinit var cleanup: Cleanup
+
+    @Inject
+    internal lateinit var appCoroutineScope: CoroutineScope
+
+    @Inject
+    internal lateinit var coroutineDispatchers: CoroutineDispatchers
 
     lateinit var applicationComponent: AppComponent
 
@@ -106,14 +114,14 @@ class BrowserApp : Application() {
             .build()
         injector.inject(this)
 
-        Single.fromCallable(bookmarkModel::count)
-            .filter { it == 0L }
-            .flatMapCompletable {
-                val assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(this@BrowserApp)
+        appCoroutineScope.launch {
+            if (bookmarkModel.count() == 0L) {
+                val assetsBookmarks = withContext(coroutineDispatchers.io) {
+                    BookmarkExporter.importBookmarksFromAssets(this@BrowserApp)
+                }
                 bookmarkModel.addBookmarkList(assetsBookmarks)
             }
-            .subscribeOn(databaseScheduler)
-            .subscribe()
+        }
 
         if (buildInfo.buildType == BuildType.DEBUG) {
             leakCanaryUtils.setup()

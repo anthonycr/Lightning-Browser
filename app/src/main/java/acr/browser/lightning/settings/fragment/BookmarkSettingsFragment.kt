@@ -9,6 +9,7 @@ import acr.browser.lightning.bookmark.NetscapeBookmarkFormatImporter
 import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.dialog.BrowserDialog
@@ -26,9 +27,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
 import javax.inject.Inject
 
 class BookmarkSettingsFragment : AbstractSettingsFragment() {
@@ -40,6 +44,8 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     @Inject @DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var logger: Logger
+    @Inject internal lateinit var appCoroutineScope: CoroutineScope
+    @Inject internal lateinit var coroutineDispatchers: CoroutineDispatchers
 
     private var importSubscription: Disposable? = null
     private var exportDisposable: Disposable? = null
@@ -75,36 +81,35 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun exportBookmarksToUri(uri: Uri) {
-        bookmarkRepository.getAllBookmarksSorted()
-            .subscribeOn(databaseScheduler)
-            .subscribe { list ->
-                if (!isAdded) {
-                    return@subscribe
-                }
-
-                val fileName = activity?.fileName(uri).orEmpty()
-                val outputStream =
-                    activity?.fileOutputStream(uri) ?: return@subscribe showExportError()
-                exportDisposable?.dispose()
-                exportDisposable =
-                    outputStream
-                        .flatMapCompletable {
-                            BookmarkExporter.exportBookmarksToOutputStream(list, it)
-                        }
-                        .subscribeOn(databaseScheduler)
-                        .observeOn(mainScheduler)
-                        .subscribeBy(
-                            onComplete = {
-                                activity?.apply {
-                                    snackbar("${getString(R.string.bookmark_export_path)} $fileName")
-                                }
-                            },
-                            onError = { throwable ->
-                                logger.log(TAG, "onError: exporting bookmarks", throwable)
-                                showExportError()
-                            }
-                        )
+        appCoroutineScope.launch {
+            val list = bookmarkRepository.getAllBookmarksSorted()
+            if (!isAdded) {
+                return@launch
             }
+
+            val fileName = activity?.fileName(uri).orEmpty()
+            val outputStream =
+                activity?.fileOutputStream(uri) ?: return@launch showExportError()
+            exportDisposable?.dispose()
+            exportDisposable =
+                outputStream
+                    .flatMapCompletable {
+                        BookmarkExporter.exportBookmarksToOutputStream(list, it)
+                    }
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(mainScheduler)
+                    .subscribeBy(
+                        onComplete = {
+                            activity?.apply {
+                                snackbar("${getString(R.string.bookmark_export_path)} $fileName")
+                            }
+                        },
+                        onError = { throwable ->
+                            logger.log(TAG, "onError: exporting bookmarks", throwable)
+                            showExportError()
+                        }
+                    )
+        }
     }
 
     private fun showExportError() {
@@ -130,10 +135,9 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
             title = R.string.action_delete,
             message = R.string.action_delete_all_bookmarks,
             positiveButton = DialogItem(title = R.string.yes) {
-                bookmarkRepository
-                    .deleteAllBookmarks()
-                    .subscribeOn(databaseScheduler)
-                    .subscribe()
+                appCoroutineScope.launch {
+                    bookmarkRepository.deleteAllBookmarks()
+                }
             },
             negativeButton = DialogItem(title = R.string.no) {},
             onCancel = {}
@@ -177,38 +181,27 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun importBookmarksFromUri(uri: Uri) {
-        val fileName = activity?.fileName(uri)
+        appCoroutineScope.launch(coroutineDispatchers.io) {
+            try {
+                val fileName = activity?.fileName(uri)
+                val inputStream = activity?.fileInputStream(uri) ?: return@launch
 
-        val inputStream = activity?.fileInputStream(uri) ?: return
-
-        inputStream
-            .map {
-                if (fileName?.endsWith(EXTENSION_HTML) == true) {
-                    netscapeBookmarkFormatImporter.importBookmarks(it)
+                val bookmarks = if (fileName?.endsWith(EXTENSION_HTML) == true) {
+                    netscapeBookmarkFormatImporter.importBookmarks(inputStream)
                 } else {
-                    legacyBookmarkImporter.importBookmarks(it)
+                    legacyBookmarkImporter.importBookmarks(inputStream)
                 }
-            }
-            .flatMapSingle {
-                bookmarkRepository.addBookmarkList(it).andThen(Single.just(it.size))
-            }
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribeBy(
-                onSuccess = { count ->
+                bookmarkRepository.addBookmarkList(bookmarks)
+                withContext(coroutineDispatchers.main) {
                     activity?.apply {
-                        snackbar("$count ${getString(R.string.message_import)}")
+                        snackbar("${bookmarks.size} ${getString(R.string.message_import)}")
                     }
-                },
-                onComplete = {
-                    logger.log(TAG, "onComplete: importing bookmarks")
-                    showImportError()
-                },
-                onError = {
-                    logger.log(TAG, "onError: importing bookmarks", it)
-                    showImportError()
                 }
-            )
+            } catch (ioException: IOException) {
+                logger.log(TAG, "onError: importing bookmarks", ioException)
+                showImportError()
+            }
+        }
     }
 
     private fun showImportError() {

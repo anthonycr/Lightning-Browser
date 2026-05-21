@@ -28,6 +28,9 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.Locale
 import javax.inject.Inject
 
@@ -44,6 +47,7 @@ class SuggestionsAdapter(
     @Inject @NetworkScheduler internal lateinit var networkScheduler: Scheduler
     @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
+    @Inject internal lateinit var appCoroutineScope: CoroutineScope
 
     private var allBookmarks: List<Bookmark.Entry> = emptyList()
     private val searchFilter = SearchFilter(this)
@@ -90,11 +94,9 @@ class SuggestionsAdapter(
     }
 
     fun refreshBookmarks() {
-        bookmarkRepository.getAllBookmarksSorted()
-            .subscribeOn(databaseScheduler)
-            .subscribe { list ->
-                allBookmarks = list
-            }
+        appCoroutineScope.launch {
+            allBookmarks = bookmarkRepository.getAllBookmarksSorted()
+        }
     }
 
     override fun getCount(): Int = filteredList.size
@@ -181,7 +183,11 @@ class SuggestionsAdapter(
                 .share()
 
             val historyEntries = upstream
-                .flatMapSingle(historyRepository::findHistoryEntriesContaining)
+                .flatMapSingle {
+                    Single.just(runBlocking {
+                        historyRepository.findHistoryEntriesContaining(it)
+                    })
+                }
                 .subscribeOn(databaseScheduler)
                 .startWithItem(emptyList())
                 .share()

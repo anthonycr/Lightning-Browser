@@ -1,10 +1,5 @@
 package acr.browser.lightning.database.downloads
 
-import androidx.annotation.WorkerThread
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Single
-
 /**
  * The interface that should be used to communicate with the download database.
  *
@@ -18,7 +13,7 @@ interface DownloadsRepository {
      * @param url the URL to check.
      * @return an observable that will emit true if the URL is a download, false otherwise.
      */
-    fun isDownload(url: String): Single<Boolean>
+    suspend fun isDownload(url: String): Boolean
 
     /**
      * Gets the download associated with the URL.
@@ -26,7 +21,7 @@ interface DownloadsRepository {
      * @param url the URL to look for.
      * @return an observable that will emit either the download associated with the URL or null.
      */
-    fun findDownloadForUrl(url: String): Maybe<DownloadEntry>
+    suspend fun findDownloadForUrl(url: String): DownloadEntry?
 
     /**
      * Adds a download if one does not already exist with the same URL.
@@ -34,7 +29,7 @@ interface DownloadsRepository {
      * @param entry the download to add.
      * @return an observable that emits true if the download was added, false otherwise.
      */
-    fun addDownloadIfNotExists(entry: DownloadEntry): Single<Boolean>
+    suspend fun addDownloadIfNotExists(entry: DownloadEntry): Boolean
 
     /**
      * Adds a list of downloads to the database.
@@ -42,7 +37,7 @@ interface DownloadsRepository {
      * @param downloadEntries the downloads to add.
      * @return an observable that emits a complete event when all the downloads have been added.
      */
-    fun addDownloadsList(downloadEntries: List<DownloadEntry>): Completable
+    suspend fun addDownloadsList(downloadEntries: List<DownloadEntry>)
 
     /**
      * Deletes a download from the database.
@@ -50,21 +45,21 @@ interface DownloadsRepository {
      * @param url the download url to delete.
      * @return an observable that emits true when the download is deleted, false otherwise.
      */
-    fun deleteDownload(url: String): Single<Boolean>
+    suspend fun deleteDownload(url: String): Boolean
 
     /**
      * Deletes all downloads in the database.
      *
      * @return an observable that emits a completion event when all downloads have been deleted.
      */
-    fun deleteAllDownloads(): Completable
+    suspend fun deleteAllDownloads()
 
     /**
      * Emits a list of all downloads, sorted by primary key.
      *
      * @return an observable that emits a list of all downloads.
      */
-    fun getAllDownloads(): Single<List<DownloadEntry>>
+    suspend fun getAllDownloads(): List<DownloadEntry>
 
     /**
      * A synchronous call to the model that returns the number of downloads. Should be called from a
@@ -72,6 +67,5 @@ interface DownloadsRepository {
      *
      * @return the number of downloads in the database.
      */
-    @WorkerThread
-    fun count(): Long
+    suspend fun count(): Long
 }

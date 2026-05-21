@@ -1,8 +1,8 @@
 package acr.browser.lightning.browser.history
 
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning.browser.di.DatabaseScheduler
-import io.reactivex.rxjava3.core.Scheduler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -10,11 +10,11 @@ import javax.inject.Inject
  */
 class DefaultHistoryRecord @Inject constructor(
     private val historyRepository: HistoryRepository,
-    @DatabaseScheduler private val databaseScheduler: Scheduler
+    private val appCoroutineScope: CoroutineScope,
 ) : HistoryRecord {
     override fun visit(title: String, url: String) {
-        historyRepository.visitHistoryEntry(url, title)
-            .subscribeOn(databaseScheduler)
-            .subscribe()
+        appCoroutineScope.launch {
+            historyRepository.visitHistoryEntry(url, title)
+        }
     }
 }

@@ -1,5 +1,6 @@
 package acr.browser.lightning.database.downloads
 
+import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.database.databaseDelegate
 import acr.browser.lightning.extensions.firstOrNullMap
 import acr.browser.lightning.extensions.useMap
@@ -10,9 +11,8 @@ import android.database.Cursor
 import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,7 +22,9 @@ import javax.inject.Singleton
 @SuppressLint("Range")
 @Singleton
 class DownloadsDatabase @Inject constructor(
-    application: Application
+    application: Application,
+    @DatabaseScheduler
+    private val databaseDispatcher: CoroutineDispatcher,
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), DownloadsRepository {
 
     private val database: SQLiteDatabase by databaseDelegate()
@@ -47,7 +49,9 @@ class DownloadsDatabase @Inject constructor(
         onCreate(db)
     }
 
-    override fun findDownloadForUrl(url: String): Maybe<DownloadEntry> = Maybe.fromCallable {
+    override suspend fun findDownloadForUrl(
+        url: String
+    ): DownloadEntry? = withContext(databaseDispatcher) {
         database.query(
             TABLE_DOWNLOADS,
             null,
@@ -59,7 +63,7 @@ class DownloadsDatabase @Inject constructor(
         ).firstOrNullMap { it.bindToDownloadItem() }
     }
 
-    override fun isDownload(url: String): Single<Boolean> = Single.fromCallable {
+    override suspend fun isDownload(url: String): Boolean = withContext(databaseDispatcher) {
         database.query(
             TABLE_DOWNLOADS,
             null,
@@ -69,59 +73,59 @@ class DownloadsDatabase @Inject constructor(
             null,
             null,
             "1"
+        ).use { it.moveToFirst() }
+    }
+
+    override suspend fun addDownloadIfNotExists(
+        entry: DownloadEntry
+    ): Boolean = withContext(databaseDispatcher) {
+        database.query(
+            TABLE_DOWNLOADS,
+            null,
+            "$KEY_URL=?",
+            arrayOf(entry.url),
+            null,
+            null,
+            "1"
         ).use {
-            return@fromCallable it.moveToFirst()
-        }
-    }
-
-    override fun addDownloadIfNotExists(entry: DownloadEntry): Single<Boolean> =
-        Single.fromCallable {
-            database.query(
-                TABLE_DOWNLOADS,
-                null,
-                "$KEY_URL=?",
-                arrayOf(entry.url),
-                null,
-                null,
-                "1"
-            ).use {
-                if (it.moveToFirst()) {
-                    return@fromCallable false
-                }
-            }
-
-            val id = database.insert(TABLE_DOWNLOADS, null, entry.toContentValues())
-
-            return@fromCallable id != -1L
-        }
-
-    override fun addDownloadsList(downloadEntries: List<DownloadEntry>): Completable =
-        Completable.fromAction {
-            database.apply {
-                beginTransaction()
-                setTransactionSuccessful()
-
-                for (item in downloadEntries) {
-                    addDownloadIfNotExists(item).subscribe()
-                }
-
-                endTransaction()
+            if (it.moveToFirst()) {
+                return@withContext false
             }
         }
 
-    override fun deleteDownload(url: String): Single<Boolean> = Single.fromCallable {
-        return@fromCallable database.delete(TABLE_DOWNLOADS, "$KEY_URL=?", arrayOf(url)) > 0
+        val id = database.insert(TABLE_DOWNLOADS, null, entry.toContentValues())
+
+        return@withContext id != -1L
     }
 
-    override fun deleteAllDownloads(): Completable = Completable.fromAction {
+    override suspend fun addDownloadsList(
+        downloadEntries: List<DownloadEntry>
+    ): Unit = withContext(databaseDispatcher) {
+        database.apply {
+            beginTransaction()
+            setTransactionSuccessful()
+
+            for (item in downloadEntries) {
+                addDownloadIfNotExists(item)
+            }
+
+            endTransaction()
+        }
+    }
+
+    override suspend fun deleteDownload(url: String): Boolean = withContext(databaseDispatcher) {
+        database.delete(TABLE_DOWNLOADS, "$KEY_URL=?", arrayOf(url)) > 0
+    }
+
+    override suspend fun deleteAllDownloads(): Unit = withContext(databaseDispatcher) {
         database.run {
             delete(TABLE_DOWNLOADS, null, null)
             close()
         }
     }
 
-    override fun getAllDownloads(): Single<List<DownloadEntry>> = Single.fromCallable {
-        return@fromCallable database.query(
+    override suspend fun getAllDownloads(): List<DownloadEntry> = withContext(databaseDispatcher) {
+        database.query(
             TABLE_DOWNLOADS,
             null,
             null,
@@ -132,7 +136,9 @@ class DownloadsDatabase @Inject constructor(
         ).useMap { it.bindToDownloadItem() }
     }
 
-    override fun count(): Long = DatabaseUtils.queryNumEntries(database, TABLE_DOWNLOADS)
+    override suspend fun count(): Long = withContext(databaseDispatcher) {
+        DatabaseUtils.queryNumEntries(database, TABLE_DOWNLOADS)
+    }
 
     /**
      * Maps the fields of [DownloadEntry] to [ContentValues].

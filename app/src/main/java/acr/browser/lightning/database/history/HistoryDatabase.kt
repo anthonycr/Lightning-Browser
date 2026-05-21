@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning.database.history
 
+import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.databaseDelegate
 import acr.browser.lightning.extensions.firstOrNullMap
@@ -14,8 +15,8 @@ import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.WorkerThread
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,7 +27,9 @@ import javax.inject.Singleton
 @Singleton
 @WorkerThread
 class HistoryDatabase @Inject constructor(
-    application: Application
+    application: Application,
+    @DatabaseScheduler
+    private val databaseDispatcher: CoroutineDispatcher,
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), HistoryRepository {
 
     private val database: SQLiteDatabase by databaseDelegate()
@@ -50,65 +53,67 @@ class HistoryDatabase @Inject constructor(
         onCreate(db)
     }
 
-    override fun deleteHistory(): Completable = Completable.fromAction {
+    override suspend fun deleteHistory(): Unit = withContext(databaseDispatcher) {
         database.run {
             delete(TABLE_HISTORY, null, null)
             close()
         }
     }
 
-    override fun deleteHistoryEntry(url: String): Completable = Completable.fromAction {
+    override suspend fun deleteHistoryEntry(url: String): Unit = withContext(databaseDispatcher) {
         database.delete(TABLE_HISTORY, "$KEY_URL = ?", arrayOf(url))
     }
 
-    override fun visitHistoryEntry(url: String, title: String): Completable =
-        Single.just(Pair(url, title))
-            .filter { (_, title) -> title.isNotBlank() }
-            .flatMapCompletable { (url, title) ->
-                Completable.fromAction {
-                    val values = ContentValues().apply {
-                        put(KEY_TITLE, title)
-                        put(KEY_TIME_VISITED, System.currentTimeMillis())
-                    }
-
-                    database.query(
-                        false,
-                        TABLE_HISTORY,
-                        arrayOf(KEY_ID),
-                        "$KEY_URL = ?",
-                        arrayOf(url),
-                        null,
-                        null,
-                        null,
-                        "1"
-                    ).use {
-                        if (it.count > 0) {
-                            database.update(TABLE_HISTORY, values, "$KEY_URL = ?", arrayOf(url))
-                        } else {
-                            addHistoryEntry(HistoryEntry(url, title))
-                        }
-                    }
-                }
-            }
-
-    override fun findHistoryEntriesContaining(query: String): Single<List<HistoryEntry>> =
-        Single.fromCallable {
-            val search = "%$query%"
-
-            return@fromCallable database.query(
-                TABLE_HISTORY,
-                null,
-                "$KEY_TITLE LIKE ? OR $KEY_URL LIKE ?",
-                arrayOf(search, search),
-                null,
-                null,
-                "$KEY_TIME_VISITED DESC",
-                "5"
-            ).useMap { it.bindToHistoryEntry() }
+    override suspend fun visitHistoryEntry(
+        url: String,
+        title: String
+    ): Unit = withContext(databaseDispatcher) {
+        if (title.isBlank()) {
+            return@withContext
+        }
+        val values = ContentValues().apply {
+            put(KEY_TITLE, title)
+            put(KEY_TIME_VISITED, System.currentTimeMillis())
         }
 
-    override fun lastHundredVisitedHistoryEntries(): Single<List<HistoryEntry>> =
-        Single.fromCallable {
+        database.query(
+            false,
+            TABLE_HISTORY,
+            arrayOf(KEY_ID),
+            "$KEY_URL = ?",
+            arrayOf(url),
+            null,
+            null,
+            null,
+            "1"
+        ).use {
+            if (it.count > 0) {
+                database.update(TABLE_HISTORY, values, "$KEY_URL = ?", arrayOf(url))
+            } else {
+                addHistoryEntry(HistoryEntry(url, title))
+            }
+        }
+    }
+
+    override suspend fun findHistoryEntriesContaining(
+        query: String
+    ): List<HistoryEntry> = withContext(databaseDispatcher) {
+        val search = "%$query%"
+
+        database.query(
+            TABLE_HISTORY,
+            null,
+            "$KEY_TITLE LIKE ? OR $KEY_URL LIKE ?",
+            arrayOf(search, search),
+            null,
+            null,
+            "$KEY_TIME_VISITED DESC",
+            "5"
+        ).useMap { it.bindToHistoryEntry() }
+    }
+
+    override suspend fun lastHundredVisitedHistoryEntries(): List<HistoryEntry> =
+        withContext(databaseDispatcher) {
             database.query(
                 TABLE_HISTORY,
                 null,

@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.webkit.WebView
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Scheduler
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
 class PrivacySettingsFragment : AbstractSettingsFragment() {
@@ -25,6 +26,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
     @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
     @Inject @DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
+    @Inject internal lateinit var appCoroutineScope: CoroutineScope
 
     override fun providePreferencesXmlResource() = R.xml.preference_privacy
 
@@ -142,7 +144,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         val activity = activity
         if (activity != null) {
             // TODO: 6/9/17 clearHistory is not synchronous
-            WebUtils.clearHistory(activity, historyRepository, databaseScheduler)
+            WebUtils.clearHistory(activity, historyRepository, appCoroutineScope)
         } else {
             throw RuntimeException("Activity was null in clearHistory")
         }

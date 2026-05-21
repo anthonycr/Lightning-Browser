@@ -2,6 +2,7 @@ package acr.browser.lightning.html.download
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.theme.ThemeProvider
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
@@ -20,7 +21,7 @@ import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import android.app.Application
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileWriter
 import javax.inject.Inject
@@ -33,7 +34,8 @@ class DownloadPageFactory @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val manager: DownloadsRepository,
     private val listPageReader: ListPageReader,
-    private val themeProvider: ThemeProvider
+    private val themeProvider: ThemeProvider,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) : HtmlPageFactory {
 
     private fun Int.toColor(): String {
@@ -51,37 +53,34 @@ class DownloadPageFactory @Inject constructor(
     private val subtitleColor: String
         get() = themeProvider.color(R.attr.autoCompleteUrlColor).toColor()
 
-    override fun buildPage(): Single<String> = manager
-        .getAllDownloads()
-        .map { list ->
-            parse(listPageReader.provideHtml()) andBuild {
-                title { application.getString(R.string.action_downloads) }
-                style { content ->
-                    content.replace("--body-bg: {COLOR}", "--body-bg: #$backgroundColor;")
-                        .replace("--divider-color: {COLOR}", "--divider-color: #$dividerColor;")
-                        .replace("--title-color: {COLOR}", "--title-color: #$textColor;")
-                        .replace("--subtitle-color: {COLOR}", "--subtitle-color: #$subtitleColor;")
-                }
-                body {
-                    val repeatableElement = findId("repeated").removeElement()
-                    id("content") {
-                        list.forEach {
-                            appendChild(repeatableElement.clone {
-                                tag("a") { attr("href", createFileUrl(it.title)) }
-                                id("title") { text(createFileTitle(it)) }
-                                id("url") { text(it.url) }
-                            })
-                        }
+    override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
+        val downloads = manager.getAllDownloads()
+        val content = parse(listPageReader.provideHtml()) andBuild {
+            title { application.getString(R.string.action_downloads) }
+            style { content ->
+                content.replace("--body-bg: {COLOR}", "--body-bg: #$backgroundColor;")
+                    .replace("--divider-color: {COLOR}", "--divider-color: #$dividerColor;")
+                    .replace("--title-color: {COLOR}", "--title-color: #$textColor;")
+                    .replace("--subtitle-color: {COLOR}", "--subtitle-color: #$subtitleColor;")
+            }
+            body {
+                val repeatableElement = findId("repeated").removeElement()
+                id("content") {
+                    downloads.forEach {
+                        appendChild(repeatableElement.clone {
+                            tag("a") { attr("href", createFileUrl(it.title)) }
+                            id("title") { text(createFileTitle(it)) }
+                            id("url") { text(it.url) }
+                        })
                     }
                 }
             }
         }
-        .map { content -> Pair(createDownloadsPageFile(), content) }
-        .doOnSuccess { (page, content) ->
-            FileWriter(page, false).use { it.write(content) }
-        }
-        .map { (page, _) -> "$FILE$page" }
+        val page = createDownloadsPageFile()
+        FileWriter(page, false).use { it.write(content) }
 
+        "$FILE$page"
+    }
 
     private fun createDownloadsPageFile(): File {
         val generatedHtml = File(application.filesDir, "generated-html")

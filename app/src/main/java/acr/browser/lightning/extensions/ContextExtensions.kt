@@ -14,6 +14,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.annotation.WorkerThread
 import androidx.core.content.ContextCompat
 import io.reactivex.rxjava3.core.Maybe
 import java.io.IOException
@@ -71,6 +72,7 @@ val Context.preferredLocale: Locale
 /**
  * Obtain the file name for the provided [Uri].
  */
+@WorkerThread
 fun Context.fileName(uri: Uri): String? {
     val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME)
     val metaCursor: Cursor? = contentResolver.query(uri, projection, null, null, null)
@@ -101,13 +103,9 @@ fun Context?.fileOutputStream(uri: Uri): Maybe<OutputStream> = Maybe.create {
  * Create an [InputStream] from a [Uri]. If the [Uri] cannot be read from, this function emits a
  * completion signal.
  */
-fun Context?.fileInputStream(uri: Uri): Maybe<InputStream> = Maybe.create {
-    try {
-        val inputStream = this?.contentResolver?.openInputStream(uri)
-            ?: return@create it.onComplete()
-
-        return@create it.onSuccess(inputStream)
-    } catch (exception: IOException) {
-        return@create it.onComplete()
-    }
+@WorkerThread
+fun Context?.fileInputStream(uri: Uri): InputStream? = try {
+    this?.contentResolver?.openInputStream(uri)
+} catch (exception: IOException) {
+    null
 }

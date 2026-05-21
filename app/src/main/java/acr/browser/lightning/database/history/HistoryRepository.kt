@@ -1,8 +1,6 @@
 package acr.browser.lightning.database.history
 
 import acr.browser.lightning.database.HistoryEntry
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
 
 /**
  * An interface that should be used to communicate with the history database.
@@ -16,7 +14,7 @@ interface HistoryRepository {
      *
      * @return a valid observable.
      */
-    fun deleteHistory(): Completable
+    suspend fun deleteHistory()
 
     /**
      * An observable that deletes the history entry with the specific URL.
@@ -24,7 +22,7 @@ interface HistoryRepository {
      * @param url the URL of the item to delete.
      * @return a valid observable.
      */
-    fun deleteHistoryEntry(url: String): Completable
+    suspend fun deleteHistoryEntry(url: String)
 
     /**
      * An observable that visits the URL by adding it to the database if it doesn't exist or
@@ -34,7 +32,7 @@ interface HistoryRepository {
      * @param title the title of the item that was visited.
      * @return a valid observable.
      */
-    fun visitHistoryEntry(url: String, title: String): Completable
+    suspend fun visitHistoryEntry(url: String, title: String)
 
     /**
      * An observable that finds all history items containing the given query. If the query is
@@ -45,12 +43,12 @@ interface HistoryRepository {
      * @return a valid observable that emits
      * a list of history items.
      */
-    fun findHistoryEntriesContaining(query: String): Single<List<HistoryEntry>>
+    suspend fun findHistoryEntriesContaining(query: String): List<HistoryEntry>
 
     /**
      * An observable that emits a list of the last 100 visited history items.
      *
      * @return a valid observable that emits a list of history items.
      */
-    fun lastHundredVisitedHistoryEntries(): Single<List<HistoryEntry>>
+    suspend fun lastHundredVisitedHistoryEntries(): List<HistoryEntry>
 }
