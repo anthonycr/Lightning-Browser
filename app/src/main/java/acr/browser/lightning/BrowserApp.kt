@@ -2,7 +2,6 @@ package acr.browser.lightning
 
 import acr.browser.lightning.browser.di.AppComponent
 import acr.browser.lightning.browser.di.DaggerAppComponent
-import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.bookmark.BookmarkExporter
@@ -17,7 +16,6 @@ import android.app.Application
 import android.os.Build
 import android.os.StrictMode
 import android.webkit.WebView
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -37,10 +35,6 @@ class BrowserApp : Application() {
 
     @Inject
     internal lateinit var bookmarkModel: BookmarkRepository
-
-    @Inject
-    @DatabaseScheduler
-    internal lateinit var databaseScheduler: Scheduler
 
     @Inject
     internal lateinit var logger: Logger
