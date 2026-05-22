@@ -1,6 +1,7 @@
 package acr.browser.lightning.favicon
 
 import acr.browser.lightning.R
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.extensions.pad
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.log.Logger
@@ -11,8 +12,7 @@ import android.graphics.BitmapFactory
 import androidx.annotation.ColorInt
 import androidx.annotation.WorkerThread
 import androidx.core.net.toUri
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
@@ -24,7 +24,8 @@ import javax.inject.Singleton
 @Singleton
 class FaviconModel @Inject constructor(
     private val application: Application,
-    private val logger: Logger
+    private val logger: Logger,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) {
 
     private val loaderOptions = BitmapFactory.Options()
@@ -54,9 +55,12 @@ class FaviconModel @Inject constructor(
      * @param url   The URL that we should retrieve the favicon for.
      * @param title The title for the web page.
      */
-    fun faviconForUrl(url: String, title: String): Maybe<Bitmap> = Maybe.create {
+    suspend fun faviconForUrl(
+        url: String,
+        title: String
+    ): Bitmap = withContext(coroutineDispatchers.io) {
         val uri = url.toUri().toValidUri()
-            ?: return@create it.onSuccess(createDefaultBitmapForTitle(title).pad())
+            ?: return@withContext createDefaultBitmapForTitle(title).pad()
 
         val faviconCacheFile = getFaviconCacheFile(application, uri)
 
@@ -64,11 +68,11 @@ class FaviconModel @Inject constructor(
             val storedFavicon = BitmapFactory.decodeFile(faviconCacheFile.path, loaderOptions)
 
             if (storedFavicon != null) {
-                return@create it.onSuccess(storedFavicon.pad())
+                return@withContext storedFavicon.pad()
             }
         }
 
-        return@create it.onSuccess(createDefaultBitmapForTitle(title).pad())
+        return@withContext createDefaultBitmapForTitle(title).pad()
     }
 
     /**
@@ -78,17 +82,18 @@ class FaviconModel @Inject constructor(
      * @param url     the URL to cache the favicon for.
      * @return an observable that notifies the consumer when it is complete.
      */
-    fun cacheFaviconForUrl(favicon: Bitmap, url: String): Completable =
-        Completable.create { emitter ->
-            val uri = url.toUri().toValidUri() ?: return@create emitter.onComplete()
+    suspend fun cacheFaviconForUrl(
+        favicon: Bitmap,
+        url: String
+    ): Unit = withContext(coroutineDispatchers.io) {
+        val uri = url.toUri().toValidUri() ?: return@withContext
 
-            logger.log(TAG, "Caching icon for ${uri.host}")
-            FileOutputStream(getFaviconCacheFile(application, uri)).safeUse {
-                favicon.compress(Bitmap.CompressFormat.PNG, 100, it)
-                it.flush()
-                emitter.onComplete()
-            }
+        logger.log(TAG, "Caching icon for ${uri.host}")
+        FileOutputStream(getFaviconCacheFile(application, uri)).safeUse {
+            favicon.compress(Bitmap.CompressFormat.PNG, 100, it)
+            it.flush()
         }
+    }
 
     companion object {
 

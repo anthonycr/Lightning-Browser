@@ -1,7 +1,6 @@
 package acr.browser.lightning.html.bookmark
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
@@ -25,7 +24,6 @@ import acr.browser.lightning.utils.ThemeUtils
 import android.app.Application
 import android.graphics.Bitmap
 import androidx.core.net.toUri
-import io.reactivex.rxjava3.core.Scheduler
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -39,7 +37,6 @@ class BookmarkPageFactory @Inject constructor(
     private val application: Application,
     private val bookmarkModel: BookmarkRepository,
     private val faviconModel: FaviconModel,
-    @DiskScheduler private val diskScheduler: Scheduler,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val bookmarkPageReader: BookmarkPageReader,
     private val themeProvider: ThemeProvider
@@ -122,7 +119,7 @@ class BookmarkPageFactory @Inject constructor(
         }
     }
 
-    private fun Bookmark.asViewModel(): BookmarkViewModel = when (this) {
+    private suspend fun Bookmark.asViewModel(): BookmarkViewModel = when (this) {
         is Bookmark.Folder -> createViewModelForFolder(this)
         is Bookmark.Entry -> createViewModelForBookmark(this)
     }
@@ -138,7 +135,7 @@ class BookmarkPageFactory @Inject constructor(
         )
     }
 
-    private fun createViewModelForBookmark(entry: Bookmark.Entry): BookmarkViewModel {
+    private suspend fun createViewModelForBookmark(entry: Bookmark.Entry): BookmarkViewModel {
         val bookmarkUri = entry.url.toUri().toValidUri()
 
         val iconUrl = if (bookmarkUri != null) {
@@ -146,8 +143,6 @@ class BookmarkPageFactory @Inject constructor(
             if (!faviconFile.exists()) {
                 val defaultFavicon = faviconModel.createDefaultBitmapForTitle(entry.title)
                 faviconModel.cacheFaviconForUrl(defaultFavicon, entry.url)
-                    .subscribeOn(diskScheduler)
-                    .subscribe()
             }
 
             faviconFile

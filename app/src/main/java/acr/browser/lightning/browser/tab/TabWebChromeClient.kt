@@ -33,6 +33,8 @@ import com.permissionx.guolindev.PermissionX
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -43,7 +45,8 @@ class TabWebChromeClient @Inject constructor(
     private val faviconModel: FaviconModel,
     @DiskScheduler private val diskScheduler: Scheduler,
     private val userPreferencesDataStore: UserPreferencesDataStore,
-    private val webRtcPermissionsModel: WebRtcPermissionsModel
+    private val webRtcPermissionsModel: WebRtcPermissionsModel,
+    private val appCoroutineScope: CoroutineScope,
 ) : WebChromeClient(), WebRtcPermissionsView {
 
     private val defaultColor = activity.color(R.color.primary_color)
@@ -145,9 +148,9 @@ class TabWebChromeClient @Inject constructor(
     override fun onReceivedIcon(view: WebView, icon: Bitmap) {
         faviconObservable.onNext(Option.Some(icon))
         val url = view.url ?: return
-        faviconModel.cacheFaviconForUrl(icon, url)
-            .subscribeOn(diskScheduler)
-            .subscribe()
+        appCoroutineScope.launch {
+            faviconModel.cacheFaviconForUrl(icon, url)
+        }
         generateColorAndPropagate(icon)
     }
 

@@ -1,9 +1,8 @@
 package acr.browser.lightning.browser.image
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.MainScheduler
-import acr.browser.lightning.browser.di.NetworkScheduler
 import acr.browser.lightning.browser.theme.ThemeProvider
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.extensions.themedDrawable
 import acr.browser.lightning.favicon.FaviconModel
@@ -13,10 +12,10 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.util.LruCache
 import android.widget.ImageView
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.plusAssign
-import io.reactivex.rxjava3.kotlin.subscribeBy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -26,10 +25,11 @@ import javax.inject.Inject
 class FaviconImageLoader @Inject constructor(
     private val faviconModel: FaviconModel,
     application: Application,
-    @NetworkScheduler private val networkScheduler: Scheduler,
-    @MainScheduler private val mainScheduler: Scheduler,
-    themeProvider: ThemeProvider
+    themeProvider: ThemeProvider,
+    coroutineDispatchers: CoroutineDispatchers,
 ) : ImageLoader {
+
+    private val coroutineScope = CoroutineScope(coroutineDispatchers.main + SupervisorJob())
 
     private val lruCache: LruCache<String, Any> =
         object : LruCache<String, Any>(FileUtils.megabytesToBytes(5).toInt()) {
@@ -46,7 +46,6 @@ class FaviconImageLoader @Inject constructor(
         R.drawable.ic_webpage,
         themeProvider.color(R.attr.autoCompleteTitleColor)
     )
-    private val compositeDisposable = CompositeDisposable()
 
     override fun loadImage(imageView: ImageView, bookmark: Bookmark) {
         imageView.tag = bookmark.url
@@ -66,24 +65,19 @@ class FaviconImageLoader @Inject constructor(
                 is Bookmark.Entry -> {
                     lruCache.put(bookmark.url, webPageIcon)
                     imageView.setImageDrawable(webPageIcon)
-                    compositeDisposable += faviconModel
-                        .faviconForUrl(bookmark.url, bookmark.title)
-                        .subscribeOn(networkScheduler)
-                        .observeOn(mainScheduler)
-                        .subscribeBy(
-                            onSuccess = { bitmap ->
-                                lruCache.put(bookmark.url, bitmap)
-                                if (imageView.tag == bookmark.url) {
-                                    imageView.setImageBitmap(bitmap)
-                                }
-                            }
-                        )
+                    coroutineScope.launch {
+                        val bitmap = faviconModel.faviconForUrl(bookmark.url, bookmark.title)
+                        lruCache.put(bookmark.url, bitmap)
+                        if (imageView.tag == bookmark.url) {
+                            imageView.setImageBitmap(bitmap)
+                        }
+                    }
                 }
             }
         }
 
         fun cleanup() {
-            compositeDisposable.clear()
+            coroutineScope.cancel()
         }
     }
 }
