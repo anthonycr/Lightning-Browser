@@ -1,7 +1,6 @@
 package acr.browser.lightning.browser.tab.bundle
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.tab.BookmarkPageInitializer
 import acr.browser.lightning.browser.tab.DownloadPageInitializer
 import acr.browser.lightning.browser.tab.FreezableBundleInitializer
@@ -9,6 +8,7 @@ import acr.browser.lightning.browser.tab.HistoryPageInitializer
 import acr.browser.lightning.browser.tab.HomePageInitializer
 import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.isBookmarkUrl
 import acr.browser.lightning.utils.isDownloadsUrl
@@ -17,7 +17,8 @@ import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.isStartPageUrl
 import android.app.Application
 import android.os.Bundle
-import io.reactivex.rxjava3.core.Scheduler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -29,7 +30,8 @@ class DefaultBundleStore @Inject constructor(
     private val homePageInitializer: HomePageInitializer,
     private val downloadPageInitializer: DownloadPageInitializer,
     private val historyPageInitializer: HistoryPageInitializer,
-    @DiskScheduler private val diskScheduler: Scheduler
+    private val appCoroutineScope: CoroutineScope,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) : BundleStore {
 
     override fun save(tabs: List<TabModel>) {
@@ -47,9 +49,14 @@ class DefaultBundleStore @Inject constructor(
             }
         }
 
-        FileUtils.writeBundleToStorage(application, outState, BUNDLE_STORAGE)
-            .subscribeOn(diskScheduler)
-            .subscribe()
+        appCoroutineScope.launch {
+            FileUtils.writeBundleToStorage(
+                application,
+                outState,
+                BUNDLE_STORAGE,
+                coroutineDispatchers.io
+            )
+        }
     }
 
     override fun retrieve(): List<TabInitializer> =

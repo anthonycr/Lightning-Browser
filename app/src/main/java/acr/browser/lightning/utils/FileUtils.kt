@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Parcel
 import android.util.Log
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.functions.Action
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -32,23 +32,26 @@ object FileUtils {
      * @param bundle the bundle to store in persistent storage.
      * @param name   the name of the file to store the bundle in.
      */
-    fun writeBundleToStorage(app: Application, bundle: Bundle?, name: String): Completable {
-        return Completable.fromAction(Action {
-            val outputFile = File(app.filesDir, name)
-            var outputStream: FileOutputStream? = null
-            try {
-                outputStream = FileOutputStream(outputFile)
-                val parcel = Parcel.obtain()
-                parcel.writeBundle(bundle)
-                outputStream.write(parcel.marshall())
-                outputStream.flush()
-                parcel.recycle()
-            } catch (e: IOException) {
-                Log.e(TAG, "Unable to write bundle to storage")
-            } finally {
-                Utils.close(outputStream)
-            }
-        })
+    suspend fun writeBundleToStorage(
+        app: Application,
+        bundle: Bundle?,
+        name: String,
+        coroutineDispatcher: CoroutineDispatcher,
+    ) = withContext(coroutineDispatcher) {
+        val outputFile = File(app.filesDir, name)
+        var outputStream: FileOutputStream? = null
+        try {
+            outputStream = FileOutputStream(outputFile)
+            val parcel = Parcel.obtain()
+            parcel.writeBundle(bundle)
+            outputStream.write(parcel.marshall())
+            outputStream.flush()
+            parcel.recycle()
+        } catch (e: IOException) {
+            Log.e(TAG, "Unable to write bundle to storage")
+        } finally {
+            Utils.close(outputStream)
+        }
     }
 
     /**
