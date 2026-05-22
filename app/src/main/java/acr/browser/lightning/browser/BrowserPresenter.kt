@@ -3,7 +3,6 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.data.CookieAdministrator
 import acr.browser.lightning.browser.di.Browser2Scope
-import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.di.IncognitoMode
 import acr.browser.lightning.browser.di.MainScheduler
@@ -79,7 +78,6 @@ class BrowserPresenter @Inject constructor(
     private val historyRepository: HistoryRepository,
     @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler,
-    @DatabaseScheduler private val databaseScheduler: Scheduler,
     private val historyRecord: HistoryRecord,
     private val bookmarkPageFactory: BookmarkPageFactory,
     private val homePageInitializer: HomePageInitializer,
@@ -388,14 +386,17 @@ class BrowserPresenter @Inject constructor(
         createNewTabAndSelect(tabInitializer = NoOpInitializer(), shouldSelect = true)
         model.clean()
 
-        historyPageFactory.deleteHistoryPage().subscribe()
-        model.deleteAllTabs().subscribe()
-        navigator.closeBrowser()
+        browserCoroutineScope.launch {
+            historyPageFactory.deleteHistoryPage()
 
-        // System exit needed in the case of receiving
-        // the panic intent since finish() isn't completely
-        // closing the browser
-        exitProcess(1)
+            model.deleteAllTabs().subscribe()
+            navigator.closeBrowser()
+
+            // System exit needed in the case of receiving
+            // the panic intent since finish() isn't completely
+            // closing the browser
+            exitProcess(1)
+        }
     }
 
     /**

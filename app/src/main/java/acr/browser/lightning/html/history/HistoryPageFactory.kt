@@ -18,7 +18,6 @@ import acr.browser.lightning.html.jsoup.style
 import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
 import android.app.Application
-import io.reactivex.rxjava3.core.Completable
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileWriter
@@ -88,7 +87,7 @@ class HistoryPageFactory @Inject constructor(
      *
      * @return a completable that deletes the history page when subscribed to.
      */
-    fun deleteHistoryPage(): Completable = Completable.fromAction {
+    suspend fun deleteHistoryPage(): Unit = withContext(coroutineDispatchers.io) {
         with(createHistoryPage()) {
             if (exists()) {
                 delete()
