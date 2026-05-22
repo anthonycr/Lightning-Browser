@@ -1,7 +1,6 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.webrtc.WebRtcPermissionsModel
 import acr.browser.lightning.browser.webrtc.WebRtcPermissionsView
 import acr.browser.lightning.dialog.BrowserDialog
@@ -30,7 +29,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import androidx.palette.graphics.Palette
 import com.permissionx.guolindev.PermissionX
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineScope
@@ -43,7 +41,6 @@ import javax.inject.Inject
 class TabWebChromeClient @Inject constructor(
     private val activity: FragmentActivity,
     private val faviconModel: FaviconModel,
-    @DiskScheduler private val diskScheduler: Scheduler,
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val webRtcPermissionsModel: WebRtcPermissionsModel,
     private val appCoroutineScope: CoroutineScope,
