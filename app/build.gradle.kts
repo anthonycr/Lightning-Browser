@@ -99,6 +99,7 @@ dependencies {
     val kotlin = "2.3.21"
     val datastore = "1.2.1"
     val coil = "3.4.0"
+    val coroutines = "1.11.0"
 
     implementation("androidx.activity:activity:1.13.0")
     implementation("androidx.annotation:annotation:1.10.0")
@@ -132,7 +133,7 @@ dependencies {
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
     implementation("javax.inject:javax.inject:1")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines")
     implementation("org.jsoup:jsoup:1.22.2")
     implementation("org.jspecify:jspecify:1.0.0")
     implementation("org.reactivestreams:reactive-streams:1.0.4")
@@ -144,6 +145,7 @@ dependencies {
     testImplementation("com.nhaarman:mockito-kotlin:1.6.0") {
         exclude(group = "org.jetbrains.kotlin")
     }
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.assertj:assertj-core:3.27.7")
     testImplementation("org.mockito:mockito-core:5.23.0")

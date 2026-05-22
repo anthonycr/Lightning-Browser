@@ -12,26 +12,27 @@ interface AdBlockAllowListRepository {
     /**
      * Returns a [Single] that emits a list of all [AllowListEntry] in the database.
      */
-    fun allAllowListItems(): Single<List<AllowListEntry>>
+    suspend fun allAllowListItems(): List<AllowListEntry>
 
     /**
-     * Returns a [Maybe] that emits the [AllowListEntry] associated with the [url] if there is one.
+     * Returns a [Maybe] that emits the [AllowListEntry] associated with the [domain] if there is
+     * one.
      */
-    fun allowListItemForUrl(url: String): Maybe<AllowListEntry>
+    suspend fun allowListItemForUrl(domain: String): AllowListEntry?
 
     /**
      * Returns a [Completable] that adds a [AllowListEntry] to the database and completes when done.
      */
-    fun addAllowListItem(whitelistItem: AllowListEntry): Completable
+    suspend fun addAllowListItem(whitelistItem: AllowListEntry)
 
     /**
      * Returns a [Completable] that removes a [AllowListEntry] from the database and completes when
      * done.
      */
-    fun removeAllowListItem(whitelistItem: AllowListEntry): Completable
+    suspend fun removeAllowListItem(whitelistItem: AllowListEntry)
 
     /**
      * Returns a [Completable] that clears the entire database.
      */
-    fun clearAllowList(): Completable
+    suspend fun clearAllowList()
 }

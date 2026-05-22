@@ -1,12 +1,12 @@
 package acr.browser.lightning.adblock.allowlist
 
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.allowlist.AdBlockAllowListRepository
 import acr.browser.lightning.database.allowlist.AllowListEntry
-import acr.browser.lightning.browser.di.DatabaseScheduler
 import acr.browser.lightning.log.Logger
 import androidx.core.net.toUri
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Scheduler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,18 +16,19 @@ import javax.inject.Singleton
 @Singleton
 class SessionAllowListModel @Inject constructor(
     private val adBlockAllowListModel: AdBlockAllowListRepository,
-    @DatabaseScheduler private val ioScheduler: Scheduler,
-    private val logger: Logger
+    private val logger: Logger,
+    private val appCoroutineScope: CoroutineScope,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) : AllowListModel {
 
     private var whitelistSet = hashSetOf<String>()
 
     init {
-        adBlockAllowListModel
-            .allAllowListItems()
-            .map { it.map(AllowListEntry::domain).toHashSet() }
-            .subscribeOn(ioScheduler)
-            .subscribe { hashSet -> whitelistSet = hashSet }
+        appCoroutineScope.launch(coroutineDispatchers.default) {
+            whitelistSet = adBlockAllowListModel.allAllowListItems()
+                .map(AllowListEntry::domain)
+                .toHashSet()
+        }
     }
 
     override fun isUrlAllowedAds(url: String): Boolean =
@@ -35,20 +36,15 @@ class SessionAllowListModel @Inject constructor(
 
     override fun addUrlToAllowList(url: String) {
         url.toUri().host?.let { host ->
-            adBlockAllowListModel
-                .allowListItemForUrl(host)
-                .isEmpty
-                .flatMapCompletable {
-                    if (it) {
-                        adBlockAllowListModel.addAllowListItem(
-                            AllowListEntry(host, System.currentTimeMillis())
-                        )
-                    } else {
-                        Completable.complete()
-                    }
+            appCoroutineScope.launch(coroutineDispatchers.default) {
+                val item = adBlockAllowListModel.allowListItemForUrl(host)
+                if (item == null) {
+                    adBlockAllowListModel.addAllowListItem(
+                        AllowListEntry(host, System.currentTimeMillis())
+                    )
                 }
-                .subscribeOn(ioScheduler)
-                .subscribe { logger.log(TAG, "whitelist item added to database") }
+                logger.log(TAG, "whitelist item added to database")
+            }
 
             whitelistSet.add(host)
         }
@@ -56,11 +52,11 @@ class SessionAllowListModel @Inject constructor(
 
     override fun removeUrlFromAllowList(url: String) {
         url.toUri().host?.let { host ->
-            adBlockAllowListModel
-                .allowListItemForUrl(host)
-                .flatMapCompletable(adBlockAllowListModel::removeAllowListItem)
-                .subscribeOn(ioScheduler)
-                .subscribe { logger.log(TAG, "whitelist item removed from database") }
+            appCoroutineScope.launch(coroutineDispatchers.default) {
+                val item = adBlockAllowListModel.allowListItemForUrl(host) ?: return@launch
+                adBlockAllowListModel.removeAllowListItem(item)
+                logger.log(TAG, "whitelist item removed from database")
+            }
 
             whitelistSet.remove(host)
         }
