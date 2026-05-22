@@ -10,7 +10,6 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.webkit.WebView
-import io.reactivex.rxjava3.functions.Cancellable
 import javax.inject.Inject
 
 /**
@@ -20,12 +19,13 @@ class WebViewLongPressHandler @Inject constructor(private val activity: Activity
 
     /**
      * Configure the provided [webView] for listening to long press events and invoke [onLongClick]
-     * whenever a long press is detected.
+     * whenever a long press is detected. Returns a lambda that can be invoked for cancellation if
+     * needed.
      */
     fun configure(
         webView: WebView,
         onLongClick: (LongPress) -> Unit
-    ): Cancellable {
+    ): () -> Unit {
         webView.setCompositeTouchListener(
             "long_press", GestureTriggeringTouchListener(
                 GestureDetector(
@@ -48,7 +48,7 @@ class WebViewLongPressHandler @Inject constructor(private val activity: Activity
             )
         )
 
-        return Cancellable {
+        return {
             webView.setCompositeTouchListener("long_press", null)
         }
     }
