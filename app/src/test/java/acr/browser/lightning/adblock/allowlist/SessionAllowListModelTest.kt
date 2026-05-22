@@ -17,6 +17,7 @@ import org.robolectric.annotation.Config
 /**
  * Unit tests for [SessionAllowListModel].
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class, sdk = [SDK_VERSION])
 class SessionAllowListModelTest {
@@ -62,7 +63,6 @@ class SessionAllowListModelTest {
         assertThat(sessionAllowListModel.isUrlAllowedAds("http://test.com")).isTrue()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `removeUrlFromAllowList updates immediately`() = runTest {
         adBlockAllowListModel.allowList.add(AllowListEntry("test.com", 0))
