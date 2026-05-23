@@ -1,10 +1,9 @@
 package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.DatabaseScheduler
-import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.tab.WebViewFactory
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
@@ -15,18 +14,17 @@ import acr.browser.lightning.preference.datastore.setUnsafe
 import acr.browser.lightning.utils.WebUtils
 import android.os.Bundle
 import android.webkit.WebView
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Scheduler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PrivacySettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var historyRepository: HistoryRepository
     @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
-    @Inject @DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
-    @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var appCoroutineScope: CoroutineScope
+    @Inject internal lateinit var coroutineDispatchers: CoroutineDispatchers
 
     override fun providePreferencesXmlResource() = R.xml.preference_privacy
 
@@ -103,11 +101,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
             message = R.string.dialog_history,
             positiveButton = DialogItem(title = R.string.action_yes) {
                 clearHistory()
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribe {
-                        requireActivity().snackbar(R.string.message_clear_history)
-                    }
+                requireActivity().snackbar(R.string.message_clear_history)
             },
             negativeButton = DialogItem(title = R.string.action_no) {},
             onCancel = {}
@@ -120,12 +114,10 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
             title = R.string.title_clear_cookies,
             message = R.string.dialog_cookies,
             positiveButton = DialogItem(title = R.string.action_yes) {
-                clearCookies()
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribe {
-                        requireActivity().snackbar(R.string.message_cookies_cleared)
-                    }
+                appCoroutineScope.launch {
+                    clearCookies()
+                    requireActivity().snackbar(R.string.message_cookies_cleared)
+                }
             },
             negativeButton = DialogItem(title = R.string.action_no) {},
             onCancel = {}
@@ -140,7 +132,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         requireActivity().snackbar(R.string.message_cache_cleared)
     }
 
-    private fun clearHistory(): Completable = Completable.fromAction {
+    private fun clearHistory() {
         val activity = activity
         if (activity != null) {
             // TODO: 6/9/17 clearHistory is not synchronous
@@ -150,7 +142,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         }
     }
 
-    private fun clearCookies(): Completable = Completable.fromAction {
+    private suspend fun clearCookies(): Unit = withContext(coroutineDispatchers.io) {
         WebUtils.clearCookies()
     }
 
