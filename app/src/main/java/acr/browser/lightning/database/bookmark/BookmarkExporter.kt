@@ -1,153 +1,144 @@
-package acr.browser.lightning.database.bookmark;
+package acr.browser.lightning.database.bookmark
 
-import android.content.Context;
-import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import acr.browser.lightning.R;
-import acr.browser.lightning.database.Bookmark;
-import acr.browser.lightning.database.WebPageKt;
-import acr.browser.lightning.utils.Preconditions;
-import acr.browser.lightning.utils.Utils;
-import androidx.annotation.NonNull;
-import io.reactivex.rxjava3.core.Completable;
+import acr.browser.lightning.R
+import acr.browser.lightning.database.Bookmark
+import acr.browser.lightning.database.asFolder
+import acr.browser.lightning.utils.Preconditions
+import acr.browser.lightning.utils.Utils
+import android.content.Context
+import android.util.Log
+import io.reactivex.rxjava3.core.Completable
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.OutputStream
+import java.io.OutputStreamWriter
 
 /**
  * The class responsible for importing and exporting
  * bookmarks in the JSON format.
- * <p>
+ * 
+ * 
  * Created by anthonycr on 5/7/17.
  */
-public final class BookmarkExporter {
+object BookmarkExporter {
+    private const val TAG = "BookmarkExporter"
 
-    private static final String TAG = "BookmarkExporter";
-
-    private static final String KEY_URL = "url";
-    private static final String KEY_TITLE = "title";
-    private static final String KEY_FOLDER = "folder";
-    private static final String KEY_ORDER = "order";
-
-    private BookmarkExporter() {}
+    private const val KEY_URL = "url"
+    private const val KEY_TITLE = "title"
+    private const val KEY_FOLDER = "folder"
+    private const val KEY_ORDER = "order"
 
     /**
      * Retrieves all the default bookmarks stored
      * in the raw file within assets.
-     *
+     * 
      * @param context the context necessary to open assets.
      * @return a non null list of the bookmarks stored in assets.
      */
-    @NonNull
-    public static List<Bookmark.Entry> importBookmarksFromAssets(@NonNull Context context) {
-        List<Bookmark.Entry> bookmarks = new ArrayList<>();
-        BufferedReader bookmarksReader = null;
-        InputStream inputStream = null;
+    fun importBookmarksFromAssets(context: Context): List<Bookmark.Entry> {
+        val bookmarks: MutableList<Bookmark.Entry> = mutableListOf()
+        var bookmarksReader: BufferedReader? = null
+        var inputStream: InputStream? = null
         try {
-            inputStream = context.getResources().openRawResource(R.raw.default_bookmarks);
-            bookmarksReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-            while ((line = bookmarksReader.readLine()) != null) {
+            inputStream = context.resources.openRawResource(R.raw.default_bookmarks)
+            bookmarksReader = BufferedReader(InputStreamReader(inputStream))
+            var line: String
+            while ((bookmarksReader.readLine().also { line = it }) != null) {
                 try {
-                    JSONObject object = new JSONObject(line);
-                    final String folderTitle = object.getString(KEY_FOLDER);
+                    val jsonObject = JSONObject(line)
+                    val folderTitle = jsonObject.getString(KEY_FOLDER)
                     bookmarks.add(
-                        new Bookmark.Entry(
-                            object.getString(KEY_URL),
-                            object.getString(KEY_TITLE),
-                            object.getInt(KEY_ORDER),
-                            WebPageKt.asFolder(folderTitle)
+                        Bookmark.Entry(
+                            jsonObject.getString(KEY_URL),
+                            jsonObject.getString(KEY_TITLE),
+                            jsonObject.getInt(KEY_ORDER),
+                            folderTitle.asFolder()
                         )
-                    );
-                } catch (JSONException e) {
-                    Log.e(TAG, "Can't parse line " + line, e);
+                    )
+                } catch (e: JSONException) {
+                    Log.e(TAG, "Can't parse line $line", e)
                 }
             }
-        } catch (IOException e) {
-            Log.e(TAG, "Error reading the bookmarks file", e);
+        } catch (e: IOException) {
+            Log.e(TAG, "Error reading the bookmarks file", e)
         } finally {
-            Utils.close(bookmarksReader);
-            Utils.close(inputStream);
+            Utils.close(bookmarksReader)
+            Utils.close(inputStream)
         }
 
-        return bookmarks;
+        return bookmarks
     }
 
     /**
      * Exports the list of bookmarks to an output stream.
-     *
+     * 
      * @param bookmarkList the bookmarks to export.
      * @param outputStream the output stream to output to.
      * @return an observable that emits a completion
      * event when the export is complete, or an error
      * event if there is a problem.
      */
-    @NonNull
-    public static Completable exportBookmarksToOutputStream(@NonNull final List<Bookmark.Entry> bookmarkList,
-                                                            @NonNull final OutputStream outputStream) {
-        return Completable.fromAction(() -> {
-            Preconditions.checkNonNull(bookmarkList);
-            BufferedWriter bookmarkWriter = null;
+    fun exportBookmarksToOutputStream(
+        bookmarkList: List<Bookmark.Entry>,
+        outputStream: OutputStream
+    ): Completable {
+        return Completable.fromAction {
+            Preconditions.checkNonNull(bookmarkList)
+            var bookmarkWriter: BufferedWriter? = null
             try {
-                bookmarkWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
+                bookmarkWriter = BufferedWriter(OutputStreamWriter(outputStream))
 
-                JSONObject object = new JSONObject();
-                for (Bookmark.Entry item : bookmarkList) {
-                    object.put(KEY_TITLE, item.getTitle());
-                    object.put(KEY_URL, item.getUrl());
-                    object.put(KEY_FOLDER, item.getFolder().getTitle());
-                    object.put(KEY_ORDER, item.getPosition());
-                    bookmarkWriter.write(object.toString());
-                    bookmarkWriter.newLine();
+                val jsonObject = JSONObject()
+                for ((url, title, position, folder) in bookmarkList) {
+                    jsonObject.put(KEY_TITLE, title)
+                    jsonObject.put(KEY_URL, url)
+                    jsonObject.put(KEY_FOLDER, folder.title)
+                    jsonObject.put(KEY_ORDER, position)
+                    bookmarkWriter.write(jsonObject.toString())
+                    bookmarkWriter.newLine()
                 }
             } finally {
-                Utils.close(bookmarkWriter);
+                Utils.close(bookmarkWriter)
             }
-        });
+        }
     }
 
     /**
      * Attempts to import bookmarks from the
      * given file. If the file is not in a
      * supported format, it will fail.
-     *
+     * 
      * @param inputStream The stream to import from.
      * @return A list of bookmarks, or throws an exception if the bookmarks cannot be imported.
      */
-    @NonNull
-    public static List<Bookmark.Entry> importBookmarksFromFileStream(@NonNull InputStream inputStream) throws Exception {
-        BufferedReader bookmarksReader = null;
+    @Throws(Exception::class)
+    fun importBookmarksFromFileStream(inputStream: InputStream): MutableList<Bookmark.Entry> {
+        var bookmarksReader: BufferedReader? = null
         try {
-            bookmarksReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
+            bookmarksReader = BufferedReader(InputStreamReader(inputStream))
+            var line: String
 
-            List<Bookmark.Entry> bookmarks = new ArrayList<>();
-            while ((line = bookmarksReader.readLine()) != null) {
-                JSONObject object = new JSONObject(line);
-                final String folderName = object.getString(KEY_FOLDER);
-                final Bookmark.Entry entry = new Bookmark.Entry(
-                    object.getString(KEY_URL),
-                    object.getString(KEY_TITLE),
-                    object.getInt(KEY_ORDER),
-                    WebPageKt.asFolder(folderName)
-                );
-                bookmarks.add(entry);
+            val bookmarks: MutableList<Bookmark.Entry> = mutableListOf()
+            while ((bookmarksReader.readLine().also { line = it }) != null) {
+                val jsonObject = JSONObject(line)
+                val folderName = jsonObject.getString(KEY_FOLDER)
+                val entry = Bookmark.Entry(
+                    jsonObject.getString(KEY_URL),
+                    jsonObject.getString(KEY_TITLE),
+                    jsonObject.getInt(KEY_ORDER),
+                    folderName.asFolder()
+                )
+                bookmarks.add(entry)
             }
 
-            return bookmarks;
+            return bookmarks
         } finally {
-            Utils.close(bookmarksReader);
+            Utils.close(bookmarksReader)
         }
     }
-
 }
