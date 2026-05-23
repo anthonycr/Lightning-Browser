@@ -13,7 +13,7 @@ class EnhancedIncognitoExitCleanup @Inject constructor(
     private val logger: Logger,
     private val activity: Activity
 ) : ExitCleanup {
-    override fun cleanUp() {
+    override suspend fun cleanUp() {
         WebUtils.clearCache(activity)
         logger.log(TAG, "Cache Cleared")
         WebUtils.clearCookies()

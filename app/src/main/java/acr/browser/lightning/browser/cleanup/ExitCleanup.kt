@@ -10,6 +10,6 @@ interface ExitCleanup {
     /**
      * Clean up the instance of the browser with the provided.
      */
-    fun cleanUp()
+    suspend fun cleanUp()
 
 }

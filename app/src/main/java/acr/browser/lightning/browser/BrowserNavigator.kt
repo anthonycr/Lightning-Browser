@@ -17,6 +17,8 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.graphics.Bitmap
 import androidx.fragment.app.FragmentActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -30,6 +32,7 @@ class BrowserNavigator @Inject constructor(
     private val exitCleanup: ExitCleanup,
     @IncognitoMode private val incognitoMode: Boolean,
     private val activityManager: ActivityManager,
+    private val appCoroutineScope: CoroutineScope,
 ) : BrowserContract.Navigator {
 
     override fun openSettings() {
@@ -46,13 +49,15 @@ class BrowserNavigator @Inject constructor(
     }
 
     override fun closeBrowser() {
-        exitCleanup.cleanUp()
-        if (incognitoMode) {
-            activityManager.appTasks
-                .first { it.taskInfo.topActivity?.className == IncognitoBrowserActivity::class.java.name }
-                .finishAndRemoveTask()
-        } else {
-            activity.finish()
+        appCoroutineScope.launch {
+            exitCleanup.cleanUp()
+            if (incognitoMode) {
+                activityManager.appTasks
+                    .first { it.taskInfo.topActivity?.className == IncognitoBrowserActivity::class.java.name }
+                    .finishAndRemoveTask()
+            } else {
+                activity.finish()
+            }
         }
     }
 
@@ -74,10 +79,12 @@ class BrowserNavigator @Inject constructor(
 
     override fun backgroundBrowser() {
         if (incognitoMode) {
-            exitCleanup.cleanUp()
-            activityManager.appTasks
-                .first { it.taskInfo.topActivity?.className == IncognitoBrowserActivity::class.java.name }
-                .finishAndRemoveTask()
+            appCoroutineScope.launch {
+                exitCleanup.cleanUp()
+                activityManager.appTasks
+                    .first { it.taskInfo.topActivity?.className == IncognitoBrowserActivity::class.java.name }
+                    .finishAndRemoveTask()
+            }
         } else {
             activity.moveTaskToBack(true)
         }

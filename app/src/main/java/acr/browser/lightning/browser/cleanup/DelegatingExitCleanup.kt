@@ -16,7 +16,7 @@ class DelegatingExitCleanup @Inject constructor(
     private val normalExitCleanup: NormalExitCleanup,
     private val activity: Activity
 ) : ExitCleanup {
-    override fun cleanUp() {
+    override suspend fun cleanUp() {
         when {
             activity is DefaultBrowserActivity -> normalExitCleanup.cleanUp()
             Capabilities.FULL_INCOGNITO.isSupported -> enhancedIncognitoExitCleanup.cleanUp()

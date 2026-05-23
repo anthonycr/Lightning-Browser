@@ -3,7 +3,6 @@ package acr.browser.lightning.browser.cleanup
 import acr.browser.lightning.database.history.HistoryDatabase
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.WebUtils
 import android.app.Activity
 import kotlinx.coroutines.CoroutineScope
@@ -19,20 +18,20 @@ class NormalExitCleanup @Inject constructor(
     private val activity: Activity,
     private val appCoroutineScope: CoroutineScope,
 ) : ExitCleanup {
-    override fun cleanUp() {
-        if (userPreferencesDataStore.clearCacheExit.getUnsafe()) {
+    override suspend fun cleanUp() {
+        if (userPreferencesDataStore.clearCacheExit.get()) {
             WebUtils.clearCache(activity)
             logger.log(TAG, "Cache Cleared")
         }
-        if (userPreferencesDataStore.clearHistoryExitEnabled.getUnsafe()) {
+        if (userPreferencesDataStore.clearHistoryExitEnabled.get()) {
             WebUtils.clearHistory(activity, historyDatabase, appCoroutineScope)
             logger.log(TAG, "History Cleared")
         }
-        if (userPreferencesDataStore.clearCookiesExitEnabled.getUnsafe()) {
+        if (userPreferencesDataStore.clearCookiesExitEnabled.get()) {
             WebUtils.clearCookies()
             logger.log(TAG, "Cookies Cleared")
         }
-        if (userPreferencesDataStore.clearWebStorageExitEnabled.getUnsafe()) {
+        if (userPreferencesDataStore.clearWebStorageExitEnabled.get()) {
             WebUtils.clearWebStorage()
             logger.log(TAG, "WebStorage Cleared")
         }

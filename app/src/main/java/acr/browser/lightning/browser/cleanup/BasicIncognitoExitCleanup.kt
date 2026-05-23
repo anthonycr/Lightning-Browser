@@ -8,7 +8,7 @@ import javax.inject.Inject
  * significantly less secure than on API > 28 since we can separate WebView data from
  */
 class BasicIncognitoExitCleanup @Inject constructor() : ExitCleanup {
-    override fun cleanUp() {
+    override suspend fun cleanUp() {
         // We want to make sure incognito mode is secure as possible without also breaking existing
         // browser instances.
         WebUtils.clearWebStorage()
