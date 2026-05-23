@@ -6,8 +6,6 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.R
 import acr.browser.lightning.bookmark.LegacyBookmarkImporter
 import acr.browser.lightning.bookmark.NetscapeBookmarkFormatImporter
-import acr.browser.lightning.browser.di.DatabaseScheduler
-import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.bookmark.BookmarkExporter
@@ -26,7 +24,6 @@ import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import io.reactivex.rxjava3.core.Scheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,8 +36,6 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     @Inject internal lateinit var application: Application
     @Inject internal lateinit var netscapeBookmarkFormatImporter: NetscapeBookmarkFormatImporter
     @Inject internal lateinit var legacyBookmarkImporter: LegacyBookmarkImporter
-    @Inject @DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
-    @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var logger: Logger
     @Inject internal lateinit var appCoroutineScope: CoroutineScope
     @Inject internal lateinit var coroutineDispatchers: CoroutineDispatchers
