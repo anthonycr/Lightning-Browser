@@ -19,7 +19,6 @@ import acr.browser.lightning.html.jsoup.style
 import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.preference.datastore.getUnsafe
 import android.app.Application
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -54,7 +53,7 @@ class DownloadPageFactory @Inject constructor(
         get() = themeProvider.color(R.attr.autoCompleteUrlColor).toColor()
 
     override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
-        val downloads = manager.getAllDownloads()
+        val downloads = manager.getAllDownloads().map { it to createFileUrl(it.title) }
         val content = parse(listPageReader.provideHtml()) andBuild {
             title { application.getString(R.string.action_downloads) }
             style { content ->
@@ -66,11 +65,11 @@ class DownloadPageFactory @Inject constructor(
             body {
                 val repeatableElement = findId("repeated").removeElement()
                 id("content") {
-                    downloads.forEach {
+                    downloads.forEach { (download, title) ->
                         appendChild(repeatableElement.clone {
-                            tag("a") { attr("href", createFileUrl(it.title)) }
-                            id("title") { text(createFileTitle(it)) }
-                            id("url") { text(it.url) }
+                            tag("a") { attr("href", title) }
+                            id("title") { text(createFileTitle(download)) }
+                            id("url") { text(download.url) }
                         })
                     }
                 }
@@ -88,8 +87,8 @@ class DownloadPageFactory @Inject constructor(
         return File(generatedHtml, FILENAME)
     }
 
-    private fun createFileUrl(fileName: String): String =
-        "$FILE${userPreferencesDataStore.downloadDirectory.getUnsafe()}/$fileName"
+    private suspend fun createFileUrl(fileName: String): String =
+        "$FILE${userPreferencesDataStore.downloadDirectory.get()}/$fileName"
 
     private fun createFileTitle(downloadItem: DownloadEntry): String {
         val contentSize = if (downloadItem.contentSize.isNotBlank()) {
