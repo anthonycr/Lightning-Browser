@@ -1,7 +1,5 @@
 package acr.browser.lightning.search
 
-import acr.browser.lightning.browser.di.SuggestionsClient
-import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.search.engine.AskSearch
@@ -22,13 +20,10 @@ import acr.browser.lightning.search.suggestions.DuckSuggestionsModel
 import acr.browser.lightning.search.suggestions.GoogleSuggestionsModel
 import acr.browser.lightning.search.suggestions.NaverSuggestionsModel
 import acr.browser.lightning.search.suggestions.NoOpSuggestionsRepository
-import acr.browser.lightning.search.suggestions.RequestFactory
 import acr.browser.lightning.search.suggestions.SuggestionsRepository
-import android.app.Application
 import dagger.Reusable
-import io.reactivex.rxjava3.core.Single
-import okhttp3.OkHttpClient
 import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * The model that provides the search engine based
@@ -37,10 +32,10 @@ import javax.inject.Inject
 @Reusable
 class SearchEngineProvider @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore,
-    @SuggestionsClient private val okHttpClient: Single<OkHttpClient>,
-    private val requestFactory: RequestFactory,
-    private val application: Application,
-    private val logger: Logger
+    private val googleSuggestionsModel: Provider<GoogleSuggestionsModel>,
+    private val duckSuggestionsModel: Provider<DuckSuggestionsModel>,
+    private val baiduSuggestionsModel: Provider<BaiduSuggestionsModel>,
+    private val naverSuggestionsModel: Provider<NaverSuggestionsModel>,
 ) {
 
     /**
@@ -49,11 +44,12 @@ class SearchEngineProvider @Inject constructor(
     fun provideSearchSuggestions(): SuggestionsRepository =
         when (userPreferencesDataStore.searchSuggestionChoice.getUnsafe()) {
             0 -> NoOpSuggestionsRepository()
-            1 -> GoogleSuggestionsModel(okHttpClient, requestFactory, application, logger)
-            2 -> DuckSuggestionsModel(okHttpClient, requestFactory, application, logger)
-            3 -> BaiduSuggestionsModel(okHttpClient, requestFactory, application, logger)
-            4 -> NaverSuggestionsModel(okHttpClient, requestFactory, application, logger)
-            else -> GoogleSuggestionsModel(okHttpClient, requestFactory, application, logger)
+            1 -> googleSuggestionsModel.get()
+
+            2 -> duckSuggestionsModel.get()
+            3 -> baiduSuggestionsModel.get()
+            4 -> naverSuggestionsModel.get()
+            else -> googleSuggestionsModel.get()
         }
 
     /**

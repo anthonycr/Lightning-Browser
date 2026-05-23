@@ -14,6 +14,6 @@ interface SuggestionsRepository {
      * @param rawQuery the raw query to retrieve the results for.
      * @return a [Single] that emits the list of results for the query.
      */
-    fun resultsForSearch(rawQuery: String): Single<List<SearchSuggestion>>
+    suspend fun resultsForSearch(rawQuery: String): List<SearchSuggestion>
 
 }

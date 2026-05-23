@@ -1,5 +1,6 @@
 package acr.browser.lightning.search.suggestions
 
+import acr.browser.lightning.concurrency.FakeCoroutineDispatchers
 import acr.browser.lightning.log.NoOpLogger
 import acr.browser.lightning.unimplemented
 import android.app.Application
@@ -9,7 +10,8 @@ import android.os.LocaleList
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.test.runTest
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
@@ -22,7 +24,7 @@ import java.util.Locale
  */
 class GoogleSuggestionsModelTest {
 
-    private val httpClient = Single.just(OkHttpClient.Builder().build())
+    private val httpClient = CompletableDeferred(OkHttpClient.Builder().build())
     private val requestFactory = object : RequestFactory {
         override fun createSuggestionsRequest(httpUrl: HttpUrl, encoding: String) = unimplemented()
     }
@@ -46,9 +48,14 @@ class GoogleSuggestionsModelTest {
     }
 
     @Test
-    fun `verify query url`() {
-        val suggestionsModel =
-            GoogleSuggestionsModel(httpClient, requestFactory, application, NoOpLogger())
+    fun `verify query url`() = runTest {
+        val suggestionsModel = GoogleSuggestionsModel(
+            httpClient,
+            requestFactory,
+            application,
+            NoOpLogger(),
+            FakeCoroutineDispatchers(testScheduler)
+        )
 
         (0..100).forEach {
             val result =

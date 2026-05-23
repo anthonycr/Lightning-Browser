@@ -47,9 +47,11 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import okhttp3.Cache
 import okhttp3.CacheControl
 import okhttp3.HttpUrl
@@ -156,16 +158,18 @@ class AppModule {
     @Singleton
     @Provides
     @SuggestionsClient
-    fun providesSuggestionsHttpClient(application: Application): Single<OkHttpClient> =
-        Single.fromCallable {
-            val intervalDay = TimeUnit.DAYS.toSeconds(1)
-            val suggestionsCache = File(application.cacheDir, "suggestion_responses")
+    fun providesSuggestionsCoroutineHttpClient(
+        application: Application,
+        appCoroutineScope: CoroutineScope,
+    ): Deferred<OkHttpClient> = appCoroutineScope.async {
+        val intervalDay = TimeUnit.DAYS.toSeconds(1)
+        val suggestionsCache = File(application.cacheDir, "suggestion_responses")
 
-            return@fromCallable OkHttpClient.Builder()
-                .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
-                .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalDay))
-                .build()
-        }.cache()
+        OkHttpClient.Builder()
+            .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
+            .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalDay))
+            .build()
+    }
 
     @Singleton
     @Provides

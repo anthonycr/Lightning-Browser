@@ -8,8 +8,8 @@ class FakeAdBlockAllowListRepository(
 ) : AdBlockAllowListRepository {
     override suspend fun allAllowListItems(): List<AllowListEntry> = allowList
 
-    override suspend fun allowListItemForUrl(url: String): AllowListEntry? =
-        allowList.firstOrNull { (domain) -> url == domain }
+    override suspend fun allowListItemForUrl(domain: String): AllowListEntry? =
+        allowList.firstOrNull { (potentialMatch) -> domain == potentialMatch }
 
     override suspend fun addAllowListItem(whitelistItem: AllowListEntry) {
         allowList.add(whitelistItem)

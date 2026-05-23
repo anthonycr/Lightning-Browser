@@ -2,10 +2,10 @@ package acr.browser.lightning.adblock.allowlist
 
 import acr.browser.lightning.SDK_VERSION
 import acr.browser.lightning.TestApplication
+import acr.browser.lightning.concurrency.FakeCoroutineDispatchers
 import acr.browser.lightning.database.allowlist.AllowListEntry
 import acr.browser.lightning.log.NoOpLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -26,14 +26,12 @@ class SessionAllowListModelTest {
 
     @Test
     fun `isUrlAllowListed checks domain`() = runTest {
-        val testDispatcher = StandardTestDispatcher(testScheduler)
-        val fakeCoroutineDispatchers = FakeCoroutineDispatchers(testDispatcher)
         adBlockAllowListModel.allowList = mutableListOf(AllowListEntry("test.com", 0))
         val sessionAllowListModel = SessionAllowListModel(
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
             appCoroutineScope = this,
-            coroutineDispatchers = fakeCoroutineDispatchers
+            coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
         advanceUntilIdle()
@@ -45,13 +43,11 @@ class SessionAllowListModelTest {
 
     @Test
     fun `addUrlToAllowList updates immediately`() = runTest {
-        val testDispatcher = StandardTestDispatcher(testScheduler)
-        val fakeCoroutineDispatchers = FakeCoroutineDispatchers(testDispatcher)
         val sessionAllowListModel = SessionAllowListModel(
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
             appCoroutineScope = this,
-            coroutineDispatchers = fakeCoroutineDispatchers
+            coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
         advanceUntilIdle()
@@ -66,13 +62,11 @@ class SessionAllowListModelTest {
     @Test
     fun `removeUrlFromAllowList updates immediately`() = runTest {
         adBlockAllowListModel.allowList.add(AllowListEntry("test.com", 0))
-        val testDispatcher = StandardTestDispatcher(testScheduler)
-        val fakeCoroutineDispatchers = FakeCoroutineDispatchers(testDispatcher)
         val sessionAllowListModel = SessionAllowListModel(
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
             appCoroutineScope = this,
-            coroutineDispatchers = fakeCoroutineDispatchers
+            coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
         advanceUntilIdle()
@@ -86,13 +80,11 @@ class SessionAllowListModelTest {
 
     @Test
     fun `addUrlToAllowList persists across instances`() = runTest {
-        val testDispatcher = StandardTestDispatcher(testScheduler)
-        val fakeCoroutineDispatchers = FakeCoroutineDispatchers(testDispatcher)
         val oldAllowListModel = SessionAllowListModel(
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
             appCoroutineScope = this,
-            coroutineDispatchers = fakeCoroutineDispatchers
+            coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
         advanceUntilIdle()
@@ -105,7 +97,7 @@ class SessionAllowListModelTest {
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
             appCoroutineScope = this,
-            coroutineDispatchers = fakeCoroutineDispatchers
+            coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
         advanceUntilIdle()
@@ -116,13 +108,11 @@ class SessionAllowListModelTest {
     @Test
     fun `removeUrlFromAllowList persists across instances`() = runTest {
         adBlockAllowListModel.allowList.add(AllowListEntry("test.com", 0))
-        val testDispatcher = StandardTestDispatcher(testScheduler)
-        val fakeCoroutineDispatchers = FakeCoroutineDispatchers(testDispatcher)
         val oldAllowListModel = SessionAllowListModel(
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
             appCoroutineScope = this,
-            coroutineDispatchers = fakeCoroutineDispatchers
+            coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
         advanceUntilIdle()
@@ -135,7 +125,7 @@ class SessionAllowListModelTest {
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
             appCoroutineScope = this,
-            coroutineDispatchers = fakeCoroutineDispatchers
+            coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
         advanceUntilIdle()

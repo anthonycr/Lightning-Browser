@@ -1,10 +1,8 @@
 package acr.browser.lightning.search
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.DatabaseScheduler
-import acr.browser.lightning.browser.di.MainScheduler
-import acr.browser.lightning.browser.di.NetworkScheduler
 import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
@@ -12,7 +10,6 @@ import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.extensions.drawable
-import acr.browser.lightning.rx.join
 import acr.browser.lightning.search.suggestions.NoOpSuggestionsRepository
 import acr.browser.lightning.search.suggestions.SuggestionsRepository
 import android.content.Context
@@ -22,18 +19,23 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Filter
 import android.widget.Filterable
-import io.reactivex.rxjava3.core.BackpressureStrategy
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.util.Locale
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SuggestionsAdapter(
     context: Context,
     private val isIncognito: Boolean
@@ -43,14 +45,14 @@ class SuggestionsAdapter(
 
     @Inject internal lateinit var bookmarkRepository: BookmarkRepository
     @Inject internal lateinit var historyRepository: HistoryRepository
-    @Inject @DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
-    @Inject @NetworkScheduler internal lateinit var networkScheduler: Scheduler
-    @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
     @Inject internal lateinit var appCoroutineScope: CoroutineScope
+    @Inject internal lateinit var coroutineDispatchers: CoroutineDispatchers
 
     private var allBookmarks: List<Bookmark.Entry> = emptyList()
-    private val searchFilter = SearchFilter(this)
+    private val searchFilter by lazy {
+        SearchFilter(this, appCoroutineScope)
+    }
 
     private val searchIcon = context.drawable(R.drawable.ic_search)
     private val webPageIcon = context.drawable(R.drawable.ic_history)
@@ -79,10 +81,11 @@ class SuggestionsAdapter(
 
         refreshBookmarks()
 
-        searchFilter.input().results()
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribe(::publishResults)
+        appCoroutineScope.launch(coroutineDispatchers.main) {
+            searchFilter.input().results().collectLatest {
+                publishResults(it)
+            }
+        }
     }
 
     fun refreshPreferences() {
@@ -155,78 +158,53 @@ class SuggestionsAdapter(
         }
     }
 
-    private fun getBookmarksForQuery(query: String): Single<List<Bookmark.Entry>> =
-        Single.fromCallable {
-            (allBookmarks.filter {
-                it.title.lowercase(Locale.getDefault()).startsWith(query)
-            } + allBookmarks.filter {
-                it.url.contains(query)
-            }).distinct().take(MAX_SUGGESTIONS)
-        }
+    private fun getBookmarksForQuery(query: String): List<Bookmark.Entry> =
+        (allBookmarks.filter {
+            it.title.lowercase(Locale.getDefault()).startsWith(query)
+        } + allBookmarks.filter {
+            it.url.contains(query)
+        }).distinct().take(MAX_SUGGESTIONS)
 
-    private fun Observable<CharSequence>.results(): Flowable<List<WebPage>> = this
-        .toFlowable(BackpressureStrategy.LATEST)
+    private fun Flow<CharSequence>.results() = flowOn(coroutineDispatchers.default)
         .map { it.toString().lowercase(Locale.getDefault()).trim() }
-        .filter(String::isNotEmpty)
-        .share()
-        .compose { upstream ->
-            val searchEntries = upstream
-                .flatMapSingle(suggestionsRepository::resultsForSearch)
-                .subscribeOn(networkScheduler)
-                .startWithItem(emptyList())
-                .share()
-
-            val bookmarksEntries = upstream
-                .flatMapSingle(::getBookmarksForQuery)
-                .subscribeOn(databaseScheduler)
-                .startWithItem(emptyList())
-                .share()
-
-            val historyEntries = upstream
-                .flatMapSingle {
-                    Single.just(runBlocking {
-                        historyRepository.findHistoryEntriesContaining(it)
-                    })
-                }
-                .subscribeOn(databaseScheduler)
-                .startWithItem(emptyList())
-                .share()
+        .filter { it.isNotEmpty() }
+        .buffer(1, BufferOverflow.DROP_OLDEST)
+        .let { sanitizedQuery ->
+            val searchEntries: Flow<List<WebPage>> = sanitizedQuery.map {
+                suggestionsRepository.resultsForSearch(it)
+            }
+            val bookmarkEntries: Flow<List<WebPage>> = sanitizedQuery.map {
+                getBookmarksForQuery(it)
+            }
+            val historyEntries: Flow<List<WebPage>> = sanitizedQuery.map {
+                historyRepository.findHistoryEntriesContaining(it)
+            }
 
             // Entries priority and ideal count:
             // Bookmarks - 2
             // History - 2
             // Search - 1
 
-            bookmarksEntries
-                .join(
-                    other = historyEntries,
-                    selectorLeft = { bookmarksEntries },
-                    selectorRight = { historyEntries },
-                    join = ::Pair
-                )
-                .compose { bookmarksAndHistory ->
-                    bookmarksAndHistory.join(
-                        other = searchEntries,
-                        selectorLeft = { bookmarksAndHistory },
-                        selectorRight = { searchEntries }
-                    ) { (bookmarks, history), t2 ->
-                        Triple(bookmarks, history, t2)
-                    }
-                }
-        }
-        .map { (bookmarks, history, searches) ->
-            val bookmarkCount =
-                MAX_SUGGESTIONS - 2.coerceAtMost(history.size) - 1.coerceAtMost(searches.size)
-            val historyCount =
-                MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - 1.coerceAtMost(
-                    searches.size
-                )
-            val searchCount =
-                MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - historyCount.coerceAtMost(
-                    history.size
-                )
+            combine(
+                searchEntries,
+                bookmarkEntries,
+                historyEntries
+            ) { (bookmarks, history, searches) ->
+                val bookmarkCount =
+                    MAX_SUGGESTIONS - 2.coerceAtMost(history.size) - 1.coerceAtMost(searches.size)
+                val historyCount =
+                    MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - 1.coerceAtMost(
+                        searches.size
+                    )
+                val searchCount =
+                    MAX_SUGGESTIONS - bookmarkCount.coerceAtMost(bookmarks.size) - historyCount.coerceAtMost(
+                        history.size
+                    )
 
-            bookmarks.take(bookmarkCount) + history.take(historyCount) + searches.take(searchCount)
+                bookmarks.take(bookmarkCount) + history.take(historyCount) + searches.take(
+                    searchCount
+                )
+            }
         }
 
     companion object {
@@ -234,18 +212,21 @@ class SuggestionsAdapter(
     }
 
     private class SearchFilter(
-        private val suggestionsAdapter: SuggestionsAdapter
+        private val suggestionsAdapter: SuggestionsAdapter,
+        private val appCoroutineScope: CoroutineScope,
     ) : Filter() {
 
-        private val publishSubject = PublishSubject.create<CharSequence>()
+        private val inputFlow = MutableSharedFlow<CharSequence>()
 
-        fun input(): Observable<CharSequence> = publishSubject.hide()
+        fun input(): Flow<CharSequence> = inputFlow.asSharedFlow()
 
         override fun performFiltering(constraint: CharSequence?): FilterResults {
             if (constraint?.isBlank() != false) {
                 return FilterResults()
             }
-            publishSubject.onNext(constraint.trim())
+            appCoroutineScope.launch {
+                inputFlow.emit(constraint.trim())
+            }
 
             return FilterResults().apply { count = 1 }
         }

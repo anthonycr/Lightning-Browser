@@ -1,27 +1,38 @@
 package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.SuggestionsClient
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.extensions.preferredLocale
 import acr.browser.lightning.log.Logger
 import android.app.Application
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.Deferred
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
+import javax.inject.Inject
 
 /**
  * Search suggestions provider for Google search engine.
  */
-class GoogleSuggestionsModel(
-    okHttpClient: Single<OkHttpClient>,
+class GoogleSuggestionsModel @Inject constructor(
+    @SuggestionsClient okHttpClient: Deferred<@JvmSuppressWildcards OkHttpClient>,
     requestFactory: RequestFactory,
     application: Application,
-    logger: Logger
-) : BaseSuggestionsModel(okHttpClient, requestFactory, UTF8, application.preferredLocale, logger) {
+    logger: Logger,
+    coroutineDispatchers: CoroutineDispatchers,
+) : BaseSuggestionsModel(
+    okHttpClient,
+    requestFactory,
+    UTF8,
+    application.preferredLocale,
+    logger,
+    coroutineDispatchers
+) {
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 
