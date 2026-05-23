@@ -3,8 +3,6 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.tab.WebViewFactory
-import acr.browser.lightning.concurrency.CoroutineDispatchers
-import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
@@ -16,15 +14,13 @@ import android.os.Bundle
 import android.webkit.WebView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PrivacySettingsFragment : AbstractSettingsFragment() {
 
-    @Inject internal lateinit var historyRepository: HistoryRepository
     @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
     @Inject internal lateinit var appCoroutineScope: CoroutineScope
-    @Inject internal lateinit var coroutineDispatchers: CoroutineDispatchers
+    @Inject internal lateinit var webUtils: WebUtils
 
     override fun providePreferencesXmlResource() = R.xml.preference_privacy
 
@@ -35,7 +31,11 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         clickablePreference(preference = SETTINGS_CLEARCACHE, onClick = this::clearCache)
         clickablePreference(preference = SETTINGS_CLEARHISTORY, onClick = this::clearHistoryDialog)
         clickablePreference(preference = SETTINGS_CLEARCOOKIES, onClick = this::clearCookiesDialog)
-        clickablePreference(preference = SETTINGS_CLEARWEBSTORAGE, onClick = this::clearWebStorage)
+        clickablePreference(preference = SETTINGS_CLEARWEBSTORAGE, onClick = {
+            appCoroutineScope.launch {
+                clearWebStorage()
+            }
+        })
 
         togglePreference(
             preference = SETTINGS_LOCATION,
@@ -137,19 +137,16 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
     private suspend fun clearHistory() {
         val activity = activity
         if (activity != null) {
-            // TODO: 6/9/17 clearHistory is not synchronous
-            WebUtils.clearHistory(activity, historyRepository)
+            webUtils.clearHistory()
         } else {
             throw RuntimeException("Activity was null in clearHistory")
         }
     }
 
-    private suspend fun clearCookies(): Unit = withContext(coroutineDispatchers.io) {
-        WebUtils.clearCookies()
-    }
+    private suspend fun clearCookies(): Unit = webUtils.clearCookies()
 
-    private fun clearWebStorage() {
-        WebUtils.clearWebStorage()
+    private suspend fun clearWebStorage() {
+        webUtils.clearWebStorage()
         requireActivity().snackbar(R.string.message_web_storage_cleared)
     }
 

@@ -11,14 +11,15 @@ import javax.inject.Inject
  */
 class EnhancedIncognitoExitCleanup @Inject constructor(
     private val logger: Logger,
-    private val activity: Activity
+    private val activity: Activity,
+    private val webUtils: WebUtils,
 ) : ExitCleanup {
     override suspend fun cleanUp() {
-        WebUtils.clearCache(activity)
+        webUtils.clearCache(activity)
         logger.log(TAG, "Cache Cleared")
-        WebUtils.clearCookies()
+        webUtils.clearCookies()
         logger.log(TAG, "Cookies Cleared")
-        WebUtils.clearWebStorage()
+        webUtils.clearWebStorage()
         logger.log(TAG, "WebStorage Cleared")
     }
 

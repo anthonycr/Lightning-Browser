@@ -1,34 +1,38 @@
 package acr.browser.lightning.utils
 
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.history.HistoryRepository
 import android.app.Activity
-import android.content.Context
+import android.app.Application
 import android.webkit.CookieManager
 import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewDatabase
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-object WebUtils {
-    fun clearCookies() {
+class WebUtils @Inject constructor(
+    private val application: Application,
+    private val coroutineDispatchers: CoroutineDispatchers,
+    private val historyRepository: HistoryRepository,
+) {
+    suspend fun clearCookies() = withContext(coroutineDispatchers.io) {
         CookieManager.getInstance().removeAllCookies(null)
     }
 
-    fun clearWebStorage() {
+    suspend fun clearWebStorage() = withContext(coroutineDispatchers.io) {
         WebStorage.getInstance().deleteAllData()
     }
 
-    suspend fun clearHistory(
-        context: Context,
-        historyRepository: HistoryRepository
-    ) {
+    suspend fun clearHistory() = withContext(coroutineDispatchers.io) {
         historyRepository.deleteHistory()
-        val webViewDatabase = WebViewDatabase.getInstance(context)
+        val webViewDatabase = WebViewDatabase.getInstance(application)
         webViewDatabase.clearFormData()
         webViewDatabase.clearHttpAuthUsernamePassword()
-        Utils.trimCache(context)
+        Utils.trimCache(application)
     }
 
-    fun clearCache(activity: Activity) {
+    suspend fun clearCache(activity: Activity) = withContext(coroutineDispatchers.main) {
         val webView = WebView(activity)
         webView.clearCache(true)
         webView.destroy()
