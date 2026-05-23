@@ -1,7 +1,6 @@
 package acr.browser.lightning.database.bookmark;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -9,8 +8,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,7 +22,6 @@ import acr.browser.lightning.database.WebPageKt;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 import androidx.annotation.NonNull;
-import androidx.annotation.WorkerThread;
 import io.reactivex.rxjava3.core.Completable;
 
 /**
@@ -85,39 +81,6 @@ public final class BookmarkExporter {
         }
 
         return bookmarks;
-    }
-
-    /**
-     * Exports the list of bookmarks to a file.
-     *
-     * @param bookmarkList the bookmarks to export.
-     * @param file         the file to export to.
-     * @return an observable that emits a completion
-     * event when the export is complete, or an error
-     * event if there is a problem.
-     */
-    @NonNull
-    public static Completable exportBookmarksToFile(@NonNull final List<Bookmark.Entry> bookmarkList,
-                                                    @NonNull final File file) {
-        return Completable.fromAction(() -> {
-            Preconditions.checkNonNull(bookmarkList);
-            BufferedWriter bookmarkWriter = null;
-            try {
-                bookmarkWriter = new BufferedWriter(new FileWriter(file, false));
-
-                JSONObject object = new JSONObject();
-                for (Bookmark.Entry item : bookmarkList) {
-                    object.put(KEY_TITLE, item.getTitle());
-                    object.put(KEY_URL, item.getUrl());
-                    object.put(KEY_FOLDER, item.getFolder().getTitle());
-                    object.put(KEY_ORDER, item.getPosition());
-                    bookmarkWriter.write(object.toString());
-                    bookmarkWriter.newLine();
-                }
-            } finally {
-                Utils.close(bookmarkWriter);
-            }
-        });
     }
 
     /**
@@ -185,32 +148,6 @@ public final class BookmarkExporter {
         } finally {
             Utils.close(bookmarksReader);
         }
-    }
-
-    /**
-     * A blocking call that creates a new export file with
-     * the name "BookmarkExport.txt" and an appropriate
-     * numerical appendage if a file already exists with
-     * that name.
-     *
-     * @return a non null empty file that can be used
-     * to export bookmarks to.
-     */
-    @WorkerThread
-    @NonNull
-    public static File createNewExportFile() {
-        File bookmarksExport = new File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            "BookmarksExport.txt");
-        int counter = 0;
-        while (bookmarksExport.exists()) {
-            counter++;
-            bookmarksExport = new File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                "BookmarksExport-" + counter + ".txt");
-        }
-
-        return bookmarksExport;
     }
 
 }
