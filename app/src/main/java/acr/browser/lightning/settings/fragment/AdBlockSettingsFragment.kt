@@ -6,9 +6,8 @@ import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.source.HostsSourceType
 import acr.browser.lightning.adblock.source.selectedHostsSource
 import acr.browser.lightning.adblock.source.toPreferenceIndex
-import acr.browser.lightning.browser.di.DiskScheduler
-import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.toast
@@ -20,11 +19,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.preference.Preference
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.plusAssign
-import io.reactivex.rxjava3.kotlin.subscribeBy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okio.buffer
 import okio.sink
@@ -39,9 +37,9 @@ import javax.inject.Inject
 class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
-    @Inject @MainScheduler internal lateinit var mainScheduler: Scheduler
-    @Inject @DiskScheduler internal lateinit var diskScheduler: Scheduler
     @Inject internal lateinit var bloomFilterAdBlocker: BloomFilterAdBlocker
+    @Inject internal lateinit var appCoroutineScope: CoroutineScope
+    @Inject internal lateinit var coroutineDispatchers: CoroutineDispatchers
 
     private var recentSummaryUpdater: SummaryUpdater? = null
     private val compositeDisposable = CompositeDisposable()
@@ -107,7 +105,9 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                 isConditionMet = userPreferencesDataStore.selectedHostsSource() == HostsSourceType.Default,
                 onClick = {
                     userPreferencesDataStore.hostsSource.setUnsafe(HostsSourceType.Default.toPreferenceIndex())
-                    summaryUpdater.updateSummary(userPreferencesDataStore.selectedHostsSource().toSummary())
+                    summaryUpdater.updateSummary(
+                        userPreferencesDataStore.selectedHostsSource().toSummary()
+                    )
                     updateForNewHostsSource()
                 }
             ),
@@ -163,20 +163,23 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
         if (requestCode == FILE_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 data?.data?.also { uri ->
-                    compositeDisposable += readTextFromUri(uri)
-                        .subscribeOn(diskScheduler)
-                        .observeOn(mainScheduler)
-                        .subscribeBy(
-                            onComplete = { activity?.toast(R.string.action_message_canceled) },
-                            onSuccess = { file ->
-                                userPreferencesDataStore.hostsSource.setUnsafe(HostsSourceType.Local(file).toPreferenceIndex())
-                                userPreferencesDataStore.hostsLocalFile.setUnsafe(file.path)
-                                recentSummaryUpdater?.updateSummary(
-                                    userPreferencesDataStore.selectedHostsSource().toSummary()
-                                )
-                                updateForNewHostsSource()
-                            }
-                        )
+                    appCoroutineScope.launch {
+                        val file = readTextFromUri(uri)
+                        if (file == null) {
+                            activity?.toast(R.string.action_message_canceled)
+                        } else {
+                            userPreferencesDataStore.hostsSource.setUnsafe(
+                                HostsSourceType.Local(
+                                    file
+                                ).toPreferenceIndex()
+                            )
+                            userPreferencesDataStore.hostsLocalFile.setUnsafe(file.path)
+                            recentSummaryUpdater?.updateSummary(
+                                userPreferencesDataStore.selectedHostsSource().toSummary()
+                            )
+                            updateForNewHostsSource()
+                        }
+                    }
                 }
             } else {
                 activity?.toast(R.string.action_message_canceled)
@@ -190,11 +193,11 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
         updateRefreshHostsEnabledStatus()
     }
 
-    private fun readTextFromUri(uri: Uri): Maybe<File> = Maybe.create {
+    private suspend fun readTextFromUri(uri: Uri): File? = withContext(coroutineDispatchers.io) {
         val externalFilesDir = activity?.getExternalFilesDir("")
-            ?: return@create it.onComplete()
+            ?: return@withContext null
         val inputStream = activity?.contentResolver?.openInputStream(uri)
-            ?: return@create it.onComplete()
+            ?: return@withContext null
 
         try {
             val outputFile = File(externalFilesDir, AD_HOSTS_FILE)
@@ -202,9 +205,9 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
             val input = inputStream.source()
             val output = outputFile.sink().buffer()
             output.writeAll(input)
-            return@create it.onSuccess(outputFile)
+            return@withContext outputFile
         } catch (exception: IOException) {
-            return@create it.onComplete()
+            return@withContext null
         }
     }
 
