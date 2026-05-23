@@ -88,7 +88,9 @@ class HostsDatabase @Inject constructor(
         return false
     }
 
-    override fun hasHosts(): Boolean = DatabaseUtils.queryNumEntries(database, TABLE_HOSTS) > 0
+    override suspend fun hasHosts(): Boolean = withContext(databaseDispatcher) {
+        DatabaseUtils.queryNumEntries(database, TABLE_HOSTS) > 0
+    }
 
     override suspend fun allHosts(): List<Host> = withContext(NonCancellable + databaseDispatcher) {
         database.query(

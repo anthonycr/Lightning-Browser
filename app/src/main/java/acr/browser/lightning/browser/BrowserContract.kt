@@ -11,10 +11,7 @@ import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
 import android.content.Intent
 import android.graphics.Bitmap
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
 
 /**
  * The contract for the browser.
@@ -180,25 +177,25 @@ interface BrowserContract {
         /**
          * Delete the tab with the provided [id].
          */
-        fun deleteTab(id: Int): Completable
+        suspend fun deleteTab(id: Int)
 
         /**
          * Delete all open tabs.
          */
-        fun deleteAllTabs(): Completable
+        suspend fun deleteAllTabs()
 
         /**
          * Create a tab that will be initialized with the [tabInitializer].
          */
-        fun createTab(
+        suspend fun createTab(
             tabInitializer: TabInitializer,
             tabType: TabModel.Type = TabModel.Type.NORMAL
-        ): Single<TabModel>
+        ): TabModel
 
         /**
          * Reopen the most recently closed tab if there is a closed tab to re-open.
          */
-        fun reopenTab(): Maybe<TabModel>
+        suspend fun reopenTab(): TabModel?
 
         /**
          * Select the tab with the provide [id] as the currently viewed tab.
@@ -209,7 +206,7 @@ interface BrowserContract {
          * Initialize all tabs that were previously frozen when the browser was last open, and
          * initialize any tabs that should be opened from the initial browser action.
          */
-        fun initializeTabs(): Maybe<List<TabModel>>
+        suspend fun initializeTabs(): List<TabModel>
 
         /**
          * Mark all tabs as being permanent tabs so that they won't be deleted during navigation
@@ -262,7 +259,7 @@ interface BrowserContract {
         /**
          * Close the browser and terminate the session.
          */
-        fun closeBrowser()
+        suspend fun closeBrowser()
 
         /**
          * Add a shortcut to the home screen that opens the [url]. Use the provided [title] and

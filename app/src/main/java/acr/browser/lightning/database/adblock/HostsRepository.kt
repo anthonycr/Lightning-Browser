@@ -23,7 +23,7 @@ interface HostsRepository {
     /**
      * @return `true` if the repository has been initialized, `false` otherwise.
      */
-    fun hasHosts(): Boolean
+    suspend fun hasHosts(): Boolean
 
     /**
      * @return A list of all hosts in the repository.

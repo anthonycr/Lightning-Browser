@@ -1,20 +1,15 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.BrowserContract
-import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.di.InitialUrl
-import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.tab.bundle.BundleStore
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.utils.isFileUrl
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -24,24 +19,20 @@ import javax.inject.Inject
 class TabsRepository @Inject constructor(
     private val webViewFactory: WebViewFactory,
     private val tabPager: TabPager,
-    @DiskScheduler private val diskScheduler: Scheduler,
-    @MainScheduler private val mainScheduler: Scheduler,
     private val bundleStore: BundleStore,
     private val recentTabModel: RecentTabModel,
     private val tabFactory: TabFactory,
     private val userPreferencesDataStore: UserPreferencesDataStore,
     @InitialUrl private val initialUrl: String?,
-    private val permissionInitializerFactory: PermissionInitializer.Factory
+    private val permissionInitializerFactory: PermissionInitializer.Factory,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) : BrowserContract.Model {
 
-    private var isInitialized = BehaviorSubject.createDefault(false)
+    private val isInitialized = CompletableDeferred<Unit>()
     private var selectedTab: TabModel? = null
     private val tabsListObservable = PublishSubject.create<List<TabModel>>()
 
-    private fun afterInitialization(): Single<Boolean> =
-        isInitialized.filter { it }.firstOrError()
-
-    override fun deleteTab(id: Int): Completable = Completable.fromAction {
+    override suspend fun deleteTab(id: Int): Unit = withContext(coroutineDispatchers.main) {
         if (selectedTab?.id == id) {
             tabPager.clearTab()
         }
@@ -49,54 +40,45 @@ class TabsRepository @Inject constructor(
         recentTabModel.addClosedTab(tab.freeze())
         tab.destroy()
         tabsList = tabsList - tab
-    }.doOnComplete {
         tabsListObservable.onNext(tabsList)
-    }.subscribeOn(mainScheduler)
+    }
 
-    override fun deleteAllTabs(): Completable =
-        afterInitialization().flatMapCompletable {
-            Completable.fromAction {
-                tabPager.clearTab()
+    override suspend fun deleteAllTabs(): Unit = withContext(coroutineDispatchers.main) {
+        isInitialized.await()
+        tabPager.clearTab()
 
-                tabsList.forEach(TabModel::destroy)
-                tabsList = emptyList()
-            }
-        }.doOnComplete {
-            tabsListObservable.onNext(tabsList)
-        }.subscribeOn(mainScheduler)
+        tabsList.forEach(TabModel::destroy)
+        tabsList = emptyList()
+        tabsListObservable.onNext(tabsList)
+    }
 
-    override fun createTab(
+    override suspend fun createTab(
         tabInitializer: TabInitializer,
         tabType: TabModel.Type
-    ): Single<TabModel> = afterInitialization()
-        .flatMap { createTabUnsafe(tabInitializer, tabType) }
-        .subscribeOn(mainScheduler)
+    ): TabModel = withContext(coroutineDispatchers.main) {
+        isInitialized.await()
+        createTabUnsafe(tabInitializer, tabType)
+    }
 
     /**
      * Creates a tab without waiting for the browser to be initialized.
      */
-    private fun createTabUnsafe(
+    private suspend fun createTabUnsafe(
         tabInitializer: TabInitializer,
         tabType: TabModel.Type
-    ): Single<TabModel> =
-        Single.fromCallable(webViewFactory::createWebView)
-            .flatMap { webViewLazy ->
-                tabFactory.constructTab(tabInitializer, webViewLazy, tabType)
-                    .map { webViewLazy to it }
-            }
-            .doOnSuccess { (webViewLazy, tabModel) ->
-                tabPager.addTab(tabModel.id, webViewLazy)
-            }
-            .map { (_, tabModel) -> tabModel }
-            .doOnSuccess {
-                tabsList = tabsList + it
-                tabsListObservable.onNext(tabsList)
-            }
-            .subscribeOn(mainScheduler)
+    ): TabModel = withContext(coroutineDispatchers.main) {
+        val webViewLazy = webViewFactory.createWebView()
+        val tabModel = tabFactory.constructTab(tabInitializer, webViewLazy, tabType)
+        tabPager.addTab(tabModel.id, webViewLazy)
+        tabsList = tabsList + tabModel
+        tabsListObservable.onNext(tabsList)
 
-    override fun reopenTab(): Maybe<TabModel> = Maybe.fromCallable(recentTabModel::lastClosed)
-        .flatMapSingle { createTab(BundleInitializer(it)) }
-        .subscribeOn(mainScheduler)
+        tabModel
+    }
+
+    override suspend fun reopenTab(): TabModel? = withContext(coroutineDispatchers.main) {
+        recentTabModel.lastClosed()?.let { createTab(BundleInitializer(it)) }
+    }
 
     override fun selectTab(id: Int): TabModel {
         val selected = tabsList.forId(id)
@@ -111,24 +93,27 @@ class TabsRepository @Inject constructor(
 
     override fun tabsListChanges(): Observable<List<TabModel>> = tabsListObservable.hide()
 
-    override fun initializeTabs(): Maybe<List<TabModel>> =
-        Single.fromCallable { runBlocking { bundleStore.retrieve() } }
-            .subscribeOn(diskScheduler)
-            .observeOn(mainScheduler)
-            .flatMapObservable { Observable.fromIterable(it) }
-            .flatMapSingle { createTabUnsafe(it, tabType = TabModel.Type.NORMAL) }
-            .concatWith(Maybe.fromCallable { initialUrl }.map {
-                if (it.isFileUrl()) {
-                    permissionInitializerFactory.create(it)
-                } else {
-                    UrlInitializer(it)
-                }
-            }.flatMapSingle { createTabUnsafe(it, tabType = TabModel.Type.EPHEMERAL) })
-            .toList()
-            .filter(List<TabModel>::isNotEmpty)
-            .doAfterTerminate {
-                isInitialized.onNext(true)
+    override suspend fun initializeTabs(): List<TabModel> =
+        withContext(coroutineDispatchers.default) {
+            val oldTabs = bundleStore.retrieve().map { createTabUnsafe(it, TabModel.Type.NORMAL) }
+
+            val newTabInitializer = if (initialUrl != null && initialUrl.isFileUrl()) {
+                permissionInitializerFactory.create(initialUrl)
+            } else if (initialUrl != null) {
+                UrlInitializer(initialUrl)
+            } else {
+                null
             }
+
+            val newTab = newTabInitializer?.let { createTabUnsafe(it, TabModel.Type.EPHEMERAL) }
+
+            isInitialized.complete(Unit)
+            if (newTab != null) {
+                oldTabs + newTab
+            } else {
+                oldTabs
+            }
+        }
 
     override fun markAllNonEphemeral() {
         tabsList.forEach { it.tabType = TabModel.Type.NORMAL }

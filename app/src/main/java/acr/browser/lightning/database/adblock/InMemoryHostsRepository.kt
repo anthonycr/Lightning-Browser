@@ -21,7 +21,7 @@ class InMemoryHostsRepository @Inject constructor() : HostsRepository {
 
     override fun containsHost(host: Host): Boolean = mutableHostsSet.contains(host)
 
-    override fun hasHosts(): Boolean = mutableHostsSet.isNotEmpty()
+    override suspend fun hasHosts(): Boolean = mutableHostsSet.isNotEmpty()
 
     override suspend fun allHosts(): List<Host> = mutableHostsSet.toList()
 }

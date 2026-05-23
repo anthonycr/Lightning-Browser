@@ -1,15 +1,14 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.di.CacheDir
-import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.di.FilesDir
-import acr.browser.lightning.browser.di.MainScheduler
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import android.webkit.WebView
 import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
@@ -21,41 +20,43 @@ class TabFactory @Inject constructor(
     private val webViewFactory: WebViewFactory,
     private val tabWebViewClientFactory: TabWebViewClient.Factory,
     private val tabAdapterFactory: TabAdapter.Factory,
-    @DiskScheduler private val diskScheduler: Scheduler,
-    @MainScheduler private val mainScheduler: Scheduler,
     @CacheDir private val cacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
     @FilesDir private val filesDirThreadSafeFileProvider: ThreadSafeFileProvider,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) {
 
     /**
      * Constructs a tab from the [webView] with the provided [tabInitializer].
      */
-    fun constructTab(
+    suspend fun constructTab(
         tabInitializer: TabInitializer,
         webView: Lazy<WebView>,
         tabType: TabModel.Type
-    ): Single<TabModel> {
-        val faviconHandler = cacheDirThreadSafeFileProvider.file()
-            .map { InternalStoragePathHandler(app, File(it, "favicon-cache")) }
-        val htmlHandler = filesDirThreadSafeFileProvider.file()
-            .map { InternalStoragePathHandler(app, File(it, "generated-html")) }
+    ): TabModel = withContext(coroutineDispatchers.main) {
+        val faviconHandler = async(coroutineDispatchers.io) {
+            InternalStoragePathHandler(
+                app,
+                File(cacheDirThreadSafeFileProvider.file.await(), "favicon-cache")
+            )
+        }
+        val htmlHandler = async(coroutineDispatchers.io) {
+            InternalStoragePathHandler(
+                app,
+                File(filesDirThreadSafeFileProvider.file.await(), "generated-html")
+            )
+        }
 
-        return faviconHandler.zipWith(htmlHandler, ::Pair)
-            .subscribeOn(diskScheduler)
-            .observeOn(mainScheduler)
-            .map { (faviconHandler, htmlHandler) ->
-                val headers = webViewFactory.createRequestHeaders()
-                tabAdapterFactory.create(
-                    tabInitializer = tabInitializer,
-                    webView = webView,
-                    requestHeaders = headers,
-                    tabWebViewClient = tabWebViewClientFactory.create(
-                        headers,
-                        faviconHandler,
-                        htmlHandler
-                    ),
-                    tabType,
-                )
-            }
+        val headers = webViewFactory.createRequestHeaders()
+        tabAdapterFactory.create(
+            tabInitializer = tabInitializer,
+            webView = webView,
+            requestHeaders = headers,
+            tabWebViewClient = tabWebViewClientFactory.create(
+                headers,
+                faviconHandler.await(),
+                htmlHandler.await()
+            ),
+            tabType,
+        )
     }
 }

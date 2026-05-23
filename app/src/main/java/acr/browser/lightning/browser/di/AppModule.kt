@@ -160,7 +160,8 @@ class AppModule {
     fun providesSuggestionsCoroutineHttpClient(
         application: Application,
         appCoroutineScope: CoroutineScope,
-    ): Deferred<OkHttpClient> = appCoroutineScope.async {
+        coroutineDispatchers: CoroutineDispatchers,
+    ): Deferred<OkHttpClient> = appCoroutineScope.async(coroutineDispatchers.io) {
         val intervalDay = TimeUnit.DAYS.toSeconds(1)
         val suggestionsCache = File(application.cacheDir, "suggestion_responses")
 
@@ -176,7 +177,8 @@ class AppModule {
     fun providesHostsHttpClient(
         application: Application,
         appCoroutineScope: CoroutineScope,
-    ): Deferred<OkHttpClient> = appCoroutineScope.async {
+        coroutineDispatchers: CoroutineDispatchers,
+    ): Deferred<OkHttpClient> = appCoroutineScope.async(coroutineDispatchers.io) {
         val intervalYear = TimeUnit.DAYS.toSeconds(365)
         val suggestionsCache = File(application.cacheDir, "hosts_cache")
 

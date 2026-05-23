@@ -48,16 +48,14 @@ class BrowserNavigator @Inject constructor(
         activity.snackbar(R.string.message_link_copied)
     }
 
-    override fun closeBrowser() {
-        appCoroutineScope.launch {
-            exitCleanup.cleanUp()
-            if (incognitoMode) {
-                activityManager.appTasks
-                    .first { it.taskInfo.topActivity?.className == IncognitoBrowserActivity::class.java.name }
-                    .finishAndRemoveTask()
-            } else {
-                activity.finish()
-            }
+    override suspend fun closeBrowser() {
+        exitCleanup.cleanUp()
+        if (incognitoMode) {
+            activityManager.appTasks
+                .first { it.taskInfo.topActivity?.className == IncognitoBrowserActivity::class.java.name }
+                .finishAndRemoveTask()
+        } else {
+            activity.finish()
         }
     }
 

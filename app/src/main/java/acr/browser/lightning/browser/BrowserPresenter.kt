@@ -54,7 +54,6 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.Observables
 import io.reactivex.rxjava3.kotlin.plusAssign
 import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.kotlin.toObservable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -151,12 +150,15 @@ class BrowserPresenter @Inject constructor(
                 tabCountNotifier.notifyTabCountChange(list.size)
             }
 
-        compositeDisposable += model.initializeTabs()
-            .observeOn(mainScheduler)
-            .switchIfEmpty(model.createTab(homePageInitializer).map(::listOf))
-            .subscribe { list ->
-                selectTab(model.selectTab(list.last().id))
+        browserCoroutineScope.launch {
+            val tabs = model.initializeTabs()
+            val lastTab = if (tabs.isEmpty()) {
+                model.createTab(homePageInitializer)
+            } else {
+                tabs.last()
             }
+            selectTab(model.selectTab(lastTab.id))
+        }
     }
 
     /**
@@ -391,7 +393,7 @@ class BrowserPresenter @Inject constructor(
             model.clean()
             historyPageFactory.deleteHistoryPage()
 
-            model.deleteAllTabs().subscribe()
+            model.deleteAllTabs()
             navigator.closeBrowser()
 
             // System exit needed in the case of receiving
@@ -450,13 +452,12 @@ class BrowserPresenter @Inject constructor(
         shouldSelect: Boolean,
         tabType: TabModel.Type = TabModel.Type.NORMAL
     ) {
-        compositeDisposable += model.createTab(tabInitializer, tabType = tabType)
-            .observeOn(mainScheduler)
-            .subscribe { tab ->
-                if (shouldSelect) {
-                    selectTab(model.selectTab(tab.id))
-                }
+        browserCoroutineScope.launch {
+            val tab = model.createTab(tabInitializer, tabType = tabType)
+            if (shouldSelect) {
+                selectTab(model.selectTab(tab.id))
             }
+        }
     }
 
     private fun List<TabViewState>.tabIndexForId(id: Int?): Int =
@@ -531,23 +532,21 @@ class BrowserPresenter @Inject constructor(
         val currentTabId = currentTab?.id
         val needToSelectNextTab = tabListState[index].id == currentTabId
 
-        compositeDisposable += model.deleteTab(tabListState[index].id)
-            .observeOn(mainScheduler)
-            .subscribe {
-                if (needToSelectNextTab) {
-                    nextTab?.id?.let {
-                        val shouldClose = currentTab?.tabType == TabModel.Type.EPHEMERAL
-                        selectTab(model.selectTab(it), focusTab = false)
-                        if (shouldClose) {
-                            navigator.backgroundBrowser()
-                        }
-                    } ?: run {
-                        selectTab(tabModel = null)
-                        navigator.closeBrowser()
+        browserCoroutineScope.launch {
+            model.deleteTab(tabListState[index].id)
+            if (needToSelectNextTab) {
+                nextTab?.id?.let {
+                    val shouldClose = currentTab?.tabType == TabModel.Type.EPHEMERAL
+                    selectTab(model.selectTab(it), focusTab = false)
+                    if (shouldClose) {
+                        navigator.backgroundBrowser()
                     }
-
+                } ?: run {
+                    selectTab(tabModel = null)
+                    navigator.closeBrowser()
                 }
             }
+        }
     }
 
     /**
@@ -640,11 +639,12 @@ class BrowserPresenter @Inject constructor(
      * the last closed tab.
      */
     fun onNewTabLongClick() {
-        compositeDisposable += model.reopenTab()
-            .observeOn(mainScheduler)
-            .subscribeBy { tab ->
+        browserCoroutineScope.launch {
+            val tab = model.reopenTab()
+            if (tab != null) {
                 selectTab(model.selectTab(tab.id))
             }
+        }
     }
 
     /**
@@ -1198,16 +1198,20 @@ class BrowserPresenter @Inject constructor(
             BrowserContract.CloseTabEvent.CLOSE_CURRENT ->
                 onTabClose(tabListState.tabIndexForId(id))
 
-            BrowserContract.CloseTabEvent.CLOSE_OTHERS -> model.tabsList
-                .filter { it.id != id }
-                .toObservable()
-                .flatMapCompletable { model.deleteTab(it.id) }
-                .subscribeOn(mainScheduler)
-                .subscribe()
+            BrowserContract.CloseTabEvent.CLOSE_OTHERS -> browserCoroutineScope.launch {
+                val currentTabId = currentTab?.id
+                model.tabsList.filter { it.id != id }.forEach {
+                    model.deleteTab(it.id)
+                    if (currentTabId != id) {
+                        selectTab(model.selectTab(id))
+                    }
+                }
+            }
 
-            BrowserContract.CloseTabEvent.CLOSE_ALL ->
-                compositeDisposable += model.deleteAllTabs().subscribeOn(mainScheduler)
-                    .subscribeBy(onComplete = navigator::closeBrowser)
+            BrowserContract.CloseTabEvent.CLOSE_ALL -> browserCoroutineScope.launch {
+                model.deleteAllTabs()
+                navigator.closeBrowser()
+            }
         }
     }
 
