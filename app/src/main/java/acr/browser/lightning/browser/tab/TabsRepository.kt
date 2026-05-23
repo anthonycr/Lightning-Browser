@@ -6,9 +6,9 @@ import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.utils.isFileUrl
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -29,8 +29,8 @@ class TabsRepository @Inject constructor(
 ) : BrowserContract.Model {
 
     private val isInitialized = CompletableDeferred<Unit>()
+    private val tabsListStateFlow = MutableStateFlow<List<TabModel>>(emptyList())
     private var selectedTab: TabModel? = null
-    private val tabsListObservable = PublishSubject.create<List<TabModel>>()
 
     override suspend fun deleteTab(id: Int): Unit = withContext(coroutineDispatchers.main) {
         if (selectedTab?.id == id) {
@@ -40,7 +40,8 @@ class TabsRepository @Inject constructor(
         recentTabModel.addClosedTab(tab.freeze())
         tab.destroy()
         tabsList = tabsList - tab
-        tabsListObservable.onNext(tabsList)
+
+        tabsListStateFlow.emit(tabsList)
     }
 
     override suspend fun deleteAllTabs(): Unit = withContext(coroutineDispatchers.main) {
@@ -49,7 +50,8 @@ class TabsRepository @Inject constructor(
 
         tabsList.forEach(TabModel::destroy)
         tabsList = emptyList()
-        tabsListObservable.onNext(tabsList)
+
+        tabsListStateFlow.emit(tabsList)
     }
 
     override suspend fun createTab(
@@ -71,7 +73,8 @@ class TabsRepository @Inject constructor(
         val tabModel = tabFactory.constructTab(tabInitializer, webViewLazy, tabType)
         tabPager.addTab(tabModel.id, webViewLazy)
         tabsList = tabsList + tabModel
-        tabsListObservable.onNext(tabsList)
+
+        tabsListStateFlow.emit(tabsList)
 
         tabModel
     }
@@ -91,7 +94,7 @@ class TabsRepository @Inject constructor(
     override var tabsList = emptyList<TabModel>()
         private set
 
-    override fun tabsListChanges(): Observable<List<TabModel>> = tabsListObservable.hide()
+    override fun tabsListChanges(): Flow<List<TabModel>> = tabsListStateFlow
 
     override suspend fun initializeTabs(): List<TabModel> =
         withContext(coroutineDispatchers.default) {

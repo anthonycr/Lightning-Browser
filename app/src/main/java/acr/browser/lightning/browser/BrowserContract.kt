@@ -11,7 +11,7 @@ import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
 import android.content.Intent
 import android.graphics.Bitmap
-import io.reactivex.rxjava3.core.Observable
+import kotlinx.coroutines.flow.Flow
 
 /**
  * The contract for the browser.
@@ -232,7 +232,7 @@ interface BrowserContract {
         /**
          * Changes to the current open tabs.
          */
-        fun tabsListChanges(): Observable<List<TabModel>>
+        fun tabsListChanges(): Flow<List<TabModel>>
 
     }
 

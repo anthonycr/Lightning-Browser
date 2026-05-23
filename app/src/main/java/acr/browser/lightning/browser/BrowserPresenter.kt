@@ -57,6 +57,7 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -137,20 +138,7 @@ class BrowserPresenter @Inject constructor(
         browserCoroutineScope.launch {
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
             view.updateState(viewState.copy(bookmarks = bookmarks, isRootFolder = true))
-        }
 
-        compositeDisposable += model.tabsListChanges()
-            .observeOn(mainScheduler)
-            .subscribe { list ->
-                this.view?.updateTabs(list.map { it.asViewState() })
-
-                allTabsDisposable.clear()
-                list.subscribeToUpdates(allTabsDisposable)
-
-                tabCountNotifier.notifyTabCountChange(list.size)
-            }
-
-        browserCoroutineScope.launch {
             val tabs = model.initializeTabs()
             val lastTab = if (tabs.isEmpty()) {
                 model.createTab(homePageInitializer)
@@ -158,6 +146,17 @@ class BrowserPresenter @Inject constructor(
                 tabs.last()
             }
             selectTab(model.selectTab(lastTab.id))
+        }
+
+        browserCoroutineScope.launch {
+            model.tabsListChanges().collectLatest { list ->
+                this@BrowserPresenter.view?.updateTabs(list.map { it.asViewState() })
+
+                allTabsDisposable.clear()
+                list.subscribeToUpdates(allTabsDisposable)
+
+                tabCountNotifier.notifyTabCountChange(list.size)
+            }
         }
     }
 
