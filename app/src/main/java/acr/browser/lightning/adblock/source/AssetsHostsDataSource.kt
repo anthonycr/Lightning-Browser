@@ -2,9 +2,9 @@ package acr.browser.lightning.adblock.source
 
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.adblock.parser.HostsFileParser
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.log.Logger
 import android.content.res.AssetManager
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStreamReader
 import javax.inject.Inject
@@ -21,6 +21,7 @@ class AssetsHostsDataSource @Inject constructor(
     private val assetManager: AssetManager,
     private val hostsFileParserProvider: Provider<HostsFileParser>,
     private val logger: Logger,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) : HostsDataSource {
 
     /**
@@ -31,7 +32,7 @@ class AssetsHostsDataSource @Inject constructor(
      *
      * @see HostsDataSource.loadHosts
      */
-    override suspend fun loadHosts(): HostsResult = withContext(Dispatchers.IO) {
+    override suspend fun loadHosts(): HostsResult = withContext(coroutineDispatchers.io) {
         val reader = InputStreamReader(assetManager.open(BLOCKED_DOMAINS_LIST_FILE_NAME))
         val hostsFileParser = hostsFileParserProvider.get()
 

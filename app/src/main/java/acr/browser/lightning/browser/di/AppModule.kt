@@ -49,7 +49,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import okhttp3.Cache
 import okhttp3.CacheControl
@@ -257,7 +257,9 @@ class AppModule {
     @Singleton
     @OptIn(DelicateCoroutinesApi::class)
     @Provides
-    fun providesAppCoroutineScope(): CoroutineScope = GlobalScope
+    fun providesAppCoroutineScope(
+        coroutineDispatchers: CoroutineDispatchers
+    ): CoroutineScope = CoroutineScope(coroutineDispatchers.main + SupervisorJob())
 
     @Singleton
     @Provides
