@@ -10,8 +10,8 @@ import android.app.Application
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import okhttp3.Call
@@ -29,7 +29,7 @@ import kotlin.coroutines.resume
  */
 class UrlHostsDataSource @AssistedInject constructor(
     @Assisted private val url: HttpUrl,
-    @HostsClient private val okHttpClient: Single<OkHttpClient>,
+    @HostsClient private val okHttpClient: Deferred<@JvmSuppressWildcards OkHttpClient>,
     private val logger: Logger,
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val application: Application,
@@ -38,8 +38,8 @@ class UrlHostsDataSource @AssistedInject constructor(
 ) : HostsDataSource {
 
     override suspend fun loadHosts(): HostsResult = withContext(networkDispatcher) {
+        val client = okHttpClient.await()
         suspendCancellableCoroutine { emitter ->
-            val client = okHttpClient.blockingGet()
             val request = Request.Builder()
                 .url(url)
                 .header("User-Agent", userPreferencesDataStore.userAgent(application))

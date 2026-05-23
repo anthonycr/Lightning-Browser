@@ -43,7 +43,6 @@ import dagger.Module
 import dagger.Provides
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -174,16 +173,18 @@ class AppModule {
     @Singleton
     @Provides
     @HostsClient
-    fun providesHostsHttpClient(application: Application): Single<OkHttpClient> =
-        Single.fromCallable {
-            val intervalYear = TimeUnit.DAYS.toSeconds(365)
-            val suggestionsCache = File(application.cacheDir, "hosts_cache")
+    fun providesHostsHttpClient(
+        application: Application,
+        appCoroutineScope: CoroutineScope,
+    ): Deferred<OkHttpClient> = appCoroutineScope.async {
+        val intervalYear = TimeUnit.DAYS.toSeconds(365)
+        val suggestionsCache = File(application.cacheDir, "hosts_cache")
 
-            return@fromCallable OkHttpClient.Builder()
-                .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(5)))
-                .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalYear))
-                .build()
-        }.cache()
+        OkHttpClient.Builder()
+            .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(5)))
+            .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalYear))
+            .build()
+    }
 
     @Provides
     @Singleton
