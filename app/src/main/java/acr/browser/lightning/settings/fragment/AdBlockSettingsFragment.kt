@@ -19,7 +19,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.preference.Preference
-import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,7 +41,6 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
     @Inject internal lateinit var coroutineDispatchers: CoroutineDispatchers
 
     private var recentSummaryUpdater: SummaryUpdater? = null
-    private val compositeDisposable = CompositeDisposable()
     private var forceRefreshHostsPreference: Preference? = null
 
     override fun providePreferencesXmlResource(): Int = R.xml.preference_ad_block
@@ -83,12 +81,6 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     private fun isRefreshHostsEnabled() =
         userPreferencesDataStore.selectedHostsSource() is HostsSourceType.Remote
-
-    @Deprecated("Deprecated in Java")
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.clear()
-    }
 
     private fun HostsSourceType.toSummary(): String = when (this) {
         HostsSourceType.Default -> getString(R.string.block_source_default)
