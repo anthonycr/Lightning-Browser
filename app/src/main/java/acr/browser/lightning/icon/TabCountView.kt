@@ -7,8 +7,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.CornerPathEffect
 import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import android.graphics.Typeface
 import android.util.AttributeSet
@@ -35,8 +33,6 @@ class TabCountView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private val numberFormat = NumberFormat.getInstance(context.preferredLocale)
-    private val clearMode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-    private val overMode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
     private val paint: Paint = Paint().apply {
         typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
         isAntiAlias = true
@@ -76,28 +72,16 @@ class TabCountView @JvmOverloads constructor(
             numberFormat.format(count)
         }
 
-//        paint.xfermode = overMode
-//
         workingRect.set(
             0f + borderWidth / 2,
             0f + borderWidth / 2,
             width.toFloat() - borderWidth / 2,
             height.toFloat() - borderWidth / 2
         )
-//        canvas.drawRoundRect(workingRect, borderRadius, borderRadius, paint)
 
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = borderWidth
         canvas.drawRoundRect(workingRect, borderRadius, borderRadius, paint)
-
-
-//        paint.xfermode = clearMode
-//
-//        val innerRadius = borderRadius - 1
-//        workingRect.set(borderWidth, borderWidth, (width - borderWidth), (height - borderWidth))
-//        canvas.drawRoundRect(workingRect, innerRadius, innerRadius, paint)
-
-//        paint.xfermode = overMode
 
         paint.style = Paint.Style.FILL
 
