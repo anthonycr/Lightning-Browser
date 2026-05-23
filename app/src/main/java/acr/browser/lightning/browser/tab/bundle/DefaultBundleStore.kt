@@ -17,8 +17,6 @@ import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.isStartPageUrl
 import android.app.Application
 import android.os.Bundle
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -30,11 +28,10 @@ class DefaultBundleStore @Inject constructor(
     private val homePageInitializer: HomePageInitializer,
     private val downloadPageInitializer: DownloadPageInitializer,
     private val historyPageInitializer: HistoryPageInitializer,
-    private val appCoroutineScope: CoroutineScope,
     private val coroutineDispatchers: CoroutineDispatchers,
 ) : BundleStore {
 
-    override fun save(tabs: List<TabModel>) {
+    override suspend fun save(tabs: List<TabModel>) {
         val outState = Bundle(ClassLoader.getSystemClassLoader())
 
         tabs.withIndex().forEach { (index, tab) ->
@@ -49,14 +46,12 @@ class DefaultBundleStore @Inject constructor(
             }
         }
 
-        appCoroutineScope.launch {
-            FileUtils.writeBundleToStorage(
-                application,
-                outState,
-                BUNDLE_STORAGE,
-                coroutineDispatchers.io
-            )
-        }
+        FileUtils.writeBundleToStorage(
+            application,
+            outState,
+            BUNDLE_STORAGE,
+            coroutineDispatchers.io
+        )
     }
 
     override fun retrieve(): List<TabInitializer> =

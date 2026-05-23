@@ -6,7 +6,6 @@ import acr.browser.lightning.browser.di.InitialUrl
 import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.isFileUrl
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
@@ -134,8 +133,8 @@ class TabsRepository @Inject constructor(
         tabsList.forEach { it.tabType = TabModel.Type.NORMAL }
     }
 
-    override fun freeze() {
-        if (userPreferencesDataStore.restoreLostTabsEnabled.getUnsafe()) {
+    override suspend fun freeze() {
+        if (userPreferencesDataStore.restoreLostTabsEnabled.get()) {
             bundleStore.save(tabsList)
         }
     }

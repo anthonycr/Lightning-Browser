@@ -220,7 +220,7 @@ interface BrowserContract {
         /**
          * Notifies the model that all tabs need to be frozen before the browser shuts down.
          */
-        fun freeze()
+        suspend fun freeze()
 
         /**
          * Clean all permanent stored content.

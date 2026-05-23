@@ -175,7 +175,9 @@ class BrowserPresenter @Inject constructor(
      */
     fun onViewHidden() {
         model.markAllNonEphemeral()
-        model.freeze()
+        browserCoroutineScope.launch {
+            model.freeze()
+        }
     }
 
     private fun TabModel.asViewState(): TabViewState = TabViewState(
