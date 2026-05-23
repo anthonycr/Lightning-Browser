@@ -1,15 +1,8 @@
 package acr.browser.lightning.utils
 
-import android.app.Application
-import android.os.Bundle
 import android.os.Environment
-import android.os.Parcel
 import android.util.Log
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.PrintStream
@@ -22,87 +15,6 @@ object FileUtils {
 
     val DEFAULT_DOWNLOAD_PATH: String =
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path
-
-    /**
-     * Writes a bundle to persistent storage in the files directory
-     * using the specified file name. This method is a blocking
-     * operation.
-     * 
-     * @param app    the application needed to obtain the file directory.
-     * @param bundle the bundle to store in persistent storage.
-     * @param name   the name of the file to store the bundle in.
-     */
-    suspend fun writeBundleToStorage(
-        app: Application,
-        bundle: Bundle?,
-        name: String,
-        coroutineDispatcher: CoroutineDispatcher,
-    ) = withContext(coroutineDispatcher) {
-        val outputFile = File(app.filesDir, name)
-        var outputStream: FileOutputStream? = null
-        try {
-            outputStream = FileOutputStream(outputFile)
-            val parcel = Parcel.obtain()
-            parcel.writeBundle(bundle)
-            outputStream.write(parcel.marshall())
-            outputStream.flush()
-            parcel.recycle()
-        } catch (e: IOException) {
-            Log.e(TAG, "Unable to write bundle to storage")
-        } finally {
-            Utils.close(outputStream)
-        }
-    }
-
-    /**
-     * Use this method to delete the bundle with the specified name.
-     * This is a blocking call and should be used within a worker
-     * thread unless immediate deletion is necessary.
-     * 
-     * @param app  the application object needed to get the file.
-     * @param name the name of the file.
-     */
-    fun deleteBundleInStorage(app: Application, name: String) {
-        val outputFile = File(app.filesDir, name)
-        if (outputFile.exists()) {
-            outputFile.delete()
-        }
-    }
-
-    /**
-     * Reads a bundle from the file with the specified
-     * name in the peristent storage files directory.
-     * This method is a blocking operation.
-     * 
-     * @param app  the application needed to obtain the files directory.
-     * @param name the name of the file to read from.
-     * @return a valid Bundle loaded using the system class loader
-     * or null if the method was unable to read the Bundle from storage.
-     */
-    fun readBundleFromStorage(app: Application, name: String): Bundle? {
-        val inputFile = File(app.filesDir, name)
-        var inputStream: FileInputStream? = null
-        try {
-            inputStream = FileInputStream(inputFile)
-            val parcel = Parcel.obtain()
-            val data = ByteArray(inputStream.channel.size().toInt())
-
-            inputStream.read(data, 0, data.size)
-            parcel.unmarshall(data, 0, data.size)
-            parcel.setDataPosition(0)
-            val out = parcel.readBundle(ClassLoader.getSystemClassLoader())
-            out!!.putAll(out)
-            parcel.recycle()
-            return out
-        } catch (e: FileNotFoundException) {
-            Log.e(TAG, "Unable to read bundle from storage")
-        } catch (e: IOException) {
-            Log.e(TAG, "Unable to read bundle from storage", e)
-        } finally {
-            Utils.close(inputStream)
-        }
-        return null
-    }
 
     /**
      * Writes a stacktrace to the downloads folder with

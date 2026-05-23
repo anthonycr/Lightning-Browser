@@ -9,7 +9,7 @@ import acr.browser.lightning.browser.tab.TabModel
 object IncognitoBundleStore : BundleStore {
     override suspend fun save(tabs: List<TabModel>) = Unit
 
-    override fun retrieve(): List<TabInitializer> = emptyList()
+    override suspend fun retrieve(): List<TabInitializer> = emptyList()
 
-    override fun deleteAll() = Unit
+    override suspend fun deleteAll() = Unit
 }

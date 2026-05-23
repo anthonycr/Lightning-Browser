@@ -14,6 +14,7 @@ import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 /**
@@ -111,7 +112,7 @@ class TabsRepository @Inject constructor(
     override fun tabsListChanges(): Observable<List<TabModel>> = tabsListObservable.hide()
 
     override fun initializeTabs(): Maybe<List<TabModel>> =
-        Single.fromCallable(bundleStore::retrieve)
+        Single.fromCallable { runBlocking { bundleStore.retrieve() } }
             .subscribeOn(diskScheduler)
             .observeOn(mainScheduler)
             .flatMapObservable { Observable.fromIterable(it) }
@@ -139,7 +140,7 @@ class TabsRepository @Inject constructor(
         }
     }
 
-    override fun clean() {
+    override suspend fun clean() {
         bundleStore.deleteAll()
     }
 

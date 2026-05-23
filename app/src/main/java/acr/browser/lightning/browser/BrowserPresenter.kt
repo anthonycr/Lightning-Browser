@@ -386,9 +386,9 @@ class BrowserPresenter @Inject constructor(
 
     private fun panicClean() {
         createNewTabAndSelect(tabInitializer = NoOpInitializer(), shouldSelect = true)
-        model.clean()
 
         browserCoroutineScope.launch {
+            model.clean()
             historyPageFactory.deleteHistoryPage()
 
             model.deleteAllTabs().subscribe()

@@ -8,8 +8,7 @@ import acr.browser.lightning.browser.tab.HistoryPageInitializer
 import acr.browser.lightning.browser.tab.HomePageInitializer
 import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
-import acr.browser.lightning.concurrency.CoroutineDispatchers
-import acr.browser.lightning.utils.FileUtils
+import acr.browser.lightning.browser.tab.bundle.storage.BundleWriter
 import acr.browser.lightning.utils.isBookmarkUrl
 import acr.browser.lightning.utils.isDownloadsUrl
 import acr.browser.lightning.utils.isHistoryUrl
@@ -28,7 +27,7 @@ class DefaultBundleStore @Inject constructor(
     private val homePageInitializer: HomePageInitializer,
     private val downloadPageInitializer: DownloadPageInitializer,
     private val historyPageInitializer: HistoryPageInitializer,
-    private val coroutineDispatchers: CoroutineDispatchers,
+    private val bundleWriter: BundleWriter,
 ) : BundleStore {
 
     override suspend fun save(tabs: List<TabModel>) {
@@ -46,16 +45,11 @@ class DefaultBundleStore @Inject constructor(
             }
         }
 
-        FileUtils.writeBundleToStorage(
-            application,
-            outState,
-            BUNDLE_STORAGE,
-            coroutineDispatchers.io
-        )
+        bundleWriter.writeToStorage(outState, BUNDLE_STORAGE)
     }
 
-    override fun retrieve(): List<TabInitializer> =
-        FileUtils.readBundleFromStorage(application, BUNDLE_STORAGE)?.let { bundle ->
+    override suspend fun retrieve(): List<TabInitializer> =
+        bundleWriter.readFromStorage(BUNDLE_STORAGE)?.let { bundle ->
             bundle.keySet()
                 .filter { it.startsWith(BUNDLE_KEY) }
                 .mapNotNull { bundleKey ->
@@ -83,8 +77,8 @@ class DefaultBundleStore @Inject constructor(
             )
         } ?: emptyList()
 
-    override fun deleteAll() {
-        FileUtils.deleteBundleInStorage(application, BUNDLE_STORAGE)
+    override suspend fun deleteAll() {
+        bundleWriter.deleteInStorage(BUNDLE_STORAGE)
     }
 
     private fun String.extractNumberFromEnd(): String {

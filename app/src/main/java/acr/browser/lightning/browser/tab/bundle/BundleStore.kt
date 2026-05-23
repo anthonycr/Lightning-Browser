@@ -16,10 +16,10 @@ interface BundleStore {
     /**
      * Synchronously previously stored tab data.
      */
-    fun retrieve(): List<TabInitializer>
+    suspend fun retrieve(): List<TabInitializer>
 
     /**
      * Synchronously delete all stored tabs.
      */
-    fun deleteAll()
+    suspend fun deleteAll()
 }

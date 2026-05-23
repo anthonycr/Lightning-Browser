@@ -225,7 +225,7 @@ interface BrowserContract {
         /**
          * Clean all permanent stored content.
          */
-        fun clean()
+        suspend fun clean()
 
         /**
          * The current open tabs.
