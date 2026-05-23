@@ -3,35 +3,27 @@
  */
 package acr.browser.lightning.utils;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.webkit.URLUtil;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.database.HistoryEntry;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.extensions.ActivityExtensions;
 import androidx.annotation.NonNull;
@@ -139,32 +131,6 @@ public final class Utils {
             return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
-    public static void trimCache(@NonNull Context context) {
-        try {
-            File dir = context.getCacheDir();
-
-            if (dir != null && dir.isDirectory()) {
-                deleteDir(dir);
-            }
-        } catch (Exception ignored) {
-
-        }
-    }
-
-    private static boolean deleteDir(@Nullable File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (String aChildren : children) {
-                boolean success = deleteDir(new File(dir, aChildren));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-        // The directory is now empty so delete it
-        return dir != null && dir.delete();
-    }
-
     public static boolean isColorGrayscale(int pixel) {
         int alpha = (pixel & 0xFF000000) >> 24;
         int red = (pixel & 0x00FF0000) >> 16;
@@ -204,19 +170,6 @@ public final class Utils {
         return 0xff << ALPHA_CHANNEL | r << RED_CHANNEL | g << GREEN_CHANNEL | b;
     }
 
-    @SuppressLint("SimpleDateFormat")
-    public static File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + '_';
-        File storageDir = Environment
-            .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        return File.createTempFile(imageFileName, /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
-        );
-    }
-
     /**
      * Quietly closes a closeable object like an InputStream or OutputStream without
      * throwing any errors or requiring you do do any checks.
@@ -232,22 +185,6 @@ public final class Utils {
         } catch (IOException e) {
             Log.e(TAG, "Unable to close closeable", e);
         }
-    }
-
-    /**
-     * Creates a shortcut on the homescreen using the
-     * {@link HistoryEntry} information that opens the
-     * browser. The icon, URL, and title are used in
-     * the creation of the shortcut.
-     *
-     * @param activity     the activity needed to create
-     *                     the intent and show a snackbar message
-     * @param historyEntry the HistoryEntity to create the shortcut from
-     */
-    public static void createShortcut(@NonNull Activity activity,
-                                      @NonNull HistoryEntry historyEntry,
-                                      @NonNull Bitmap favicon) {
-        createShortcut(activity, historyEntry.getUrl(), historyEntry.getTitle(), favicon);
     }
 
     public static void createShortcut(@NonNull Activity activity,
@@ -280,29 +217,6 @@ public final class Utils {
         } else {
             ActivityExtensions.snackbar(activity, R.string.shortcut_message_failed_to_add);
         }
-    }
-
-    public static int calculateInSampleSize(@NonNull BitmapFactory.Options options,
-                                            int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) >= reqHeight
-                && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
     }
 
     @Nullable

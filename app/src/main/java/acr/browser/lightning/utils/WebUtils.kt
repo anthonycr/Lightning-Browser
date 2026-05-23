@@ -29,12 +29,13 @@ class WebUtils @Inject constructor(
         val webViewDatabase = WebViewDatabase.getInstance(application)
         webViewDatabase.clearFormData()
         webViewDatabase.clearHttpAuthUsernamePassword()
-        Utils.trimCache(application)
+        application.cacheDir.deleteRecursively()
     }
 
     suspend fun clearCache(activity: Activity) = withContext(coroutineDispatchers.main) {
         val webView = WebView(activity)
         webView.clearCache(true)
         webView.destroy()
+        application.cacheDir.deleteRecursively()
     }
 }

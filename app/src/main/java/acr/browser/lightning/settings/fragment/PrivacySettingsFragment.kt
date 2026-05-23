@@ -11,7 +11,6 @@ import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.preference.datastore.setUnsafe
 import acr.browser.lightning.utils.WebUtils
 import android.os.Bundle
-import android.webkit.WebView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +27,11 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         super.onCreatePreferences(savedInstanceState, rootKey)
         injector.inject(this)
 
-        clickablePreference(preference = SETTINGS_CLEARCACHE, onClick = this::clearCache)
+        clickablePreference(preference = SETTINGS_CLEARCACHE, onClick = {
+            appCoroutineScope.launch {
+                clearCache()
+            }
+        })
         clickablePreference(preference = SETTINGS_CLEARHISTORY, onClick = this::clearHistoryDialog)
         clickablePreference(preference = SETTINGS_CLEARCOOKIES, onClick = this::clearCookiesDialog)
         clickablePreference(preference = SETTINGS_CLEARWEBSTORAGE, onClick = {
@@ -126,11 +129,9 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         )
     }
 
-    private fun clearCache() {
-        WebView(requireNotNull(activity)).apply {
-            clearCache(true)
-            destroy()
-        }
+    private suspend fun clearCache() {
+        val activity = requireNotNull(activity)
+        webUtils.clearCache(activity)
         requireActivity().snackbar(R.string.message_cache_cleared)
     }
 
