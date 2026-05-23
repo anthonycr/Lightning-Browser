@@ -27,8 +27,10 @@ class DefaultBundleStore @Inject constructor(
     private val homePageInitializer: HomePageInitializer,
     private val downloadPageInitializer: DownloadPageInitializer,
     private val historyPageInitializer: HistoryPageInitializer,
-    private val bundleWriter: BundleWriter,
+    bundleWriterFactory: BundleWriter.Factory,
 ) : BundleStore {
+
+    private val bundleWriter = bundleWriterFactory.create(BUNDLE_STORAGE)
 
     override suspend fun save(tabs: List<TabModel>) {
         val outState = Bundle(ClassLoader.getSystemClassLoader())
@@ -45,11 +47,11 @@ class DefaultBundleStore @Inject constructor(
             }
         }
 
-        bundleWriter.writeToStorage(outState, BUNDLE_STORAGE)
+        bundleWriter.writeToStorage(outState)
     }
 
     override suspend fun retrieve(): List<TabInitializer> =
-        bundleWriter.readFromStorage(BUNDLE_STORAGE)?.let { bundle ->
+        bundleWriter.readFromStorage()?.let { bundle ->
             bundle.keySet()
                 .filter { it.startsWith(BUNDLE_KEY) }
                 .mapNotNull { bundleKey ->
@@ -78,7 +80,7 @@ class DefaultBundleStore @Inject constructor(
         } ?: emptyList()
 
     override suspend fun deleteAll() {
-        bundleWriter.deleteInStorage(BUNDLE_STORAGE)
+        bundleWriter.deleteInStorage()
     }
 
     private fun String.extractNumberFromEnd(): String {

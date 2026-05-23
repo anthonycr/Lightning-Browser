@@ -6,34 +6,38 @@ import acr.browser.lightning.utils.Utils
 import android.app.Application
 import android.os.Bundle
 import android.os.Parcel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import javax.inject.Inject
 
 /**
  * Reads and writes bundles to and from storage.
  */
-class BundleWriter @Inject constructor(
+class BundleWriter @AssistedInject constructor(
     private val application: Application,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val logger: Logger,
+    @Assisted private val bundleFileName: String
 ) {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(bundleFileName: String): BundleWriter
+    }
 
     /**
      * Writes a bundle to persistent storage in the files directory using the specified file name.
      *
      * @param bundle the bundle to store in persistent storage.
-     * @param name the name of the file to store the bundle in.
      */
-    suspend fun writeToStorage(
-        bundle: Bundle?,
-        name: String
-    ) = withContext(coroutineDispatchers.io) {
-        val outputFile = File(application.filesDir, name)
+    suspend fun writeToStorage(bundle: Bundle?) = withContext(coroutineDispatchers.io) {
+        val outputFile = File(application.filesDir, bundleFileName)
         var outputStream: FileOutputStream? = null
         try {
             outputStream = FileOutputStream(outputFile)
@@ -51,11 +55,9 @@ class BundleWriter @Inject constructor(
 
     /**
      * Use this method to delete the bundle with the specified name.
-     *
-     * @param name the name of the file.
      */
-    suspend fun deleteInStorage(name: String) = withContext(coroutineDispatchers.io) {
-        val outputFile = File(application.filesDir, name)
+    suspend fun deleteInStorage() = withContext(coroutineDispatchers.io) {
+        val outputFile = File(application.filesDir, bundleFileName)
         if (outputFile.exists()) {
             outputFile.delete()
         }
@@ -65,12 +67,11 @@ class BundleWriter @Inject constructor(
      * Reads a bundle from the file with the specified name in the persistent storage files
      * directory.
      *
-     * @param name the name of the file to read from.
      * @return a valid Bundle loaded using the system class loader or null if the method was unable
      * to read the Bundle from storage.
      */
-    suspend fun readFromStorage(name: String): Bundle? = withContext(coroutineDispatchers.io) {
-        val inputFile = File(application.filesDir, name)
+    suspend fun readFromStorage(): Bundle? = withContext(coroutineDispatchers.io) {
+        val inputFile = File(application.filesDir, bundleFileName)
         var inputStream: FileInputStream? = null
         try {
             inputStream = FileInputStream(inputFile)
