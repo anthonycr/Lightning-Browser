@@ -7,8 +7,6 @@ import android.webkit.CookieManager
 import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 object WebUtils {
     fun clearCookies() {
@@ -19,14 +17,11 @@ object WebUtils {
         WebStorage.getInstance().deleteAllData()
     }
 
-    fun clearHistory(
+    suspend fun clearHistory(
         context: Context,
-        historyRepository: HistoryRepository,
-        coroutineScope: CoroutineScope
+        historyRepository: HistoryRepository
     ) {
-        coroutineScope.launch {
-            historyRepository.deleteHistory()
-        }
+        historyRepository.deleteHistory()
         val webViewDatabase = WebViewDatabase.getInstance(context)
         webViewDatabase.clearFormData()
         webViewDatabase.clearHttpAuthUsernamePassword()

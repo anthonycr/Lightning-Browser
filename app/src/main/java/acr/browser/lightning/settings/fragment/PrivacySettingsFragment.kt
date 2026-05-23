@@ -100,8 +100,10 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
             title = R.string.title_clear_history,
             message = R.string.dialog_history,
             positiveButton = DialogItem(title = R.string.action_yes) {
-                clearHistory()
-                requireActivity().snackbar(R.string.message_clear_history)
+                appCoroutineScope.launch {
+                    clearHistory()
+                    requireActivity().snackbar(R.string.message_clear_history)
+                }
             },
             negativeButton = DialogItem(title = R.string.action_no) {},
             onCancel = {}
@@ -132,11 +134,11 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         requireActivity().snackbar(R.string.message_cache_cleared)
     }
 
-    private fun clearHistory() {
+    private suspend fun clearHistory() {
         val activity = activity
         if (activity != null) {
             // TODO: 6/9/17 clearHistory is not synchronous
-            WebUtils.clearHistory(activity, historyRepository, appCoroutineScope)
+            WebUtils.clearHistory(activity, historyRepository)
         } else {
             throw RuntimeException("Activity was null in clearHistory")
         }

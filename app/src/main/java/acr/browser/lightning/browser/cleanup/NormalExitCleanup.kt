@@ -5,7 +5,6 @@ import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.utils.WebUtils
 import android.app.Activity
-import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
 /**
@@ -16,7 +15,6 @@ class NormalExitCleanup @Inject constructor(
     private val logger: Logger,
     private val historyDatabase: HistoryDatabase,
     private val activity: Activity,
-    private val appCoroutineScope: CoroutineScope,
 ) : ExitCleanup {
     override suspend fun cleanUp() {
         if (userPreferencesDataStore.clearCacheExit.get()) {
@@ -24,7 +22,7 @@ class NormalExitCleanup @Inject constructor(
             logger.log(TAG, "Cache Cleared")
         }
         if (userPreferencesDataStore.clearHistoryExitEnabled.get()) {
-            WebUtils.clearHistory(activity, historyDatabase, appCoroutineScope)
+            WebUtils.clearHistory(activity, historyDatabase)
             logger.log(TAG, "History Cleared")
         }
         if (userPreferencesDataStore.clearCookiesExitEnabled.get()) {
