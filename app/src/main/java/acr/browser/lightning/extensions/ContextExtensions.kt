@@ -2,6 +2,7 @@
 
 package acr.browser.lightning.extensions
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.database.Cursor
 import android.graphics.drawable.Drawable
@@ -16,7 +17,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.annotation.WorkerThread
 import androidx.core.content.ContextCompat
-import io.reactivex.rxjava3.core.Maybe
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -88,14 +90,15 @@ fun Context.fileName(uri: Uri): String? {
  * Create an [OutputStream] from a [Uri]. If the [Uri] cannot be written to, this function emits a
  * completion signal.
  */
-fun Context?.fileOutputStream(uri: Uri): Maybe<OutputStream> = Maybe.create {
+@SuppressLint("Recycle")
+suspend fun Context?.fileOutputStream(
+    uri: Uri,
+    coroutineDispatcher: CoroutineDispatcher,
+): OutputStream? = withContext(coroutineDispatcher) {
     try {
-        val outputStream = this?.contentResolver?.openOutputStream(uri)
-            ?: return@create it.onComplete()
-
-        return@create it.onSuccess(outputStream)
+        this@fileOutputStream?.contentResolver?.openOutputStream(uri)
     } catch (exception: IOException) {
-        return@create it.onComplete()
+        null
     }
 }
 

@@ -7,7 +7,8 @@ import acr.browser.lightning.utils.Preconditions
 import acr.browser.lightning.utils.Utils
 import android.content.Context
 import android.util.Log
-import io.reactivex.rxjava3.core.Completable
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -19,11 +20,7 @@ import java.io.OutputStream
 import java.io.OutputStreamWriter
 
 /**
- * The class responsible for importing and exporting
- * bookmarks in the JSON format.
- * 
- * 
- * Created by anthonycr on 5/7/17.
+ * The class responsible for importing and exporting bookmarks in the JSON format.
  */
 object BookmarkExporter {
     private const val TAG = "BookmarkExporter"
@@ -40,7 +37,10 @@ object BookmarkExporter {
      * @param context the context necessary to open assets.
      * @return a non null list of the bookmarks stored in assets.
      */
-    fun importBookmarksFromAssets(context: Context): List<Bookmark.Entry> {
+    suspend fun importBookmarksFromAssets(
+        context: Context,
+        coroutineDispatcher: CoroutineDispatcher,
+    ): List<Bookmark.Entry> = withContext(coroutineDispatcher) {
         val bookmarks: MutableList<Bookmark.Entry> = mutableListOf()
         var bookmarksReader: BufferedReader? = null
         var inputStream: InputStream? = null
@@ -71,7 +71,7 @@ object BookmarkExporter {
             Utils.close(inputStream)
         }
 
-        return bookmarks
+        bookmarks
     }
 
     /**
@@ -83,28 +83,27 @@ object BookmarkExporter {
      * event when the export is complete, or an error
      * event if there is a problem.
      */
-    fun exportBookmarksToOutputStream(
+    suspend fun exportBookmarksToOutputStream(
         bookmarkList: List<Bookmark.Entry>,
-        outputStream: OutputStream
-    ): Completable {
-        return Completable.fromAction {
-            Preconditions.checkNonNull(bookmarkList)
-            var bookmarkWriter: BufferedWriter? = null
-            try {
-                bookmarkWriter = BufferedWriter(OutputStreamWriter(outputStream))
+        outputStream: OutputStream,
+        coroutineDispatcher: CoroutineDispatcher,
+    ): Unit = withContext(coroutineDispatcher) {
+        Preconditions.checkNonNull(bookmarkList)
+        var bookmarkWriter: BufferedWriter? = null
+        try {
+            bookmarkWriter = BufferedWriter(OutputStreamWriter(outputStream))
 
-                val jsonObject = JSONObject()
-                for ((url, title, position, folder) in bookmarkList) {
-                    jsonObject.put(KEY_TITLE, title)
-                    jsonObject.put(KEY_URL, url)
-                    jsonObject.put(KEY_FOLDER, folder.title)
-                    jsonObject.put(KEY_ORDER, position)
-                    bookmarkWriter.write(jsonObject.toString())
-                    bookmarkWriter.newLine()
-                }
-            } finally {
-                Utils.close(bookmarkWriter)
+            val jsonObject = JSONObject()
+            for ((url, title, position, folder) in bookmarkList) {
+                jsonObject.put(KEY_TITLE, title)
+                jsonObject.put(KEY_URL, url)
+                jsonObject.put(KEY_FOLDER, folder.title)
+                jsonObject.put(KEY_ORDER, position)
+                bookmarkWriter.write(jsonObject.toString())
+                bookmarkWriter.newLine()
             }
+        } finally {
+            Utils.close(bookmarkWriter)
         }
     }
 

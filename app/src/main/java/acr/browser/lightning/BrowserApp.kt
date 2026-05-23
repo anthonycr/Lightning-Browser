@@ -19,7 +19,6 @@ import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -106,9 +105,10 @@ class BrowserApp : Application() {
 
         appCoroutineScope.launch {
             if (bookmarkModel.count() == 0L) {
-                val assetsBookmarks = withContext(coroutineDispatchers.io) {
-                    BookmarkExporter.importBookmarksFromAssets(this@BrowserApp)
-                }
+                val assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(
+                    this@BrowserApp,
+                    coroutineDispatchers.io
+                )
                 bookmarkModel.addBookmarkList(assetsBookmarks)
             }
         }

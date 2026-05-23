@@ -27,8 +27,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.kotlin.subscribeBy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -47,9 +45,6 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     @Inject internal lateinit var appCoroutineScope: CoroutineScope
     @Inject internal lateinit var coroutineDispatchers: CoroutineDispatchers
 
-    private var importSubscription: Disposable? = null
-    private var exportDisposable: Disposable? = null
-
     override fun providePreferencesXmlResource() = R.xml.preference_bookmarks
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -64,22 +59,6 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
         )
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-        exportDisposable?.dispose()
-        importSubscription?.dispose()
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onDestroy() {
-        super.onDestroy()
-
-        exportDisposable?.dispose()
-        importSubscription?.dispose()
-    }
-
     private fun exportBookmarksToUri(uri: Uri) {
         appCoroutineScope.launch {
             val list = bookmarkRepository.getAllBookmarksSorted()
@@ -88,27 +67,22 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
             }
 
             val fileName = activity?.fileName(uri).orEmpty()
-            val outputStream =
-                activity?.fileOutputStream(uri) ?: return@launch showExportError()
-            exportDisposable?.dispose()
-            exportDisposable =
-                outputStream
-                    .flatMapCompletable {
-                        BookmarkExporter.exportBookmarksToOutputStream(list, it)
-                    }
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribeBy(
-                        onComplete = {
-                            activity?.apply {
-                                snackbar("${getString(R.string.bookmark_export_path)} $fileName")
-                            }
-                        },
-                        onError = { throwable ->
-                            logger.log(TAG, "onError: exporting bookmarks", throwable)
-                            showExportError()
-                        }
-                    )
+            val outputStream = activity?.fileOutputStream(uri, coroutineDispatchers.io)
+                ?: return@launch showExportError()
+
+            try {
+                BookmarkExporter.exportBookmarksToOutputStream(
+                    list,
+                    outputStream,
+                    coroutineDispatchers.io
+                )
+                activity?.apply {
+                    snackbar("${getString(R.string.bookmark_export_path)} $fileName")
+                }
+            } catch (ioException: IOException) {
+                logger.log(TAG, "onError: exporting bookmarks", ioException)
+                showExportError()
+            }
         }
     }
 
