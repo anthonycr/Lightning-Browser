@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser.download
 
 import acr.browser.lightning.R
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.dialog.BrowserDialog.setDialogSize
@@ -16,7 +17,6 @@ import android.webkit.URLUtil
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.permissionx.guolindev.PermissionX
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,7 +28,7 @@ class DownloadPermissionsHelper @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val logger: Logger,
     private val downloadsRepository: DownloadsRepository,
-    private val appCoroutineScope: CoroutineScope,
+    private val appCoroutineScope: AppCoroutineScope,
 ) {
 
     /**

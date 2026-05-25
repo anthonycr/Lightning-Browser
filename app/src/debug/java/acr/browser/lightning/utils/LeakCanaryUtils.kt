@@ -1,8 +1,8 @@
 package acr.browser.lightning.utils
 
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.preference.DeveloperPreferenceStore
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import leakcanary.LeakCanary
 import javax.inject.Inject
@@ -12,7 +12,7 @@ import javax.inject.Inject
  */
 class LeakCanaryUtils @Inject constructor(
     private val developerPreferenceStore: DeveloperPreferenceStore,
-    private val appCoroutineScope: CoroutineScope,
+    private val appCoroutineScope: AppCoroutineScope,
     private val coroutineDispatchers: CoroutineDispatchers,
 ) {
 

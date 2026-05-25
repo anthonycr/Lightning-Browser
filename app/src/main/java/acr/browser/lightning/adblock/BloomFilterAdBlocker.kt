@@ -10,6 +10,7 @@ import acr.browser.lightning.adblock.util.hash.MurmurHashHostAdapter
 import acr.browser.lightning.adblock.util.hash.MurmurHashStringAdapter
 import acr.browser.lightning.adblock.util.`object`.JvmObjectStore
 import acr.browser.lightning.adblock.util.`object`.ObjectStore
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.database.adblock.HostsPreferenceStore
@@ -18,7 +19,6 @@ import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.log.Logger
 import android.app.Application
 import androidx.core.net.toUri
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.buffer
@@ -46,7 +46,7 @@ class BloomFilterAdBlocker @Inject constructor(
     private val hostsRepository: HostsRepository,
     private val hostsPreferenceStore: HostsPreferenceStore,
     private val application: Application,
-    private val appCoroutineScope: CoroutineScope,
+    private val appCoroutineScope: AppCoroutineScope,
     private val coroutineDispatchers: CoroutineDispatchers,
 ) : AdBlocker {
 

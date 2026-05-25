@@ -1,11 +1,11 @@
 package acr.browser.lightning.adblock.allowlist
 
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.allowlist.AdBlockAllowListRepository
 import acr.browser.lightning.database.allowlist.AllowListEntry
 import acr.browser.lightning.log.Logger
 import androidx.core.net.toUri
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 class SessionAllowListModel @Inject constructor(
     private val adBlockAllowListModel: AdBlockAllowListRepository,
     private val logger: Logger,
-    private val appCoroutineScope: CoroutineScope,
+    private val appCoroutineScope: AppCoroutineScope,
     private val coroutineDispatchers: CoroutineDispatchers,
 ) : AllowListModel {
 

@@ -7,6 +7,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.bookmark.LegacyBookmarkImporter
 import acr.browser.lightning.bookmark.NetscapeBookmarkFormatImporter
 import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
@@ -24,7 +25,6 @@ import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -37,7 +37,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     @Inject internal lateinit var netscapeBookmarkFormatImporter: NetscapeBookmarkFormatImporter
     @Inject internal lateinit var legacyBookmarkImporter: LegacyBookmarkImporter
     @Inject internal lateinit var logger: Logger
-    @Inject internal lateinit var appCoroutineScope: CoroutineScope
+    @Inject internal lateinit var appCoroutineScope: AppCoroutineScope
     @Inject internal lateinit var coroutineDispatchers: CoroutineDispatchers
 
     override fun providePreferencesXmlResource() = R.xml.preference_bookmarks

@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.R
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
@@ -21,7 +22,6 @@ import dagger.Reusable
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -77,7 +77,7 @@ class HomePageInitializer @Inject constructor(
 @Reusable
 class StartPageInitializer @Inject constructor(
     homePageFactory: HomePageFactory,
-    appCoroutineScope: CoroutineScope,
+    appCoroutineScope: AppCoroutineScope,
     coroutineDispatchers: CoroutineDispatchers,
 ) : HtmlPageFactoryInitializer(homePageFactory, appCoroutineScope, coroutineDispatchers)
 
@@ -87,7 +87,7 @@ class StartPageInitializer @Inject constructor(
 @Reusable
 class BookmarkPageInitializer @Inject constructor(
     bookmarkPageFactory: BookmarkPageFactory,
-    appCoroutineScope: CoroutineScope,
+    appCoroutineScope: AppCoroutineScope,
     coroutineDispatchers: CoroutineDispatchers,
 ) : HtmlPageFactoryInitializer(bookmarkPageFactory, appCoroutineScope, coroutineDispatchers)
 
@@ -97,7 +97,7 @@ class BookmarkPageInitializer @Inject constructor(
 @Reusable
 class DownloadPageInitializer @Inject constructor(
     downloadPageFactory: DownloadPageFactory,
-    appCoroutineScope: CoroutineScope,
+    appCoroutineScope: AppCoroutineScope,
     coroutineDispatchers: CoroutineDispatchers,
 ) : HtmlPageFactoryInitializer(downloadPageFactory, appCoroutineScope, coroutineDispatchers)
 
@@ -107,7 +107,7 @@ class DownloadPageInitializer @Inject constructor(
 @Reusable
 class HistoryPageInitializer @Inject constructor(
     historyPageFactory: HistoryPageFactory,
-    appCoroutineScope: CoroutineScope,
+    appCoroutineScope: AppCoroutineScope,
     coroutineDispatchers: CoroutineDispatchers,
 ) : HtmlPageFactoryInitializer(historyPageFactory, appCoroutineScope, coroutineDispatchers)
 
@@ -116,7 +116,7 @@ class HistoryPageInitializer @Inject constructor(
  */
 abstract class HtmlPageFactoryInitializer(
     private val htmlPageFactory: HtmlPageFactory,
-    private val coroutineScope: CoroutineScope,
+    private val coroutineScope: AppCoroutineScope,
     private val coroutineDispatchers: CoroutineDispatchers
 ) : TabInitializer {
 

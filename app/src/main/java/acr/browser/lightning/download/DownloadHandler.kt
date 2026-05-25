@@ -6,6 +6,7 @@ package acr.browser.lightning.download
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.DefaultBrowserActivity
 import acr.browser.lightning.R
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.dialog.BrowserDialog.setDialogSize
@@ -28,7 +29,6 @@ import android.webkit.MimeTypeMap
 import android.webkit.URLUtil
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -43,7 +43,7 @@ class DownloadHandler @Inject constructor(
     private val downloadManager: DownloadManager,
     private val logger: Logger,
     private val coroutineDispatchers: CoroutineDispatchers,
-    private val appCoroutineScope: CoroutineScope,
+    private val appCoroutineScope: AppCoroutineScope,
 ) {
     /**
      * Notify the host application a download should be done, or that the data

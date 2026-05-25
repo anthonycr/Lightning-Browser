@@ -2,6 +2,7 @@ package acr.browser.lightning.search
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
@@ -19,7 +20,6 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Filter
 import android.widget.Filterable
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -46,7 +46,7 @@ class SuggestionsAdapter(
     @Inject internal lateinit var bookmarkRepository: BookmarkRepository
     @Inject internal lateinit var historyRepository: HistoryRepository
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
-    @Inject internal lateinit var appCoroutineScope: CoroutineScope
+    @Inject internal lateinit var appCoroutineScope: AppCoroutineScope
     @Inject internal lateinit var coroutineDispatchers: CoroutineDispatchers
 
     private var allBookmarks: List<Bookmark.Entry> = emptyList()
@@ -213,7 +213,7 @@ class SuggestionsAdapter(
 
     private class SearchFilter(
         private val suggestionsAdapter: SuggestionsAdapter,
-        private val appCoroutineScope: CoroutineScope,
+        private val appCoroutineScope: AppCoroutineScope,
     ) : Filter() {
 
         private val inputFlow = MutableSharedFlow<CharSequence>()

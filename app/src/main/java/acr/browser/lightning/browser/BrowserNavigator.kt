@@ -6,6 +6,7 @@ import acr.browser.lightning.browser.cleanup.ExitCleanup
 import acr.browser.lightning.browser.di.IncognitoMode
 import acr.browser.lightning.browser.download.DownloadPermissionsHelper
 import acr.browser.lightning.browser.download.PendingDownload
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.extensions.copyToClipboard
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.log.Logger
@@ -17,7 +18,6 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.graphics.Bitmap
 import androidx.fragment.app.FragmentActivity
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,7 +32,7 @@ class BrowserNavigator @Inject constructor(
     private val exitCleanup: ExitCleanup,
     @IncognitoMode private val incognitoMode: Boolean,
     private val activityManager: ActivityManager,
-    private val appCoroutineScope: CoroutineScope,
+    private val appCoroutineScope: AppCoroutineScope,
 ) : BrowserContract.Navigator {
 
     override fun openSettings() {

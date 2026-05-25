@@ -3,6 +3,7 @@ package acr.browser.lightning.preview
 import acr.browser.lightning.browser.di.Browser2Scope
 import acr.browser.lightning.browser.di.CacheDir
 import acr.browser.lightning.browser.di.IncognitoMode
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.ids.ViewIdGenerator
@@ -10,7 +11,6 @@ import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.graphics.Bitmap
 import androidx.annotation.WorkerThread
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -29,7 +29,7 @@ class PreviewModel @Inject constructor(
     @IncognitoMode private val incognitoMode: Boolean,
     @CacheDir private val cacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
     private val coroutineDispatchers: CoroutineDispatchers,
-    private val appCoroutineScope: CoroutineScope,
+    private val appCoroutineScope: AppCoroutineScope,
 ) {
 
     private val eventSharedFlow = MutableSharedFlow<Event>()

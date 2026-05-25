@@ -21,6 +21,7 @@ import acr.browser.lightning.browser.tab.UrlInitializer
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
 import acr.browser.lightning.browser.view.targetUrl.LongPress
+import acr.browser.lightning.concurrency.BrowserCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.concurrency.combine
 import acr.browser.lightning.database.Bookmark
@@ -87,7 +88,9 @@ class BrowserPresenter @Inject constructor(
     private val coroutineDispatchers: CoroutineDispatchers,
 ) {
 
-    private val browserCoroutineScope = CoroutineScope(coroutineDispatchers.main + SupervisorJob())
+    private val browserCoroutineScope = BrowserCoroutineScope(
+        CoroutineScope(coroutineDispatchers.main + SupervisorJob())
+    )
 
     private var view: BrowserContract.View? = null
     private var viewState: BrowserViewState = BrowserViewState(

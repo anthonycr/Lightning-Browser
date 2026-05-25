@@ -2,6 +2,7 @@ package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.tab.DefaultTabTitle
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatcherProvider
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.device.BuildInfo
@@ -131,7 +132,7 @@ class AppModule {
     @SuggestionsClient
     fun providesSuggestionsCoroutineHttpClient(
         application: Application,
-        appCoroutineScope: CoroutineScope,
+        appCoroutineScope: AppCoroutineScope,
         coroutineDispatchers: CoroutineDispatchers,
     ): Deferred<OkHttpClient> = appCoroutineScope.async(coroutineDispatchers.io) {
         val intervalDay = TimeUnit.DAYS.toSeconds(1)
@@ -148,7 +149,7 @@ class AppModule {
     @HostsClient
     fun providesHostsHttpClient(
         application: Application,
-        appCoroutineScope: CoroutineScope,
+        appCoroutineScope: AppCoroutineScope,
         coroutineDispatchers: CoroutineDispatchers,
     ): Deferred<OkHttpClient> = appCoroutineScope.async(coroutineDispatchers.io) {
         val intervalYear = TimeUnit.DAYS.toSeconds(365)
@@ -231,9 +232,8 @@ class AppModule {
     @Singleton
     @OptIn(DelicateCoroutinesApi::class)
     @Provides
-    fun providesAppCoroutineScope(
-        coroutineDispatchers: CoroutineDispatchers
-    ): CoroutineScope = CoroutineScope(coroutineDispatchers.main + SupervisorJob())
+    fun providesAppCoroutineScope(coroutineDispatchers: CoroutineDispatchers): AppCoroutineScope =
+        AppCoroutineScope(CoroutineScope(coroutineDispatchers.main + SupervisorJob()))
 
     @Singleton
     @Provides

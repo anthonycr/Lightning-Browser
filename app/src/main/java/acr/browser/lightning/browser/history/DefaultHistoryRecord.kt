@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.history
 
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.database.history.HistoryRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -10,7 +10,7 @@ import javax.inject.Inject
  */
 class DefaultHistoryRecord @Inject constructor(
     private val historyRepository: HistoryRepository,
-    private val appCoroutineScope: CoroutineScope,
+    private val appCoroutineScope: AppCoroutineScope,
 ) : HistoryRecord {
     override fun visit(title: String, url: String) {
         appCoroutineScope.launch {

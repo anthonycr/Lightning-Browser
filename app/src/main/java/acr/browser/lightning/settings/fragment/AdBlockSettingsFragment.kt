@@ -7,6 +7,7 @@ import acr.browser.lightning.adblock.source.HostsSourceType
 import acr.browser.lightning.adblock.source.selectedHostsSource
 import acr.browser.lightning.adblock.source.toPreferenceIndex
 import acr.browser.lightning.browser.di.injector
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
@@ -19,7 +20,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.preference.Preference
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -37,7 +37,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
     @Inject internal lateinit var bloomFilterAdBlocker: BloomFilterAdBlocker
-    @Inject internal lateinit var appCoroutineScope: CoroutineScope
+    @Inject internal lateinit var appCoroutineScope: AppCoroutineScope
     @Inject internal lateinit var coroutineDispatchers: CoroutineDispatchers
 
     private var recentSummaryUpdater: SummaryUpdater? = null

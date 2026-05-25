@@ -3,6 +3,7 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.tab.WebViewFactory
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
@@ -11,14 +12,13 @@ import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.preference.datastore.setUnsafe
 import acr.browser.lightning.utils.WebUtils
 import android.os.Bundle
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class PrivacySettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
-    @Inject internal lateinit var appCoroutineScope: CoroutineScope
+    @Inject internal lateinit var appCoroutineScope: AppCoroutineScope
     @Inject internal lateinit var webUtils: WebUtils
 
     override fun providePreferencesXmlResource() = R.xml.preference_privacy
