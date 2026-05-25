@@ -1,7 +1,6 @@
 package acr.browser.lightning.browser.data
 
 import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.preference.datastore.getUnsafe
 import android.webkit.CookieManager
 import javax.inject.Inject
 
@@ -11,7 +10,7 @@ import javax.inject.Inject
 class DefaultCookieAdministrator @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore
 ) : CookieAdministrator {
-    override fun adjustCookieSettings() {
-        CookieManager.getInstance().setAcceptCookie(userPreferencesDataStore.cookiesEnabled.getUnsafe())
+    override suspend fun adjustCookieSettings() {
+        CookieManager.getInstance().setAcceptCookie(userPreferencesDataStore.cookiesEnabled.get())
     }
 }

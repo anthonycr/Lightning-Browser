@@ -127,10 +127,10 @@ class BrowserPresenter @Inject constructor(
         this.view = view
         view.updateState(viewState)
 
-        cookieAdministrator.adjustCookieSettings()
-
         currentFolder = Bookmark.Folder.Root
         browserCoroutineScope.launch {
+            cookieAdministrator.adjustCookieSettings()
+
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
             view.updateState(viewState.copy(bookmarks = bookmarks, isRootFolder = true))
 

@@ -8,6 +8,6 @@ interface CookieAdministrator {
     /**
      * Adjust the cookie setting based on the current preferences.
      */
-    fun adjustCookieSettings()
+    suspend fun adjustCookieSettings()
 
 }
