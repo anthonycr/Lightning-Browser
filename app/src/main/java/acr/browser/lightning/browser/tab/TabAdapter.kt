@@ -151,7 +151,9 @@ class TabAdapter @AssistedInject constructor(
     }
 
     override fun loadFromInitializer(tabInitializer: TabInitializer) {
-        tabInitializer.initialize(webView, requestHeaders)
+        tabCoroutineScope.launch {
+            tabInitializer.initialize(webView, requestHeaders)
+        }
     }
 
     override fun goBack() {

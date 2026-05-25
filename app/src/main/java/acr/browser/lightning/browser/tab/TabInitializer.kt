@@ -1,8 +1,6 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.R
-import acr.browser.lightning.concurrency.AppCoroutineScope
-import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.extensions.resizeAndShow
@@ -12,7 +10,6 @@ import acr.browser.lightning.html.download.DownloadPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.preference.datastore.getUnsafe
 import android.app.Activity
 import android.os.Bundle
 import android.os.Message
@@ -22,8 +19,9 @@ import dagger.Reusable
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 /**
  * An initializer that is run on a [WebView] after it is created.
@@ -34,7 +32,7 @@ interface TabInitializer {
      * Initialize the [WebView] instance held by the tab. If a url is loaded, the
      * provided [headers] should be used to load the url.
      */
-    fun initialize(webView: WebView, headers: Map<String, String>)
+    suspend fun initialize(webView: WebView, headers: Map<String, String>)
 
 }
 
@@ -43,7 +41,7 @@ interface TabInitializer {
  */
 class UrlInitializer(private val url: String) : TabInitializer {
 
-    override fun initialize(webView: WebView, headers: Map<String, String>) {
+    override suspend fun initialize(webView: WebView, headers: Map<String, String>) {
         webView.loadUrl(url, headers)
     }
 
@@ -59,8 +57,8 @@ class HomePageInitializer @Inject constructor(
     private val bookmarkPageInitializer: BookmarkPageInitializer
 ) : TabInitializer {
 
-    override fun initialize(webView: WebView, headers: Map<String, String>) {
-        val homepage = userPreferencesDataStore.homepage.getUnsafe()
+    override suspend fun initialize(webView: WebView, headers: Map<String, String>) {
+        val homepage = userPreferencesDataStore.homepage.get()
 
         when (homepage) {
             SCHEME_HOMEPAGE -> startPageInitializer
@@ -76,55 +74,46 @@ class HomePageInitializer @Inject constructor(
  */
 @Reusable
 class StartPageInitializer @Inject constructor(
-    homePageFactory: HomePageFactory,
-    appCoroutineScope: AppCoroutineScope,
-    coroutineDispatchers: CoroutineDispatchers,
-) : HtmlPageFactoryInitializer(homePageFactory, appCoroutineScope, coroutineDispatchers)
+    homePageFactory: HomePageFactory
+) : HtmlPageFactoryInitializer(homePageFactory)
 
 /**
  * An initializer that displays the bookmark page.
  */
 @Reusable
 class BookmarkPageInitializer @Inject constructor(
-    bookmarkPageFactory: BookmarkPageFactory,
-    appCoroutineScope: AppCoroutineScope,
-    coroutineDispatchers: CoroutineDispatchers,
-) : HtmlPageFactoryInitializer(bookmarkPageFactory, appCoroutineScope, coroutineDispatchers)
+    bookmarkPageFactory: BookmarkPageFactory
+) : HtmlPageFactoryInitializer(bookmarkPageFactory)
 
 /**
  * An initializer that displays the download page.
  */
 @Reusable
 class DownloadPageInitializer @Inject constructor(
-    downloadPageFactory: DownloadPageFactory,
-    appCoroutineScope: AppCoroutineScope,
-    coroutineDispatchers: CoroutineDispatchers,
-) : HtmlPageFactoryInitializer(downloadPageFactory, appCoroutineScope, coroutineDispatchers)
+    downloadPageFactory: DownloadPageFactory
+) : HtmlPageFactoryInitializer(downloadPageFactory)
 
 /**
  * An initializer that displays the history page.
  */
 @Reusable
 class HistoryPageInitializer @Inject constructor(
-    historyPageFactory: HistoryPageFactory,
-    appCoroutineScope: AppCoroutineScope,
-    coroutineDispatchers: CoroutineDispatchers,
-) : HtmlPageFactoryInitializer(historyPageFactory, appCoroutineScope, coroutineDispatchers)
+    historyPageFactory: HistoryPageFactory
+) : HtmlPageFactoryInitializer(historyPageFactory)
 
 /**
  * An initializer that loads the url built by the [HtmlPageFactory].
  */
 abstract class HtmlPageFactoryInitializer(
-    private val htmlPageFactory: HtmlPageFactory,
-    private val coroutineScope: AppCoroutineScope,
-    private val coroutineDispatchers: CoroutineDispatchers
+    private val htmlPageFactory: HtmlPageFactory
 ) : TabInitializer {
 
-    override fun initialize(webView: WebView, headers: Map<String, String>) {
-        coroutineScope.launch(coroutineDispatchers.main) {
-            val page = htmlPageFactory.buildPage()
-            webView.loadUrl(page, headers)
-        }
+    override suspend fun initialize(
+        webView: WebView,
+        headers: Map<String, String>
+    ) {
+        val page = htmlPageFactory.buildPage()
+        webView.loadUrl(page, headers)
     }
 
 }
@@ -135,7 +124,7 @@ abstract class HtmlPageFactoryInitializer(
  */
 class ResultMessageInitializer(private val resultMessage: Message) : TabInitializer {
 
-    override fun initialize(webView: WebView, headers: Map<String, String>) {
+    override suspend fun initialize(webView: WebView, headers: Map<String, String>) {
         resultMessage.apply {
             (obj as WebView.WebViewTransport).webView = webView
         }.sendToTarget()
@@ -148,7 +137,7 @@ class ResultMessageInitializer(private val resultMessage: Message) : TabInitiali
  */
 open class BundleInitializer(private val bundle: Bundle) : TabInitializer {
 
-    override fun initialize(webView: WebView, headers: Map<String, String>) {
+    override suspend fun initialize(webView: WebView, headers: Map<String, String>) {
         webView.restoreState(bundle)
     }
 
@@ -169,7 +158,7 @@ class FreezableBundleInitializer(
  */
 class NoOpInitializer : TabInitializer {
 
-    override fun initialize(webView: WebView, headers: Map<String, String>) = Unit
+    override suspend fun initialize(webView: WebView, headers: Map<String, String>) = Unit
 
 }
 
@@ -184,17 +173,30 @@ class PermissionInitializer @AssistedInject constructor(
     private val homePageInitializer: HomePageInitializer
 ) : TabInitializer {
 
-    override fun initialize(webView: WebView, headers: Map<String, String>) {
+    override suspend fun initialize(webView: WebView, headers: Map<String, String>) {
+        val dialogChoice = showDialog()
+        when (dialogChoice) {
+            DialogChoice.DISMISS -> homePageInitializer.initialize(webView, headers)
+            DialogChoice.OPEN -> UrlInitializer(url).initialize(webView, headers)
+        }
+    }
+
+    private enum class DialogChoice {
+        DISMISS,
+        OPEN
+    }
+
+    private suspend fun showDialog(): DialogChoice = suspendCancellableCoroutine { continuation ->
         AlertDialog.Builder(activity).apply {
             setTitle(R.string.title_warning)
             setMessage(R.string.message_blocked_local)
             setCancelable(false)
             setOnDismissListener {
-                homePageInitializer.initialize(webView, headers)
+                continuation.resume(DialogChoice.DISMISS)
             }
             setNegativeButton(android.R.string.cancel, null)
             setPositiveButton(R.string.action_open) { _, _ ->
-                UrlInitializer(url).initialize(webView, headers)
+                continuation.resume(DialogChoice.OPEN)
             }
         }.resizeAndShow()
     }

@@ -2,6 +2,7 @@ package acr.browser.lightning.adblock.allowlist
 
 import acr.browser.lightning.SDK_VERSION
 import acr.browser.lightning.TestApplication
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.FakeCoroutineDispatchers
 import acr.browser.lightning.database.allowlist.AllowListEntry
 import acr.browser.lightning.log.NoOpLogger
@@ -30,7 +31,7 @@ class SessionAllowListModelTest {
         val sessionAllowListModel = SessionAllowListModel(
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
-            appCoroutineScope = this,
+            appCoroutineScope = AppCoroutineScope(this),
             coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
@@ -46,7 +47,7 @@ class SessionAllowListModelTest {
         val sessionAllowListModel = SessionAllowListModel(
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
-            appCoroutineScope = this,
+            appCoroutineScope = AppCoroutineScope(this),
             coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
@@ -65,7 +66,7 @@ class SessionAllowListModelTest {
         val sessionAllowListModel = SessionAllowListModel(
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
-            appCoroutineScope = this,
+            appCoroutineScope = AppCoroutineScope(this),
             coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
@@ -83,7 +84,7 @@ class SessionAllowListModelTest {
         val oldAllowListModel = SessionAllowListModel(
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
-            appCoroutineScope = this,
+            appCoroutineScope = AppCoroutineScope(this),
             coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
@@ -96,7 +97,7 @@ class SessionAllowListModelTest {
         val newAllowListModel = SessionAllowListModel(
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
-            appCoroutineScope = this,
+            appCoroutineScope = AppCoroutineScope(this),
             coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
@@ -111,7 +112,7 @@ class SessionAllowListModelTest {
         val oldAllowListModel = SessionAllowListModel(
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
-            appCoroutineScope = this,
+            appCoroutineScope = AppCoroutineScope(this),
             coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
@@ -124,7 +125,7 @@ class SessionAllowListModelTest {
         val newAllowListModel = SessionAllowListModel(
             adBlockAllowListModel = adBlockAllowListModel,
             logger = NoOpLogger(),
-            appCoroutineScope = this,
+            appCoroutineScope = AppCoroutineScope(this),
             coroutineDispatchers = FakeCoroutineDispatchers(testScheduler)
         )
 
