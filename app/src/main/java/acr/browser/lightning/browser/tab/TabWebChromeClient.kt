@@ -3,14 +3,13 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.webrtc.WebRtcPermissionsModel
 import acr.browser.lightning.browser.webrtc.WebRtcPermissionsView
+import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.preference.datastore.getUnsafe
-import acr.browser.lightning.utils.Option
 import acr.browser.lightning.utils.Utils
 import android.Manifest
 import android.content.Intent
@@ -29,22 +28,28 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import androidx.palette.graphics.Palette
 import com.permissionx.guolindev.PermissionX
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
-import kotlinx.coroutines.CoroutineScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * A [WebChromeClient] that supports the tab adaptation.
  */
-class TabWebChromeClient @Inject constructor(
+class TabWebChromeClient @AssistedInject constructor(
     private val activity: FragmentActivity,
     private val faviconModel: FaviconModel,
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val webRtcPermissionsModel: WebRtcPermissionsModel,
-    private val appCoroutineScope: CoroutineScope,
+    @Assisted private val tabCoroutineScope: TabCoroutineScope,
 ) : WebChromeClient(), WebRtcPermissionsView {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(tabCoroutineScope: TabCoroutineScope): TabWebChromeClient
+    }
 
     private val defaultColor = activity.color(R.color.primary_color)
     private val geoLocationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -52,47 +57,47 @@ class TabWebChromeClient @Inject constructor(
     /**
      * Emits changes to the page loading progress.
      */
-    val progressObservable: PublishSubject<Int> = PublishSubject.create()
+    val progressSharedFlow: MutableSharedFlow<Int> = MutableSharedFlow()
 
     /**
      * Emits changes to the page title.
      */
-    val titleObservable: PublishSubject<String> = PublishSubject.create()
+    val titleShareFlow: MutableSharedFlow<String> = MutableSharedFlow()
 
     /**
      * Emits changes to the page favicon. Always emits the last emitted favicon.
      */
-    val faviconObservable: BehaviorSubject<Option<Bitmap>> = BehaviorSubject.create()
+    val faviconStateFlow: MutableStateFlow<Bitmap?> = MutableStateFlow(null)
 
     /**
      * Emits create window requests.
      */
-    val createWindowObservable: PublishSubject<TabInitializer> = PublishSubject.create()
+    val createWindowSharedFlow: MutableSharedFlow<TabInitializer> = MutableSharedFlow()
 
     /**
      * Emits close window requests.
      */
-    val closeWindowObservable: PublishSubject<Unit> = PublishSubject.create()
+    val closeWindowSharedFlow: MutableSharedFlow<Unit> = MutableSharedFlow()
 
     /**
      * Emits changes to the thematic color of the current page.
      */
-    val colorChangeObservable: BehaviorSubject<Int> = BehaviorSubject.createDefault(defaultColor)
+    val colorChangeStateFlow: MutableStateFlow<Int> = MutableStateFlow(defaultColor)
 
     /**
      * Emits requests to open the file chooser for upload.
      */
-    val fileChooserObservable: PublishSubject<Intent> = PublishSubject.create()
+    val fileChooserSharedFlow: MutableSharedFlow<Intent> = MutableSharedFlow()
 
     /**
      * Emits requests to show a custom view (i.e. full screen video).
      */
-    val showCustomViewObservable: PublishSubject<View> = PublishSubject.create()
+    val showCustomViewSharedFlow: MutableSharedFlow<View> = MutableSharedFlow()
 
     /**
      * Emits requests to hide the custom view that was shown prior.
      */
-    val hideCustomViewObservable: PublishSubject<Unit> = PublishSubject.create()
+    val hideCustomViewObservable: MutableSharedFlow<Unit> = MutableSharedFlow()
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
     private var customViewCallback: CustomViewCallback? = null
@@ -124,36 +129,46 @@ class TabWebChromeClient @Inject constructor(
         isUserGesture: Boolean,
         resultMsg: Message
     ): Boolean {
-        createWindowObservable.onNext(ResultMessageInitializer(resultMsg))
+        tabCoroutineScope.launch {
+            createWindowSharedFlow.emit(ResultMessageInitializer(resultMsg))
+        }
         return true
     }
 
     override fun onCloseWindow(window: WebView) {
-        closeWindowObservable.onNext(Unit)
+        tabCoroutineScope.launch {
+            closeWindowSharedFlow.emit(Unit)
+        }
     }
 
     override fun onProgressChanged(view: WebView, newProgress: Int) {
-        progressObservable.onNext(newProgress)
+        tabCoroutineScope.launch {
+            progressSharedFlow.emit(newProgress)
+        }
     }
 
     override fun onReceivedTitle(view: WebView, title: String) {
-        titleObservable.onNext(title)
-        faviconObservable.onNext(Option.None)
-        generateColorAndPropagate(null)
+        tabCoroutineScope.launch {
+            titleShareFlow.emit(title)
+            faviconStateFlow.emit(null)
+            generateColorAndPropagate(null)
+        }
     }
 
     override fun onReceivedIcon(view: WebView, icon: Bitmap) {
-        faviconObservable.onNext(Option.Some(icon))
-        val url = view.url ?: return
-        appCoroutineScope.launch {
-            faviconModel.cacheFaviconForUrl(icon, url)
+        tabCoroutineScope.launch {
+            faviconStateFlow.emit(icon)
+            val url = view.url ?: return@launch
+            tabCoroutineScope.launch {
+                faviconModel.cacheFaviconForUrl(icon, url)
+            }
+            generateColorAndPropagate(icon)
         }
-        generateColorAndPropagate(icon)
     }
 
-    private fun generateColorAndPropagate(favicon: Bitmap?) {
+    private suspend fun generateColorAndPropagate(favicon: Bitmap?) {
         val icon = favicon ?: return run {
-            colorChangeObservable.onNext(defaultColor)
+            colorChangeStateFlow.emit(defaultColor)
         }
         Palette.from(icon).generate { palette ->
             // OR with opaque black to remove transparency glitches
@@ -165,7 +180,9 @@ class TabWebChromeClient @Inject constructor(
             } else {
                 color
             }
-            colorChangeObservable.onNext(finalColor)
+            tabCoroutineScope.launch {
+                colorChangeStateFlow.emit(finalColor)
+            }
         }
     }
 
@@ -179,17 +196,23 @@ class TabWebChromeClient @Inject constructor(
         this.filePathCallback = null
 
         this.filePathCallback = filePathCallback
-        fileChooserParams.createIntent().let(fileChooserObservable::onNext)
+        tabCoroutineScope.launch {
+            fileChooserSharedFlow.emit(fileChooserParams.createIntent())
+        }
         return true
     }
 
     override fun onShowCustomView(view: View, callback: CustomViewCallback) {
         customViewCallback = callback
-        showCustomViewObservable.onNext(view)
+        tabCoroutineScope.launch {
+            showCustomViewSharedFlow.emit(view)
+        }
     }
 
     override fun onHideCustomView() {
-        hideCustomViewObservable.onNext(Unit)
+        tabCoroutineScope.launch {
+            hideCustomViewObservable.emit(Unit)
+        }
         customViewCallback = null
     }
 
@@ -231,10 +254,12 @@ class TabWebChromeClient @Inject constructor(
     }
 
     override fun onPermissionRequest(request: PermissionRequest) {
-        if (userPreferencesDataStore.webRtcEnabled.getUnsafe()) {
-            webRtcPermissionsModel.requestPermission(request, this)
-        } else {
-            request.deny()
+        tabCoroutineScope.launch {
+            if (userPreferencesDataStore.webRtcEnabled.get()) {
+                webRtcPermissionsModel.requestPermission(request, this@TabWebChromeClient)
+            } else {
+                request.deny()
+            }
         }
     }
 

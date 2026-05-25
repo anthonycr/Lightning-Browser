@@ -3,14 +3,13 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
-import acr.browser.lightning.utils.Option
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.annotation.ColorInt
-import io.reactivex.rxjava3.core.Observable
+import kotlinx.coroutines.flow.Flow
 
 /**
  * The representation of a browser tab.
@@ -52,7 +51,7 @@ interface TabModel {
     /**
      * Emits changes to the [canGoBack] status.
      */
-    fun canGoBackChanges(): Observable<Boolean>
+    fun canGoBackChanges(): Flow<Boolean>
 
     /**
      * Go forward in the navigation tree.
@@ -67,7 +66,7 @@ interface TabModel {
     /**
      * Emits changes to the [canGoForward] status.
      */
-    fun canGoForwardChanges(): Observable<Boolean>
+    fun canGoForwardChanges(): Flow<Boolean>
 
     /**
      * Toggle the user agent used by the browser to a desktop one or back to the default one.
@@ -119,7 +118,7 @@ interface TabModel {
     /**
      * Emits changes to the [favicon].
      */
-    fun faviconChanges(): Observable<Option<Bitmap>>
+    fun faviconChanges(): Flow<Bitmap?>
 
     /**
      * A preview of the tab's content.
@@ -129,7 +128,7 @@ interface TabModel {
     /**
      * Emits changes to the [preview].
      */
-    fun previewChanges(): Observable<Pair<String?, Long>>
+    fun previewChanges(): Flow<Pair<String?, Long>>
 
     /**
      * The thematic color of the current webpage.
@@ -140,7 +139,7 @@ interface TabModel {
     /**
      * Emits changes to the [themeColor].
      */
-    fun themeColorChanges(): Observable<Int>
+    fun themeColorChanges(): Flow<Int>
 
     /**
      * The URL of the currently displayed webpage.
@@ -150,7 +149,7 @@ interface TabModel {
     /**
      * Emits changes to the [url].
      */
-    fun urlChanges(): Observable<String>
+    fun urlChanges(): Flow<String>
 
     /**
      * The title of the current webpage.
@@ -160,7 +159,7 @@ interface TabModel {
     /**
      * Emits changes to the [title].
      */
-    fun titleChanges(): Observable<String>
+    fun titleChanges(): Flow<String>
 
     /**
      * The current SSL certificate information about the webpage.
@@ -175,7 +174,7 @@ interface TabModel {
     /**
      * Emits changes to [sslState].
      */
-    fun sslChanges(): Observable<SslState>
+    fun sslChanges(): Flow<SslState>
 
     /**
      * The loading progress for the current webpage on a scale of 0-100. If the page is completely
@@ -186,7 +185,7 @@ interface TabModel {
     /**
      * Emits changes to [sslState].
      */
-    fun loadingProgress(): Observable<Int>
+    fun loadingProgress(): Flow<Int>
 
     // Lifecycle
 
@@ -194,12 +193,12 @@ interface TabModel {
      * Emits requests to download a file represented by [PendingDownload] that are triggered by the
      * browser.
      */
-    fun downloadRequests(): Observable<PendingDownload>
+    fun downloadRequests(): Flow<PendingDownload>
 
     /**
      * Emits requests to open the file chooser that are triggered by the browser.
      */
-    fun fileChooserRequests(): Observable<Intent>
+    fun fileChooserRequests(): Flow<Intent>
 
     /**
      * Handle a resulting file to upload after selecting a file from the file chooser.
@@ -210,13 +209,13 @@ interface TabModel {
      * Emits requests by the browser to display a custom view (i.e. full screen video) over the
      * regular webpage content.
      */
-    fun showCustomViewRequests(): Observable<View>
+    fun showCustomViewRequests(): Flow<View>
 
     /**
      * Emits requests by the browser to hide the custom view it previously requested to display via
      * [showCustomViewRequests].
      */
-    fun hideCustomViewRequests(): Observable<Unit>
+    fun hideCustomViewRequests(): Flow<Unit>
 
     /**
      * Notify the browser that we are manually hiding the custom view requested to be shown by
@@ -228,22 +227,23 @@ interface TabModel {
      * Emits requests by the browser to automatically open a new tab and load the URL provided by
      * the [TabInitializer].
      */
-    fun createWindowRequests(): Observable<TabInitializer>
+    fun createWindowRequests(): Flow<TabInitializer>
 
     /**
      * Emits requests by the browser to automatically close the current tab.
      */
-    fun closeWindowRequests(): Observable<Unit>
+    fun closeWindowRequests(): Flow<Unit>
+
+    /**
+     * Emits requests to focus the tab.
+     */
+    fun focusRequests(): Flow<Unit>
 
     /**
      * True if the tab is in the foreground, false if it is in the background. Used to prevent
      * background tabs from consuming disproportionate amounts of resources when they are unused.
      */
     var isForeground: Boolean
-
-    val hasFocus: Boolean
-
-    fun hasFocusChanges(): Observable<Boolean>
 
     /**
      * Teardown the current tab and release held resources.

@@ -3,9 +3,7 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.data.CookieAdministrator
 import acr.browser.lightning.browser.di.Browser2Scope
-import acr.browser.lightning.browser.di.DiskScheduler
 import acr.browser.lightning.browser.di.IncognitoMode
-import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.history.HistoryRecord
 import acr.browser.lightning.browser.keys.KeyCombo
@@ -24,6 +22,7 @@ import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.concurrency.CoroutineDispatchers
+import acr.browser.lightning.concurrency.combine
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
@@ -44,22 +43,18 @@ import acr.browser.lightning.utils.isDownloadsUrl
 import acr.browser.lightning.utils.isHistoryUrl
 import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.smartUrlFilter
-import acr.browser.lightning.utils.value
 import androidx.activity.result.ActivityResult
 import androidx.core.net.toUri
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.Observables
-import io.reactivex.rxjava3.kotlin.plusAssign
-import io.reactivex.rxjava3.kotlin.subscribeBy
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -76,8 +71,6 @@ class BrowserPresenter @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val downloadsRepository: DownloadsRepository,
     private val historyRepository: HistoryRepository,
-    @DiskScheduler private val diskScheduler: Scheduler,
-    @MainScheduler private val mainScheduler: Scheduler,
     private val historyRecord: HistoryRecord,
     private val bookmarkPageFactory: BookmarkPageFactory,
     private val homePageInitializer: HomePageInitializer,
@@ -91,7 +84,7 @@ class BrowserPresenter @Inject constructor(
     private val cookieAdministrator: CookieAdministrator,
     private val tabCountNotifier: TabCountNotifier,
     @IncognitoMode private val incognitoMode: Boolean,
-    coroutineDispatchers: CoroutineDispatchers,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) {
 
     private val browserCoroutineScope = CoroutineScope(coroutineDispatchers.main + SupervisorJob())
@@ -121,9 +114,8 @@ class BrowserPresenter @Inject constructor(
     private var pendingAction: BrowserContract.Action.LoadUrl? = null
     private var isCustomViewShowing = false
 
-    private val compositeDisposable = CompositeDisposable()
-    private val allTabsDisposable = CompositeDisposable()
-    private var tabDisposable: CompositeDisposable = CompositeDisposable()
+    private val tabJobs: MutableList<Job> = mutableListOf()
+    private val allTabsJobs: MutableList<Job> = mutableListOf()
 
     /**
      * Call when the view is attached to the presenter.
@@ -152,8 +144,9 @@ class BrowserPresenter @Inject constructor(
             model.tabsListChanges().collectLatest { list ->
                 this@BrowserPresenter.view?.updateTabs(list.map { it.asViewState() })
 
-                allTabsDisposable.clear()
-                list.subscribeToUpdates(allTabsDisposable)
+                allTabsJobs.forEach { it.cancel() }
+                allTabsJobs.clear()
+                list.subscribeToUpdates(allTabsJobs)
 
                 tabCountNotifier.notifyTabCountChange(list.size)
             }
@@ -166,8 +159,8 @@ class BrowserPresenter @Inject constructor(
     fun onViewDetached() {
         view = null
 
-        compositeDisposable.dispose()
-        tabDisposable.dispose()
+        tabJobs.forEach { it.cancel() }
+        allTabsJobs.forEach { it.cancel() }
         browserCoroutineScope.cancel()
     }
 
@@ -237,113 +230,124 @@ class BrowserPresenter @Inject constructor(
 
         view.updateTabs(tabListState.map { it.copy(isSelected = it.id == tab.id) })
 
-        tabDisposable.dispose()
-        tabDisposable = CompositeDisposable()
-        tabDisposable += Observable.combineLatest(
-            tab.sslChanges().startWithItem(tab.sslState),
-            tab.titleChanges().startWithItem(tab.title),
-            tab.urlChanges().startWithItem(tab.url),
-            tab.loadingProgress().startWithItem(tab.loadingProgress),
-            tab.canGoBackChanges().startWithItem(tab.canGoBack()),
-            tab.canGoForwardChanges().startWithItem(tab.canGoForward()),
-            tab.urlChanges().startWithItem(tab.url).observeOn(diskScheduler)
-                .flatMapSingle {
-                    Single.just(runBlocking { bookmarkRepository.isBookmark(it) })
-                }.observeOn(mainScheduler),
-            tab.urlChanges().startWithItem(tab.url).map(String::isSpecialUrl),
-            tab.themeColorChanges().startWithItem(tab.themeColor)
-        ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl, themeColor ->
-            viewState.copy(
-                displayUrl = searchBoxModel.getDisplayContent(
-                    url = url,
-                    title = title,
-                    isLoading = progress < 100
-                ).takeIf { !isSearchViewFocused } ?: viewState.displayUrl,
-                enableFullMenu = !url.isSpecialUrl(),
-                themeColor = Option.Some(themeColor),
-                isRefresh = (progress == 100).takeIf { !isSearchViewFocused }
-                    ?: viewState.isRefresh,
-                isForwardEnabled = canGoForward,
-                isBackEnabled = canGoBack,
-                sslState = sslState.takeIf { !isSearchViewFocused } ?: viewState.sslState,
-                progress = progress,
-                isBookmarked = isBookmark,
-                isBookmarkEnabled = !isSpecialUrl,
-                findInPage = tab.findQuery.orEmpty()
-            )
-        }.observeOn(mainScheduler)
-            .subscribe { view.updateState(it) }
+        tabJobs.forEach { it.cancel() }
+        tabJobs.clear()
 
-        tabDisposable += tab.downloadRequests()
-            .subscribeOn(mainScheduler)
-            .subscribeBy(onNext = navigator::download)
-
-        tabDisposable += tab.urlChanges()
-            .distinctUntilChanged()
-            .subscribeOn(mainScheduler)
-            .subscribeBy { url ->
-                url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {
-                    historyRecord.visit(tab.title, it)
-                }
-                view?.showToolbar()
+        tabJobs += browserCoroutineScope.launch {
+            combine(
+                tab.sslChanges().onStart { emit(tab.sslState) },
+                tab.titleChanges().onStart { emit(tab.title) },
+                tab.urlChanges().onStart { emit(tab.url) },
+                tab.loadingProgress().onStart { emit(tab.loadingProgress) },
+                tab.canGoBackChanges().onStart { emit(tab.canGoBack()) },
+                tab.canGoForwardChanges().onStart { emit(tab.canGoForward()) },
+                tab.urlChanges().onStart { emit(tab.url) }
+                    .map { bookmarkRepository.isBookmark(it) },
+                tab.urlChanges().onStart { emit(tab.url) }.map(String::isSpecialUrl),
+                tab.themeColorChanges().onStart { emit(tab.themeColor) }
+            ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl, themeColor ->
+                viewState.copy(
+                    displayUrl = searchBoxModel.getDisplayContent(
+                        url = url,
+                        title = title,
+                        isLoading = progress < 100
+                    ).takeIf { !isSearchViewFocused } ?: viewState.displayUrl,
+                    enableFullMenu = !url.isSpecialUrl(),
+                    themeColor = Option.Some(themeColor),
+                    isRefresh = (progress == 100).takeIf { !isSearchViewFocused }
+                        ?: viewState.isRefresh,
+                    isForwardEnabled = canGoForward,
+                    isBackEnabled = canGoBack,
+                    sslState = sslState.takeIf { !isSearchViewFocused } ?: viewState.sslState,
+                    progress = progress,
+                    isBookmarked = isBookmark,
+                    isBookmarkEnabled = !isSpecialUrl,
+                    findInPage = tab.findQuery.orEmpty()
+                )
+            }.flowOn(coroutineDispatchers.main).collectLatest {
+                view.updateState(it)
             }
+        }
 
-        tabDisposable += tab.createWindowRequests()
-            .subscribeOn(mainScheduler)
-            .subscribeBy {
+
+        tabJobs += browserCoroutineScope.launch {
+            tab.downloadRequests().collectLatest {
+                navigator.download(it)
+            }
+        }
+
+        tabJobs += browserCoroutineScope.launch {
+            tab.urlChanges()
+                .distinctUntilChanged()
+                .collectLatest { url ->
+                    url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {
+                        historyRecord.visit(tab.title, it)
+                    }
+                    view?.showToolbar()
+                }
+        }
+
+        tabJobs += browserCoroutineScope.launch {
+            tab.createWindowRequests().collectLatest {
                 createNewTabAndSelect(
                     tabInitializer = it,
                     shouldSelect = true,
                     tabType = TabModel.Type.POP_UP
                 )
             }
+        }
 
-        tabDisposable += tab.closeWindowRequests()
-            .subscribeOn(mainScheduler)
-            .subscribeBy { onTabClose(tabListState.indexOfCurrentTab()) }
+        tabJobs += browserCoroutineScope.launch {
+            tab.closeWindowRequests().collectLatest {
+                onTabClose(tabListState.indexOfCurrentTab())
+            }
+        }
 
-        tabDisposable += tab.fileChooserRequests()
-            .subscribeOn(mainScheduler)
-            .subscribeBy { view?.showFileChooser(it) }
+        tabJobs += browserCoroutineScope.launch {
+            tab.fileChooserRequests().collectLatest {
+                view?.showFileChooser(it)
+            }
+        }
 
-        tabDisposable += tab.showCustomViewRequests()
-            .subscribeOn(mainScheduler)
-            .subscribeBy {
+        tabJobs += browserCoroutineScope.launch {
+            tab.showCustomViewRequests().collectLatest {
                 view?.showCustomView(it)
                 isCustomViewShowing = true
             }
+        }
 
-        tabDisposable += tab.hideCustomViewRequests()
-            .subscribeOn(mainScheduler)
-            .subscribeBy {
+        tabJobs += browserCoroutineScope.launch {
+            tab.hideCustomViewRequests().collectLatest {
                 view?.hideCustomView()
                 isCustomViewShowing = false
             }
+        }
 
-        tabDisposable += tab.hasFocusChanges()
-            .subscribeOn(mainScheduler)
-            .subscribeBy {
-                if (it) {
-                    view?.closeTabDrawer()
-                }
+        tabJobs += browserCoroutineScope.launch {
+            tab.focusRequests().collectLatest {
+                view?.closeTabDrawer()
             }
+        }
     }
 
-    private fun List<TabModel>.subscribeToUpdates(compositeDisposable: CompositeDisposable) {
+    private fun List<TabModel>.subscribeToUpdates(allTabsJobs: MutableList<Job>) {
         forEach { tabModel ->
-            compositeDisposable += Observables.combineLatest(
-                tabModel.titleChanges().startWithItem(tabModel.title),
-                tabModel.faviconChanges()
-                    .startWithItem(Option.fromNullable(tabModel.favicon)),
-                tabModel.previewChanges()
-            ).distinctUntilChanged()
-                .subscribeOn(mainScheduler)
-                .observeOn(mainScheduler)
-                .subscribeBy { (title, bitmap, _) ->
-                    view.updateTabs(tabListState.updateId(tabModel.id) {
-                        it.copy(title = title, icon = bitmap.value(), preview = tabModel.preview)
-                    })
-                }
+            allTabsJobs += browserCoroutineScope.launch {
+                combine(
+                    tabModel.titleChanges().onStart { emit(tabModel.title) },
+                    tabModel.faviconChanges()
+                        .onStart { emit(tabModel.favicon) },
+                    tabModel.previewChanges()
+                ) { title, bitmap, pair ->
+                    Triple(title, bitmap, pair)
+                }.distinctUntilChanged()
+                    .flowOn(coroutineDispatchers.main)
+                    .collectLatest { (title, bitmap, _) ->
+                        view.updateTabs(tabListState.updateId(tabModel.id) {
+                            it.copy(title = title, icon = bitmap, preview = tabModel.preview)
+                        })
+                    }
+            }
         }
     }
 

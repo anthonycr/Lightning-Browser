@@ -3,6 +3,7 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
+import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.databinding.DialogAuthRequestBinding
 import acr.browser.lightning.databinding.DialogSslWarningBinding
 import acr.browser.lightning.extensions.resizeAndShow
@@ -30,7 +31,8 @@ import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 import java.io.ByteArrayInputStream
 import java.io.File
 import kotlin.math.abs
@@ -50,7 +52,25 @@ class TabWebViewClient @AssistedInject constructor(
     private val logger: Logger,
     @Assisted("cache") private val cacheStoragePathHandler: InternalStoragePathHandler,
     @Assisted("files") private val filesStoragePathHandler: InternalStoragePathHandler,
+    @Assisted private val tabCoroutineScope: TabCoroutineScope
 ) : WebViewClient() {
+
+    /**
+     * The factory for constructing the client.
+     */
+    @AssistedFactory
+    interface Factory {
+
+        /**
+         * Create the client.
+         */
+        fun create(
+            headers: Map<String, String>,
+            @Assisted("cache") cacheStoragePathHandler: InternalStoragePathHandler,
+            @Assisted("files") filesStoragePathHandler: InternalStoragePathHandler,
+            tabCoroutineScope: TabCoroutineScope,
+        ): TabWebViewClient
+    }
 
     private val cache by lazy {
         File(application.cacheDir, "favicon-cache")
@@ -65,27 +85,27 @@ class TabWebViewClient @AssistedInject constructor(
     /**
      * Emits changes to the current URL.
      */
-    val urlObservable: PublishSubject<String> = PublishSubject.create()
+    val urlSharedFlow: MutableSharedFlow<String> = MutableSharedFlow()
 
     /**
      * Emits changes to the current SSL state.
      */
-    val sslStateObservable: PublishSubject<SslState> = PublishSubject.create()
+    val sslStateSharedFlow: MutableSharedFlow<SslState> = MutableSharedFlow()
 
     /**
      * Emits changes to the can go back state of the browser.
      */
-    val goBackObservable: PublishSubject<Boolean> = PublishSubject.create()
+    val goBackSharedFlow: MutableSharedFlow<Boolean> = MutableSharedFlow()
 
     /**
      * Emits changes to the can go forward state of the browser.
      */
-    val goForwardObservable: PublishSubject<Boolean> = PublishSubject.create()
+    val goForwardSharedFlow: MutableSharedFlow<Boolean> = MutableSharedFlow()
 
     /**
      * Emit when the tab has finished rendering its content.
      */
-    val finishedObservable = PublishSubject.create<Unit>()
+    val finishedSharedFlow = MutableSharedFlow<Unit>()
 
     /**
      * The current SSL state of the page.
@@ -105,26 +125,32 @@ class TabWebViewClient @AssistedInject constructor(
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
         currentUrl = url
-        urlObservable.onNext(url)
-        if (urlWithSslError != url) {
-            urlWithSslError = null
-            sslState = if (URLUtil.isHttpsUrl(url)) {
-                SslState.Valid
-            } else {
-                SslState.None
+        tabCoroutineScope.launch {
+            urlSharedFlow.emit(url)
+            if (urlWithSslError != url) {
+                urlWithSslError = null
+                sslState = if (URLUtil.isHttpsUrl(url)) {
+                    SslState.Valid
+                } else {
+                    SslState.None
+                }
             }
+            sslStateSharedFlow.emit(sslState)
         }
-        sslStateObservable.onNext(sslState)
     }
 
     override fun onPageFinished(view: WebView, url: String) {
         super.onPageFinished(view, url)
-        urlObservable.onNext(url)
-        goBackObservable.onNext(view.canGoBack())
-        goForwardObservable.onNext(view.canGoForward())
+        tabCoroutineScope.launch {
+            urlSharedFlow.emit(url)
+            goBackSharedFlow.emit(view.canGoBack())
+            goForwardSharedFlow.emit(view.canGoForward())
+        }
         view.postVisualStateCallback(1, object : WebView.VisualStateCallback() {
             override fun onComplete(requestId: Long) {
-                finishedObservable.onNext(Unit)
+                tabCoroutineScope.launch {
+                    finishedSharedFlow.emit(Unit)
+                }
             }
         })
     }
@@ -196,9 +222,10 @@ class TabWebViewClient @AssistedInject constructor(
         val context = webView.context
         urlWithSslError = webView.url
 
-        sslState = SslState.Invalid(error)
-        sslStateObservable.onNext(sslState)
-        sslState = SslState.Invalid(error)
+        tabCoroutineScope.launch {
+            sslState = SslState.Invalid(error)
+            sslStateSharedFlow.emit(sslState)
+        }
 
         when (sslWarningPreferences.recallBehaviorForDomain(webView.url)) {
             SslWarningPreferences.Behavior.PROCEED -> return handler.proceed()
@@ -295,22 +322,6 @@ class TabWebViewClient @AssistedInject constructor(
         }
 
         return errorCodeMessageCodes
-    }
-
-    /**
-     * The factory for constructing the client.
-     */
-    @AssistedFactory
-    interface Factory {
-
-        /**
-         * Create the client.
-         */
-        fun create(
-            headers: Map<String, String>,
-            @Assisted("cache") cacheStoragePathHandler: InternalStoragePathHandler,
-            @Assisted("files") filesStoragePathHandler: InternalStoragePathHandler,
-        ): TabWebViewClient
     }
 
     companion object {

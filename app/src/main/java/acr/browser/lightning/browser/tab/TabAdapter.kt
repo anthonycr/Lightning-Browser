@@ -1,11 +1,11 @@
 package acr.browser.lightning.browser.tab
 
-import acr.browser.lightning.browser.di.DiskScheduler
-import acr.browser.lightning.browser.di.MainScheduler
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.image.IconFreeze
 import acr.browser.lightning.browser.view.setCompositeOnFocusChangeListener
 import acr.browser.lightning.browser.view.setCompositeTouchListener
+import acr.browser.lightning.concurrency.CoroutineDispatchers
+import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
 import acr.browser.lightning.ids.ViewIdGenerator
 import acr.browser.lightning.preference.UserPreferencesDataStore
@@ -13,8 +13,6 @@ import acr.browser.lightning.preference.userAgent
 import acr.browser.lightning.preview.PreviewModel
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
-import acr.browser.lightning.utils.Option
-import acr.browser.lightning.utils.value
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
@@ -28,13 +26,20 @@ import androidx.core.graphics.createBitmap
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
-import java.util.Optional
-import java.util.concurrent.TimeUnit
-
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Creates the adaptation between a [WebView] and the [TabModel] interface used by the browser.
@@ -46,15 +51,15 @@ class TabAdapter @AssistedInject constructor(
     @Assisted private val requestHeaders: Map<String, String>,
     @Assisted private val tabWebViewClient: TabWebViewClient,
     @Assisted override var tabType: TabModel.Type,
-    private val tabWebChromeClient: TabWebChromeClient,
+    @Assisted private val tabCoroutineScope: TabCoroutineScope,
+    private val tabWebChromeClientFactory: TabWebChromeClient.Factory,
     private val userPreferencesDataStore: UserPreferencesDataStore,
     @DefaultUserAgent private val defaultUserAgent: String,
     @DefaultTabTitle private val defaultTabTitle: String,
     @IconFreeze private val iconFreeze: Bitmap,
     private val viewIdGenerator: ViewIdGenerator,
     private val previewModel: PreviewModel,
-    @DiskScheduler private val diskScheduler: Scheduler,
-    @MainScheduler private val mainScheduler: Scheduler,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) : TabModel {
 
     @AssistedFactory
@@ -66,6 +71,7 @@ class TabAdapter @AssistedInject constructor(
             requestHeaders: Map<String, String>,
             tabWebViewClient: TabWebViewClient,
             tabType: TabModel.Type,
+            tabCoroutineScope: TabCoroutineScope,
         ): TabAdapter
     }
 
@@ -73,8 +79,8 @@ class TabAdapter @AssistedInject constructor(
 
     private var findInPageQuery: String? = null
     private var toggleDesktop: Boolean = false
-    private val downloadsSubject = PublishSubject.create<PendingDownload>()
-    private val focusObservable = BehaviorSubject.createDefault(false)
+    private val downloadsShareFlow = MutableSharedFlow<PendingDownload>()
+    private val focusSharedFlow = MutableSharedFlow<Unit>()
 
     private var previewGeneratedTime = System.currentTimeMillis()
 
@@ -87,25 +93,33 @@ class TabAdapter @AssistedInject constructor(
         viewIdGenerator.generateViewId()
     }
 
+    private val tabWebChromeClient by lazy { tabWebChromeClientFactory.create(tabCoroutineScope) }
+
     private val webView: WebView
         get() = webViewLazy.value.apply {
             webViewClient = tabWebViewClient
             webChromeClient = tabWebChromeClient
             setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
-                downloadsSubject.onNext(
-                    PendingDownload(
-                        url = url,
-                        userAgent = userAgent,
-                        contentDisposition = contentDisposition,
-                        mimeType = mimetype,
-                        contentLength = contentLength
+                tabCoroutineScope.launch {
+                    downloadsShareFlow.emit(
+                        PendingDownload(
+                            url = url,
+                            userAgent = userAgent,
+                            contentDisposition = contentDisposition,
+                            mimeType = mimetype,
+                            contentLength = contentLength
+                        )
                     )
-                )
+                }
             }
             id = this@TabAdapter.id
 
             setCompositeOnFocusChangeListener("focus_change") { _, hasFocus ->
-                focusObservable.onNext(hasFocus)
+                tabCoroutineScope.launch {
+                    if (hasFocus) {
+                        focusSharedFlow.emit(Unit)
+                    }
+                }
             }
 
             setCompositeTouchListener("focus") { view, event ->
@@ -113,7 +127,9 @@ class TabAdapter @AssistedInject constructor(
                     if (!view.hasFocus()) {
                         view.requestFocus()
                     }
-                    focusObservable.onNext(true)
+                    tabCoroutineScope.launch {
+                        focusSharedFlow.emit(Unit)
+                    }
                 }
                 false
             }
@@ -126,7 +142,9 @@ class TabAdapter @AssistedInject constructor(
     }
 
     private var previewPath: String? = null
-    private val previewPathSingle = previewModel.previewForId(id).cache()
+    private val previewPathDeferred = tabCoroutineScope.async {
+        previewModel.previewForId(id)
+    }
 
     override fun loadUrl(url: String) {
         webView.loadUrl(url, requestHeaders)
@@ -142,7 +160,7 @@ class TabAdapter @AssistedInject constructor(
 
     override fun canGoBack(): Boolean = webView.canGoBack()
 
-    override fun canGoBackChanges(): Observable<Boolean> = tabWebViewClient.goBackObservable.hide()
+    override fun canGoBackChanges(): Flow<Boolean> = tabWebViewClient.goBackSharedFlow
 
     override fun goForward() {
         webView.goForward()
@@ -150,8 +168,7 @@ class TabAdapter @AssistedInject constructor(
 
     override fun canGoForward(): Boolean = webView.canGoForward()
 
-    override fun canGoForwardChanges(): Observable<Boolean> =
-        tabWebViewClient.goForwardObservable.hide()
+    override fun canGoForwardChanges(): Flow<Boolean> = tabWebViewClient.goForwardSharedFlow
 
     override suspend fun toggleDesktopAgent() {
         webView.settings.userAgentString = if (!toggleDesktop) {
@@ -192,52 +209,58 @@ class TabAdapter @AssistedInject constructor(
     override val preview: Pair<String?, Long>
         get() = previewPath to previewGeneratedTime
 
-    override fun previewChanges(): Observable<Pair<String?, Long>> =
-        tabWebViewClient.finishedObservable
-            .debounce(100, TimeUnit.MILLISECONDS)
-            .observeOn(mainScheduler)
-            .mapOptional { Optional.ofNullable(renderViewToBitmap(webView)) }
-            .observeOn(diskScheduler)
-            .flatMapSingle { bitmap ->
-                previewModel.cachePreviewForId(id, bitmap)
-                    .andThen(previewPathSingle)
-                    .map<Pair<String?, Long>> { path -> path to System.currentTimeMillis() }
+    @OptIn(FlowPreview::class)
+    override fun previewChanges(): Flow<Pair<String?, Long>> =
+        tabWebViewClient.finishedSharedFlow
+            .debounce(100.milliseconds)
+            .map { renderViewToBitmap(webView) }
+            .flowOn(coroutineDispatchers.main)
+            .map { bitmap ->
+                if (bitmap != null) {
+                    previewModel.cachePreviewForId(id, bitmap)
+                    previewPathDeferred.await() to System.currentTimeMillis()
+                } else {
+                    null to System.currentTimeMillis()
+                }
             }
-            .startWith(
-                previewPathSingle.ignoreElement()
-                    .andThen(previewPathSingle)
-                    .map { path -> path to System.currentTimeMillis() }
-            )
-            .doOnNext { (path, time) ->
+            .onStart { emit(previewPathDeferred.await() to System.currentTimeMillis()) }
+            .onEach { (path, time) ->
                 previewPath = path
                 previewGeneratedTime = time
             }
-            .observeOn(mainScheduler)
+            .flowOn(coroutineDispatchers.io)
 
     override val findQuery: String?
         get() = findInPageQuery
 
     override val favicon: Bitmap?
         get() = latentInitializer?.let { iconFreeze }
-            ?: tabWebChromeClient.faviconObservable.value?.value()
+            ?: tabWebChromeClient.faviconStateFlow.value
 
-    override fun faviconChanges(): Observable<Option<Bitmap>> = tabWebChromeClient.faviconObservable
+    override fun faviconChanges(): Flow<Bitmap?> {
+        // Treat it like a SharedFlow for consistency on presenter side and because frozen tabs have
+        // their own icon that the chrome client doesn't know about.
+        return tabWebChromeClient.faviconStateFlow.drop(1)
+    }
 
     override val themeColor: Int
-        get() = requireNotNull(tabWebChromeClient.colorChangeObservable.value)
+        get() = tabWebChromeClient.colorChangeStateFlow.value
 
-    override fun themeColorChanges(): Observable<Int> = tabWebChromeClient.colorChangeObservable
+    override fun themeColorChanges(): Flow<Int> {
+        // Treat it like a SharedFlow for consistency on presenter side
+        return tabWebChromeClient.colorChangeStateFlow.drop(1)
+    }
 
     override val url: String
         get() = webView.url.orEmpty()
 
-    override fun urlChanges(): Observable<String> = tabWebViewClient.urlObservable.hide()
+    override fun urlChanges(): Flow<String> = tabWebViewClient.urlSharedFlow
 
     override val title: String
         get() = latentInitializer?.initialTitle ?: webView.title?.takeIf(String::isNotBlank)
         ?: defaultTabTitle
 
-    override fun titleChanges(): Observable<String> = tabWebChromeClient.titleObservable.hide()
+    override fun titleChanges(): Flow<String> = tabWebChromeClient.titleShareFlow
 
     override val sslCertificateInfo: SslCertificateInfo?
         get() = webView.certificate?.let {
@@ -254,37 +277,35 @@ class TabAdapter @AssistedInject constructor(
     override val sslState: SslState
         get() = tabWebViewClient.sslState
 
-    override fun sslChanges(): Observable<SslState> = tabWebViewClient.sslStateObservable.hide()
+    override fun sslChanges(): Flow<SslState> = tabWebViewClient.sslStateSharedFlow
 
     override val loadingProgress: Int
         get() = webView.progress
 
-    override fun loadingProgress(): Observable<Int> = tabWebChromeClient.progressObservable.hide()
+    override fun loadingProgress(): Flow<Int> = tabWebChromeClient.progressSharedFlow
 
-    override fun downloadRequests(): Observable<PendingDownload> = downloadsSubject.hide()
+    override fun downloadRequests(): Flow<PendingDownload> = downloadsShareFlow
 
-    override fun fileChooserRequests(): Observable<Intent> =
-        tabWebChromeClient.fileChooserObservable.hide()
+    override fun fileChooserRequests(): Flow<Intent> = tabWebChromeClient.fileChooserSharedFlow
 
     override fun handleFileChooserResult(activityResult: ActivityResult) {
         tabWebChromeClient.onResult(activityResult)
     }
 
-    override fun showCustomViewRequests(): Observable<View> =
-        tabWebChromeClient.showCustomViewObservable.hide()
+    override fun showCustomViewRequests(): Flow<View> = tabWebChromeClient.showCustomViewSharedFlow
 
-    override fun hideCustomViewRequests(): Observable<Unit> =
-        tabWebChromeClient.hideCustomViewObservable.hide()
+    override fun hideCustomViewRequests(): Flow<Unit> = tabWebChromeClient.hideCustomViewObservable
 
     override fun hideCustomView() {
         tabWebChromeClient.hideCustomView()
     }
 
-    override fun createWindowRequests(): Observable<TabInitializer> =
-        tabWebChromeClient.createWindowObservable.hide()
+    override fun createWindowRequests(): Flow<TabInitializer> =
+        tabWebChromeClient.createWindowSharedFlow
 
-    override fun closeWindowRequests(): Observable<Unit> =
-        tabWebChromeClient.closeWindowObservable.hide()
+    override fun closeWindowRequests(): Flow<Unit> = tabWebChromeClient.closeWindowSharedFlow
+    
+    override fun focusRequests(): Flow<Unit> = focusSharedFlow
 
     override var isForeground: Boolean = false
         set(value) {
@@ -299,11 +320,6 @@ class TabAdapter @AssistedInject constructor(
             }
         }
 
-    override val hasFocus: Boolean
-        get() = webView.hasFocus()
-
-    override fun hasFocusChanges(): Observable<Boolean> = focusObservable.hide()
-
     override fun destroy() {
         viewIdGenerator.releaseViewId(id)
         previewModel.prune()
@@ -312,19 +328,20 @@ class TabAdapter @AssistedInject constructor(
         webView.clearHistory()
         webView.removeAllViews()
         webView.destroy()
+        tabCoroutineScope.cancel()
     }
 
     override fun freeze(): Bundle = latentInitializer?.bundle
         ?: Bundle(ClassLoader.getSystemClassLoader()).also(webView::saveState)
 
-    private fun renderViewToBitmap(
+    private suspend fun renderViewToBitmap(
         view: View,
         width: Int = view.width,
         height: Int = view.height
-    ): Bitmap? {
+    ): Bitmap? = withContext(coroutineDispatchers.main) {
         // Ensure the view has been laid out
         if (width == 0 || height == 0) {
-            return null
+            return@withContext null
         }
 
         // Create a Bitmap with the specified dimensions and ARGB_8888 configuration
@@ -343,6 +360,6 @@ class TabAdapter @AssistedInject constructor(
         // Draw the view onto the canvas
         view.draw(canvas)
 
-        return bitmap
+        return@withContext bitmap
     }
 }

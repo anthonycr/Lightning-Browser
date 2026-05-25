@@ -3,10 +3,13 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.browser.di.CacheDir
 import acr.browser.lightning.browser.di.FilesDir
 import acr.browser.lightning.concurrency.CoroutineDispatchers
+import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import android.webkit.WebView
 import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -47,6 +50,9 @@ class TabFactory @Inject constructor(
         }
 
         val headers = webViewFactory.createRequestHeaders()
+        val tabCoroutineScope = TabCoroutineScope(
+            CoroutineScope(coroutineDispatchers.main + SupervisorJob())
+        )
         tabAdapterFactory.create(
             tabInitializer = tabInitializer,
             webView = webView,
@@ -54,9 +60,11 @@ class TabFactory @Inject constructor(
             tabWebViewClient = tabWebViewClientFactory.create(
                 headers,
                 faviconHandler.await(),
-                htmlHandler.await()
+                htmlHandler.await(),
+                tabCoroutineScope,
             ),
-            tabType,
+            tabType = tabType,
+            tabCoroutineScope = tabCoroutineScope
         )
     }
 }

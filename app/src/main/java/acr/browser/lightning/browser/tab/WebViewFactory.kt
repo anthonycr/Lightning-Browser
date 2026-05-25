@@ -29,7 +29,7 @@ class WebViewFactory @Inject constructor(
     private val activity: Activity,
     private val logger: Logger,
     private val userPreferencesDataStore: UserPreferencesDataStore,
-    @IncognitoMode private val incognitoMode: Boolean
+    @IncognitoMode private val incognitoMode: Boolean,
 ) {
 
     /**
