@@ -1,6 +1,6 @@
 package acr.browser.lightning.database.adblock
 
-import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.databaseDelegate
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.extensions.useMap
@@ -10,7 +10,6 @@ import android.content.ContentValues
 import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -23,10 +22,10 @@ import javax.inject.Singleton
 @Singleton
 class HostsDatabase @Inject constructor(
     application: Application,
-    @DatabaseScheduler
-    private val databaseDispatcher: CoroutineDispatcher
+    coroutineDispatchers: CoroutineDispatchers,
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), HostsRepository {
 
+    private val databaseDispatcher = coroutineDispatchers.createDatabaseDispatcher()
     private val database: SQLiteDatabase by databaseDelegate()
 
     // Creating Tables

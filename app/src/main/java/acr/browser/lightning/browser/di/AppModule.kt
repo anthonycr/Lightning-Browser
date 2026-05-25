@@ -41,7 +41,6 @@ import androidx.core.content.getSystemService
 import com.anthonycr.mezzanine.mezzanine
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -243,18 +242,6 @@ class AppModule {
         io = Dispatchers.IO,
         default = Dispatchers.Default
     )
-
-    @DatabaseScheduler
-    @Provides
-    fun providesDatabaseDispatcher(
-        coroutineDispatchers: CoroutineDispatchers
-    ): CoroutineDispatcher = coroutineDispatchers.io.limitedParallelism(1)
-
-    @NetworkScheduler
-    @Provides
-    fun providesNetworkDispatcher(
-        coroutineDispatchers: CoroutineDispatchers
-    ): CoroutineDispatcher = coroutineDispatchers.io.limitedParallelism(4)
 }
 
 @Qualifier
@@ -268,14 +255,6 @@ annotation class HostsClient
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
 annotation class MainHandler
-
-@Qualifier
-@Retention(AnnotationRetention.SOURCE)
-annotation class NetworkScheduler
-
-@Qualifier
-@Retention(AnnotationRetention.SOURCE)
-annotation class DatabaseScheduler
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)

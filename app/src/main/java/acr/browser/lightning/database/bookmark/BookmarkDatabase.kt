@@ -1,7 +1,7 @@
 package acr.browser.lightning.database.bookmark
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.asFolder
 import acr.browser.lightning.database.databaseDelegate
@@ -15,7 +15,6 @@ import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.core.database.getStringOrNull
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -30,10 +29,10 @@ import javax.inject.Singleton
 @Singleton
 class BookmarkDatabase @Inject constructor(
     application: Application,
-    @DatabaseScheduler
-    private val databaseDispatcher: CoroutineDispatcher,
+    coroutineDispatchers: CoroutineDispatchers,
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), BookmarkRepository {
 
+    private val databaseDispatcher = coroutineDispatchers.createDatabaseDispatcher()
     private val defaultBookmarkTitle: String = application.getString(R.string.untitled)
     private val database: SQLiteDatabase by databaseDelegate()
 

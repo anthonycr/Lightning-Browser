@@ -2,7 +2,7 @@ package acr.browser.lightning.adblock.source
 
 import acr.browser.lightning.adblock.parser.HostsFileParser
 import acr.browser.lightning.browser.di.HostsClient
-import acr.browser.lightning.browser.di.NetworkScheduler
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.userAgent
@@ -10,7 +10,6 @@ import android.app.Application
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -33,11 +32,10 @@ class UrlHostsDataSource @AssistedInject constructor(
     private val logger: Logger,
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val application: Application,
-    @NetworkScheduler
-    private val networkDispatcher: CoroutineDispatcher,
+    private val coroutineDispatchers: CoroutineDispatchers,
 ) : HostsDataSource {
 
-    override suspend fun loadHosts(): HostsResult = withContext(networkDispatcher) {
+    override suspend fun loadHosts(): HostsResult = withContext(coroutineDispatchers.network) {
         val client = okHttpClient.await()
         suspendCancellableCoroutine { emitter ->
             val request = Request.Builder()

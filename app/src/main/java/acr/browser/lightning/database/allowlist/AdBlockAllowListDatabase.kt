@@ -1,6 +1,6 @@
 package acr.browser.lightning.database.allowlist
 
-import acr.browser.lightning.browser.di.DatabaseScheduler
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.databaseDelegate
 import acr.browser.lightning.extensions.firstOrNullMap
 import acr.browser.lightning.extensions.useMap
@@ -10,7 +10,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.WorkerThread
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,11 +22,11 @@ import javax.inject.Singleton
 @WorkerThread
 class AdBlockAllowListDatabase @Inject constructor(
     application: Application,
-    @DatabaseScheduler
-    private val databaseDispatcher: CoroutineDispatcher,
+    coroutineDispatchers: CoroutineDispatchers,
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION),
     AdBlockAllowListRepository {
 
+    private val databaseDispatcher = coroutineDispatchers.createDatabaseDispatcher()
     private val database: SQLiteDatabase by databaseDelegate()
 
     // Creating Tables

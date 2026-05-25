@@ -18,10 +18,19 @@ interface CoroutineDispatchers {
     val io: CoroutineDispatcher
 
     /**
+     * The network thread dispatcher, a limited parallelism window of [io].
+     */
+    val network: CoroutineDispatcher
+
+    /**
      * The default dispatcher.
      */
     val default: CoroutineDispatcher
 
+    /**
+     * Creates a new single threaded dispatcher for use with databases, backed by [io] dispatcher.
+     */
+    fun createDatabaseDispatcher(): CoroutineDispatcher
 }
 
 /**
@@ -31,4 +40,7 @@ class CoroutineDispatcherProvider(
     override val main: CoroutineDispatcher,
     override val io: CoroutineDispatcher,
     override val default: CoroutineDispatcher
-) : CoroutineDispatchers
+) : CoroutineDispatchers {
+    override val network: CoroutineDispatcher = io.limitedParallelism(4)
+    override fun createDatabaseDispatcher(): CoroutineDispatcher = io.limitedParallelism(1)
+}
