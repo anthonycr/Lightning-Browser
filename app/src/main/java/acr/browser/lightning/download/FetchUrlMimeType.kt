@@ -1,21 +1,20 @@
 /*
  * Copyright 2014 A.C.R. Development
  */
-package acr.browser.lightning.download;
+package acr.browser.lightning.download
 
-import android.app.DownloadManager;
-import android.os.Environment;
-import android.util.Log;
-import android.webkit.MimeTypeMap;
-import android.webkit.URLUtil;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import acr.browser.lightning.utils.Utils;
-import androidx.annotation.NonNull;
-import io.reactivex.rxjava3.core.Single;
+import acr.browser.lightning.utils.Utils
+import android.app.DownloadManager
+import android.os.Environment
+import android.util.Log
+import android.webkit.MimeTypeMap
+import android.webkit.URLUtil
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.core.SingleEmitter
+import io.reactivex.rxjava3.core.SingleOnSubscribe
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
 
 /**
  * This class is used to pull down the http headers of a given URL so that we
@@ -25,100 +24,95 @@ import io.reactivex.rxjava3.core.Single;
  * just clicks on the link, we will do the same steps of correcting the mimetype
  * down in android.os.webkit.LoadListener rather than handling it here.
  */
-class FetchUrlMimeType {
-
-    private static final String TAG = "FetchUrlMimeType";
-
-    private final DownloadManager.Request mRequest;
-    private final DownloadManager mDownloadManager;
-    private final String mUri;
-    private final String mCookies;
-    private final String mUserAgent;
-
-    public FetchUrlMimeType(DownloadManager downloadManager,
-                            DownloadManager.Request request,
-                            String uri,
-                            String cookies,
-                            String userAgent) {
-        mRequest = request;
-        mDownloadManager = downloadManager;
-        mUri = uri;
-        mCookies = cookies;
-        mUserAgent = userAgent;
-    }
-
-    public Single<Result> create() {
-        return Single.create(emitter -> {
+internal class FetchUrlMimeType(
+    private val downloadManager: DownloadManager,
+    private val request: DownloadManager.Request,
+    private val uri: String,
+    private val cookies: String,
+    private val userAgent: String
+) {
+    fun create(): Single<Result> {
+        return Single.create<Result>(SingleOnSubscribe { emitter: SingleEmitter<Result> ->
             // User agent is likely to be null, though the AndroidHttpClient
             // seems ok with that.
-            String mimeType = null;
-            String contentDisposition = null;
-            HttpURLConnection connection = null;
+            var mimeType: String? = null
+            var contentDisposition: String? = null
+            var connection: HttpURLConnection? = null
             try {
-                URL url = new URL(mUri);
-                connection = (HttpURLConnection) url.openConnection();
-                if (mCookies != null && !mCookies.isEmpty()) {
-                    connection.addRequestProperty("Cookie", mCookies);
-                    connection.setRequestProperty("User-Agent", mUserAgent);
+                val url = URL(uri)
+                connection = url.openConnection() as HttpURLConnection?
+                if (cookies.isNotEmpty()) {
+                    connection!!.addRequestProperty("Cookie", cookies)
+                    connection.setRequestProperty("User-Agent", userAgent)
                 }
-                connection.connect();
+                connection!!.connect()
                 // We could get a redirect here, but if we do lets let
                 // the download manager take care of it, and thus trust that
                 // the server sends the right mimetype
                 if (connection.getResponseCode() == 200) {
-                    String header = connection.getHeaderField("Content-Type");
+                    val header = connection.getHeaderField("Content-Type")
                     if (header != null) {
-                        mimeType = header;
-                        final int semicolonIndex = mimeType.indexOf(';');
+                        mimeType = header
+                        val semicolonIndex = mimeType.indexOf(';')
                         if (semicolonIndex != -1) {
-                            mimeType = mimeType.substring(0, semicolonIndex);
+                            mimeType = mimeType.substring(0, semicolonIndex)
                         }
                     }
-                    String contentDispositionHeader = connection.getHeaderField("Content-Disposition");
+                    val contentDispositionHeader =
+                        connection.getHeaderField("Content-Disposition")
                     if (contentDispositionHeader != null) {
-                        contentDisposition = contentDispositionHeader;
+                        contentDisposition = contentDispositionHeader
                     }
                 }
-            } catch (@NonNull IllegalArgumentException | IOException ex) {
-                if (connection != null)
-                    connection.disconnect();
+            } catch (ex: IllegalArgumentException) {
+                connection?.disconnect()
+            } catch (ex: IOException) {
+                connection?.disconnect()
             } finally {
-                if (connection != null)
-                    connection.disconnect();
+                connection?.disconnect()
             }
 
             if (mimeType != null) {
-                if (mimeType.equalsIgnoreCase("text/plain")
-                    || mimeType.equalsIgnoreCase("application/octet-stream")) {
-                    String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                        Utils.guessFileExtension(mUri));
+                if (mimeType.equals("text/plain", ignoreCase = true)
+                    || mimeType.equals("application/octet-stream", ignoreCase = true)
+                ) {
+                    val newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                        Utils.guessFileExtension(uri)
+                    )
                     if (newMimeType != null) {
-                        mRequest.setMimeType(newMimeType);
+                        request.setMimeType(newMimeType)
                     }
                 }
-                final String filename = URLUtil.guessFileName(mUri, contentDisposition, mimeType);
-                mRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                val filename = URLUtil.guessFileName(uri, contentDisposition, mimeType)
+                request.setDestinationInExternalPublicDir(
+                    Environment.DIRECTORY_DOWNLOADS,
+                    filename
+                )
             }
 
             // Start the download
             try {
-                mDownloadManager.enqueue(mRequest);
-                emitter.onSuccess(Result.SUCCESS);
-            } catch (IllegalArgumentException e) {
+                downloadManager.enqueue(request)
+                emitter.onSuccess(Result.SUCCESS)
+            } catch (e: IllegalArgumentException) {
                 // Probably got a bad URL or something
-                Log.e(TAG, "Unable to enqueue request", e);
-                emitter.onSuccess(Result.FAILURE_ENQUEUE);
-            } catch (SecurityException e) {
+                Log.e(TAG, "Unable to enqueue request", e)
+                emitter.onSuccess(Result.FAILURE_ENQUEUE)
+            } catch (e: SecurityException) {
                 // TODO write a download utility that downloads files rather than rely on the system
                 // because the system can only handle Environment.getExternal... as a path
-                emitter.onSuccess(Result.FAILURE_LOCATION);
+                emitter.onSuccess(Result.FAILURE_LOCATION)
             }
-        });
+        })
     }
 
-    enum Result {
+    internal enum class Result {
         FAILURE_ENQUEUE,
         FAILURE_LOCATION,
         SUCCESS
+    }
+
+    companion object {
+        private const val TAG = "FetchUrlMimeType"
     }
 }
