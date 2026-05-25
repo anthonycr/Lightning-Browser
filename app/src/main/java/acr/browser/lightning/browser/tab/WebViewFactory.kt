@@ -35,21 +35,21 @@ class WebViewFactory @Inject constructor(
     /**
      * Create the request headers that notify websites of various privacy and data preferences.
      */
-    fun createRequestHeaders(): Map<String, String> {
+    suspend fun createRequestHeaders(): Map<String, String> {
         val requestHeaders = mutableMapOf<String, String>()
-        if (userPreferencesDataStore.doNotTrackEnabled.getUnsafe()) {
+        if (userPreferencesDataStore.doNotTrackEnabled.get()) {
             requestHeaders[HEADER_DNT] = "1"
         } else {
             requestHeaders.remove(HEADER_DNT)
         }
 
-        if (userPreferencesDataStore.saveDataEnabled.getUnsafe()) {
+        if (userPreferencesDataStore.saveDataEnabled.get()) {
             requestHeaders[HEADER_SAVEDATA] = "on"
         } else {
             requestHeaders.remove(HEADER_SAVEDATA)
         }
 
-        if (userPreferencesDataStore.removeIdentifyingHeadersEnabled.getUnsafe()) {
+        if (userPreferencesDataStore.removeIdentifyingHeadersEnabled.get()) {
             requestHeaders[HEADER_REQUESTED_WITH] = ""
             requestHeaders[HEADER_WAP_PROFILE] = ""
         } else {
