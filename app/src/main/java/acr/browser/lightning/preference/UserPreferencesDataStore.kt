@@ -247,7 +247,7 @@ class UserPreferencesDataStore @Inject constructor(
     val searchChoice: EnumPreferenceStore<SearchEngineChoice> = EnumPreferenceStore(
         key = intPreferencesKey(SEARCH),
         dataStore = dataStore,
-        defaultValue = SearchEngineChoice.GOOGLE
+        defaultValue = SearchEngineChoice.DUCK
     )
 
     /**
@@ -463,7 +463,7 @@ class UserPreferencesDataStore @Inject constructor(
     val searchSuggestionChoice: EnumPreferenceStore<Suggestions> = EnumPreferenceStore(
         key = intPreferencesKey(SEARCH_SUGGESTIONS),
         dataStore = dataStore,
-        defaultValue = Suggestions.GOOGLE
+        defaultValue = Suggestions.DUCK
     )
 
     /**

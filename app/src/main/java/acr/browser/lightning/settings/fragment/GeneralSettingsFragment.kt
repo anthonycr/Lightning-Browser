@@ -368,7 +368,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     2 -> Suggestions.BAIDU
                     3 -> Suggestions.NAVER
                     4 -> Suggestions.NONE
-                    else -> Suggestions.GOOGLE
+                    else -> Suggestions.DUCK
                 }
                 userPreferencesDataStore.searchSuggestionChoice.setUnsafe(suggestionsProvider)
                 summaryUpdater.updateSummary(searchSuggestionChoiceToTitle(suggestionsProvider))
