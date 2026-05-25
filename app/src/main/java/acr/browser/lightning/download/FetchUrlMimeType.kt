@@ -29,7 +29,7 @@ internal class FetchUrlMimeType(
     private val request: DownloadManager.Request,
     private val uri: String,
     private val cookies: String,
-    private val userAgent: String
+    private val userAgent: String?
 ) {
     fun create(): Single<Result> {
         return Single.create<Result>(SingleOnSubscribe { emitter: SingleEmitter<Result> ->
@@ -43,7 +43,7 @@ internal class FetchUrlMimeType(
                 connection = url.openConnection() as HttpURLConnection?
                 if (cookies.isNotEmpty()) {
                     connection!!.addRequestProperty("Cookie", cookies)
-                    connection.setRequestProperty("User-Agent", userAgent)
+                    connection.setRequestProperty("User-Agent", userAgent.orEmpty())
                 }
                 connection!!.connect()
                 // We could get a redirect here, but if we do lets let
