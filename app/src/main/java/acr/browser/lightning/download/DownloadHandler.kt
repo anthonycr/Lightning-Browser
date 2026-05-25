@@ -6,8 +6,7 @@ package acr.browser.lightning.download
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.DefaultBrowserActivity
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.MainScheduler
-import acr.browser.lightning.browser.di.NetworkScheduler
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.dialog.BrowserDialog.setDialogSize
 import acr.browser.lightning.extensions.snackbar
@@ -29,8 +28,8 @@ import android.webkit.MimeTypeMap
 import android.webkit.URLUtil
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.functions.Consumer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
@@ -42,9 +41,9 @@ import javax.inject.Singleton
 @Singleton
 class DownloadHandler @Inject constructor(
     private val downloadManager: DownloadManager,
-    @NetworkScheduler private val networkScheduler: Scheduler,
-    @MainScheduler private val mainScheduler: Scheduler,
-    private val logger: Logger
+    private val logger: Logger,
+    private val coroutineDispatchers: CoroutineDispatchers,
+    private val appCoroutineScope: CoroutineScope,
 ) {
     /**
      * Notify the host application a download should be done, or that the data
@@ -220,18 +219,21 @@ class DownloadHandler @Inject constructor(
             }
             // We must have long pressed on a link or image to download it. We
             // are not sure of the mimetype in this case, so do a head request
-            val disposable =
-                FetchUrlMimeType(downloadManager, request, addressString, cookies, userAgent)
-                    .create()
-                    .subscribeOn(networkScheduler)
-                    .observeOn(mainScheduler)
-                    .subscribe(Consumer { result: FetchUrlMimeType.Result ->
-                        when (result) {
-                            FetchUrlMimeType.Result.FAILURE_ENQUEUE -> context.snackbar(R.string.cannot_download)
-                            FetchUrlMimeType.Result.FAILURE_LOCATION -> context.snackbar(R.string.problem_location_download)
-                            FetchUrlMimeType.Result.SUCCESS -> context.snackbar(R.string.download_pending)
-                        }
-                    })
+            appCoroutineScope.launch {
+                val result = FetchUrlMimeType(
+                    downloadManager,
+                    request,
+                    addressString,
+                    cookies,
+                    userAgent,
+                    coroutineDispatchers
+                ).create()
+                when (result) {
+                    FetchUrlMimeType.Result.FAILURE_ENQUEUE -> context.snackbar(R.string.cannot_download)
+                    FetchUrlMimeType.Result.FAILURE_LOCATION -> context.snackbar(R.string.problem_location_download)
+                    FetchUrlMimeType.Result.SUCCESS -> context.snackbar(R.string.download_pending)
+                }
+            }
         } else {
             logger.log(TAG, "Valid mimetype, attempting to download")
             try {
