@@ -17,6 +17,7 @@ import acr.browser.lightning.preference.datastore.migrateEnum
 import acr.browser.lightning.preference.datastore.migrateInt
 import acr.browser.lightning.preference.datastore.migrateNullableString
 import acr.browser.lightning.preference.datastore.migrateString
+import acr.browser.lightning.search.SearchEngineChoice
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.Suggestions
 import acr.browser.lightning.search.engine.GoogleSearch
@@ -61,7 +62,7 @@ class UserPreferencesDataStore @Inject constructor(
                     migrateBoolean(overviewModeEnabled)
                     migrateBoolean(popupsEnabled)
                     migrateBoolean(restoreLostTabsEnabled)
-                    migrateInt(searchChoice)
+                    migrateEnum(searchChoice)
                     migrateString(searchUrl)
                     migrateBoolean(textReflowEnabled)
                     migrateInt(textSize)
@@ -243,10 +244,10 @@ class UserPreferencesDataStore @Inject constructor(
      *
      * @see SearchEngineProvider
      */
-    val searchChoice: NonNullPreferenceStore<Int> = NonNullPreferenceStore(
+    val searchChoice: EnumPreferenceStore<SearchEngineChoice> = EnumPreferenceStore(
         key = intPreferencesKey(SEARCH),
         dataStore = dataStore,
-        defaultValue = 1
+        defaultValue = SearchEngineChoice.GOOGLE
     )
 
     /**

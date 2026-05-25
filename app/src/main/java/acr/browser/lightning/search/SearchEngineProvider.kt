@@ -55,38 +55,37 @@ class SearchEngineProvider @Inject constructor(
      */
     fun provideSearchEngine(): BaseSearchEngine =
         when (userPreferencesDataStore.searchChoice.getUnsafe()) {
-            0 -> CustomSearch(userPreferencesDataStore.searchUrl.getUnsafe())
-            1 -> GoogleSearch()
-            2 -> AskSearch()
-            3 -> BingSearch()
-            4 -> YahooSearch()
-            5 -> StartPageSearch()
-            6 -> StartPageMobileSearch()
-            7 -> DuckSearch()
-            8 -> DuckLiteSearch()
-            9 -> BaiduSearch()
-            10 -> YandexSearch()
-            11 -> NaverSearch()
-            else -> GoogleSearch()
+            SearchEngineChoice.CUSTOM -> CustomSearch(userPreferencesDataStore.searchUrl.getUnsafe())
+            SearchEngineChoice.GOOGLE -> GoogleSearch()
+            SearchEngineChoice.ASK -> AskSearch()
+            SearchEngineChoice.BING -> BingSearch()
+            SearchEngineChoice.YAHOO -> YahooSearch()
+            SearchEngineChoice.START_PAGE -> StartPageSearch()
+            SearchEngineChoice.START_PAGE_MOBILE -> StartPageMobileSearch()
+            SearchEngineChoice.DUCK -> DuckSearch()
+            SearchEngineChoice.DUCK_LITE -> DuckLiteSearch()
+            SearchEngineChoice.BAIDU -> BaiduSearch()
+            SearchEngineChoice.YANDEX -> YandexSearch()
+            SearchEngineChoice.NAVER -> NaverSearch()
         }
 
     /**
-     * Return the serializable index of of the provided [BaseSearchEngine].
+     * Return the serializable index of the provided [BaseSearchEngine].
      */
-    fun mapSearchEngineToPreferenceIndex(searchEngine: BaseSearchEngine): Int =
+    fun mapSearchEngineToPreferenceIndex(searchEngine: BaseSearchEngine): SearchEngineChoice =
         when (searchEngine) {
-            is CustomSearch -> 0
-            is GoogleSearch -> 1
-            is AskSearch -> 2
-            is BingSearch -> 3
-            is YahooSearch -> 4
-            is StartPageSearch -> 5
-            is StartPageMobileSearch -> 6
-            is DuckSearch -> 7
-            is DuckLiteSearch -> 8
-            is BaiduSearch -> 9
-            is YandexSearch -> 10
-            is NaverSearch -> 11
+            is CustomSearch -> SearchEngineChoice.CUSTOM
+            is GoogleSearch -> SearchEngineChoice.GOOGLE
+            is AskSearch -> SearchEngineChoice.ASK
+            is BingSearch -> SearchEngineChoice.BING
+            is YahooSearch -> SearchEngineChoice.YAHOO
+            is StartPageSearch -> SearchEngineChoice.START_PAGE
+            is StartPageMobileSearch -> SearchEngineChoice.START_PAGE_MOBILE
+            is DuckSearch -> SearchEngineChoice.DUCK
+            is DuckLiteSearch -> SearchEngineChoice.DUCK_LITE
+            is BaiduSearch -> SearchEngineChoice.BAIDU
+            is YandexSearch -> SearchEngineChoice.YANDEX
+            is NaverSearch -> SearchEngineChoice.NAVER
             else -> throw UnsupportedOperationException("Unknown search engine provided: " + searchEngine.javaClass)
         }
 

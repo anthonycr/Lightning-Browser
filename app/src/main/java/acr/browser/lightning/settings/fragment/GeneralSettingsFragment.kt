@@ -297,15 +297,15 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
             val chars = convertSearchEngineToString(searchEngineList)
 
-            val n = userPreferencesDataStore.searchChoice.getUnsafe()
+            val n = userPreferencesDataStore.searchChoice.getUnsafe().value
 
             setSingleChoiceItems(chars, n) { _, which ->
                 val searchEngine = searchEngineList[which]
 
                 // Store the search engine preference
-                val preferencesIndex =
+                val searchEngineChoice =
                     searchEngineProvider.mapSearchEngineToPreferenceIndex(searchEngine)
-                userPreferencesDataStore.searchChoice.setUnsafe(preferencesIndex)
+                userPreferencesDataStore.searchChoice.setUnsafe(searchEngineChoice)
 
                 if (searchEngine is CustomSearch) {
                     // Show the URL picker
