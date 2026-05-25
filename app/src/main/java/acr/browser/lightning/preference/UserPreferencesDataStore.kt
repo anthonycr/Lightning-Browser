@@ -67,7 +67,7 @@ class UserPreferencesDataStore @Inject constructor(
                     migrateBoolean(textReflowEnabled)
                     migrateInt(textSize)
                     migrateBoolean(useWideViewPortEnabled)
-                    migrateInt(userAgentChoice)
+                    migrateEnum(userAgentChoice)
                     migrateString(userAgentString)
                     migrateBoolean(clearHistoryExitEnabled)
                     migrateBoolean(clearCookiesExitEnabled)
@@ -292,10 +292,10 @@ class UserPreferencesDataStore @Inject constructor(
      *
      * @see userAgent
      */
-    val userAgentChoice: NonNullPreferenceStore<Int> = NonNullPreferenceStore(
+    val userAgentChoice: EnumPreferenceStore<UserAgentChoice> = EnumPreferenceStore(
         key = intPreferencesKey(USER_AGENT),
         dataStore = dataStore,
-        defaultValue = 1
+        defaultValue = UserAgentChoice.DEFAULT
     )
 
     /**

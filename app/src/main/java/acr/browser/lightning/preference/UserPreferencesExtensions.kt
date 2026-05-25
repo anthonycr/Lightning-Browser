@@ -10,19 +10,24 @@ import android.webkit.WebSettings
  * Return the user agent chosen by the user or the custom user agent entered by the user.
  */
 fun UserPreferencesDataStore.userAgent(application: Application): String =
-    when (val choice = userAgentChoice.getUnsafe()) {
-        1 -> WebSettings.getDefaultUserAgent(application)
-        2 -> DESKTOP_USER_AGENT
-        3 -> MOBILE_USER_AGENT
-        4 -> userAgentString.getUnsafe().takeIf(String::isNotEmpty) ?: " "
-        else -> throw UnsupportedOperationException("Unknown userAgentChoice: $choice")
+    when (userAgentChoice.getUnsafe()) {
+        UserAgentChoice.DEFAULT -> WebSettings.getDefaultUserAgent(application)
+        UserAgentChoice.DESKTOP -> DESKTOP_USER_AGENT
+        UserAgentChoice.MOBILE -> MOBILE_USER_AGENT
+        UserAgentChoice.CUSTOM -> userAgentString.getUnsafe().takeIf(String::isNotEmpty) ?: " "
     }
 
 suspend fun UserPreferencesDataStore.userAgent(defaultUserAgent: String): String =
-    when (val choice = userAgentChoice.get()) {
-        1 -> defaultUserAgent
-        2 -> DESKTOP_USER_AGENT
-        3 -> MOBILE_USER_AGENT
-        4 -> userAgentString.get().takeIf(String::isNotEmpty).orEmpty()
-        else -> throw UnsupportedOperationException("Unknown userAgentChoice: $choice")
+    when (userAgentChoice.get()) {
+        UserAgentChoice.DEFAULT -> defaultUserAgent
+        UserAgentChoice.DESKTOP -> DESKTOP_USER_AGENT
+        UserAgentChoice.MOBILE -> MOBILE_USER_AGENT
+        UserAgentChoice.CUSTOM -> userAgentString.get().takeIf(String::isNotEmpty).orEmpty()
     }
+
+enum class UserAgentChoice(override val value: Int) : IntEnum {
+    DEFAULT(1),
+    DESKTOP(2),
+    MOBILE(3),
+    CUSTOM(4),
+}

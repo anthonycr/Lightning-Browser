@@ -6,6 +6,7 @@ import acr.browser.lightning.constant.SCHEME_BLANK
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.dialog.BrowserDialog
+import acr.browser.lightning.preference.UserAgentChoice
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.preference.datastore.setUnsafe
@@ -94,12 +95,11 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         )
     }
 
-    private fun choiceToUserAgent(index: Int) = when (index) {
-        1 -> resources.getString(R.string.agent_default)
-        2 -> resources.getString(R.string.agent_desktop)
-        3 -> resources.getString(R.string.agent_mobile)
-        4 -> resources.getString(R.string.agent_custom)
-        else -> resources.getString(R.string.agent_default)
+    private fun choiceToUserAgent(userAgentChoice: UserAgentChoice) = when (userAgentChoice) {
+        UserAgentChoice.DEFAULT -> resources.getString(R.string.agent_default)
+        UserAgentChoice.DESKTOP -> resources.getString(R.string.agent_desktop)
+        UserAgentChoice.MOBILE -> resources.getString(R.string.agent_mobile)
+        UserAgentChoice.CUSTOM -> resources.getString(R.string.agent_custom)
     }
 
     private fun showUserAgentChooserDialog(summaryUpdater: SummaryUpdater) {
@@ -107,9 +107,11 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             setTitle(resources.getString(R.string.title_user_agent))
             setSingleChoiceItems(
                 R.array.user_agent,
-                userPreferencesDataStore.userAgentChoice.getUnsafe() - 1
+                userPreferencesDataStore.userAgentChoice.getUnsafe().value - 1
             ) { _, which ->
-                userPreferencesDataStore.userAgentChoice.setUnsafe(which + 1)
+                val updatedChoice = UserAgentChoice.entries.firstOrNull { it.value == which + 1 }
+                    ?: UserAgentChoice.DEFAULT
+                userPreferencesDataStore.userAgentChoice.setUnsafe(updatedChoice)
                 summaryUpdater.updateSummary(choiceToUserAgent(userPreferencesDataStore.userAgentChoice.getUnsafe()))
                 when (which) {
                     in 0..2 -> Unit
@@ -142,7 +144,9 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(resources.getString(R.string.title_download_location))
             val n: Int =
-                if (userPreferencesDataStore.downloadDirectory.getUnsafe().contains(Environment.DIRECTORY_DOWNLOADS)) {
+                if (userPreferencesDataStore.downloadDirectory.getUnsafe()
+                        .contains(Environment.DIRECTORY_DOWNLOADS)
+                ) {
                     0
                 } else {
                     1
@@ -258,11 +262,12 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun showCustomHomePagePicker(summaryUpdater: SummaryUpdater) {
-        val currentHomepage: String = if (!URLUtil.isAboutUrl(userPreferencesDataStore.homepage.getUnsafe())) {
-            userPreferencesDataStore.homepage.getUnsafe()
-        } else {
-            "https://www.google.com"
-        }
+        val currentHomepage: String =
+            if (!URLUtil.isAboutUrl(userPreferencesDataStore.homepage.getUnsafe())) {
+                userPreferencesDataStore.homepage.getUnsafe()
+            } else {
+                "https://www.google.com"
+            }
 
         activity?.let {
             BrowserDialog.showEditText(
