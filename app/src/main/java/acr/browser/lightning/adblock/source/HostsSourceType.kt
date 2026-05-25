@@ -1,5 +1,6 @@
 package acr.browser.lightning.adblock.source
 
+import acr.browser.lightning.preference.IntEnum
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import okhttp3.HttpUrl
@@ -37,26 +38,30 @@ sealed class HostsSourceType {
  * invalid or the remote URL chosen is invalid, we will fall back to the [HostsSourceType.Default].
  */
 fun UserPreferencesDataStore.selectedHostsSource(): HostsSourceType {
-    val localFile: File? = hostsLocalFile.getUnsafe()?.let(::File)?.takeIf(File::exists)?.takeIf(File::canRead)
+    val localFile: File? =
+        hostsLocalFile.getUnsafe()?.let(::File)?.takeIf(File::exists)?.takeIf(File::canRead)
 
     val remoteUrl: HttpUrl? = hostsRemoteFile.getUnsafe()?.toHttpUrlOrNull()
 
     val source = hostsSource.getUnsafe()
 
-    return if (source == 1 && localFile != null) {
-        HostsSourceType.Local(localFile)
-    } else if (source == 2 && remoteUrl != null) {
-        HostsSourceType.Remote(remoteUrl)
-    } else {
-        HostsSourceType.Default
+    return when (source) {
+        HostsSourcePreference.LOCAL if localFile != null -> {
+            HostsSourceType.Local(localFile)
+        }
+
+        HostsSourcePreference.REMOTE if remoteUrl != null -> {
+            HostsSourceType.Remote(remoteUrl)
+        }
+
+        else -> {
+            HostsSourceType.Default
+        }
     }
 }
 
-/**
- * Convert the [HostsSourceType] to the index stored in preferences.
- */
-fun HostsSourceType.toPreferenceIndex(): Int = when (this) {
-    HostsSourceType.Default -> 0
-    is HostsSourceType.Local -> 1
-    is HostsSourceType.Remote -> 2
+enum class HostsSourcePreference(override val value: Int) : IntEnum {
+    DEFAULT(0),
+    LOCAL(1),
+    REMOTE(2)
 }

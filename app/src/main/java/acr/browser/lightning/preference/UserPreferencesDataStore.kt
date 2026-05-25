@@ -1,6 +1,7 @@
 package acr.browser.lightning.preference
 
 import acr.browser.lightning.AppTheme
+import acr.browser.lightning.adblock.source.HostsSourcePreference
 import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.browser.ui.TabConfiguration
@@ -82,7 +83,7 @@ class UserPreferencesDataStore @Inject constructor(
                     migrateBoolean(bookmarksAndTabsSwapped)
                     migrateBoolean(useBlackStatusBar)
                     migrateInt(searchSuggestionChoice)
-                    migrateInt(hostsSource)
+                    migrateEnum(hostsSource)
                     migrateNullableString(hostsLocalFile)
                     migrateNullableString(hostsRemoteFile)
                 }.first
@@ -464,12 +465,12 @@ class UserPreferencesDataStore @Inject constructor(
     )
 
     /**
-     * The index of the ad blocking hosts file source.
+     * The type of the ad blocking hosts file source.
      */
-    val hostsSource: NonNullPreferenceStore<Int> = NonNullPreferenceStore(
+    val hostsSource: EnumPreferenceStore<HostsSourcePreference> = EnumPreferenceStore(
         key = intPreferencesKey(HOSTS_SOURCE),
         dataStore = dataStore,
-        defaultValue = 0
+        defaultValue = HostsSourcePreference.DEFAULT
     )
 
     /**

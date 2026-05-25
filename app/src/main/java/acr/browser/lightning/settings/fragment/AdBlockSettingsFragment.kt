@@ -3,9 +3,9 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
+import acr.browser.lightning.adblock.source.HostsSourcePreference
 import acr.browser.lightning.adblock.source.HostsSourceType
 import acr.browser.lightning.adblock.source.selectedHostsSource
-import acr.browser.lightning.adblock.source.toPreferenceIndex
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
@@ -96,7 +96,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                 title = R.string.block_source_default,
                 isConditionMet = userPreferencesDataStore.selectedHostsSource() == HostsSourceType.Default,
                 onClick = {
-                    userPreferencesDataStore.hostsSource.setUnsafe(HostsSourceType.Default.toPreferenceIndex())
+                    userPreferencesDataStore.hostsSource.setUnsafe(HostsSourcePreference.DEFAULT)
                     summaryUpdater.updateSummary(
                         userPreferencesDataStore.selectedHostsSource().toSummary()
                     )
@@ -140,9 +140,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
             textInputListener = {
                 val url = it.toHttpUrlOrNull()
                     ?: return@showEditText run { activity?.toast(R.string.problem_download) }
-                userPreferencesDataStore.hostsSource.setUnsafe(
-                    HostsSourceType.Remote(url).toPreferenceIndex()
-                )
+                userPreferencesDataStore.hostsSource.setUnsafe(HostsSourcePreference.REMOTE)
                 userPreferencesDataStore.hostsRemoteFile.setUnsafe(it)
                 summaryUpdater.updateSummary(it)
                 updateForNewHostsSource()
@@ -160,11 +158,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                         if (file == null) {
                             activity?.toast(R.string.action_message_canceled)
                         } else {
-                            userPreferencesDataStore.hostsSource.setUnsafe(
-                                HostsSourceType.Local(
-                                    file
-                                ).toPreferenceIndex()
-                            )
+                            userPreferencesDataStore.hostsSource.setUnsafe(HostsSourcePreference.LOCAL)
                             userPreferencesDataStore.hostsLocalFile.setUnsafe(file.path)
                             recentSummaryUpdater?.updateSummary(
                                 userPreferencesDataStore.selectedHostsSource().toSummary()
