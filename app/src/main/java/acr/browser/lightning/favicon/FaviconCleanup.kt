@@ -13,11 +13,9 @@ class FaviconCleanup @Inject constructor(
 ) : Cleanup.Action {
     override val versionCode: Int = 101
 
-    override suspend fun execute() {
-        withContext(coroutineDispatchers.io) {
-            application.cacheDir.listFiles()
-                ?.filter { it.extension == "png" }
-                ?.forEach(File::delete)
-        }
+    override suspend fun execute(): Unit = withContext(coroutineDispatchers.io) {
+        application.cacheDir.listFiles()
+            ?.filter { it.extension == "png" }
+            ?.forEach(File::delete)
     }
 }

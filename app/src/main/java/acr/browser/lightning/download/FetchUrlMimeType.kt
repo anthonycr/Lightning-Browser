@@ -31,7 +31,7 @@ internal class FetchUrlMimeType(
     private val userAgent: String?,
     private val coroutineDispatchers: CoroutineDispatchers,
 ) {
-    suspend fun create(): Result = withContext(coroutineDispatchers.io) {
+    suspend fun create(): Result = withContext(coroutineDispatchers.network) {
         // User agent is likely to be null, though the AndroidHttpClient
         // seems ok with that.
         var mimeType: String? = null

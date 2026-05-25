@@ -49,7 +49,7 @@ abstract class BaseSuggestionsModel internal constructor(
 
     override suspend fun resultsForSearch(
         rawQuery: String
-    ): List<SearchSuggestion> = withContext(coroutineDispatchers.io) {
+    ): List<SearchSuggestion> = withContext(coroutineDispatchers.network) {
         val okHttpClient = okHttpClientDeferred.await()
 
         val query = try {
