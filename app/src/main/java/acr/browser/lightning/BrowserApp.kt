@@ -15,7 +15,6 @@ import android.app.Application
 import android.os.Build
 import android.os.StrictMode
 import android.webkit.WebView
-import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -83,13 +82,6 @@ class BrowserApp : Application() {
                 defaultHandler.uncaughtException(thread, ex)
             } else {
                 exitProcess(2)
-            }
-        }
-
-        RxJavaPlugins.setErrorHandler { throwable: Throwable? ->
-            if (BuildConfig.DEBUG && throwable != null) {
-                FileUtils.writeCrashToStorage(throwable)
-                throw throwable
             }
         }
 

@@ -41,9 +41,6 @@ import androidx.core.content.getSystemService
 import com.anthonycr.mezzanine.mezzanine
 import dagger.Module
 import dagger.Provides
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -58,9 +55,6 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
-import java.util.concurrent.Executors
-import java.util.concurrent.LinkedBlockingDeque
-import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
@@ -109,27 +103,6 @@ class AppModule {
     @Provides
     fun providesActivityManager(application: Application) =
         application.getSystemService<ActivityManager>()!!
-
-    @Provides
-    @DatabaseScheduler
-    @Singleton
-    fun providesIoThread(): Scheduler = Schedulers.from(Executors.newSingleThreadExecutor())
-
-    @Provides
-    @DiskScheduler
-    @Singleton
-    fun providesDiskThread(): Scheduler = Schedulers.from(Executors.newSingleThreadExecutor())
-
-    @Provides
-    @NetworkScheduler
-    @Singleton
-    fun providesNetworkThread(): Scheduler =
-        Schedulers.from(ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, LinkedBlockingDeque()))
-
-    @Provides
-    @MainScheduler
-    @Singleton
-    fun providesMainThread(): Scheduler = AndroidSchedulers.mainThread()
 
     @Singleton
     @Provides
@@ -295,14 +268,6 @@ annotation class HostsClient
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
 annotation class MainHandler
-
-@Qualifier
-@Retention(AnnotationRetention.SOURCE)
-annotation class MainScheduler
-
-@Qualifier
-@Retention(AnnotationRetention.SOURCE)
-annotation class DiskScheduler
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
