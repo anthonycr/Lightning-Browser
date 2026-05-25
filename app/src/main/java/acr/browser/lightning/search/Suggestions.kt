@@ -1,11 +1,11 @@
 package acr.browser.lightning.search
 
+import acr.browser.lightning.preference.IntEnum
+
 /**
  * The suggestion choices.
- *
- * Created by anthonycr on 2/19/18.
  */
-enum class Suggestions(val index: Int) {
+enum class Suggestions(override val value: Int) : IntEnum {
     NONE(0),
     GOOGLE(1),
     DUCK(2),

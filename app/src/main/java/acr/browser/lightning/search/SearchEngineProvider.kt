@@ -43,13 +43,11 @@ class SearchEngineProvider @Inject constructor(
      */
     fun provideSearchSuggestions(): SuggestionsRepository =
         when (userPreferencesDataStore.searchSuggestionChoice.getUnsafe()) {
-            0 -> NoOpSuggestionsRepository()
-            1 -> googleSuggestionsModel.get()
-
-            2 -> duckSuggestionsModel.get()
-            3 -> baiduSuggestionsModel.get()
-            4 -> naverSuggestionsModel.get()
-            else -> googleSuggestionsModel.get()
+            Suggestions.NONE -> NoOpSuggestionsRepository()
+            Suggestions.GOOGLE -> googleSuggestionsModel.get()
+            Suggestions.DUCK -> duckSuggestionsModel.get()
+            Suggestions.BAIDU -> baiduSuggestionsModel.get()
+            Suggestions.NAVER -> naverSuggestionsModel.get()
         }
 
     /**

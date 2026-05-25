@@ -18,6 +18,7 @@ import acr.browser.lightning.preference.datastore.migrateInt
 import acr.browser.lightning.preference.datastore.migrateNullableString
 import acr.browser.lightning.preference.datastore.migrateString
 import acr.browser.lightning.search.SearchEngineProvider
+import acr.browser.lightning.search.Suggestions
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
@@ -82,7 +83,7 @@ class UserPreferencesDataStore @Inject constructor(
                     migrateBoolean(removeIdentifyingHeadersEnabled)
                     migrateBoolean(bookmarksAndTabsSwapped)
                     migrateBoolean(useBlackStatusBar)
-                    migrateInt(searchSuggestionChoice)
+                    migrateEnum(searchSuggestionChoice)
                     migrateEnum(hostsSource)
                     migrateNullableString(hostsLocalFile)
                     migrateNullableString(hostsRemoteFile)
@@ -458,10 +459,10 @@ class UserPreferencesDataStore @Inject constructor(
      *
      * @see SearchEngineProvider
      */
-    val searchSuggestionChoice: NonNullPreferenceStore<Int> = NonNullPreferenceStore(
+    val searchSuggestionChoice: EnumPreferenceStore<Suggestions> = EnumPreferenceStore(
         key = intPreferencesKey(SEARCH_SUGGESTIONS),
         dataStore = dataStore,
-        defaultValue = 1
+        defaultValue = Suggestions.GOOGLE
     )
 
     /**
