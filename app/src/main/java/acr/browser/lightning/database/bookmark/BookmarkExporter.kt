@@ -42,13 +42,10 @@ object BookmarkExporter {
         coroutineDispatcher: CoroutineDispatcher,
     ): List<Bookmark.Entry> = withContext(coroutineDispatcher) {
         val bookmarks: MutableList<Bookmark.Entry> = mutableListOf()
-        var bookmarksReader: BufferedReader? = null
         var inputStream: InputStream? = null
         try {
             inputStream = context.resources.openRawResource(R.raw.default_bookmarks)
-            bookmarksReader = BufferedReader(InputStreamReader(inputStream))
-            var line: String
-            while ((bookmarksReader.readLine().also { line = it }) != null) {
+            inputStream.bufferedReader().lines().forEach { line ->
                 try {
                     val jsonObject = JSONObject(line)
                     val folderTitle = jsonObject.getString(KEY_FOLDER)
@@ -67,7 +64,6 @@ object BookmarkExporter {
         } catch (e: IOException) {
             Log.e(TAG, "Error reading the bookmarks file", e)
         } finally {
-            Utils.close(bookmarksReader)
             Utils.close(inputStream)
         }
 
