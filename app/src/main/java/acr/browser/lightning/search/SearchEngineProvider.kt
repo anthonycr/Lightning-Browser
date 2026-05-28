@@ -92,7 +92,7 @@ class SearchEngineProvider @Inject constructor(
     /**
      * Provide a list of all supported search engines.
      */
-    fun provideAllSearchEngines(): List<BaseSearchEngine> = listOf(
+    suspend fun provideAllSearchEngines(): List<BaseSearchEngine> = listOf(
         CustomSearch(userPreferencesDataStore.searchUrl.getUnsafe()),
         GoogleSearch(),
         AskSearch(),

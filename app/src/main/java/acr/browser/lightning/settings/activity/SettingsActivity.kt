@@ -3,19 +3,11 @@
  */
 package acr.browser.lightning.settings.activity
 
-import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.compose.AppTheme
-import acr.browser.lightning.database.bookmark.BookmarkExporter
-import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.device.BuildInfo
-import acr.browser.lightning.preference.DeveloperPreferenceStore
-import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.resources.ResourceProvider
-import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.settings.SettingsNavigation
 import acr.browser.lightning.settings.SettingsScreen
-import acr.browser.lightning.settings.adblock.HostsFileUpdater
 import acr.browser.lightning.settings.screens.AboutSettingsScreen
 import acr.browser.lightning.settings.screens.AdBlockSettingsScreen
 import acr.browser.lightning.settings.screens.AdvancedSettingsScreen
@@ -24,7 +16,6 @@ import acr.browser.lightning.settings.screens.DebugSettingsScreen
 import acr.browser.lightning.settings.screens.DisplaySettingsScreen
 import acr.browser.lightning.settings.screens.GeneralSettingsScreen
 import acr.browser.lightning.settings.screens.PrivacySettingsScreen
-import acr.browser.lightning.utils.WebUtils
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -46,16 +37,17 @@ import javax.inject.Inject
 
 class SettingsActivity : ComponentActivity() {
 
-    @Inject internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
-    @Inject internal lateinit var developerPreferenceStore: DeveloperPreferenceStore
-    @Inject internal lateinit var resourceProvider: ResourceProvider
-    @Inject internal lateinit var bloomFilterAdBlocker: BloomFilterAdBlocker
-    @Inject internal lateinit var hostsFileUpdater: HostsFileUpdater
-    @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
-    @Inject internal lateinit var webUtils: WebUtils
-    @Inject internal lateinit var bookmarkExporter: BookmarkExporter
-    @Inject internal lateinit var bookmarkRepository: BookmarkRepository
+
     @Inject internal lateinit var buildInfo: BuildInfo
+
+    @Inject internal lateinit var aboutSettingsScreen: AboutSettingsScreen
+    @Inject internal lateinit var adBlockSettingsScreen: AdBlockSettingsScreen
+    @Inject internal lateinit var advancedSettingsScreen: AdvancedSettingsScreen
+    @Inject internal lateinit var bookmarkSettingsScreen: BookmarkSettingsScreen
+    @Inject internal lateinit var debugSettingsScreen: DebugSettingsScreen
+    @Inject internal lateinit var displaySettingsScreen: DisplaySettingsScreen
+    @Inject internal lateinit var generalSettingsScreen: GeneralSettingsScreen
+    @Inject internal lateinit var privacySettingsScreen: PrivacySettingsScreen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
@@ -87,45 +79,34 @@ class SettingsActivity : ComponentActivity() {
                         }
 
                         SettingsNavigation.ADBLOCK -> AdBlockSettingsScreen(
-                            resourceProvider,
-                            userPreferencesDataStore,
-                            bloomFilterAdBlocker,
-                            hostsFileUpdater,
+                            adBlockSettingsScreen
                         ) { navigationState = SettingsNavigation.ROOT }
 
                         SettingsNavigation.GENERAL -> GeneralSettingsScreen(
-                            resourceProvider,
-                            userPreferencesDataStore,
-                            searchEngineProvider,
+                            generalSettingsScreen
                         ) { navigationState = SettingsNavigation.ROOT }
 
                         SettingsNavigation.BOOKMARK -> BookmarkSettingsScreen(
-                            resourceProvider,
-                            bookmarkExporter,
-                            bookmarkRepository
+                            bookmarkSettingsScreen
                         ) { navigationState = SettingsNavigation.ROOT }
 
                         SettingsNavigation.DISPLAY -> DisplaySettingsScreen(
-                            userPreferencesDataStore,
-                            resourceProvider,
+                            displaySettingsScreen
                         ) { navigationState = SettingsNavigation.ROOT }
 
                         SettingsNavigation.PRIVACY -> PrivacySettingsScreen(
-                            resourceProvider,
-                            userPreferencesDataStore,
-                            webUtils
+                            privacySettingsScreen
                         ) {
                             navigationState = SettingsNavigation.ROOT
                         }
 
                         SettingsNavigation.ADVANCED -> AdvancedSettingsScreen(
-                            userPreferencesDataStore,
-                            resourceProvider
+                            advancedSettingsScreen
                         ) {
                             navigationState = SettingsNavigation.ROOT
                         }
 
-                        SettingsNavigation.ABOUT -> AboutSettingsScreen(resourceProvider) {
+                        SettingsNavigation.ABOUT -> AboutSettingsScreen(aboutSettingsScreen) {
                             navigationState = SettingsNavigation.ROOT
                         }
 
@@ -142,8 +123,7 @@ class SettingsActivity : ComponentActivity() {
                         }
 
                         SettingsNavigation.DEBUG -> DebugSettingsScreen(
-                            resourceProvider,
-                            developerPreferenceStore
+                            debugSettingsScreen
                         ) {
                             navigationState = SettingsNavigation.ROOT
                         }

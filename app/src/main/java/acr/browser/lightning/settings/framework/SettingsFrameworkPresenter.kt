@@ -44,24 +44,17 @@ sealed interface ClickableOnClick {
     class Action(val action: suspend () -> Unit) : ClickableOnClick
 
     class ItemSelector(
-        val title: String,
-        val values: List<String>,
-        val selected: suspend () -> Int,
+        val produceState: suspend () -> SettingsBottomSheetChooserState,
         val onSelected: suspend (Int) -> ClickableOnClick,
     ) : ClickableOnClick
 
     class Input(
-        val title: String,
-        val hint: String,
-        val currentValue: suspend () -> String = { "" },
+        val produceState: suspend () -> SettingsBottomSheetInputState,
         val onValueUpdated: suspend (String) -> ClickableOnClick
     ) : ClickableOnClick
 
     class Confirmation(
-        val title: String,
-        val message: String,
-        val positiveAction: String,
-        val negativeAction: String,
+        val produceState: suspend () -> SettingsDialogConfirmationState,
         val onConfirmed: suspend (Boolean) -> ClickableOnClick
     ) : ClickableOnClick
 
@@ -176,24 +169,12 @@ class SettingsFrameworkPresenter(
 
             is ClickableOnClick.ItemSelector -> {
                 pendingActionState.emit(this)
-                settingsFrameworkState.asUiState(
-                    bottomSheetChooser = SettingsBottomSheetChooserState(
-                        title = this.title,
-                        this.values,
-                        selected = this.selected()
-                    )
-                )
+                settingsFrameworkState.asUiState(bottomSheetChooser = produceState())
             }
 
             is ClickableOnClick.Input -> {
                 pendingActionState.emit(this)
-                settingsFrameworkState.asUiState(
-                    bottomSheetInput = SettingsBottomSheetInputState(
-                        title = this.title,
-                        hint = this.hint,
-                        currentValue = this.currentValue()
-                    )
-                )
+                settingsFrameworkState.asUiState(bottomSheetInput = produceState())
             }
 
             ClickableOnClick.None -> {
@@ -208,14 +189,7 @@ class SettingsFrameworkPresenter(
             is ClickableOnClick.Snackbar -> settingsFrameworkState.asUiState(ephemeral = this.produceState())
             is ClickableOnClick.Confirmation -> {
                 pendingActionState.emit(this)
-                settingsFrameworkState.asUiState(
-                    dialogConfirmation = SettingsDialogConfirmationState(
-                        title = this.title,
-                        message = this.message,
-                        negativeAction = this.negativeAction,
-                        positiveAction = this.positiveAction
-                    )
-                )
+                settingsFrameworkState.asUiState(dialogConfirmation = produceState())
             }
 
             is ClickableOnClick.FileCreator -> {

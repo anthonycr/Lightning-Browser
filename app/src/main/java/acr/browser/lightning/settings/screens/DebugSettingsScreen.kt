@@ -10,34 +10,45 @@ import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import javax.inject.Inject
+
+class DebugSettingsScreen @Inject constructor(
+    private val resourceProvider: ResourceProvider,
+    private val developerPreferenceStore: DeveloperPreferenceStore
+) {
+    val key = "debug"
+
+    fun createSettingsFrameworkState(): SettingsFrameworkState = SettingsFrameworkState(
+        title = resourceProvider.stringResource(R.string.debug_title),
+        content = listOf(
+            ToggleState(
+                title = resourceProvider.stringResource(R.string.debug_leak_canary),
+                isChecked = { developerPreferenceStore.useLeakCanary.get() },
+                onToggle = {
+                    developerPreferenceStore.useLeakCanary.set(it)
+                    SettingsSnackBarState(
+                        resourceProvider.stringResource(R.string.app_restart)
+                    )
+                }
+            )
+        )
+    )
+}
 
 @Composable
 fun DebugSettingsScreen(
-    resourceProvider: ResourceProvider,
-    developerPreferenceStore: DeveloperPreferenceStore,
+    debugSettingsScreen: DebugSettingsScreen,
     onUp: () -> Unit
 ) {
-    val presenter: SettingsFrameworkPresenter = viewModel(
-        key = "debug",
-        factory = SettingsFrameworkPresenter.Factory(
-            settingsFrameworkState = {
-                SettingsFrameworkState(
-                    title = resourceProvider.stringResource(R.string.debug_title),
-                    content = listOf(
-                        ToggleState(
-                            title = resourceProvider.stringResource(R.string.debug_leak_canary),
-                            isChecked = { developerPreferenceStore.useLeakCanary.get() },
-                            onToggle = {
-                                developerPreferenceStore.useLeakCanary.set(it)
-                                SettingsSnackBarState(
-                                    resourceProvider.stringResource(R.string.app_restart)
-                                )
-                            }
-                        )
-                    )
-                )
-            }
-        )
+    SettingsFrameworkScreen(
+        viewModel(
+            key = debugSettingsScreen.key,
+            factory = SettingsFrameworkPresenter.Factory(
+                settingsFrameworkState = {
+                    debugSettingsScreen.createSettingsFrameworkState()
+                }
+            )
+        ),
+        onUp
     )
-    SettingsFrameworkScreen(presenter, onUp)
 }
