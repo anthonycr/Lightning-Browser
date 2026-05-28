@@ -8,6 +8,6 @@ interface HostsDataSourceProvider {
     /**
      * Create the hosts data source.
      */
-    fun createHostsDataSource(): HostsDataSource
+    suspend fun createHostsDataSource(): HostsDataSource
 
 }

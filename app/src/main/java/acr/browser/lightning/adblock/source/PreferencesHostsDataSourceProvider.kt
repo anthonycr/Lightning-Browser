@@ -15,7 +15,7 @@ class PreferencesHostsDataSourceProvider @Inject constructor(
     private val urlHostsDataSourceFactory: UrlHostsDataSource.Factory
 ) : HostsDataSourceProvider {
 
-    override fun createHostsDataSource(): HostsDataSource =
+    override suspend fun createHostsDataSource(): HostsDataSource =
         when (val source = userPreferencesDataStore.selectedHostsSource()) {
             HostsSourceType.Default -> assetsHostsDataSource
             is HostsSourceType.Local -> fileHostsDataSourceFactory.create(source.file)

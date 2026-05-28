@@ -6,15 +6,7 @@ import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.search.SuggestionsAdapter
-import acr.browser.lightning.settings.activity.ThemableSettingsActivity
-import acr.browser.lightning.settings.fragment.AdBlockSettingsFragment
-import acr.browser.lightning.settings.fragment.AdvancedSettingsFragment
-import acr.browser.lightning.settings.fragment.BookmarkSettingsFragment
-import acr.browser.lightning.settings.fragment.DebugSettingsFragment
-import acr.browser.lightning.settings.fragment.DisplaySettingsFragment
-import acr.browser.lightning.settings.fragment.GeneralSettingsFragment
-import acr.browser.lightning.settings.fragment.PrivacySettingsFragment
-import acr.browser.lightning.settings.fragment.RootSettingsFragment
+import acr.browser.lightning.settings.activity.SettingsActivity
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
@@ -37,33 +29,17 @@ interface AppComponent {
         fun build(): AppComponent
     }
 
-    fun inject(fragment: BookmarkSettingsFragment)
-
     fun inject(builder: LightningDialogBuilder)
 
     fun inject(activity: ThemableBrowserActivity)
 
-    fun inject(advancedSettingsFragment: AdvancedSettingsFragment)
-
     fun inject(app: BrowserApp)
 
-    fun inject(activity: ThemableSettingsActivity)
-
-    fun inject(fragment: PrivacySettingsFragment)
-
-    fun inject(fragment: DebugSettingsFragment)
+    fun inject(activity: SettingsActivity)
 
     fun inject(suggestionsAdapter: SuggestionsAdapter)
 
     fun inject(searchBoxModel: SearchBoxModel)
-
-    fun inject(activity: RootSettingsFragment)
-
-    fun inject(generalSettingsFragment: GeneralSettingsFragment)
-
-    fun inject(displaySettingsFragment: DisplaySettingsFragment)
-
-    fun inject(adBlockSettingsFragment: AdBlockSettingsFragment)
 
     fun browser2ComponentBuilder(): Browser2Component.Builder
 

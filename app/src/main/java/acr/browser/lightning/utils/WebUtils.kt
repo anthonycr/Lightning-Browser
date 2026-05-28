@@ -2,7 +2,6 @@ package acr.browser.lightning.utils
 
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.history.HistoryRepository
-import android.app.Activity
 import android.app.Application
 import android.webkit.CookieManager
 import android.webkit.WebStorage
@@ -32,8 +31,8 @@ class WebUtils @Inject constructor(
         application.cacheDir.deleteRecursively()
     }
 
-    suspend fun clearCache(activity: Activity) = withContext(coroutineDispatchers.main) {
-        val webView = WebView(activity)
+    suspend fun clearCache() = withContext(coroutineDispatchers.main) {
+        val webView = WebView(application)
         webView.clearCache(true)
         webView.destroy()
         application.cacheDir.deleteRecursively()

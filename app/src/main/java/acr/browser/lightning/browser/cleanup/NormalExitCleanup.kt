@@ -3,7 +3,6 @@ package acr.browser.lightning.browser.cleanup
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.utils.WebUtils
-import android.app.Activity
 import javax.inject.Inject
 
 /**
@@ -12,12 +11,11 @@ import javax.inject.Inject
 class NormalExitCleanup @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val logger: Logger,
-    private val activity: Activity,
     private val webUtils: WebUtils,
 ) : ExitCleanup {
     override suspend fun cleanUp() {
         if (userPreferencesDataStore.clearCacheExit.get()) {
-            webUtils.clearCache(activity)
+            webUtils.clearCache()
             logger.log(TAG, "Cache Cleared")
         }
         if (userPreferencesDataStore.clearHistoryExitEnabled.get()) {

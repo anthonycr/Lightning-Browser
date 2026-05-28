@@ -5,6 +5,7 @@ plugins {
     id("com.anthonycr.plugins.mezzanine") version "2.3.0"
     id("com.autonomousapps.dependency-analysis") version "3.14.0"
     id("com.squareup.sort-dependencies") version "0.18.0"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
 }
 
 android {
@@ -33,6 +34,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
 
     buildTypes {
@@ -100,10 +102,21 @@ dependencies {
     val datastore = "1.2.1"
     val coil = "3.4.0"
     val coroutines = "1.11.0"
+    val lifecycle = "2.10.0"
 
+    implementation(platform("androidx.compose:compose-bom:2026.05.01"))
     implementation("androidx.activity:activity:1.13.0")
+    implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.annotation:annotation:1.10.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
+    implementation("androidx.compose.animation:animation")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.foundation:foundation-layout")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.runtime:runtime")
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.ui:ui-util")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.3.0")
     implementation("androidx.core:core:1.18.0")
@@ -114,7 +127,8 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences-core:$datastore")
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
     implementation("androidx.fragment:fragment:1.8.9")
-    implementation("androidx.lifecycle:lifecycle-common:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-common:$lifecycle")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle")
     implementation("androidx.palette:palette:1.0.0")
     implementation("androidx.preference:preference:1.2.1")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
@@ -135,6 +149,7 @@ dependencies {
     implementation("org.jspecify:jspecify:1.0.0")
     implementation("org.reactivestreams:reactive-streams:1.0.4")
 
+    debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 
     compileOnly("javax.annotation:jsr250-api:1.0")

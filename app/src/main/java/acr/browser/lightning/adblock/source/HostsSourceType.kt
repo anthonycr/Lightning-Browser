@@ -2,7 +2,6 @@ package acr.browser.lightning.adblock.source
 
 import acr.browser.lightning.preference.IntEnum
 import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.preference.datastore.getUnsafe
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.io.File
@@ -37,13 +36,13 @@ sealed class HostsSourceType {
  * Extract the user's chosen [HostsSourceType] from the preferences. If either the file chosen is
  * invalid or the remote URL chosen is invalid, we will fall back to the [HostsSourceType.Default].
  */
-fun UserPreferencesDataStore.selectedHostsSource(): HostsSourceType {
+suspend fun UserPreferencesDataStore.selectedHostsSource(): HostsSourceType {
     val localFile: File? =
-        hostsLocalFile.getUnsafe()?.let(::File)?.takeIf(File::exists)?.takeIf(File::canRead)
+        hostsLocalFile.get()?.let(::File)?.takeIf(File::exists)?.takeIf(File::canRead)
 
-    val remoteUrl: HttpUrl? = hostsRemoteFile.getUnsafe()?.toHttpUrlOrNull()
+    val remoteUrl: HttpUrl? = hostsRemoteFile.get()?.toHttpUrlOrNull()
 
-    val source = hostsSource.getUnsafe()
+    val source = hostsSource.get()
 
     return when (source) {
         HostsSourcePreference.LOCAL if localFile != null -> {
