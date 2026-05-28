@@ -16,12 +16,10 @@ import acr.browser.lightning.settings.framework.SettingsFrameworkPresenter
 import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdBlockSettingsScreen(
     resourceProvider: ResourceProvider,
