@@ -4,7 +4,6 @@ import acr.browser.lightning.browser.di.AppComponent
 import acr.browser.lightning.browser.di.DaggerAppComponent
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.concurrency.AppCoroutineScope
-import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.device.BuildInfo
@@ -43,7 +42,7 @@ class BrowserApp : Application() {
     internal lateinit var appCoroutineScope: AppCoroutineScope
 
     @Inject
-    internal lateinit var coroutineDispatchers: CoroutineDispatchers
+    internal lateinit var bookmarkExporter: BookmarkExporter
 
     lateinit var applicationComponent: AppComponent
 
@@ -97,10 +96,7 @@ class BrowserApp : Application() {
 
         appCoroutineScope.launch {
             if (bookmarkModel.count() == 0L) {
-                val assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(
-                    this@BrowserApp,
-                    coroutineDispatchers.io
-                )
+                val assetsBookmarks = bookmarkExporter.importBookmarksFromAssets()
                 bookmarkModel.addBookmarkList(assetsBookmarks)
             }
         }

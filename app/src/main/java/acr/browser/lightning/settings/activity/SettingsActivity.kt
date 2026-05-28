@@ -6,8 +6,8 @@ package acr.browser.lightning.settings.activity
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.compose.AppTheme
+import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
-import acr.browser.lightning.database.bookmark.NewBookmarkExporter
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.preference.DeveloperPreferenceStore
 import acr.browser.lightning.preference.UserPreferencesDataStore
@@ -53,7 +53,7 @@ class SettingsActivity : ComponentActivity() {
     @Inject internal lateinit var hostsFileUpdater: HostsFileUpdater
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
     @Inject internal lateinit var webUtils: WebUtils
-    @Inject internal lateinit var newBookmarkExporter: NewBookmarkExporter
+    @Inject internal lateinit var bookmarkExporter: BookmarkExporter
     @Inject internal lateinit var bookmarkRepository: BookmarkRepository
     @Inject internal lateinit var buildInfo: BuildInfo
 
@@ -101,7 +101,7 @@ class SettingsActivity : ComponentActivity() {
 
                         SettingsNavigation.BOOKMARK -> BookmarkSettingsScreen(
                             resourceProvider,
-                            newBookmarkExporter,
+                            bookmarkExporter,
                             bookmarkRepository
                         ) { navigationState = SettingsNavigation.ROOT }
 

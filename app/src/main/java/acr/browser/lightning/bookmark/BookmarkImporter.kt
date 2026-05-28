@@ -1,6 +1,7 @@
 package acr.browser.lightning.bookmark
 
 import acr.browser.lightning.database.Bookmark
+import android.net.Uri
 import java.io.InputStream
 
 /**
@@ -10,8 +11,8 @@ import java.io.InputStream
 interface BookmarkImporter {
 
     /**
-     * Synchronously converts an [InputStream] to a [List] of [Bookmark.Entry].
+     * Converts a [Uri] to a [List] of [Bookmark.Entry], returns null if an error occurred.
      */
-    fun importBookmarks(inputStream: InputStream): List<Bookmark.Entry>
+    suspend fun importBookmarks(uri: Uri): List<Bookmark.Entry>?
 
 }

@@ -1,8 +1,8 @@
 package acr.browser.lightning.settings.screens
 
 import acr.browser.lightning.R
+import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
-import acr.browser.lightning.database.bookmark.NewBookmarkExporter
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.SettingsSnackBarState
 import acr.browser.lightning.settings.framework.ClickableOnClick
@@ -16,7 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun BookmarkSettingsScreen(
     resourceProvider: ResourceProvider,
-    newBookmarkExporter: NewBookmarkExporter,
+    bookmarkExporter: BookmarkExporter,
     bookmarkRepository: BookmarkRepository,
     onUp: () -> Unit
 ) {
@@ -35,7 +35,7 @@ fun BookmarkSettingsScreen(
                                     if (it != null) {
                                         ClickableOnClick.Snackbar {
                                             val exportFile =
-                                                newBookmarkExporter.exportBookmarksToUri(it)
+                                                bookmarkExporter.exportBookmarksToUri(it)
                                             if (exportFile == null) {
                                                 SettingsSnackBarState(
                                                     resourceProvider.stringResource(
@@ -66,7 +66,7 @@ fun BookmarkSettingsScreen(
                                     if (it != null) {
                                         ClickableOnClick.Snackbar {
                                             val imported =
-                                                newBookmarkExporter.importBookmarksFromUri(it)
+                                                bookmarkExporter.importBookmarksFromUri(it)
                                             if (imported == null) {
                                                 SettingsSnackBarState(
                                                     resourceProvider.stringResource(

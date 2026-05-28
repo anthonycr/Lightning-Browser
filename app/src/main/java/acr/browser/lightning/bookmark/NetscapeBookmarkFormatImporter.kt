@@ -1,11 +1,15 @@
 package acr.browser.lightning.bookmark
 
+import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.asFolder
+import acr.browser.lightning.extensions.fileInputStream
+import android.app.Application
+import android.net.Uri
+import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.io.InputStream
 import javax.inject.Inject
 
 /**
@@ -13,15 +17,20 @@ import javax.inject.Inject
  *
  * See https://msdn.microsoft.com/en-us/ie/aa753582(v=vs.94)
  */
-class NetscapeBookmarkFormatImporter @Inject constructor() : BookmarkImporter {
+class NetscapeBookmarkFormatImporter @Inject constructor(
+    private val application: Application,
+    private val coroutineDispatchers: CoroutineDispatchers,
+) : BookmarkImporter {
 
-    override fun importBookmarks(inputStream: InputStream): List<Bookmark.Entry> {
-        val document = Jsoup.parse(inputStream, UTF8, "")
+    override suspend fun importBookmarks(uri: Uri): List<Bookmark.Entry>? =
+        withContext(coroutineDispatchers.io) {
+            val inputStream = application.fileInputStream(uri) ?: return@withContext null
+            val document = Jsoup.parse(inputStream, UTF8, "")
 
-        val rootList = document.body().children().first { it.matchesName(LIST_TAG) }
+            val rootList = document.body().children().first { it.matchesName(LIST_TAG) }
 
-        return rootList.processFolder(ROOT_FOLDER_NAME)
-    }
+            rootList.processFolder(ROOT_FOLDER_NAME)
+        }
 
     /**
      * @return The [List] of [Bookmark.Entry] held by [Element] with the provided [folderName].
