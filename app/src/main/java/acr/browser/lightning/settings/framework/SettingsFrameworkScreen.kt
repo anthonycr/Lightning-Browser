@@ -1,6 +1,5 @@
 package acr.browser.lightning.settings.framework
 
-import acr.browser.lightning.compose.AppTheme
 import acr.browser.lightning.settings.SettingsBottomSheetChooser
 import acr.browser.lightning.settings.SettingsBottomSheetInput
 import acr.browser.lightning.settings.SettingsClickable
@@ -94,134 +93,132 @@ fun SettingsFrameworkScreen(
             current.startActivity(Intent(Intent.ACTION_VIEW, webLink.toUri()))
         }
     }
-    AppTheme {
-        Scaffold(
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            },
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(state.title)
-                    }
-                )
-            }
-        ) { innerPadding ->
-            when (val content = state.content) {
-                is SettingsUiState.Content.Actual -> {
-                    if (content.bottomSheetChooser != null) {
-                        SettingsBottomSheetChooser(
-                            innerPadding = innerPadding,
-                            state = content.bottomSheetChooser,
-                            onDismiss = {
-                                presenter.onEvent(
-                                    SettingsFrameworkUiEvent.BottomSheetChoiceResult(null)
-                                )
-                            },
-                            onSelected = {
-                                presenter.onEvent(
-                                    SettingsFrameworkUiEvent.BottomSheetChoiceResult(it)
-                                )
-                            }
-                        )
-                    }
-                    if (content.bottomSheetInput != null) {
-                        SettingsBottomSheetInput(
-                            innerPadding = innerPadding,
-                            state = content.bottomSheetInput,
-                            onDismiss = {
-                                presenter.onEvent(
-                                    SettingsFrameworkUiEvent.BottomSheetInputResult(null)
-                                )
-                            },
-                            onSelected = {
-                                presenter.onEvent(
-                                    SettingsFrameworkUiEvent.BottomSheetInputResult(it.toString())
-                                )
-                            }
-                        )
-                    }
-                    if (content.dialogConfirmation != null) {
-                        BasicAlertDialog(onDismissRequest = {
-                            presenter.onEvent(SettingsFrameworkUiEvent.DialogConfirmation(false))
-                        }) {
-                            Surface(
-                                modifier = Modifier
-                                    .widthIn(max = 300.dp)
-                                    .wrapContentHeight(),
-                                shape = AlertDialogDefaults.shape,
-                                color = AlertDialogDefaults.containerColor
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(24.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        text = content.dialogConfirmation.title,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        textAlign = TextAlign.Center,
-                                        color = AlertDialogDefaults.titleContentColor
-                                    )
-
-                                    Spacer(modifier = Modifier.height(24.dp))
-
-                                    Text(
-                                        text = content.dialogConfirmation.message,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        textAlign = TextAlign.Center,
-                                        color = AlertDialogDefaults.textContentColor
-                                    )
-
-                                    Spacer(modifier = Modifier.height(24.dp))
-
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.End
-                                    ) {
-                                        TextButton(onClick = {
-                                            presenter.onEvent(
-                                                SettingsFrameworkUiEvent.DialogConfirmation(false)
-                                            )
-                                        }) {
-                                            Text(content.dialogConfirmation.negativeAction)
-                                        }
-
-                                        Spacer(modifier = Modifier.width(8.dp))
-
-                                        TextButton(onClick = {
-                                            presenter.onEvent(
-                                                SettingsFrameworkUiEvent.DialogConfirmation(true)
-                                            )
-                                        }) {
-                                            Text(content.dialogConfirmation.positiveAction)
-                                        }
-                                    }
-                                }
-                            }
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(state.title)
+                }
+            )
+        }
+    ) { innerPadding ->
+        when (val content = state.content) {
+            is SettingsUiState.Content.Actual -> {
+                if (content.bottomSheetChooser != null) {
+                    SettingsBottomSheetChooser(
+                        innerPadding = innerPadding,
+                        state = content.bottomSheetChooser,
+                        onDismiss = {
+                            presenter.onEvent(
+                                SettingsFrameworkUiEvent.BottomSheetChoiceResult(null)
+                            )
+                        },
+                        onSelected = {
+                            presenter.onEvent(
+                                SettingsFrameworkUiEvent.BottomSheetChoiceResult(it)
+                            )
                         }
-                    }
+                    )
+                }
+                if (content.bottomSheetInput != null) {
+                    SettingsBottomSheetInput(
+                        innerPadding = innerPadding,
+                        state = content.bottomSheetInput,
+                        onDismiss = {
+                            presenter.onEvent(
+                                SettingsFrameworkUiEvent.BottomSheetInputResult(null)
+                            )
+                        },
+                        onSelected = {
+                            presenter.onEvent(
+                                SettingsFrameworkUiEvent.BottomSheetInputResult(it.toString())
+                            )
+                        }
+                    )
+                }
+                if (content.dialogConfirmation != null) {
+                    BasicAlertDialog(onDismissRequest = {
+                        presenter.onEvent(SettingsFrameworkUiEvent.DialogConfirmation(false))
+                    }) {
+                        Surface(
+                            modifier = Modifier
+                                .widthIn(max = 300.dp)
+                                .wrapContentHeight(),
+                            shape = AlertDialogDefaults.shape,
+                            color = AlertDialogDefaults.containerColor
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = content.dialogConfirmation.title,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    textAlign = TextAlign.Center,
+                                    color = AlertDialogDefaults.titleContentColor
+                                )
 
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        content.entries.forEachIndexed { index, option ->
-                            when (option) {
-                                is SettingsClickableState -> SettingsClickable(option) {
-                                    presenter.onEvent(SettingsFrameworkUiEvent.Click(index))
-                                }
+                                Spacer(modifier = Modifier.height(24.dp))
 
-                                is SettingsToggleState -> SettingsToggle(option) {
-                                    presenter.onEvent(SettingsFrameworkUiEvent.Toggle(it, index))
+                                Text(
+                                    text = content.dialogConfirmation.message,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    textAlign = TextAlign.Center,
+                                    color = AlertDialogDefaults.textContentColor
+                                )
+
+                                Spacer(modifier = Modifier.height(24.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    TextButton(onClick = {
+                                        presenter.onEvent(
+                                            SettingsFrameworkUiEvent.DialogConfirmation(false)
+                                        )
+                                    }) {
+                                        Text(content.dialogConfirmation.negativeAction)
+                                    }
+
+                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                    TextButton(onClick = {
+                                        presenter.onEvent(
+                                            SettingsFrameworkUiEvent.DialogConfirmation(true)
+                                        )
+                                    }) {
+                                        Text(content.dialogConfirmation.positiveAction)
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-                SettingsUiState.Content.Loading -> SettingsLoader(innerPadding)
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    content.entries.forEachIndexed { index, option ->
+                        when (option) {
+                            is SettingsClickableState -> SettingsClickable(option) {
+                                presenter.onEvent(SettingsFrameworkUiEvent.Click(index))
+                            }
+
+                            is SettingsToggleState -> SettingsToggle(option) {
+                                presenter.onEvent(SettingsFrameworkUiEvent.Toggle(it, index))
+                            }
+                        }
+                    }
+                }
             }
+
+            SettingsUiState.Content.Loading -> SettingsLoader(innerPadding)
         }
     }
 }
