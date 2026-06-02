@@ -1,7 +1,11 @@
 package acr.browser.lightning.browser.di
 
+import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.tab.DefaultTabTitle
+import acr.browser.lightning.browser.ui.TabConfiguration
+import acr.browser.lightning.compose.PreferenceStoreStateProvider
+import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatcherProvider
 import acr.browser.lightning.concurrency.CoroutineDispatchers
@@ -22,6 +26,7 @@ import acr.browser.lightning.log.AndroidLogger
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.log.NoOpLogger
 import acr.browser.lightning.migration.Cleanup
+import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.search.suggestions.RequestFactory
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.ThreadSafeFileProvider
@@ -56,6 +61,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -241,6 +247,28 @@ class AppModule {
         main = Dispatchers.Main,
         io = Dispatchers.IO,
         default = Dispatchers.Default
+    )
+
+    @Named("theme")
+    @Singleton
+    @Provides
+    fun providesThemePreferenceStoreStateProvider(
+        userPreferencesDataStore: UserPreferencesDataStore,
+        appCoroutineScope: AppCoroutineScope,
+    ): StateProvider<AppTheme> = PreferenceStoreStateProvider(
+        userPreferencesDataStore.useTheme,
+        appCoroutineScope,
+    )
+
+    @Named("tab")
+    @Singleton
+    @Provides
+    fun providesTabConfigurationStoreStateProvider(
+        userPreferencesDataStore: UserPreferencesDataStore,
+        appCoroutineScope: AppCoroutineScope,
+    ): StateProvider<TabConfiguration> = PreferenceStoreStateProvider(
+        userPreferencesDataStore.tabConfiguration,
+        appCoroutineScope,
     )
 }
 

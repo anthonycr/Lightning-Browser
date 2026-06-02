@@ -1,10 +1,13 @@
 package acr.browser.lightning.compose
 
+import acr.browser.lightning.AppTheme
+import acr.browser.lightning.ThemableActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -100,6 +103,27 @@ fun AppTheme(
         else -> lightScheme
     }
 
+    MaterialTheme(
+        colorScheme = colorScheme,
+        content = content
+    )
+}
+
+@Composable
+fun ThemableActivity.BrowserTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Dynamic color is available on Android 12+
+    dynamicColor: Boolean = true,
+    content: @Composable () -> Unit
+) {
+    val colorScheme = when (appThemePreferenceStoreStateProvider.state.collectAsState().value) {
+        null -> null
+        AppTheme.LIGHT -> lightScheme
+        AppTheme.DARK -> darkScheme
+        AppTheme.BLACK -> darkScheme
+    }
+
+    if (colorScheme == null) return
     MaterialTheme(
         colorScheme = colorScheme,
         content = content

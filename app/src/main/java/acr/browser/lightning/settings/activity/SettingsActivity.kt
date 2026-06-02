@@ -3,8 +3,9 @@
  */
 package acr.browser.lightning.settings.activity
 
+import acr.browser.lightning.ThemableActivity
 import acr.browser.lightning.browser.di.injector
-import acr.browser.lightning.compose.AppTheme
+import acr.browser.lightning.compose.BrowserTheme
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.settings.SettingsNavigation
 import acr.browser.lightning.settings.SettingsScreen
@@ -18,7 +19,6 @@ import acr.browser.lightning.settings.screens.GeneralSettingsScreen
 import acr.browser.lightning.settings.screens.PrivacySettingsScreen
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -35,7 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import javax.inject.Inject
 
-class SettingsActivity : ComponentActivity() {
+class SettingsActivity : ThemableActivity() {
 
 
     @Inject internal lateinit var buildInfo: BuildInfo
@@ -54,7 +54,7 @@ class SettingsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            AppTheme {
+            BrowserTheme {
                 var navigationState by remember { mutableStateOf(SettingsNavigation.ROOT) }
                 AnimatedContent(navigationState, transitionSpec = {
                     if (targetState == SettingsNavigation.ROOT) {
