@@ -413,7 +413,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 isBookmarked = false,
                 isBookmarkEnabled = true,
                 isRootFolder = true,
-                findInPage = ""
+                findInPage = null,
             ),
             emptyList()
         )
@@ -425,7 +425,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     fun renderState(viewState: BrowserViewState) {
         lifecycleScope.launch {
             state.emit(state.value.copy(browserViewState = viewState))
-            println("YOLO " + state.value)
         }
 //        viewState.isBackEnabled?.let { binding.actionBack.isEnabled = it }
 //        viewState.isForwardEnabled?.let { binding.actionForward.isEnabled = it }
@@ -485,7 +484,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     fun renderTabs(tabListState: List<TabViewState>) {
         lifecycleScope.launch {
             state.emit(state.value.copy(tabState = tabListState))
-            println("YOLO " + state.value)
         }
 //        binding.tabCountView.updateCount(tabListState.size)
 //        val shouldScroll = tabsAdapter.itemCount < tabListState.size
@@ -506,137 +504,137 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      * @see BrowserContract.View.showAddBookmarkDialog
      */
     fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {
-//        lightningDialogBuilder.showAddBookmarkDialog(
-//            activity = this,
-//            currentTitle = title,
-//            currentUrl = url,
-//            folders = folders,
-//            onSave = presenter::onBookmarkConfirmed
-//        )
+        lightningDialogBuilder.showAddBookmarkDialog(
+            activity = this,
+            currentTitle = title,
+            currentUrl = url,
+            folders = folders,
+            onSave = presenter::onBookmarkConfirmed
+        )
     }
 
     /**
      * @see BrowserContract.View.showBookmarkOptionsDialog
      */
     fun showBookmarkOptionsDialog(bookmark: Bookmark.Entry) {
-//        lightningDialogBuilder.showLongPressedDialogForBookmarkUrl(
-//            activity = this,
-//            onClick = {
-//                presenter.onBookmarkOptionClick(bookmark, it)
-//            }
-//        )
+        lightningDialogBuilder.showLongPressedDialogForBookmarkUrl(
+            activity = this,
+            onClick = {
+                presenter.onBookmarkOptionClick(bookmark, it)
+            }
+        )
     }
 
     /**
      * @see BrowserContract.View.showEditBookmarkDialog
      */
     fun showEditBookmarkDialog(title: String, url: String, folder: String, folders: List<String>) {
-//        lightningDialogBuilder.showEditBookmarkDialog(
-//            activity = this,
-//            currentTitle = title,
-//            currentUrl = url,
-//            currentFolder = folder,
-//            folders = folders,
-//            onSave = presenter::onBookmarkEditConfirmed
-//        )
+        lightningDialogBuilder.showEditBookmarkDialog(
+            activity = this,
+            currentTitle = title,
+            currentUrl = url,
+            currentFolder = folder,
+            folders = folders,
+            onSave = presenter::onBookmarkEditConfirmed
+        )
     }
 
     /**
      * @see BrowserContract.View.showFolderOptionsDialog
      */
     fun showFolderOptionsDialog(folder: Bookmark.Folder) {
-//        lightningDialogBuilder.showBookmarkFolderLongPressedDialog(
-//            activity = this,
-//            onClick = {
-//                presenter.onFolderOptionClick(folder, it)
-//            }
-//        )
+        lightningDialogBuilder.showBookmarkFolderLongPressedDialog(
+            activity = this,
+            onClick = {
+                presenter.onFolderOptionClick(folder, it)
+            }
+        )
     }
 
     /**
      * @see BrowserContract.View.showEditFolderDialog
      */
     fun showEditFolderDialog(oldTitle: String) {
-//        lightningDialogBuilder.showRenameFolderDialog(
-//            activity = this,
-//            oldTitle = oldTitle,
-//            onSave = presenter::onBookmarkFolderRenameConfirmed
-//        )
+        lightningDialogBuilder.showRenameFolderDialog(
+            activity = this,
+            oldTitle = oldTitle,
+            onSave = presenter::onBookmarkFolderRenameConfirmed
+        )
     }
 
     /**
      * @see BrowserContract.View.showDownloadOptionsDialog
      */
     fun showDownloadOptionsDialog(download: DownloadEntry) {
-//        lightningDialogBuilder.showLongPressedDialogForDownloadUrl(
-//            activity = this,
-//            onClick = {
-//                presenter.onDownloadOptionClick(download, it)
-//            }
-//        )
+        lightningDialogBuilder.showLongPressedDialogForDownloadUrl(
+            activity = this,
+            onClick = {
+                presenter.onDownloadOptionClick(download, it)
+            }
+        )
     }
 
     /**
      * @see BrowserContract.View.showHistoryOptionsDialog
      */
     fun showHistoryOptionsDialog(historyEntry: HistoryEntry) {
-//        lightningDialogBuilder.showLongPressedHistoryLinkDialog(
-//            activity = this,
-//            onClick = {
-//                presenter.onHistoryOptionClick(historyEntry, it)
-//            }
-//        )
+        lightningDialogBuilder.showLongPressedHistoryLinkDialog(
+            activity = this,
+            onClick = {
+                presenter.onHistoryOptionClick(historyEntry, it)
+            }
+        )
     }
 
     /**
      * @see BrowserContract.View.showFindInPageDialog
      */
     fun showFindInPageDialog() {
-//        BrowserDialog.showEditText(
-//            this,
-//            R.string.action_find,
-//            R.string.search_hint,
-//            R.string.search_hint,
-//            presenter::onFindInPage
-//        )
+        BrowserDialog.showEditText(
+            this,
+            R.string.action_find,
+            R.string.search_hint,
+            R.string.search_hint,
+            presenter::onFindInPage
+        )
     }
 
     /**
      * @see BrowserContract.View.showLinkLongPressDialog
      */
     fun showLinkLongPressDialog(longPress: LongPress) {
-//        BrowserDialog.show(
-//            this, longPress.targetUrl?.replace(HTTP, ""),
-//            DialogItem(title = R.string.dialog_open_new_tab) {
-//                presenter.onLinkLongPressEvent(
-//                    longPress,
-//                    BrowserContract.LinkLongPressEvent.NEW_TAB
-//                )
-//            },
-//            DialogItem(title = R.string.dialog_open_background_tab) {
-//                presenter.onLinkLongPressEvent(
-//                    longPress,
-//                    BrowserContract.LinkLongPressEvent.BACKGROUND_TAB
-//                )
-//            },
-//            DialogItem(
-//                title = R.string.dialog_open_incognito_tab,
-//                isConditionMet = !isIncognito()
-//            ) {
-//                presenter.onLinkLongPressEvent(
-//                    longPress,
-//                    BrowserContract.LinkLongPressEvent.INCOGNITO_TAB
-//                )
-//            },
-//            DialogItem(title = R.string.action_share) {
-//                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.SHARE)
-//            },
-//            DialogItem(title = R.string.dialog_copy_link) {
-//                presenter.onLinkLongPressEvent(
-//                    longPress,
-//                    BrowserContract.LinkLongPressEvent.COPY_LINK
-//                )
-//            })
+        BrowserDialog.show(
+            this, longPress.targetUrl?.replace(HTTP, ""),
+            DialogItem(title = R.string.dialog_open_new_tab) {
+                presenter.onLinkLongPressEvent(
+                    longPress,
+                    BrowserContract.LinkLongPressEvent.NEW_TAB
+                )
+            },
+            DialogItem(title = R.string.dialog_open_background_tab) {
+                presenter.onLinkLongPressEvent(
+                    longPress,
+                    BrowserContract.LinkLongPressEvent.BACKGROUND_TAB
+                )
+            },
+            DialogItem(
+                title = R.string.dialog_open_incognito_tab,
+                isConditionMet = !isIncognito()
+            ) {
+                presenter.onLinkLongPressEvent(
+                    longPress,
+                    BrowserContract.LinkLongPressEvent.INCOGNITO_TAB
+                )
+            },
+            DialogItem(title = R.string.action_share) {
+                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.SHARE)
+            },
+            DialogItem(title = R.string.dialog_copy_link) {
+                presenter.onLinkLongPressEvent(
+                    longPress,
+                    BrowserContract.LinkLongPressEvent.COPY_LINK
+                )
+            })
     }
 
     /**

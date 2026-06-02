@@ -44,7 +44,7 @@ data class BrowserViewState(
     val isRootFolder: Boolean,
 
     // find
-    val findInPage: String
+    val findInPage: String?
 
 )
 

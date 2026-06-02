@@ -106,7 +106,7 @@ class BrowserPresenter @Inject constructor(
         isBookmarked = false,
         isBookmarkEnabled = true,
         isRootFolder = true,
-        findInPage = ""
+        findInPage = null
     )
     private var tabListState: List<TabViewState> = emptyList()
     private var currentTab: TabModel? = null
@@ -220,7 +220,7 @@ class BrowserPresenter @Inject constructor(
                     isBackEnabled = false,
                     sslState = SslState.None,
                     progress = 100,
-                    findInPage = ""
+                    findInPage = null
                 )
             )
             view.updateTabs(tabListState.map { it.copy(isSelected = false) })
@@ -265,7 +265,7 @@ class BrowserPresenter @Inject constructor(
                     progress = progress,
                     isBookmarked = isBookmark,
                     isBookmarkEnabled = !isSpecialUrl,
-                    findInPage = tab.findQuery.orEmpty()
+                    findInPage = tab.findQuery
                 )
             }.flowOn(coroutineDispatchers.main).collectLatest {
                 view.updateState(it)
@@ -562,6 +562,11 @@ class BrowserPresenter @Inject constructor(
      */
     fun onTabDrawerMoved(isOpen: Boolean) {
         isTabDrawerOpen = isOpen
+        if (isOpen) {
+            view?.openTabDrawer()
+        } else {
+            view?.closeTabDrawer()
+        }
     }
 
     /**
@@ -772,7 +777,7 @@ class BrowserPresenter @Inject constructor(
      */
     fun onFindDismiss() {
         currentTab?.clearFindMatches()
-        view?.updateState(viewState.copy(findInPage = ""))
+        view?.updateState(viewState.copy(findInPage = null))
     }
 
     /**

@@ -142,6 +142,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:5.3.2")
     implementation("com.squareup.okio:okio:3.17.0")
     implementation("io.coil-kt.coil3:coil:$coil")
+    implementation("io.coil-kt.coil3:coil-compose:$coil")
     implementation("io.coil-kt.coil3:coil-core:$coil")
     implementation("io.coil-kt.coil3:coil-network-okhttp:$coil")
     implementation("javax.inject:javax.inject:1")

@@ -8,6 +8,7 @@ import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.ssl.SslState
 import android.widget.FrameLayout
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -69,6 +70,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.drawText
@@ -80,6 +83,8 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
 import kotlinx.coroutines.launch
 import kotlin.math.tan
 
@@ -205,7 +210,7 @@ fun DrawerTabs(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             tab.icon?.let {
-                                Icon(
+                                Image(
                                     modifier = Modifier
                                         .size(56.dp)
                                         .padding(horizontal = 16.dp),
@@ -288,6 +293,12 @@ fun DrawerTabs(
                             contentDescription = ""
                         )
                     }
+                    IconButton(onClick = { presenter.onNewTabClick() }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_action_plus),
+                            contentDescription = ""
+                        )
+                    }
                 }
             }
         }
@@ -335,8 +346,10 @@ fun BottomTabNavigationBar(
                     if (sheetState.isAnimationRunning) return@launch
 
                     if (sheetState.isVisible) {
+                        presenter.onTabCountViewClick()
                         sheetState.hide()
                     } else {
+                        presenter.onTabCountViewClick()
                         sheetState.show()
                     }
                 }
@@ -412,7 +425,7 @@ fun TopTabDesktopNavigationBar(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     tab.icon?.let {
-                        Icon(
+                        Image(
                             modifier = Modifier
                                 .size(28.dp)
                                 .padding(horizontal = 4.dp),
@@ -475,6 +488,7 @@ fun BrowserFindInPage(
     browserScreenState: BrowserScreenState,
     presenter: BrowserPresenter,
 ) {
+    val findInPage = browserScreenState.browserViewState.findInPage ?: return
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -496,7 +510,7 @@ fun BrowserFindInPage(
                     .padding(8.dp)
                     .fillMaxWidth()
                     .weight(1f, false),
-                value = browserScreenState.browserViewState.findInPage,
+                value = findInPage,
                 onValueChange = { presenter.onFindInPage(it) }
             )
             IconButton(onClick = { presenter.onFindPrevious() }) {
@@ -729,6 +743,12 @@ fun TabsBottomSheet(
                     contentDescription = ""
                 )
             }
+            IconButton(onClick = { presenter.onNewTabClick() }) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_action_plus),
+                    contentDescription = ""
+                )
+            }
         }
         LazyRow(
             modifier = Modifier.height(200.dp),
@@ -760,7 +780,7 @@ fun TabsBottomSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         tab.icon?.let {
-                            Icon(
+                            Image(
                                 modifier = Modifier
                                     .size(24.dp)
                                     .padding(horizontal = 4.dp),
@@ -797,12 +817,19 @@ fun TabsBottomSheet(
                             )
                         }
                     }
-                    Box(
+                    // TODO: Get image to reload on tab updates
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(tab.preview.first)
+                            .build(),
+                        placeholder = null,
+                        contentDescription = "test",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.surface)
                             .fillMaxSize()
-                            .weight(1f, false)
-                    ) { }
+                            .weight(1f, false),
+                    )
                 }
             }
         }
