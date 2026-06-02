@@ -1,9 +1,9 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.AppTheme
+import acr.browser.lightning.BrowserScreenState
 import acr.browser.lightning.R
 import acr.browser.lightning.ThemableBrowserActivity
-import acr.browser.lightning.animation.AnimationUtils
 import acr.browser.lightning.browser.bookmark.BookmarkRecyclerViewAdapter
 import acr.browser.lightning.browser.color.ColorAnimator
 import acr.browser.lightning.browser.di.MainHandler
@@ -12,16 +12,11 @@ import acr.browser.lightning.browser.image.ImageLoader
 import acr.browser.lightning.browser.keys.KeyEventAdapter
 import acr.browser.lightning.browser.menu.MenuItemAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
-import acr.browser.lightning.browser.search.SearchListener
-import acr.browser.lightning.browser.search.StyleRemovingTextWatcher
-import acr.browser.lightning.browser.tab.BottomDrawerTabRecyclerViewAdapter
 import acr.browser.lightning.browser.tab.DesktopTabRecyclerViewAdapter
-import acr.browser.lightning.browser.tab.DrawerTabRecyclerViewAdapter
 import acr.browser.lightning.browser.tab.TabPager
 import acr.browser.lightning.browser.tab.TabViewHolder
 import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.browser.theme.ThemeProvider
-import acr.browser.lightning.browser.ui.BookmarkConfiguration
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
 import acr.browser.lightning.browser.view.ViewDelegate
@@ -29,11 +24,10 @@ import acr.browser.lightning.browser.view.delegates.BottomTabViewDelegate
 import acr.browser.lightning.browser.view.delegates.DesktopTabViewDelegate
 import acr.browser.lightning.browser.view.delegates.DrawerTabViewDelegate
 import acr.browser.lightning.browser.view.targetUrl.LongPress
+import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
-import acr.browser.lightning.database.SearchSuggestion
-import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.databinding.BrowserActivityBottomBinding
 import acr.browser.lightning.databinding.BrowserActivityDesktopBinding
@@ -45,17 +39,13 @@ import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.resizeAndShow
-import acr.browser.lightning.extensions.takeIfInstance
 import acr.browser.lightning.extensions.tint
 import acr.browser.lightning.preference.datastore.getUnsafe
-import acr.browser.lightning.search.SuggestionsAdapter
-import acr.browser.lightning.ssl.createSslDrawableForState
-import acr.browser.lightning.utils.value
+import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.utils.Option
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.Handler
-import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.Menu
@@ -63,21 +53,23 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import android.widget.AdapterView
+import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.activity.addCallback
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
+import androidx.compose.runtime.collectAsState
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.view.isVisible
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * The base browser activity that governs the browsing experience for both default and incognito
@@ -141,6 +133,10 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     @Inject
     internal lateinit var mainHandler: Handler
 
+    @Named("tab")
+    @Inject
+    internal lateinit var tabConfigurationProvider: StateProvider<TabConfiguration>
+
     /**
      * True if the activity is operating in incognito mode, false otherwise.
      */
@@ -183,12 +179,14 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             null
         }
 
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
 
+
+//        setContentView(binding.root)
+//        setSupportActionBar(binding.toolbar)
+        val frameLayout: FrameLayout = FrameLayout(this)
         injector.browser2ComponentBuilder()
             .activity(this)
-            .browserFrame(binding.contentFrame)
+            .browserFrame(frameLayout)
             .bottomTabsLayout(bottomTabsBinding)
             .toolbarRoot(binding.uiLayout)
             .browserRoot(binding.browserLayoutContainer)
@@ -198,165 +196,169 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             .build()
             .inject(this)
 
-        binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
-
-            override fun onDrawerOpened(drawerView: View) {
-                if (drawerView == binding.tabDrawer) {
-                    presenter.onTabDrawerMoved(isOpen = true)
-                } else if (drawerView == binding.bookmarkDrawer) {
-                    presenter.onBookmarkDrawerMoved(isOpen = true)
-                }
-            }
-
-            override fun onDrawerClosed(drawerView: View) {
-                if (drawerView == binding.tabDrawer) {
-                    presenter.onTabDrawerMoved(isOpen = false)
-                } else if (drawerView == binding.bookmarkDrawer) {
-                    presenter.onBookmarkDrawerMoved(isOpen = false)
-                }
-            }
-        })
-
-        binding.bookmarkDrawer.layoutParams =
-            (binding.bookmarkDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
-                gravity = when (uiConfiguration.bookmarkConfiguration) {
-                    BookmarkConfiguration.LEFT -> Gravity.START
-                    BookmarkConfiguration.RIGHT -> Gravity.END
-                }
-            }
-
-        binding.tabDrawer.layoutParams =
-            (binding.tabDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
-                gravity = when (uiConfiguration.bookmarkConfiguration) {
-                    BookmarkConfiguration.LEFT -> Gravity.END
-                    BookmarkConfiguration.RIGHT -> Gravity.START
-                }
-            }
-
-        binding.homeImageView.isVisible =
-            uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP || isIncognito()
-        binding.homeImageView.setImageResource(homeIcon())
-        binding.tabCountView.isVisible =
-            uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP && !isIncognito()
-
-        if (uiConfiguration.tabConfiguration != TabConfiguration.DRAWER_SIDE) {
-            binding.drawerLayout.setDrawerLockMode(
-                DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
-                binding.tabDrawer
-            )
+        setContent {
+            BrowserScreen(tabConfigurationProvider, state.collectAsState().value, presenter, frameLayout)
         }
-
-        if (uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP) {
-            if (binding.browserLayoutContainer == null) {
-                tabsAdapter = DrawerTabRecyclerViewAdapter(
-                    onClick = presenter::onTabClick,
-                    onCloseClick = presenter::onTabClose,
-                    onLongClick = presenter::onTabLongClick
-                )
-                binding.drawerTabsList.isVisible = true
-                binding.drawerTabsList.adapter = tabsAdapter
-                binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
-                binding.drawerTabsList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
-                    ?.supportsChangeAnimations = false
-                binding.desktopTabsList.isVisible = false
-                activeRecyclerView = binding.desktopTabsList
-            } else {
-                tabsAdapter = BottomDrawerTabRecyclerViewAdapter(
-                    themeProvider,
-                    onClick = presenter::onTabClick,
-                    onLongClick = presenter::onTabLongClick,
-                    onCloseClick = presenter::onTabClose,
-                    onBackClick = { presenter.onBackClick() },
-                    onForwardClick = { presenter.onForwardClick() },
-                    onHomeClick = { presenter.onHomeClick() }
-                )
-                bottomTabsBinding!!.bottomTabList.adapter = tabsAdapter
-                bottomTabsBinding.bottomTabList.layoutManager =
-                    LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-                bottomTabsBinding.bottomTabList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
-                    ?.supportsChangeAnimations = false
-                binding.drawerTabsList.isVisible = false
-                binding.desktopTabsList.isVisible = false
-                activeRecyclerView = bottomTabsBinding.bottomTabList
-            }
-        } else {
-            tabsAdapter = DesktopTabRecyclerViewAdapter(
-                context = this,
-                onClick = presenter::onTabClick,
-                onCloseClick = presenter::onTabClose,
-                onLongClick = presenter::onTabLongClick
-            )
-            binding.desktopTabsList.isVisible = true
-            binding.desktopTabsList.adapter = tabsAdapter
-            binding.desktopTabsList.layoutManager =
-                LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-            binding.desktopTabsList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
-                ?.supportsChangeAnimations = false
-            binding.drawerTabsList.isVisible = false
-            activeRecyclerView = binding.desktopTabsList
-        }
-
-        bookmarksAdapter = BookmarkRecyclerViewAdapter(
-            onClick = presenter::onBookmarkClick,
-            onLongClick = presenter::onBookmarkLongClick,
-            imageLoader = imageLoader
-        )
-        binding.bookmarkListView.adapter = bookmarksAdapter
-        binding.bookmarkListView.layoutManager = LinearLayoutManager(this)
-
+//
+//        binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+//
+//            override fun onDrawerOpened(drawerView: View) {
+//                if (drawerView == binding.tabDrawer) {
+//                    presenter.onTabDrawerMoved(isOpen = true)
+//                } else if (drawerView == binding.bookmarkDrawer) {
+//                    presenter.onBookmarkDrawerMoved(isOpen = true)
+//                }
+//            }
+//
+//            override fun onDrawerClosed(drawerView: View) {
+//                if (drawerView == binding.tabDrawer) {
+//                    presenter.onTabDrawerMoved(isOpen = false)
+//                } else if (drawerView == binding.bookmarkDrawer) {
+//                    presenter.onBookmarkDrawerMoved(isOpen = false)
+//                }
+//            }
+//        })
+//
+//        binding.bookmarkDrawer.layoutParams =
+//            (binding.bookmarkDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
+//                gravity = when (uiConfiguration.bookmarkConfiguration) {
+//                    BookmarkConfiguration.LEFT -> Gravity.START
+//                    BookmarkConfiguration.RIGHT -> Gravity.END
+//                }
+//            }
+//
+//        binding.tabDrawer.layoutParams =
+//            (binding.tabDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
+//                gravity = when (uiConfiguration.bookmarkConfiguration) {
+//                    BookmarkConfiguration.LEFT -> Gravity.END
+//                    BookmarkConfiguration.RIGHT -> Gravity.START
+//                }
+//            }
+//
+//        binding.homeImageView.isVisible =
+//            uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP || isIncognito()
+//        binding.homeImageView.setImageResource(homeIcon())
+//        binding.tabCountView.isVisible =
+//            uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP && !isIncognito()
+//
+//        if (uiConfiguration.tabConfiguration != TabConfiguration.DRAWER_SIDE) {
+//            binding.drawerLayout.setDrawerLockMode(
+//                DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
+//                binding.tabDrawer
+//            )
+//        }
+//
+//        if (uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP) {
+//            if (binding.browserLayoutContainer == null) {
+//                tabsAdapter = DrawerTabRecyclerViewAdapter(
+//                    onClick = presenter::onTabClick,
+//                    onCloseClick = presenter::onTabClose,
+//                    onLongClick = presenter::onTabLongClick
+//                )
+//                binding.drawerTabsList.isVisible = true
+//                binding.drawerTabsList.adapter = tabsAdapter
+//                binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
+//                binding.drawerTabsList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
+//                    ?.supportsChangeAnimations = false
+//                binding.desktopTabsList.isVisible = false
+//                activeRecyclerView = binding.desktopTabsList
+//            } else {
+//                tabsAdapter = BottomDrawerTabRecyclerViewAdapter(
+//                    themeProvider,
+//                    onClick = presenter::onTabClick,
+//                    onLongClick = presenter::onTabLongClick,
+//                    onCloseClick = presenter::onTabClose,
+//                    onBackClick = { presenter.onBackClick() },
+//                    onForwardClick = { presenter.onForwardClick() },
+//                    onHomeClick = { presenter.onHomeClick() }
+//                )
+//                bottomTabsBinding!!.bottomTabList.adapter = tabsAdapter
+//                bottomTabsBinding.bottomTabList.layoutManager =
+//                    LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+//                bottomTabsBinding.bottomTabList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
+//                    ?.supportsChangeAnimations = false
+//                binding.drawerTabsList.isVisible = false
+//                binding.desktopTabsList.isVisible = false
+//                activeRecyclerView = bottomTabsBinding.bottomTabList
+//            }
+//        } else {
+//            tabsAdapter = DesktopTabRecyclerViewAdapter(
+//                context = this,
+//                onClick = presenter::onTabClick,
+//                onCloseClick = presenter::onTabClose,
+//                onLongClick = presenter::onTabLongClick
+//            )
+//            binding.desktopTabsList.isVisible = true
+//            binding.desktopTabsList.adapter = tabsAdapter
+//            binding.desktopTabsList.layoutManager =
+//                LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+//            binding.desktopTabsList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
+//                ?.supportsChangeAnimations = false
+//            binding.drawerTabsList.isVisible = false
+//            activeRecyclerView = binding.desktopTabsList
+//        }
+//
+//        bookmarksAdapter = BookmarkRecyclerViewAdapter(
+//            onClick = presenter::onBookmarkClick,
+//            onLongClick = presenter::onBookmarkLongClick,
+//            imageLoader = imageLoader
+//        )
+//        binding.bookmarkListView.adapter = bookmarksAdapter
+//        binding.bookmarkListView.layoutManager = LinearLayoutManager(this)
+//
         presenter.onViewAttached(BrowserStateAdapter(this))
-
-        val suggestionsAdapter = SuggestionsAdapter(this, isIncognito = isIncognito()).apply {
-            onSuggestionInsertClick = {
-                if (it is SearchSuggestion) {
-                    binding.search.setText(it.title)
-                    binding.search.setSelection(it.title.length)
-                } else {
-                    binding.search.setText(it.url)
-                    binding.search.setSelection(it.url.length)
-                }
-            }
-        }
-        binding.search.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            binding.search.clearFocus()
-            presenter.onSearchSuggestionClicked(suggestionsAdapter.getItem(position) as WebPage)
-            inputMethodManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
-        }
-        binding.search.setAdapter(suggestionsAdapter)
-        val searchListener = SearchListener(
-            onConfirm = { presenter.onSearch(binding.search.text.toString()) },
-            inputMethodManager = inputMethodManager
-        )
-        binding.search.setOnEditorActionListener(searchListener)
-        binding.search.setOnKeyListener(searchListener)
-        binding.search.addTextChangedListener(StyleRemovingTextWatcher())
-        binding.search.setOnFocusChangeListener { _, hasFocus ->
-            presenter.onSearchFocusChanged(hasFocus)
-            binding.search.selectAll()
-        }
-
-        binding.findPrevious.setOnClickListener { presenter.onFindPrevious() }
-        binding.findNext.setOnClickListener { presenter.onFindNext() }
-        binding.findQuit.setOnClickListener { presenter.onFindDismiss() }
-
-        binding.homeButton.setOnClickListener { presenter.onTabCountViewClick() }
-        binding.actionBack.setOnClickListener { presenter.onBackClick() }
-        binding.actionForward.setOnClickListener { presenter.onForwardClick() }
-        binding.actionHome.setOnClickListener { presenter.onHomeClick() }
-        binding.newTabButton.setOnClickListener { presenter.onNewTabClick() }
-        binding.newTabButton.setOnLongClickListener {
-            presenter.onNewTabLongClick()
-            true
-        }
-        binding.searchRefresh.setOnClickListener { presenter.onRefreshOrStopClick() }
-        binding.actionAddBookmark.setOnClickListener { presenter.onStarClick() }
-        binding.actionPageTools.setOnClickListener { presenter.onToolsClick() }
-        binding.tabHeaderButton.setOnClickListener { presenter.onTabMenuClick() }
-        binding.bookmarkBackButton.setOnClickListener { presenter.onBookmarkMenuClick() }
-        binding.searchSslStatus.setOnClickListener { presenter.onSslIconClick() }
-
-        tabPager.longPressListener = presenter::onPageLongPress
-
+//
+//        val suggestionsAdapter = SuggestionsAdapter(this, isIncognito = isIncognito()).apply {
+//            onSuggestionInsertClick = {
+//                if (it is SearchSuggestion) {
+//                    binding.search.setText(it.title)
+//                    binding.search.setSelection(it.title.length)
+//                } else {
+//                    binding.search.setText(it.url)
+//                    binding.search.setSelection(it.url.length)
+//                }
+//            }
+//        }
+//        binding.search.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+//            binding.search.clearFocus()
+//            presenter.onSearchSuggestionClicked(suggestionsAdapter.getItem(position) as WebPage)
+//            inputMethodManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
+//        }
+//        binding.search.setAdapter(suggestionsAdapter)
+//        val searchListener = SearchListener(
+//            onConfirm = { presenter.onSearch(binding.search.text.toString()) },
+//            inputMethodManager = inputMethodManager
+//        )
+//        binding.search.setOnEditorActionListener(searchListener)
+//        binding.search.setOnKeyListener(searchListener)
+//        binding.search.addTextChangedListener(StyleRemovingTextWatcher())
+//        binding.search.setOnFocusChangeListener { _, hasFocus ->
+//            presenter.onSearchFocusChanged(hasFocus)
+//            binding.search.selectAll()
+//        }
+//
+//        binding.findPrevious.setOnClickListener { presenter.onFindPrevious() }
+//        binding.findNext.setOnClickListener { presenter.onFindNext() }
+//        binding.findQuit.setOnClickListener { presenter.onFindDismiss() }
+//
+//        binding.homeButton.setOnClickListener { presenter.onTabCountViewClick() }
+//        binding.actionBack.setOnClickListener { presenter.onBackClick() }
+//        binding.actionForward.setOnClickListener { presenter.onForwardClick() }
+//        binding.actionHome.setOnClickListener { presenter.onHomeClick() }
+//        binding.newTabButton.setOnClickListener { presenter.onNewTabClick() }
+//        binding.newTabButton.setOnLongClickListener {
+//            presenter.onNewTabLongClick()
+//            true
+//        }
+//        binding.searchRefresh.setOnClickListener { presenter.onRefreshOrStopClick() }
+//        binding.actionAddBookmark.setOnClickListener { presenter.onStarClick() }
+//        binding.actionPageTools.setOnClickListener { presenter.onToolsClick() }
+//        binding.tabHeaderButton.setOnClickListener { presenter.onTabMenuClick() }
+//        binding.bookmarkBackButton.setOnClickListener { presenter.onBookmarkMenuClick() }
+//        binding.searchSslStatus.setOnClickListener { presenter.onSslIconClick() }
+//
+//        tabPager.longPressListener = presenter::onPageLongPress
+//
         onBackPressedDispatcher.addCallback {
             presenter.onNavigateBack()
         }
@@ -396,216 +398,245 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             ?: super.onKeyUp(keyCode, event)
     }
 
+    val state = MutableStateFlow(
+        BrowserScreenState(
+            BrowserViewState(
+                displayUrl = "",
+                isRefresh = true,
+                sslState = SslState.None,
+                progress = 0,
+                enableFullMenu = true,
+                themeColor = Option.None,
+                isForwardEnabled = false,
+                isBackEnabled = false,
+                bookmarks = emptyList(),
+                isBookmarked = false,
+                isBookmarkEnabled = true,
+                isRootFolder = true,
+                findInPage = ""
+            ),
+            emptyList()
+        )
+    )
+
     /**
      * @see BrowserContract.View.renderState
      */
-    fun renderState(viewState: PartialBrowserViewState) {
-        viewState.isBackEnabled?.let { binding.actionBack.isEnabled = it }
-        viewState.isForwardEnabled?.let { binding.actionForward.isEnabled = it }
-        viewState.displayUrl?.let(binding.search::setText)
-        viewState.sslState?.let {
-            binding.searchSslStatus.setImageDrawable(createSslDrawableForState(it))
-            binding.searchSslStatus.updateVisibilityForDrawable()
+    fun renderState(viewState: BrowserViewState) {
+        lifecycleScope.launch {
+            state.emit(state.value.copy(browserViewState = viewState))
+            println("YOLO " + state.value)
         }
-        viewState.enableFullMenu?.let {
-            menuItemShare?.isVisible = it
-            menuItemCopyLink?.isVisible = it
-            menuItemAddToHome?.isVisible = it
-            menuItemAddBookmark?.isVisible = it
-        }
-        viewState.themeColor?.value()?.let(::animateColorChange)
-        viewState.progress?.let {
-            binding.progressView.isVisible = it != 100
-            binding.progressView.progress = it
-        }
-        viewState.isRefresh?.let {
-            binding.searchRefresh.setImageResource(
-                if (it) {
-                    R.drawable.ic_action_refresh
-                } else {
-                    R.drawable.ic_action_delete
-                }
-            )
-        }
-        viewState.bookmarks?.let(bookmarksAdapter::submitList)
-        viewState.isBookmarked?.let { binding.actionAddBookmark.isSelected = it }
-        viewState.isBookmarkEnabled?.let { binding.actionAddBookmark.isEnabled = it }
-        viewState.isRootFolder?.let {
-            binding.bookmarkBackButton.startAnimation(
-                AnimationUtils.createRotationTransitionAnimation(
-                    binding.bookmarkBackButton,
-                    if (it) {
-                        R.drawable.ic_action_star
-                    } else {
-                        R.drawable.ic_action_back
-                    }
-                )
-            )
-        }
-        viewState.findInPage?.let {
-            if (it.isEmpty()) {
-                binding.findBar.isVisible = false
-            } else {
-                binding.findBar.isVisible = true
-                binding.findQuery.text = it
-            }
-        }
+//        viewState.isBackEnabled?.let { binding.actionBack.isEnabled = it }
+//        viewState.isForwardEnabled?.let { binding.actionForward.isEnabled = it }
+//        viewState.displayUrl?.let(binding.search::setText)
+//        viewState.sslState?.let {
+//            binding.searchSslStatus.setImageDrawable(createSslDrawableForState(it))
+//            binding.searchSslStatus.updateVisibilityForDrawable()
+//        }
+//        viewState.enableFullMenu?.let {
+//            menuItemShare?.isVisible = it
+//            menuItemCopyLink?.isVisible = it
+//            menuItemAddToHome?.isVisible = it
+//            menuItemAddBookmark?.isVisible = it
+//        }
+//        viewState.themeColor?.value()?.let(::animateColorChange)
+//        viewState.progress?.let {
+//            binding.progressView.isVisible = it != 100
+//            binding.progressView.progress = it
+//        }
+//        viewState.isRefresh?.let {
+//            binding.searchRefresh.setImageResource(
+//                if (it) {
+//                    R.drawable.ic_action_refresh
+//                } else {
+//                    R.drawable.ic_action_delete
+//                }
+//            )
+//        }
+//        viewState.bookmarks?.let(bookmarksAdapter::submitList)
+//        viewState.isBookmarked?.let { binding.actionAddBookmark.isSelected = it }
+//        viewState.isBookmarkEnabled?.let { binding.actionAddBookmark.isEnabled = it }
+//        viewState.isRootFolder?.let {
+//            binding.bookmarkBackButton.startAnimation(
+//                AnimationUtils.createRotationTransitionAnimation(
+//                    binding.bookmarkBackButton,
+//                    if (it) {
+//                        R.drawable.ic_action_star
+//                    } else {
+//                        R.drawable.ic_action_back
+//                    }
+//                )
+//            )
+//        }
+//        viewState.findInPage?.let {
+//            if (it.isEmpty()) {
+//                binding.findBar.isVisible = false
+//            } else {
+//                binding.findBar.isVisible = true
+//                binding.findQuery.text = it
+//            }
+//        }
     }
 
     /**
      * @see BrowserContract.View.renderTabs
      */
     fun renderTabs(tabListState: List<TabViewState>) {
-        binding.tabCountView.updateCount(tabListState.size)
-        val shouldScroll = tabsAdapter.itemCount < tabListState.size
-        tabsAdapter.submitList(tabListState)
-        val nextSelected = tabListState.indexOfFirst(TabViewState::isSelected)
-        if (shouldScroll && nextSelected != -1) {
-            mainHandler.post {
-                if (tabPager.isBottomTabDrawerOpen()) {
-                    activeRecyclerView?.smoothScrollToPosition(nextSelected)
-                } else {
-                    pendingScroll = nextSelected
-                }
-            }
+        lifecycleScope.launch {
+            state.emit(state.value.copy(tabState = tabListState))
+            println("YOLO " + state.value)
         }
+//        binding.tabCountView.updateCount(tabListState.size)
+//        val shouldScroll = tabsAdapter.itemCount < tabListState.size
+//        tabsAdapter.submitList(tabListState)
+//        val nextSelected = tabListState.indexOfFirst(TabViewState::isSelected)
+//        if (shouldScroll && nextSelected != -1) {
+//            mainHandler.post {
+//                if (tabPager.isBottomTabDrawerOpen()) {
+//                    activeRecyclerView?.smoothScrollToPosition(nextSelected)
+//                } else {
+//                    pendingScroll = nextSelected
+//                }
+//            }
+//        }
     }
 
     /**
      * @see BrowserContract.View.showAddBookmarkDialog
      */
     fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {
-        lightningDialogBuilder.showAddBookmarkDialog(
-            activity = this,
-            currentTitle = title,
-            currentUrl = url,
-            folders = folders,
-            onSave = presenter::onBookmarkConfirmed
-        )
+//        lightningDialogBuilder.showAddBookmarkDialog(
+//            activity = this,
+//            currentTitle = title,
+//            currentUrl = url,
+//            folders = folders,
+//            onSave = presenter::onBookmarkConfirmed
+//        )
     }
 
     /**
      * @see BrowserContract.View.showBookmarkOptionsDialog
      */
     fun showBookmarkOptionsDialog(bookmark: Bookmark.Entry) {
-        lightningDialogBuilder.showLongPressedDialogForBookmarkUrl(
-            activity = this,
-            onClick = {
-                presenter.onBookmarkOptionClick(bookmark, it)
-            }
-        )
+//        lightningDialogBuilder.showLongPressedDialogForBookmarkUrl(
+//            activity = this,
+//            onClick = {
+//                presenter.onBookmarkOptionClick(bookmark, it)
+//            }
+//        )
     }
 
     /**
      * @see BrowserContract.View.showEditBookmarkDialog
      */
     fun showEditBookmarkDialog(title: String, url: String, folder: String, folders: List<String>) {
-        lightningDialogBuilder.showEditBookmarkDialog(
-            activity = this,
-            currentTitle = title,
-            currentUrl = url,
-            currentFolder = folder,
-            folders = folders,
-            onSave = presenter::onBookmarkEditConfirmed
-        )
+//        lightningDialogBuilder.showEditBookmarkDialog(
+//            activity = this,
+//            currentTitle = title,
+//            currentUrl = url,
+//            currentFolder = folder,
+//            folders = folders,
+//            onSave = presenter::onBookmarkEditConfirmed
+//        )
     }
 
     /**
      * @see BrowserContract.View.showFolderOptionsDialog
      */
     fun showFolderOptionsDialog(folder: Bookmark.Folder) {
-        lightningDialogBuilder.showBookmarkFolderLongPressedDialog(
-            activity = this,
-            onClick = {
-                presenter.onFolderOptionClick(folder, it)
-            }
-        )
+//        lightningDialogBuilder.showBookmarkFolderLongPressedDialog(
+//            activity = this,
+//            onClick = {
+//                presenter.onFolderOptionClick(folder, it)
+//            }
+//        )
     }
 
     /**
      * @see BrowserContract.View.showEditFolderDialog
      */
     fun showEditFolderDialog(oldTitle: String) {
-        lightningDialogBuilder.showRenameFolderDialog(
-            activity = this,
-            oldTitle = oldTitle,
-            onSave = presenter::onBookmarkFolderRenameConfirmed
-        )
+//        lightningDialogBuilder.showRenameFolderDialog(
+//            activity = this,
+//            oldTitle = oldTitle,
+//            onSave = presenter::onBookmarkFolderRenameConfirmed
+//        )
     }
 
     /**
      * @see BrowserContract.View.showDownloadOptionsDialog
      */
     fun showDownloadOptionsDialog(download: DownloadEntry) {
-        lightningDialogBuilder.showLongPressedDialogForDownloadUrl(
-            activity = this,
-            onClick = {
-                presenter.onDownloadOptionClick(download, it)
-            }
-        )
+//        lightningDialogBuilder.showLongPressedDialogForDownloadUrl(
+//            activity = this,
+//            onClick = {
+//                presenter.onDownloadOptionClick(download, it)
+//            }
+//        )
     }
 
     /**
      * @see BrowserContract.View.showHistoryOptionsDialog
      */
     fun showHistoryOptionsDialog(historyEntry: HistoryEntry) {
-        lightningDialogBuilder.showLongPressedHistoryLinkDialog(
-            activity = this,
-            onClick = {
-                presenter.onHistoryOptionClick(historyEntry, it)
-            }
-        )
+//        lightningDialogBuilder.showLongPressedHistoryLinkDialog(
+//            activity = this,
+//            onClick = {
+//                presenter.onHistoryOptionClick(historyEntry, it)
+//            }
+//        )
     }
 
     /**
      * @see BrowserContract.View.showFindInPageDialog
      */
     fun showFindInPageDialog() {
-        BrowserDialog.showEditText(
-            this,
-            R.string.action_find,
-            R.string.search_hint,
-            R.string.search_hint,
-            presenter::onFindInPage
-        )
+//        BrowserDialog.showEditText(
+//            this,
+//            R.string.action_find,
+//            R.string.search_hint,
+//            R.string.search_hint,
+//            presenter::onFindInPage
+//        )
     }
 
     /**
      * @see BrowserContract.View.showLinkLongPressDialog
      */
     fun showLinkLongPressDialog(longPress: LongPress) {
-        BrowserDialog.show(
-            this, longPress.targetUrl?.replace(HTTP, ""),
-            DialogItem(title = R.string.dialog_open_new_tab) {
-                presenter.onLinkLongPressEvent(
-                    longPress,
-                    BrowserContract.LinkLongPressEvent.NEW_TAB
-                )
-            },
-            DialogItem(title = R.string.dialog_open_background_tab) {
-                presenter.onLinkLongPressEvent(
-                    longPress,
-                    BrowserContract.LinkLongPressEvent.BACKGROUND_TAB
-                )
-            },
-            DialogItem(
-                title = R.string.dialog_open_incognito_tab,
-                isConditionMet = !isIncognito()
-            ) {
-                presenter.onLinkLongPressEvent(
-                    longPress,
-                    BrowserContract.LinkLongPressEvent.INCOGNITO_TAB
-                )
-            },
-            DialogItem(title = R.string.action_share) {
-                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.SHARE)
-            },
-            DialogItem(title = R.string.dialog_copy_link) {
-                presenter.onLinkLongPressEvent(
-                    longPress,
-                    BrowserContract.LinkLongPressEvent.COPY_LINK
-                )
-            })
+//        BrowserDialog.show(
+//            this, longPress.targetUrl?.replace(HTTP, ""),
+//            DialogItem(title = R.string.dialog_open_new_tab) {
+//                presenter.onLinkLongPressEvent(
+//                    longPress,
+//                    BrowserContract.LinkLongPressEvent.NEW_TAB
+//                )
+//            },
+//            DialogItem(title = R.string.dialog_open_background_tab) {
+//                presenter.onLinkLongPressEvent(
+//                    longPress,
+//                    BrowserContract.LinkLongPressEvent.BACKGROUND_TAB
+//                )
+//            },
+//            DialogItem(
+//                title = R.string.dialog_open_incognito_tab,
+//                isConditionMet = !isIncognito()
+//            ) {
+//                presenter.onLinkLongPressEvent(
+//                    longPress,
+//                    BrowserContract.LinkLongPressEvent.INCOGNITO_TAB
+//                )
+//            },
+//            DialogItem(title = R.string.action_share) {
+//                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.SHARE)
+//            },
+//            DialogItem(title = R.string.dialog_copy_link) {
+//                presenter.onLinkLongPressEvent(
+//                    longPress,
+//                    BrowserContract.LinkLongPressEvent.COPY_LINK
+//                )
+//            })
     }
 
     /**
@@ -677,51 +708,63 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      * @see BrowserContract.View.openBookmarkDrawer
      */
     fun openBookmarkDrawer() {
-        binding.drawerLayout.closeDrawer(binding.tabDrawer)
-        binding.drawerLayout.openDrawer(binding.bookmarkDrawer)
+        lifecycleScope.launch {
+            state.emit(state.value.copy(openBookmarks = true))
+        }
+//        binding.drawerLayout.closeDrawer(binding.tabDrawer)
+//        binding.drawerLayout.openDrawer(binding.bookmarkDrawer)
     }
 
     /**
      * @see BrowserContract.View.closeBookmarkDrawer
      */
     fun closeBookmarkDrawer() {
-        binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
+        lifecycleScope.launch {
+            state.emit(state.value.copy(openBookmarks = false))
+        }
+//        binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
     }
 
     /**
      * @see BrowserContract.View.openTabDrawer
      */
     fun openTabDrawer() {
-        binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
-        if (binding.browserLayoutContainer == null) {
-            binding.drawerLayout.openDrawer(binding.tabDrawer)
-        } else {
-            presenter.onTabDrawerMoved(isOpen = true)
-            tabPager.openBottomTabDrawer()
-            if (pendingScroll != -1) {
-                activeRecyclerView?.scrollToPosition(pendingScroll)
-                pendingScroll = -1
-            }
+        lifecycleScope.launch {
+            state.emit(state.value.copy(openTabs = true))
         }
+//        binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
+//        if (binding.browserLayoutContainer == null) {
+//            binding.drawerLayout.openDrawer(binding.tabDrawer)
+//        } else {
+//            presenter.onTabDrawerMoved(isOpen = true)
+//            tabPager.openBottomTabDrawer()
+//            if (pendingScroll != -1) {
+//                activeRecyclerView?.scrollToPosition(pendingScroll)
+//                pendingScroll = -1
+//            }
+//        }
     }
 
     /**
      * @see BrowserContract.View.closeTabDrawer
      */
     fun closeTabDrawer() {
-        if (binding.browserLayoutContainer == null) {
-            binding.drawerLayout.closeDrawer(binding.tabDrawer)
-        } else {
-            presenter.onTabDrawerMoved(isOpen = false)
-            tabPager.closeBottomTabDrawer()
+        lifecycleScope.launch {
+            state.emit(state.value.copy(openTabs = false))
         }
+//        if (binding.browserLayoutContainer == null) {
+//            binding.drawerLayout.closeDrawer(binding.tabDrawer)
+//        } else {
+//            presenter.onTabDrawerMoved(isOpen = false)
+//            tabPager.closeBottomTabDrawer()
+//        }
     }
 
     /**
      * @see BrowserContract.View.showToolbar
      */
     fun showToolbar() {
-        tabPager.showToolbar()
+//        tabPager.showToolbar()
     }
 
     /**
@@ -780,27 +823,27 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      * @see BrowserContract.View.showCustomView
      */
     fun showCustomView(view: View) {
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
-        binding.root.addView(view)
-        customView = view
-        setFullscreen(enabled = true, immersive = true)
+//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+//        binding.root.addView(view)
+//        customView = view
+//        setFullscreen(enabled = true, immersive = true)
     }
 
     /**
      * @see BrowserContract.View.hideCustomView
      */
     fun hideCustomView() {
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        customView?.let(binding.root::removeView)
-        customView = null
-        setFullscreen(enabled = false, immersive = false)
+//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+//        customView?.let(binding.root::removeView)
+//        customView = null
+//        setFullscreen(enabled = false, immersive = false)
     }
 
     /**
      * @see BrowserContract.View.clearSearchFocus
      */
     fun clearSearchFocus() {
-        binding.search.clearFocus()
+//        binding.search.clearFocus()
     }
 
     // TODO: update to use non deprecated flags

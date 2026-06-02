@@ -34,7 +34,7 @@ class TabsRepository @Inject constructor(
 
     override suspend fun deleteTab(id: Int): Unit = withContext(coroutineDispatchers.main) {
         if (selectedTab?.id == id) {
-            tabPager.clearTab()
+//            tabPager.clearTab()
         }
         val tab = tabsList.forId(id)
         recentTabModel.addClosedTab(tab.freeze())

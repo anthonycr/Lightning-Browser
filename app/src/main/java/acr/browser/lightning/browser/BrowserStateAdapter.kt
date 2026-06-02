@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.browser.tab.TabViewState
+import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
@@ -8,7 +9,6 @@ import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.showSslDialog
 import android.content.Intent
 import android.view.View
-import acr.browser.lightning.browser.view.targetUrl.LongPress
 
 /**
  * An adapter between [BrowserContract.View] and the [BrowserActivity] that creates partial states
@@ -20,39 +20,40 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
     private var currentTabs: List<TabViewState>? = null
 
     override fun renderState(viewState: BrowserViewState) {
-        val (
-            displayUrl,
-            sslState,
-            isRefresh,
-            progress,
-            enableFullMenu,
-            themeColor,
-            isForwardEnabled,
-            isBackEnabled,
-            bookmarks,
-            isBookmarked,
-            isBookmarkEnabled,
-            isRootFolder,
-            findInPage
-        ) = viewState
-
-        browserActivity.renderState(
-            PartialBrowserViewState(
-                displayUrl = displayUrl.takeIf { it != currentState?.displayUrl },
-                sslState = sslState.takeIf { it != currentState?.sslState },
-                isRefresh = isRefresh.takeIf { it != currentState?.isRefresh },
-                progress = progress.takeIf { it != currentState?.progress },
-                enableFullMenu = enableFullMenu.takeIf { it != currentState?.enableFullMenu },
-                themeColor = themeColor.takeIf { it != currentState?.themeColor },
-                isForwardEnabled = isForwardEnabled.takeIf { it != currentState?.isForwardEnabled },
-                isBackEnabled = isBackEnabled.takeIf { it != currentState?.isBackEnabled },
-                bookmarks = bookmarks.takeIf { it != currentState?.bookmarks },
-                isBookmarked = isBookmarked.takeIf { it != currentState?.isBookmarked },
-                isBookmarkEnabled = isBookmarkEnabled.takeIf { it != currentState?.isBookmarkEnabled },
-                isRootFolder = isRootFolder.takeIf { it != currentState?.isRootFolder },
-                findInPage = findInPage.takeIf { it != currentState?.findInPage }
-            )
-        )
+//        val (
+//            displayUrl,
+//            sslState,
+//            isRefresh,
+//            progress,
+//            enableFullMenu,
+//            themeColor,
+//            isForwardEnabled,
+//            isBackEnabled,
+//            bookmarks,
+//            isBookmarked,
+//            isBookmarkEnabled,
+//            isRootFolder,
+//            findInPage
+//        ) = viewState
+//
+//        browserActivity.renderState(
+//            PartialBrowserViewState(
+//                displayUrl = displayUrl.takeIf { it != currentState?.displayUrl },
+//                sslState = sslState.takeIf { it != currentState?.sslState },
+//                isRefresh = isRefresh.takeIf { it != currentState?.isRefresh },
+//                progress = progress.takeIf { it != currentState?.progress },
+//                enableFullMenu = enableFullMenu.takeIf { it != currentState?.enableFullMenu },
+//                themeColor = themeColor.takeIf { it != currentState?.themeColor },
+//                isForwardEnabled = isForwardEnabled.takeIf { it != currentState?.isForwardEnabled },
+//                isBackEnabled = isBackEnabled.takeIf { it != currentState?.isBackEnabled },
+//                bookmarks = bookmarks.takeIf { it != currentState?.bookmarks },
+//                isBookmarked = isBookmarked.takeIf { it != currentState?.isBookmarked },
+//                isBookmarkEnabled = isBookmarkEnabled.takeIf { it != currentState?.isBookmarkEnabled },
+//                isRootFolder = isRootFolder.takeIf { it != currentState?.isRootFolder },
+//                findInPage = findInPage.takeIf { it != currentState?.findInPage }
+//            )
+//        )
+        browserActivity.renderState(viewState)
 
         currentState = viewState
     }
