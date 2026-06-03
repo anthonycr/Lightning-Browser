@@ -37,6 +37,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -57,13 +58,13 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarState
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -164,11 +165,8 @@ fun BottomTabs(
                     .weight(1f, false),
             )
             BrowserFindInPage(browserScreenState, presenter)
-            val sheetState = rememberModalBottomSheetState()
-            BottomTabNavigationBar(browserScreenState, sheetState, presenter, suggestionsModel)
-            if (browserScreenState.openTabs) {
-                TabsBottomSheet(browserScreenState, sheetState, presenter)
-            }
+            BottomTabNavigationBar(browserScreenState, presenter, suggestionsModel)
+            TabsBottomSheet(browserScreenState, presenter)
         }
     }
 }
@@ -207,7 +205,14 @@ fun DrawerTabs(
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
-    val drawerState = rememberDrawerState(DrawerValue.Open)
+    val lazyListState = rememberLazyListState()
+    val drawerState = rememberDrawerState(
+        initialValue = if (browserScreenState.openTabs) {
+            DrawerValue.Open
+        } else {
+            DrawerValue.Closed
+        }
+    )
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -240,7 +245,8 @@ fun DrawerTabs(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .weight(1f, false)
+                        .weight(1f, false),
+                    state = lazyListState
                 ) {
                     itemsIndexed(browserScreenState.tabState) { index, tab ->
                         Row(
@@ -385,7 +391,6 @@ fun BookmarkIcon(isBookmarked: Boolean) {
 @Composable
 fun BottomTabNavigationBar(
     browserScreenState: BrowserScreenState,
-    sheetState: SheetState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -402,20 +407,9 @@ fun BottomTabNavigationBar(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val coroutineScope = rememberCoroutineScope()
             BrowserSearchBar(browserScreenState, presenter, suggestionsModel)
             TabCountButton(browserScreenState.tabState.size) {
-                coroutineScope.launch {
-                    if (sheetState.isAnimationRunning) return@launch
-
-                    if (sheetState.isVisible) {
-                        presenter.onTabCountViewClick()
-                        sheetState.hide()
-                    } else {
-                        presenter.onTabCountViewClick()
-                        sheetState.show()
-                    }
-                }
+                presenter.onTabCountViewClick()
             }
             BrowserOverflowMenu(presenter, browserScreenState)
         }
@@ -439,16 +433,15 @@ fun TopTabNavigationBar(
         ) {
             val coroutineScope = rememberCoroutineScope()
             TabCountButton(browserScreenState.tabState.size) {
+                if (drawerState.isAnimationRunning) return@TabCountButton
+                // TODO: Figure out how to do this more like bottom sheet modal
                 coroutineScope.launch {
-                    if (drawerState.isAnimationRunning) return@launch
-
                     if (drawerState.isOpen) {
-                        presenter.onTabCountViewClick()
                         drawerState.close()
                     } else {
-                        presenter.onTabCountViewClick()
                         drawerState.open()
                     }
+                    presenter.onTabCountViewClick()
                 }
             }
             BrowserSearchBar(browserScreenState, presenter, suggestionsModel)
@@ -470,6 +463,7 @@ fun TopTabDesktopNavigationBar(
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
+    val lazyListState = rememberLazyListState()
     Column(
         modifier = Modifier.height(92.dp)
     ) {
@@ -477,6 +471,7 @@ fun TopTabDesktopNavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.scrim, RectangleShape),
+            state = lazyListState,
             verticalAlignment = Alignment.CenterVertically,
             overscrollEffect = null,
             horizontalArrangement = Arrangement.spacedBy((-20).dp)
@@ -1008,9 +1003,25 @@ fun TabCountButton(count: Int, onClick: () -> Unit) {
 @Composable
 fun TabsBottomSheet(
     browserScreenState: BrowserScreenState,
-    sheetState: SheetState,
     presenter: BrowserPresenter,
 ) {
+    val lazyListState = rememberLazyListState()
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(browserScreenState.openTabs) }
+    if (showBottomSheet != browserScreenState.openTabs) {
+        if (showBottomSheet) {
+            LaunchedEffect(null) {
+                sheetState.hide()
+                showBottomSheet = false
+            }
+        } else {
+            showBottomSheet = true
+            LaunchedEffect(null) {
+                sheetState.show()
+            }
+        }
+    }
+    if (!showBottomSheet) return
     ModalBottomSheet(
         dragHandle = {},
         sheetState = sheetState,
@@ -1059,6 +1070,7 @@ fun TabsBottomSheet(
         }
         LazyRow(
             modifier = Modifier.height(200.dp),
+            state = lazyListState,
             contentPadding = PaddingValues(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
