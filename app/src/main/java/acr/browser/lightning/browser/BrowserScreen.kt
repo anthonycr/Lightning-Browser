@@ -114,8 +114,15 @@ fun BrowserScreen(
     AppTheme {
         val tabConfiguration = tabConfigurationStateProvider.state.collectAsState()
         when (tabConfiguration.value) {
-            TabConfiguration.DESKTOP -> DesktopTabs(browserScreenState, presenter, suggestionsModel)
+            TabConfiguration.DESKTOP -> DesktopTabs(
+                frameLayout,
+                browserScreenState,
+                presenter,
+                suggestionsModel
+            )
+
             TabConfiguration.DRAWER_SIDE -> DrawerTabs(
+                frameLayout,
                 browserScreenState,
                 presenter,
                 suggestionsModel
@@ -167,6 +174,7 @@ fun BottomTabs(
 
 @Composable
 fun DesktopTabs(
+    frameLayout: FrameLayout,
     browserScreenState: BrowserScreenState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
@@ -180,18 +188,20 @@ fun DesktopTabs(
             BookmarksBottomSheet(browserScreenState, presenter)
             TopTabDesktopNavigationBar(browserScreenState, presenter, suggestionsModel)
             BrowserFindInPage(browserScreenState, presenter)
-            Column(
+            AndroidView(
+                factory = { frameLayout },
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surfaceDim)
-                    .weight(1f, false)
-            ) { }
+                    .weight(1f, false),
+            )
         }
     }
 }
 
 @Composable
 fun DrawerTabs(
+    frameLayout: FrameLayout,
     browserScreenState: BrowserScreenState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
@@ -339,12 +349,13 @@ fun DrawerTabs(
                 BookmarksBottomSheet(browserScreenState, presenter)
                 TopTabNavigationBar(browserScreenState, drawerState, presenter, suggestionsModel)
                 BrowserFindInPage(browserScreenState, presenter)
-                Column(
+                AndroidView(
+                    factory = { frameLayout },
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceDim)
-                        .weight(1f, false)
-                ) { }
+                        .weight(1f, false),
+                )
             }
         }
     }
