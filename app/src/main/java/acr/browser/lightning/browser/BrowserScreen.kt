@@ -294,7 +294,7 @@ fun DrawerTabs(
                                 onClick = { presenter.onTabClose(index) }
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(24.dp),
+                                    modifier = Modifier.size(20.dp),
                                     painter = painterResource(R.drawable.ic_action_delete),
                                     contentDescription = stringResource(R.string.close_tab)
                                 )
