@@ -474,7 +474,7 @@ fun TopTabDesktopNavigationBar(
             state = lazyListState,
             verticalAlignment = Alignment.CenterVertically,
             overscrollEffect = null,
-            horizontalArrangement = Arrangement.spacedBy((-20).dp)
+            horizontalArrangement = Arrangement.spacedBy((-16).dp)
         ) {
             itemsIndexed(browserScreenState.tabState) { index, tab ->
                 Row(
