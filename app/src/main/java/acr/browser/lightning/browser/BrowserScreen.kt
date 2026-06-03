@@ -1199,6 +1199,7 @@ fun BookmarksBottomSheet(
                         .height(56.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // TODO: Use real icon
                     Icon(
                         modifier = Modifier
                             .size(56.dp)
