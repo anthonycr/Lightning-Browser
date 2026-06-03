@@ -901,7 +901,12 @@ class BrowserPresenter @Inject constructor(
                     )
                 )
                 val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
-                view?.updateState(viewState.copy(bookmarks = bookmarks))
+                view?.updateState(
+                    viewState.copy(
+                        bookmarks = bookmarks,
+                        isBookmarked = bookmarkRepository.isBookmark(url)
+                    )
+                )
             } else {
                 showAddBookmarkDialog()
             }
@@ -937,7 +942,12 @@ class BrowserPresenter @Inject constructor(
                 )
             )
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
-            view?.updateState(viewState.copy(bookmarks = bookmarks))
+            view?.updateState(
+                viewState.copy(
+                    bookmarks = bookmarks,
+                    isBookmarked = bookmarkRepository.isBookmark(url)
+                )
+            )
         }
     }
 
