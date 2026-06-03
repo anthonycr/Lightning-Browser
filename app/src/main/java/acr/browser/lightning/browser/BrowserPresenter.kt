@@ -576,6 +576,11 @@ class BrowserPresenter @Inject constructor(
      */
     fun onBookmarkDrawerMoved(isOpen: Boolean) {
         isBookmarkDrawerOpen = isOpen
+        if (isOpen) {
+            view?.openBookmarkDrawer()
+        } else {
+            view?.closeBookmarkDrawer()
+        }
     }
 
     /**

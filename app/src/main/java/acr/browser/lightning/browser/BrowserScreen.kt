@@ -1176,7 +1176,7 @@ fun BookmarksBottomSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         sheetState = sheetState,
-        onDismissRequest = {}
+        onDismissRequest = { presenter.onBookmarkDrawerMoved(false) }
     ) {
         Row(
             modifier = Modifier
