@@ -554,7 +554,7 @@ fun BrowserFindInPage(
                     contentDescription = "test"
                 )
             }
-            var text by remember { mutableStateOf(browserScreenState.browserViewState.findInPage) }
+            var text by remember { mutableStateOf(findInPage) }
             val interactionSource = remember { MutableInteractionSource() }
             BasicTextField(
                 modifier = Modifier
