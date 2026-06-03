@@ -2,9 +2,14 @@ package acr.browser.lightning.browser
 
 import acr.browser.lightning.BrowserScreenState
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.menu.MenuSelection
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.compose.AppTheme
 import acr.browser.lightning.compose.StateProvider
+import acr.browser.lightning.database.Bookmark
+import acr.browser.lightning.database.HistoryEntry
+import acr.browser.lightning.database.SearchSuggestion
+import acr.browser.lightning.search.SuggestionsModel
 import acr.browser.lightning.ssl.SslState
 import android.widget.FrameLayout
 import androidx.compose.foundation.Canvas
@@ -12,6 +17,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,13 +33,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -45,9 +56,10 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSearchBarState
@@ -74,9 +86,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
@@ -94,13 +109,25 @@ fun BrowserScreen(
     browserScreenState: BrowserScreenState,
     presenter: BrowserPresenter,
     frameLayout: FrameLayout,
+    suggestionsModel: SuggestionsModel,
 ) {
     AppTheme {
         val tabConfiguration = tabConfigurationStateProvider.state.collectAsState()
         when (tabConfiguration.value) {
-            TabConfiguration.DESKTOP -> DesktopTabs(browserScreenState, presenter)
-            TabConfiguration.DRAWER_SIDE -> DrawerTabs(browserScreenState, presenter)
-            TabConfiguration.DRAWER_BOTTOM -> BottomTabs(frameLayout, browserScreenState, presenter)
+            TabConfiguration.DESKTOP -> DesktopTabs(browserScreenState, presenter, suggestionsModel)
+            TabConfiguration.DRAWER_SIDE -> DrawerTabs(
+                browserScreenState,
+                presenter,
+                suggestionsModel
+            )
+
+            TabConfiguration.DRAWER_BOTTOM -> BottomTabs(
+                frameLayout,
+                browserScreenState,
+                presenter,
+                suggestionsModel
+            )
+
             null -> Unit
         }
     }
@@ -112,6 +139,7 @@ fun BottomTabs(
     frameLayout: FrameLayout,
     browserScreenState: BrowserScreenState,
     presenter: BrowserPresenter,
+    suggestionsModel: SuggestionsModel,
 ) {
     Scaffold { innerPadding ->
         Column(
@@ -129,7 +157,7 @@ fun BottomTabs(
             )
             BrowserFindInPage(browserScreenState, presenter)
             val sheetState = rememberModalBottomSheetState()
-            BottomTabNavigationBar(browserScreenState, sheetState, presenter)
+            BottomTabNavigationBar(browserScreenState, sheetState, presenter, suggestionsModel)
             if (browserScreenState.openTabs) {
                 TabsBottomSheet(browserScreenState, sheetState, presenter)
             }
@@ -141,6 +169,7 @@ fun BottomTabs(
 fun DesktopTabs(
     browserScreenState: BrowserScreenState,
     presenter: BrowserPresenter,
+    suggestionsModel: SuggestionsModel,
 ) {
     Scaffold { innerPadding ->
         Column(
@@ -149,7 +178,7 @@ fun DesktopTabs(
                 .padding(innerPadding)
         ) {
             BookmarksBottomSheet(browserScreenState, presenter)
-            TopTabDesktopNavigationBar(browserScreenState, presenter)
+            TopTabDesktopNavigationBar(browserScreenState, presenter, suggestionsModel)
             BrowserFindInPage(browserScreenState, presenter)
             Column(
                 modifier = Modifier
@@ -165,6 +194,7 @@ fun DesktopTabs(
 fun DrawerTabs(
     browserScreenState: BrowserScreenState,
     presenter: BrowserPresenter,
+    suggestionsModel: SuggestionsModel,
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Open)
     ModalNavigationDrawer(
@@ -288,10 +318,7 @@ fun DrawerTabs(
                         )
                     }
                     IconButton(onClick = { presenter.onStarClick() }) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_action_star),
-                            contentDescription = ""
-                        )
+                        BookmarkIcon(browserScreenState.browserViewState.isBookmarked)
                     }
                     IconButton(onClick = { presenter.onNewTabClick() }) {
                         Icon(
@@ -310,7 +337,7 @@ fun DrawerTabs(
                     .padding(innerPadding)
             ) {
                 BookmarksBottomSheet(browserScreenState, presenter)
-                TopTabNavigationBar(browserScreenState, drawerState, presenter)
+                TopTabNavigationBar(browserScreenState, drawerState, presenter, suggestionsModel)
                 BrowserFindInPage(browserScreenState, presenter)
                 Column(
                     modifier = Modifier
@@ -323,12 +350,32 @@ fun DrawerTabs(
     }
 }
 
+@Composable
+fun BookmarkIcon(isBookmarked: Boolean) {
+    Icon(
+        painter = painterResource(
+            if (isBookmarked) {
+                R.drawable.ic_bookmark
+            } else {
+                R.drawable.ic_action_star
+            }
+        ),
+        tint = if (isBookmarked) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.onSurface
+        },
+        contentDescription = ""
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomTabNavigationBar(
     browserScreenState: BrowserScreenState,
     sheetState: SheetState,
     presenter: BrowserPresenter,
+    suggestionsModel: SuggestionsModel,
 ) {
     Column(
         modifier = Modifier.height(56.dp)
@@ -340,7 +387,7 @@ fun BottomTabNavigationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val coroutineScope = rememberCoroutineScope()
-            BrowserSearchBar(browserScreenState, presenter)
+            BrowserSearchBar(browserScreenState, presenter, suggestionsModel)
             TabCountButton(browserScreenState.tabState.size) {
                 coroutineScope.launch {
                     if (sheetState.isAnimationRunning) return@launch
@@ -354,7 +401,7 @@ fun BottomTabNavigationBar(
                     }
                 }
             }
-            BrowserOverflowMenu()
+            BrowserOverflowMenu(presenter, browserScreenState)
         }
     }
 }
@@ -365,6 +412,7 @@ fun TopTabNavigationBar(
     browserScreenState: BrowserScreenState,
     drawerState: DrawerState,
     presenter: BrowserPresenter,
+    suggestionsModel: SuggestionsModel,
 ) {
     Column(
         modifier = Modifier.height(56.dp)
@@ -385,8 +433,8 @@ fun TopTabNavigationBar(
                     }
                 }
             }
-            BrowserSearchBar(browserScreenState, presenter)
-            BrowserOverflowMenu()
+            BrowserSearchBar(browserScreenState, presenter, suggestionsModel)
+            BrowserOverflowMenu(presenter, browserScreenState)
         }
         BrowserProgressIndicator(browserScreenState)
         HorizontalDivider()
@@ -398,6 +446,7 @@ fun TopTabNavigationBar(
 fun TopTabDesktopNavigationBar(
     browserScreenState: BrowserScreenState,
     presenter: BrowserPresenter,
+    suggestionsModel: SuggestionsModel,
 ) {
     Column(
         modifier = Modifier.height(92.dp)
@@ -475,8 +524,8 @@ fun TopTabDesktopNavigationBar(
                     contentDescription = "test"
                 )
             }
-            BrowserSearchBar(browserScreenState, presenter)
-            BrowserOverflowMenu()
+            BrowserSearchBar(browserScreenState, presenter, suggestionsModel)
+            BrowserOverflowMenu(presenter, browserScreenState)
         }
         BrowserProgressIndicator(browserScreenState)
         HorizontalDivider()
@@ -493,11 +542,11 @@ fun BrowserFindInPage(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .height(48.dp)
     ) {
         Row(
             Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { presenter.onFindDismiss() }) {
                 Icon(
@@ -505,13 +554,37 @@ fun BrowserFindInPage(
                     contentDescription = "test"
                 )
             }
-            TextField(
+            var text by remember { mutableStateOf(browserScreenState.browserViewState.findInPage) }
+            val interactionSource = remember { MutableInteractionSource() }
+            BasicTextField(
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(horizontal = 8.dp)
                     .fillMaxWidth()
-                    .weight(1f, false),
-                value = findInPage,
-                onValueChange = { presenter.onFindInPage(it) }
+                    .weight(1f, false)
+                    .indicatorLine(
+                        enabled = true,
+                        isError = false,
+                        interactionSource = interactionSource
+                    ),
+                value = text,
+                onValueChange = {
+                    text = it
+                    presenter.onFindInPage(it)
+                },
+                textStyle = MaterialTheme.typography.bodyLarge,
+                singleLine = true,
+                interactionSource = interactionSource,
+                decorationBox = {
+                    Box {
+                        if (text.isEmpty()) {
+                            Text(
+                                text = stringResource(R.string.action_find),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        it()
+                    }
+                }
             )
             IconButton(onClick = { presenter.onFindPrevious() }) {
                 Icon(
@@ -546,88 +619,226 @@ fun BrowserProgressIndicator(browserScreenState: BrowserScreenState) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun BrowserSearchSuggestions(
+    browserScreenState: BrowserScreenState,
+    presenter: BrowserPresenter,
+    suggestionsModel: SuggestionsModel,
+    searchBarState: SearchBarState,
+) {
+    val coroutineScope = rememberCoroutineScope()
+    ExpandedFullScreenSearchBar(
+        collapsedShape = MaterialTheme.shapes.small,
+        state = searchBarState,
+        inputField = {
+            var state by remember {
+                mutableStateOf(
+                    TextFieldValue(
+                        text = browserScreenState.browserViewState.displayUrl,
+                        selection = TextRange(
+                            0,
+                            browserScreenState.browserViewState.displayUrl.length
+                        ),
+                    )
+                )
+            }
+            BasicTextField(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .wrapContentHeight(),
+                value = state,
+                onValueChange = {
+                    state = it
+                    suggestionsModel.updateQuery(it.text)
+                },
+                textStyle = MaterialTheme.typography.bodyLarge,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = {
+                    coroutineScope.launch {
+                        searchBarState.animateToCollapsed()
+                    }
+                    presenter.onSearch(state.text)
+                }),
+                decorationBox = {
+                    Box {
+                        if (state.text.isEmpty()) {
+                            Text(
+                                text = stringResource(R.string.search_hint),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        it()
+                    }
+                }
+            )
+        }
+    ) {
+        val suggestions = suggestionsModel.results().collectAsState(emptyList())
+        suggestions.value.forEach {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        presenter.onSearchSuggestionClicked(it)
+                        coroutineScope.launch {
+                            searchBarState.animateToCollapsed()
+                        }
+                    }
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val resource = when (it) {
+                        is Bookmark -> R.drawable.ic_bookmark
+                        is HistoryEntry -> R.drawable.ic_history
+                        is SearchSuggestion -> R.drawable.ic_search
+                    }
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(resource),
+                        contentDescription = "test"
+                    )
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .fillMaxWidth()
+                            .weight(1f, false)
+                    ) {
+                        Text(
+                            text = it.title,
+                            style = MaterialTheme.typography.titleMedium,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                        Text(
+                            text = it.url,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
+                    IconButton(onClick = {
+                        // TODO: insert
+                    }) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(R.drawable.ic_insert),
+                            contentDescription = "test"
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun RowScope.BrowserSearchBar(
     browserScreenState: BrowserScreenState,
     presenter: BrowserPresenter,
+    suggestionsModel: SuggestionsModel,
 ) {
     val searchBarState = rememberSearchBarState()
-    val coroutineScope = rememberCoroutineScope()
     SearchBar(
         shape = MaterialTheme.shapes.small,
         state = searchBarState,
         modifier = Modifier
             .padding(horizontal = 8.dp, vertical = 6.dp)
             .height(40.dp)
-            .weight(1f, false)
-            .clickable {
-                println("test")
-            },
+            .weight(1f, false),
         inputField = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        coroutineScope.launch {
-                            println("test")
-                            searchBarState.animateToExpanded()
-                        }
-                    },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                when (browserScreenState.browserViewState.sslState) {
-                    is SslState.Invalid -> IconButton(
-                        modifier = Modifier.size(36.dp),
-                        onClick = { presenter.onSslIconClick() }
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .padding(6.dp)
-                                .size(24.dp),
-                            tint = null,
-                            painter = painterResource(R.drawable.ic_unsecured),
-                            contentDescription = "SSL Cert is Invalid"
-                        )
-                    }
-
-                    SslState.None -> Unit
-                    SslState.Valid -> IconButton(
-                        modifier = Modifier.size(36.dp),
-                        onClick = { presenter.onSslIconClick() }
-                    ) {
-                        Icon(
-                            modifier = Modifier.padding(6.dp),
-                            tint = null,
-                            painter = painterResource(R.drawable.ic_secured),
-                            contentDescription = "SSL Cert is Valid"
-                        )
-                    }
-                }
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f, false),
-                    maxLines = 1,
-                    overflow = TextOverflow.Clip,
-                    text = browserScreenState.browserViewState.displayUrl,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                IconButton(onClick = { presenter.onRefreshOrStopClick() }) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        painter = when (browserScreenState.browserViewState.isRefresh) {
-                            true -> painterResource(R.drawable.ic_action_refresh)
-                            false -> painterResource(R.drawable.ic_action_delete)
-                        },
-                        contentDescription = "refresh"
-                    )
-                }
-            }
+            BrowserSearchBarInputField(browserScreenState, presenter, searchBarState)
         }
     )
+    BrowserSearchSuggestions(browserScreenState, presenter, suggestionsModel, searchBarState)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BrowserSearchBarInputField(
+    browserScreenState: BrowserScreenState,
+    presenter: BrowserPresenter,
+    searchBarState: SearchBarState,
+) {
+    val coroutineScope = rememberCoroutineScope()
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                coroutineScope.launch {
+                    println("test")
+                    searchBarState.animateToExpanded()
+                }
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        when (browserScreenState.browserViewState.sslState) {
+            is SslState.Invalid -> IconButton(
+                modifier = Modifier.size(36.dp),
+                onClick = { presenter.onSslIconClick() }
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .size(24.dp),
+                    tint = null,
+                    painter = painterResource(R.drawable.ic_unsecured),
+                    contentDescription = "SSL Cert is Invalid"
+                )
+            }
+
+            SslState.None -> Unit
+            SslState.Valid -> IconButton(
+                modifier = Modifier.size(36.dp),
+                onClick = { presenter.onSslIconClick() }
+            ) {
+                Icon(
+                    modifier = Modifier.padding(6.dp),
+                    tint = null,
+                    painter = painterResource(R.drawable.ic_secured),
+                    contentDescription = "SSL Cert is Valid"
+                )
+            }
+        }
+        if (browserScreenState.browserViewState.displayUrl.isEmpty()) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .weight(1f, false),
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = stringResource(R.string.search_hint),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        } else {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f, false),
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+                text = browserScreenState.browserViewState.displayUrl,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+        IconButton(onClick = { presenter.onRefreshOrStopClick() }) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = when (browserScreenState.browserViewState.isRefresh) {
+                    true -> painterResource(R.drawable.ic_action_refresh)
+                    false -> painterResource(R.drawable.ic_action_delete)
+                },
+                contentDescription = "refresh"
+            )
+        }
+    }
 }
 
 @Composable
-fun BrowserOverflowMenu() {
+fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: BrowserScreenState) {
     Box {
         var dropDownExpanded by remember { mutableStateOf(false) }
         IconButton(onClick = {
@@ -639,20 +850,83 @@ fun BrowserOverflowMenu() {
             )
         }
         DropdownMenu(
+            modifier = Modifier.align(Alignment.BottomEnd),
             expanded = dropDownExpanded,
             onDismissRequest = { dropDownExpanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("test") },
-                onClick = {}
+                text = { Text(stringResource(R.string.action_new_tab)) },
+                onClick = {
+                    presenter.onMenuClick(MenuSelection.NEW_TAB)
+                    dropDownExpanded = false
+                }
             )
             DropdownMenuItem(
-                text = { Text("test") },
-                onClick = {}
+                text = { Text(stringResource(R.string.action_incognito)) },
+                onClick = {
+                    presenter.onMenuClick(MenuSelection.NEW_INCOGNITO_TAB)
+                    dropDownExpanded = false
+                }
+            )
+            if (browserScreenState.browserViewState.enableFullMenu) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.action_share)) },
+                    onClick = {
+                        presenter.onMenuClick(MenuSelection.SHARE)
+                        dropDownExpanded = false
+                    }
+                )
+            }
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.action_history)) },
+                onClick = {
+                    presenter.onMenuClick(MenuSelection.HISTORY)
+                    dropDownExpanded = false
+                }
             )
             DropdownMenuItem(
-                text = { Text("test") },
-                onClick = {}
+                text = { Text(stringResource(R.string.action_downloads)) },
+                onClick = {
+                    presenter.onMenuClick(MenuSelection.DOWNLOADS)
+                    dropDownExpanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.action_find)) },
+                onClick = {
+                    presenter.onMenuClick(MenuSelection.FIND)
+                    dropDownExpanded = false
+                }
+            )
+            if (browserScreenState.browserViewState.enableFullMenu) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.action_copy)) },
+                    onClick = {
+                        presenter.onMenuClick(MenuSelection.COPY_LINK)
+                        dropDownExpanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.action_add_to_homescreen)) },
+                    onClick = {
+                        presenter.onMenuClick(MenuSelection.ADD_TO_HOME)
+                        dropDownExpanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.action_add_bookmark)) },
+                    onClick = {
+                        presenter.onMenuClick(MenuSelection.ADD_BOOKMARK)
+                        dropDownExpanded = false
+                    }
+                )
+            }
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.settings)) },
+                onClick = {
+                    presenter.onMenuClick(MenuSelection.SETTINGS)
+                    dropDownExpanded = false
+                }
             )
         }
     }
@@ -738,10 +1012,7 @@ fun TabsBottomSheet(
                 )
             }
             IconButton(onClick = { presenter.onStarClick() }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_action_star),
-                    contentDescription = ""
-                )
+                BookmarkIcon(browserScreenState.browserViewState.isBookmarked)
             }
             IconButton(onClick = { presenter.onNewTabClick() }) {
                 Icon(
@@ -764,14 +1035,8 @@ fun TabsBottomSheet(
                             shape = MaterialTheme.shapes.medium
                         )
                         .clickable { presenter.onTabClick(index) }
+                        .optionalBorder(tab.isSelected)
                         .padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
-                        .apply {
-                            if (tab.isSelected) {
-                                // TODO: Fix
-                                border(2.dp, MaterialTheme.colorScheme.primary)
-                            }
-                        }
-
                 ) {
                     Row(
                         modifier = Modifier
@@ -834,6 +1099,18 @@ fun TabsBottomSheet(
             }
         }
     }
+}
+
+@Composable
+fun Modifier.optionalBorder(apply: Boolean): Modifier {
+    if (apply) {
+        return border(
+            width = 2.dp,
+            color = MaterialTheme.colorScheme.primary,
+            shape = MaterialTheme.shapes.medium
+        )
+    }
+    return this
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -916,35 +1193,3 @@ val TabBackground: Shape = object : Shape {
 
 }
 
-//@Composable
-//@Preview
-//fun BrowserScreenPreview() {
-//    BrowserScreen(
-//        BrowserScreenState(
-//            browserViewState = BrowserViewState(
-//                displayUrl = "https://test.com",
-//                sslState = SslState.Valid,
-//                isRefresh = false,
-//                progress = 75,
-//                enableFullMenu = true,
-//                themeColor = Option.None,
-//                isForwardEnabled = true,
-//                isBackEnabled = true,
-//                bookmarks = emptyList(),
-//                isBookmarked = true,
-//                isBookmarkEnabled = true,
-//                isRootFolder = true,
-//                findInPage = "maya"
-//            ),
-//            tabState = listOf(
-//                TabViewState(
-//                    id = 0,
-//                    icon = null,
-//                    title = "Test",
-//                    isSelected = true,
-//                    preview = Pair(null, 1)
-//                )
-//            )
-//        )
-//    )
-//}

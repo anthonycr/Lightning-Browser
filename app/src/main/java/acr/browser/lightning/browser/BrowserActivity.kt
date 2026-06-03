@@ -41,6 +41,7 @@ import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.tint
 import acr.browser.lightning.preference.datastore.getUnsafe
+import acr.browser.lightning.search.SuggestionsModel
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.Option
 import android.content.Intent
@@ -137,6 +138,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     @Inject
     internal lateinit var tabConfigurationProvider: StateProvider<TabConfiguration>
 
+    @Inject
+    internal lateinit var suggestionsModel: SuggestionsModel
+
     /**
      * True if the activity is operating in incognito mode, false otherwise.
      */
@@ -180,7 +184,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         }
 
 
-
 //        setContentView(binding.root)
 //        setSupportActionBar(binding.toolbar)
         val frameLayout: FrameLayout = FrameLayout(this)
@@ -197,7 +200,13 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             .inject(this)
 
         setContent {
-            BrowserScreen(tabConfigurationProvider, state.collectAsState().value, presenter, frameLayout)
+            BrowserScreen(
+                tabConfigurationProvider,
+                state.collectAsState().value,
+                presenter,
+                frameLayout,
+                suggestionsModel
+            )
         }
 //
 //        binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
