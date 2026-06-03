@@ -98,6 +98,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import kotlinx.coroutines.launch
@@ -391,8 +392,12 @@ fun BottomTabNavigationBar(
     Column(
         modifier = Modifier.height(56.dp)
     ) {
-        HorizontalDivider()
-        BrowserProgressIndicator(browserScreenState)
+        Box(
+            contentAlignment = Alignment.TopCenter
+        ) {
+            HorizontalDivider()
+            BrowserProgressIndicator(browserScreenState)
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -438,8 +443,10 @@ fun TopTabNavigationBar(
                     if (drawerState.isAnimationRunning) return@launch
 
                     if (drawerState.isOpen) {
+                        presenter.onTabCountViewClick()
                         drawerState.close()
                     } else {
+                        presenter.onTabCountViewClick()
                         drawerState.open()
                     }
                 }
@@ -447,8 +454,12 @@ fun TopTabNavigationBar(
             BrowserSearchBar(browserScreenState, presenter, suggestionsModel)
             BrowserOverflowMenu(presenter, browserScreenState)
         }
-        BrowserProgressIndicator(browserScreenState)
-        HorizontalDivider()
+        Box(
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            BrowserProgressIndicator(browserScreenState)
+            HorizontalDivider()
+        }
     }
 }
 
@@ -466,7 +477,9 @@ fun TopTabDesktopNavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.scrim, RectangleShape),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            overscrollEffect = null,
+            horizontalArrangement = Arrangement.spacedBy((-20).dp)
         ) {
             itemsIndexed(browserScreenState.tabState) { index, tab ->
                 Row(
@@ -474,12 +487,20 @@ fun TopTabDesktopNavigationBar(
                         .width(175.dp)
                         .height(36.dp)
                         .clickable { presenter.onTabClick(index) }
-                        .background(
+                        .zIndex(
                             if (tab.isSelected) {
+                                1f
+                            } else {
+                                0f
+                            }
+                        )
+                        .background(
+                            color = if (tab.isSelected) {
                                 MaterialTheme.colorScheme.surface
                             } else {
                                 MaterialTheme.colorScheme.surfaceVariant
-                            }, TabBackground
+                            },
+                            shape = TabBackground
                         )
                         .padding(horizontal = 15.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -538,8 +559,12 @@ fun TopTabDesktopNavigationBar(
             BrowserSearchBar(browserScreenState, presenter, suggestionsModel)
             BrowserOverflowMenu(presenter, browserScreenState)
         }
-        BrowserProgressIndicator(browserScreenState)
-        HorizontalDivider()
+        Box(
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            BrowserProgressIndicator(browserScreenState)
+            HorizontalDivider()
+        }
     }
 }
 
