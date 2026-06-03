@@ -98,6 +98,7 @@ class TabsRepository @Inject constructor(
 
     override suspend fun initializeTabs(): List<TabModel> =
         withContext(coroutineDispatchers.default) {
+            // TODO: Stop pre-emission of tabs?
             val oldTabs = bundleStore.retrieve().map { createTabUnsafe(it, TabModel.Type.NORMAL) }
 
             val newTabInitializer = if (initialUrl != null && initialUrl.isFileUrl()) {

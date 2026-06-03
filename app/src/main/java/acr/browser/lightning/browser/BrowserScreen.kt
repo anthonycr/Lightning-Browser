@@ -943,6 +943,13 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                     }
                 )
                 DropdownMenuItem(
+                    text = { Text(stringResource(R.string.action_bookmarks)) },
+                    onClick = {
+                        presenter.onMenuClick(MenuSelection.BOOKMARKS)
+                        dropDownExpanded = false
+                    }
+                )
+                DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_add_bookmark)) },
                     onClick = {
                         presenter.onMenuClick(MenuSelection.ADD_BOOKMARK)
