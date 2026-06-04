@@ -481,9 +481,20 @@ class BrowserPresenter @Inject constructor(
             KeyCombo.CTRL_W -> onTabClose(tabListState.indexOfCurrentTab())
             KeyCombo.CTRL_Q -> view?.showCloseBrowserDialog(tabListState.indexOfCurrentTab())
             KeyCombo.CTRL_R -> onRefreshOrStopClick()
-            KeyCombo.CTRL_TAB -> TODO()
-            KeyCombo.CTRL_SHIFT_TAB -> TODO()
-            KeyCombo.SEARCH -> TODO()
+            KeyCombo.CTRL_TAB -> {
+                val currentIndex = tabListState.indexOfCurrentTab()
+                val nextIndex = if (currentIndex + 1 < tabListState.size) currentIndex + 1 else 0
+                onTabClick(nextIndex)
+            }
+
+            KeyCombo.CTRL_SHIFT_TAB -> {
+                val currentIndex = tabListState.indexOfCurrentTab()
+                val previousIndex =
+                    if (currentIndex - 1 >= 0) currentIndex - 1 else tabListState.size - 1
+                onTabClick(previousIndex)
+            }
+
+            KeyCombo.SEARCH -> view?.clearSearchFocus()
             KeyCombo.ALT_0 -> onTabClick(0.coerceAtMost(tabListState.size - 1))
             KeyCombo.ALT_1 -> onTabClick(1.coerceAtMost(tabListState.size - 1))
             KeyCombo.ALT_2 -> onTabClick(2.coerceAtMost(tabListState.size - 1))
