@@ -213,6 +213,7 @@ fun DrawerTabs(
         }
     )
     ModalNavigationDrawer(
+        gesturesEnabled = drawerState.isOpen,
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
