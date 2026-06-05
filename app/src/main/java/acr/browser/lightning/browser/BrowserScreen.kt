@@ -1216,7 +1216,10 @@ fun BookmarksBottomSheet(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { presenter.onBookmarkClick(index) }
+                        .combinedClickable(
+                            onClick = { presenter.onBookmarkClick(index) },
+                            onLongClick = { presenter.onBookmarkLongClick(index) }
+                        )
                         .height(56.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
