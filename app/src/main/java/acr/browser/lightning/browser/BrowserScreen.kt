@@ -313,13 +313,19 @@ fun DrawerTabs(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    IconButton(onClick = { presenter.onBackClick() }) {
+                    IconButton(
+                        enabled = browserScreenState.browserViewState.isBackEnabled,
+                        onClick = { presenter.onBackClick() }
+                    ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_action_back),
                             contentDescription = ""
                         )
                     }
-                    IconButton(onClick = { presenter.onForwardClick() }) {
+                    IconButton(
+                        enabled = browserScreenState.browserViewState.isForwardEnabled,
+                        onClick = { presenter.onForwardClick() }
+                    ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_action_forward),
                             contentDescription = ""
@@ -337,7 +343,10 @@ fun DrawerTabs(
                             contentDescription = ""
                         )
                     }
-                    IconButton(onClick = { presenter.onStarClick() }) {
+                    IconButton(
+                        enabled = browserScreenState.browserViewState.isBookmarkEnabled,
+                        onClick = { presenter.onStarClick() }
+                    ) {
                         BookmarkIcon(browserScreenState.browserViewState.isBookmarked)
                     }
                     IconButton(onClick = { presenter.onNewTabClick() }) {
@@ -372,22 +381,21 @@ fun DrawerTabs(
 }
 
 @Composable
-fun BookmarkIcon(isBookmarked: Boolean) {
-    Icon(
-        painter = painterResource(
-            if (isBookmarked) {
-                R.drawable.ic_bookmark
-            } else {
-                R.drawable.ic_action_star
-            }
-        ),
-        tint = if (isBookmarked) {
-            MaterialTheme.colorScheme.primary
-        } else {
-            MaterialTheme.colorScheme.onSurface
-        },
-        contentDescription = ""
-    )
+fun BookmarkIcon(
+    isBookmarked: Boolean,
+) {
+    if (isBookmarked) {
+        Icon(
+            painter = painterResource(R.drawable.ic_bookmark),
+            tint = MaterialTheme.colorScheme.primary,
+            contentDescription = ""
+        )
+    } else {
+        Icon(
+            painter = painterResource(R.drawable.ic_action_star),
+            contentDescription = ""
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -1057,13 +1065,19 @@ fun TabsBottomSheet(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            IconButton(onClick = { presenter.onBackClick() }) {
+            IconButton(
+                enabled = browserScreenState.browserViewState.isBackEnabled,
+                onClick = { presenter.onBackClick() }
+            ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_action_back),
                     contentDescription = ""
                 )
             }
-            IconButton(onClick = { presenter.onForwardClick() }) {
+            IconButton(
+                enabled = browserScreenState.browserViewState.isForwardEnabled,
+                onClick = { presenter.onForwardClick() }
+            ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_action_forward),
                     contentDescription = ""
@@ -1081,7 +1095,10 @@ fun TabsBottomSheet(
                     contentDescription = ""
                 )
             }
-            IconButton(onClick = { presenter.onStarClick() }) {
+            IconButton(
+                enabled = browserScreenState.browserViewState.isBookmarkEnabled,
+                onClick = { presenter.onStarClick() }
+            ) {
                 BookmarkIcon(browserScreenState.browserViewState.isBookmarked)
             }
             IconButton(onClick = { presenter.onNewTabClick() }) {
