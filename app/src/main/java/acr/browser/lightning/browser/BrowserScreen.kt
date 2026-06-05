@@ -9,6 +9,7 @@ import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
+import acr.browser.lightning.preview.TopCropTransformation
 import acr.browser.lightning.search.SuggestionsModel
 import acr.browser.lightning.ssl.SslState
 import android.widget.FrameLayout
@@ -102,6 +103,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
+import coil3.request.transformations
 import kotlinx.coroutines.launch
 import kotlin.math.tan
 
@@ -1177,6 +1179,7 @@ fun TabsBottomSheet(
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(tab.preview.first)
+                            .transformations(TopCropTransformation)
                             .build(),
                         placeholder = null,
                         contentDescription = "test",
