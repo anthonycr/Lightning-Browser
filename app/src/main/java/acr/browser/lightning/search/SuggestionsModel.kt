@@ -31,7 +31,7 @@ class SuggestionsModel @Inject constructor(
 
     private var allBookmarks: List<Bookmark.Entry> = emptyList()
     private var suggestionsRepository: SuggestionsRepository
-    private val inputFlow = MutableSharedFlow<CharSequence>()
+    private val inputFlow = MutableSharedFlow<CharSequence>(replay = 1)
 
     init {
         appCoroutineScope.launch {
