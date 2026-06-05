@@ -17,6 +17,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -251,7 +252,10 @@ fun DrawerTabs(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { presenter.onTabClick(index) }
+                                .combinedClickable(
+                                    onClick = { presenter.onTabClick(index) },
+                                    onLongClick = { presenter.onTabLongClick(index) }
+                                )
                                 .height(56.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -480,7 +484,10 @@ fun TopTabDesktopNavigationBar(
                     modifier = Modifier
                         .width(175.dp)
                         .height(36.dp)
-                        .clickable { presenter.onTabClick(index) }
+                        .combinedClickable(
+                            onClick = { presenter.onTabClick(index) },
+                            onLongClick = { presenter.onTabLongClick(index) }
+                        )
                         .zIndex(
                             if (tab.isSelected) {
                                 1f
@@ -1098,7 +1105,10 @@ fun TabsBottomSheet(
                             color = MaterialTheme.colorScheme.surfaceVariant,
                             shape = MaterialTheme.shapes.medium
                         )
-                        .clickable { presenter.onTabClick(index) }
+                        .combinedClickable(
+                            onClick = { presenter.onTabClick(index) },
+                            onLongClick = { presenter.onTabLongClick(index) }
+                        )
                         .optionalBorder(tab.isSelected)
                         .padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
                 ) {
