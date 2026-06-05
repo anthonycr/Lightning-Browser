@@ -956,22 +956,22 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                         }
                     )
                 }
+            }
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.action_bookmarks)) },
+                onClick = {
+                    presenter.onMenuClick(MenuSelection.BOOKMARKS)
+                    dropDownExpanded = false
+                }
+            )
+            if (browserScreenState.browserViewState.enableFullMenu && !browserScreenState.isIncognito) {
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_bookmarks)) },
+                    text = { Text(stringResource(R.string.action_add_bookmark)) },
                     onClick = {
-                        presenter.onMenuClick(MenuSelection.BOOKMARKS)
+                        presenter.onMenuClick(MenuSelection.ADD_BOOKMARK)
                         dropDownExpanded = false
                     }
                 )
-                if (!browserScreenState.isIncognito) {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.action_add_bookmark)) },
-                        onClick = {
-                            presenter.onMenuClick(MenuSelection.ADD_BOOKMARK)
-                            dropDownExpanded = false
-                        }
-                    )
-                }
             }
             if (!browserScreenState.isIncognito) {
                 DropdownMenuItem(
