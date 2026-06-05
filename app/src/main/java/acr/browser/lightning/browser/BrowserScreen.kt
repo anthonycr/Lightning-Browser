@@ -1037,7 +1037,7 @@ fun TabsBottomSheet(
     presenter: BrowserPresenter,
 ) {
     val lazyListState = rememberLazyListState()
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(browserScreenState.openTabs) }
     if (showBottomSheet != browserScreenState.openTabs) {
         if (showBottomSheet) {
