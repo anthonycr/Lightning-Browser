@@ -9,6 +9,7 @@ import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
 
 data class BrowserScreenState(
+    val isIncognito: Boolean,
     val browserViewState: BrowserViewState,
     val tabState: List<TabViewState>,
     val dialog: Dialogs? = null,

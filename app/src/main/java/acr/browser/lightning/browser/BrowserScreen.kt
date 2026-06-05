@@ -891,13 +891,15 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                     dropDownExpanded = false
                 }
             )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.action_incognito)) },
-                onClick = {
-                    presenter.onMenuClick(MenuSelection.NEW_INCOGNITO_TAB)
-                    dropDownExpanded = false
-                }
-            )
+            if (!browserScreenState.isIncognito) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.action_incognito)) },
+                    onClick = {
+                        presenter.onMenuClick(MenuSelection.NEW_INCOGNITO_TAB)
+                        dropDownExpanded = false
+                    }
+                )
+            }
             if (browserScreenState.browserViewState.enableFullMenu) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_share)) },
@@ -907,20 +909,22 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                     }
                 )
             }
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.action_history)) },
-                onClick = {
-                    presenter.onMenuClick(MenuSelection.HISTORY)
-                    dropDownExpanded = false
-                }
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.action_downloads)) },
-                onClick = {
-                    presenter.onMenuClick(MenuSelection.DOWNLOADS)
-                    dropDownExpanded = false
-                }
-            )
+            if (!browserScreenState.isIncognito) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.action_history)) },
+                    onClick = {
+                        presenter.onMenuClick(MenuSelection.HISTORY)
+                        dropDownExpanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.action_downloads)) },
+                    onClick = {
+                        presenter.onMenuClick(MenuSelection.DOWNLOADS)
+                        dropDownExpanded = false
+                    }
+                )
+            }
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_find)) },
                 onClick = {
@@ -936,13 +940,15 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                         dropDownExpanded = false
                     }
                 )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_add_to_homescreen)) },
-                    onClick = {
-                        presenter.onMenuClick(MenuSelection.ADD_TO_HOME)
-                        dropDownExpanded = false
-                    }
-                )
+                if (!browserScreenState.isIncognito) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.action_add_to_homescreen)) },
+                        onClick = {
+                            presenter.onMenuClick(MenuSelection.ADD_TO_HOME)
+                            dropDownExpanded = false
+                        }
+                    )
+                }
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_bookmarks)) },
                     onClick = {
@@ -950,21 +956,25 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                         dropDownExpanded = false
                     }
                 )
+                if (!browserScreenState.isIncognito) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.action_add_bookmark)) },
+                        onClick = {
+                            presenter.onMenuClick(MenuSelection.ADD_BOOKMARK)
+                            dropDownExpanded = false
+                        }
+                    )
+                }
+            }
+            if (!browserScreenState.isIncognito) {
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_add_bookmark)) },
+                    text = { Text(stringResource(R.string.settings)) },
                     onClick = {
-                        presenter.onMenuClick(MenuSelection.ADD_BOOKMARK)
+                        presenter.onMenuClick(MenuSelection.SETTINGS)
                         dropDownExpanded = false
                     }
                 )
             }
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.settings)) },
-                onClick = {
-                    presenter.onMenuClick(MenuSelection.SETTINGS)
-                    dropDownExpanded = false
-                }
-            )
         }
     }
 }

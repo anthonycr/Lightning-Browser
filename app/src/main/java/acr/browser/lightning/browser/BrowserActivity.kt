@@ -409,6 +409,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     val state = MutableStateFlow(
         BrowserScreenState(
+            isIncognito(),
             BrowserViewState(
                 displayUrl = "",
                 isRefresh = true,
