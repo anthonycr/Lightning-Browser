@@ -1175,10 +1175,10 @@ fun TabsBottomSheet(
                             )
                         }
                     }
-                    // TODO: Get image to reload on tab updates
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(tab.preview.first)
+                            .memoryCacheKey("${tab.preview.second}-${tab.preview.first}")
                             .transformations(TopCropTransformation)
                             .build(),
                         placeholder = null,
