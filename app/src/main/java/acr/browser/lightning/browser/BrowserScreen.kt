@@ -421,7 +421,7 @@ fun BottomTabNavigationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             BrowserSearchBar(browserScreenState, presenter, suggestionsModel)
-            TabCountButton(browserScreenState.tabState.size) {
+            TabCountButton(browserScreenState.tabCountText) {
                 presenter.onTabCountViewClick()
             }
             BrowserOverflowMenu(presenter, browserScreenState)
@@ -445,7 +445,7 @@ fun TopTabNavigationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val coroutineScope = rememberCoroutineScope()
-            TabCountButton(browserScreenState.tabState.size) {
+            TabCountButton(browserScreenState.tabCountText) {
                 if (drawerState.isAnimationRunning) return@TabCountButton
                 // TODO: Figure out how to do this more like bottom sheet modal
                 coroutineScope.launch {
@@ -997,15 +997,9 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
 }
 
 @Composable
-fun TabCountButton(count: Int, onClick: () -> Unit) {
+fun TabCountButton(countText: String, onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         val color = MaterialTheme.colorScheme.onSurface
-        val text: String = if (count > 99) {
-            stringResource(R.string.infinity)
-        } else {
-            // TODO: Preformat using NumberFormat
-            count.toString()
-        }
         val textMeasurer = rememberTextMeasurer()
         val textStyle = MaterialTheme.typography.bodyMedium.copy(
             fontWeight = FontWeight.Bold
@@ -1016,12 +1010,12 @@ fun TabCountButton(count: Int, onClick: () -> Unit) {
                 cornerRadius = CornerRadius(6.dp.toPx()),
                 style = Stroke(width = 2.dp.toPx()),
             )
-            val textLayout = textMeasurer.measure(style = textStyle, text = text)
+            val textLayout = textMeasurer.measure(style = textStyle, text = countText)
             val textWidth = textLayout.size.width
             val textHeight = textLayout.size.height
             drawText(
                 textMeasurer = textMeasurer,
-                text = text,
+                text = countText,
                 style = textStyle,
                 topLeft = Offset(
                     12.dp.toPx() - textWidth / 2,

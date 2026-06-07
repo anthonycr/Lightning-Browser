@@ -38,6 +38,7 @@ import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.drawable
+import acr.browser.lightning.extensions.preferredLocale
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.tint
 import acr.browser.lightning.preference.datastore.getUnsafe
@@ -69,6 +70,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -140,6 +142,11 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     @Inject
     internal lateinit var suggestionsModel: SuggestionsModel
+
+    // TODO: Inject into presenter
+    private val numberFormat by lazy {
+        NumberFormat.getInstance(preferredLocale)
+    }
 
     /**
      * True if the activity is operating in incognito mode, false otherwise.
@@ -409,8 +416,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     val state = MutableStateFlow(
         BrowserScreenState(
-            isIncognito(),
-            BrowserViewState(
+            isIncognito = isIncognito(),
+            browserViewState = BrowserViewState(
                 displayUrl = "",
                 isRefresh = true,
                 sslState = SslState.None,
@@ -425,7 +432,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 isRootFolder = true,
                 findInPage = null,
             ),
-            emptyList()
+            tabState = emptyList(),
+            tabCountText = ""
         )
     )
 
@@ -433,6 +441,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      * @see BrowserContract.View.renderState
      */
     fun renderState(viewState: BrowserViewState) {
+        // TODO: Move into presenter
         lifecycleScope.launch {
             state.emit(state.value.copy(browserViewState = viewState))
         }
@@ -492,8 +501,18 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      * @see BrowserContract.View.renderTabs
      */
     fun renderTabs(tabListState: List<TabViewState>) {
+        // TODO: Move into presenter
         lifecycleScope.launch {
-            state.emit(state.value.copy(tabState = tabListState))
+            state.emit(
+                state.value.copy(
+                    tabState = tabListState,
+                    tabCountText = if (tabListState.size > 99) {
+                        getString(R.string.infinity)
+                    } else {
+                        numberFormat.format(tabListState.size)
+                    }
+                )
+            )
         }
 //        binding.tabCountView.updateCount(tabListState.size)
 //        val shouldScroll = tabsAdapter.itemCount < tabListState.size

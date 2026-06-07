@@ -12,6 +12,7 @@ data class BrowserScreenState(
     val isIncognito: Boolean,
     val browserViewState: BrowserViewState,
     val tabState: List<TabViewState>,
+    val tabCountText: String,
     val dialog: Dialogs? = null,
     val openBookmarks: Boolean = false,
     val openTabs: Boolean = false,
