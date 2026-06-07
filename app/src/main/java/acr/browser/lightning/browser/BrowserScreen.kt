@@ -1219,8 +1219,20 @@ fun BookmarksBottomSheet(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            IconButton(
+                modifier = Modifier
+                    .size(56.dp),
+                onClick = { presenter.onBookmarkMenuClick() }) {
+                Icon(
+                    painter = if (browserScreenState.browserViewState.isRootFolder) {
+                        painterResource(R.drawable.ic_action_star)
+                    } else {
+                        painterResource(R.drawable.ic_action_back)
+                    },
+                    contentDescription = "test"
+                )
+            }
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
                 text = stringResource(R.string.action_bookmarks),
                 style = MaterialTheme.typography.titleLarge
             )
@@ -1238,12 +1250,16 @@ fun BookmarksBottomSheet(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // TODO: Use real icon
+                    val painter = when (bookmark) {
+                        is Bookmark.Entry -> painterResource(R.drawable.ic_webpage)
+                        is Bookmark.Folder -> painterResource(R.drawable.ic_folder)
+                    }
                     Icon(
                         modifier = Modifier
                             .size(56.dp)
                             .padding(horizontal = 16.dp),
                         tint = MaterialTheme.colorScheme.onSurface,
-                        painter = painterResource(R.drawable.ic_webpage),
+                        painter = painter,
                         contentDescription = "test"
                     )
                     Text(
