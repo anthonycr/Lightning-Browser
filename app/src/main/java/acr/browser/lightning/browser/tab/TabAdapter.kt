@@ -312,7 +312,7 @@ class TabAdapter @AssistedInject constructor(
         tabWebChromeClient.createWindowSharedFlow
 
     override fun closeWindowRequests(): Flow<Unit> = tabWebChromeClient.closeWindowSharedFlow
-    
+
     override fun focusRequests(): Flow<Unit> = focusSharedFlow
 
     override var isForeground: Boolean = false
