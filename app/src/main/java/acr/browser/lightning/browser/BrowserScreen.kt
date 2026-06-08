@@ -681,10 +681,10 @@ fun BrowserSearchSuggestions(
             var state by remember {
                 mutableStateOf(
                     TextFieldValue(
-                        text = browserScreenState.browserViewState.displayUrl,
+                        text = browserScreenState.browserViewState.searchQuery,
                         selection = TextRange(
                             0,
-                            browserScreenState.browserViewState.displayUrl.length
+                            browserScreenState.browserViewState.searchQuery.length
                         ),
                     )
                 )
@@ -697,6 +697,7 @@ fun BrowserSearchSuggestions(
                 onValueChange = {
                     state = it
                     suggestionsModel.updateQuery(it.text)
+                    presenter.onSearchQueryChanged(it.text)
                 },
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
                     color = MaterialTheme.colorScheme.onSurface

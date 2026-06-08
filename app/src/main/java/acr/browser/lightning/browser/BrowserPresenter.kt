@@ -95,6 +95,7 @@ class BrowserPresenter @Inject constructor(
     private var view: BrowserContract.View? = null
     private var viewState: BrowserViewState = BrowserViewState(
         displayUrl = "",
+        searchQuery = "",
         isRefresh = true,
         sslState = SslState.None,
         progress = 0,
@@ -255,6 +256,7 @@ class BrowserPresenter @Inject constructor(
                         title = title,
                         isLoading = progress < 100
                     ).takeIf { !isSearchViewFocused } ?: viewState.displayUrl,
+                    searchQuery = tab.searchQuery,
                     enableFullMenu = !url.isSpecialUrl(),
                     themeColor = Option.Some(themeColor),
                     isRefresh = (progress == 100).takeIf { !isSearchViewFocused }
@@ -700,6 +702,16 @@ class BrowserPresenter @Inject constructor(
         } else {
             currentTab?.reload()
         }
+    }
+
+    /**
+     * Call when the search [query] is updated by the user so that we can remember it.
+     */
+    fun onSearchQueryChanged(query: String) {
+        currentTab?.searchQuery = query
+        view?.updateState(
+            viewState.copy(searchQuery = query)
+        )
     }
 
     /**

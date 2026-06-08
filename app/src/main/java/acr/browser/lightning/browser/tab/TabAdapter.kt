@@ -235,6 +235,12 @@ class TabAdapter @AssistedInject constructor(
     override val findQuery: String?
         get() = findInPageQuery
 
+    override var searchQuery: String
+        get() = tabWebViewClient.searchQuery
+        set(value) {
+            tabWebViewClient.searchQuery = value
+        }
+
     override val favicon: Bitmap?
         get() = latentInitializer?.let { iconFreeze }
             ?: tabWebChromeClient.faviconStateFlow.value

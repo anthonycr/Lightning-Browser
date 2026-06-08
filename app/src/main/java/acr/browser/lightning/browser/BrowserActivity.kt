@@ -419,6 +419,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             isIncognito = isIncognito(),
             browserViewState = BrowserViewState(
                 displayUrl = "",
+                searchQuery = "",
                 isRefresh = true,
                 sslState = SslState.None,
                 progress = 0,

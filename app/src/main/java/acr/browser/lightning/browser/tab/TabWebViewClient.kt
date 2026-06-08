@@ -13,6 +13,7 @@ import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.ssl.SslWarningPreferences
+import acr.browser.lightning.utils.isSpecialUrl
 import android.annotation.SuppressLint
 import android.app.Application
 import android.graphics.Bitmap
@@ -113,6 +114,12 @@ class TabWebViewClient @AssistedInject constructor(
     var sslState: SslState = SslState.None
         private set
 
+    /**
+     * The latest search query entered by the user, or the latest loaded URL, whichever event
+     * happened later.
+     */
+    var searchQuery: String = ""
+
     private var currentUrl: String = ""
     private var isReflowRunning: Boolean = false
     private var zoomScale: Float = 0.0F
@@ -124,6 +131,11 @@ class TabWebViewClient @AssistedInject constructor(
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
+        searchQuery = if (!url.isSpecialUrl()) {
+            url
+        } else {
+            ""
+        }
         currentUrl = url
         tabCoroutineScope.launch {
             urlSharedFlow.emit(url)

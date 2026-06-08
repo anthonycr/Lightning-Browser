@@ -111,6 +111,11 @@ interface TabModel {
     // Data
 
     /**
+     * The current query or the current URL that the user has entered in the search bar.
+     */
+    var searchQuery: String
+
+    /**
      * The current favicon of the webpage or null if there isn't one.
      */
     val favicon: Bitmap?
