@@ -87,6 +87,7 @@ private val darkScheme = darkColorScheme(
 
 @Composable
 fun AppTheme(
+    isIncognito: Boolean = false,
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -99,7 +100,7 @@ fun AppTheme(
 //            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 //        }
 
-        darkTheme -> darkScheme
+        darkTheme || isIncognito -> darkScheme
         else -> lightScheme
     }
 

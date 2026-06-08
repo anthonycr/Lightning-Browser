@@ -82,6 +82,7 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
@@ -115,7 +116,7 @@ fun BrowserScreen(
     frameLayout: FrameLayout,
     suggestionsModel: SuggestionsModel,
 ) {
-    AppTheme {
+    AppTheme(isIncognito = browserScreenState.isIncognito) {
         val tabConfiguration = tabConfigurationStateProvider.state.collectAsState()
         when (tabConfiguration.value) {
             TabConfiguration.DESKTOP -> DesktopTabs(
@@ -697,7 +698,9 @@ fun BrowserSearchSuggestions(
                     state = it
                     suggestionsModel.updateQuery(it.text)
                 },
-                textStyle = MaterialTheme.typography.bodyLarge,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = {
@@ -706,6 +709,7 @@ fun BrowserSearchSuggestions(
                     }
                     presenter.onSearch(state.text)
                 }),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
                 decorationBox = {
                     Box {
                         if (state.text.isEmpty()) {
@@ -1002,6 +1006,7 @@ fun TabCountButton(countText: String, onClick: () -> Unit) {
         val color = MaterialTheme.colorScheme.onSurface
         val textMeasurer = rememberTextMeasurer()
         val textStyle = MaterialTheme.typography.bodyMedium.copy(
+            color = color,
             fontWeight = FontWeight.Bold
         )
         Canvas(Modifier.size(24.dp)) {
