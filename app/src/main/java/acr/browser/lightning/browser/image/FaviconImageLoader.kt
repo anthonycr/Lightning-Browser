@@ -66,7 +66,7 @@ class FaviconImageLoader @Inject constructor(
                     lruCache.put(bookmark.url, webPageIcon)
                     imageView.setImageDrawable(webPageIcon)
                     coroutineScope.launch {
-                        val bitmap = faviconModel.faviconForUrl(bookmark.url, bookmark.title)
+                        val bitmap = faviconModel.getFaviconForUrl(bookmark.url, bookmark.title)
                         lruCache.put(bookmark.url, bitmap)
                         if (imageView.tag == bookmark.url) {
                             imageView.setImageBitmap(bitmap)

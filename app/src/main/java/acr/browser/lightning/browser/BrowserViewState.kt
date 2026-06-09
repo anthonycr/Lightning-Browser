@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser
 
+import acr.browser.lightning.BookmarkListItem
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.Option
@@ -40,7 +41,7 @@ data class BrowserViewState(
     val isBackEnabled: Boolean,
 
     // Bookmarks
-    val bookmarks: List<Bookmark>,
+    val bookmarks: List<BookmarkListItem>,
     val isBookmarked: Boolean,
     val isBookmarkEnabled: Boolean,
     val isRootFolder: Boolean,

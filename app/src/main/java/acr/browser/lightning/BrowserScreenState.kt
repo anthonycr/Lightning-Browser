@@ -76,6 +76,16 @@ data class BrowserScreenState(
     }
 }
 
+data class BookmarkListItem(
+    val title: String,
+    val icon: Icon
+) {
+    sealed interface Icon {
+        data object Folder : Icon
+        data class Image(val path: String?) : Icon
+    }
+}
+
 //interface View {
 //
 //    /**

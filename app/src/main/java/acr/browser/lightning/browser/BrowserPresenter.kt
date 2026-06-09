@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser
 
+import acr.browser.lightning.BookmarkListItem
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.data.CookieAdministrator
 import acr.browser.lightning.browser.di.Browser2Scope
@@ -33,6 +34,7 @@ import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.database.history.HistoryRepository
+import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.search.SearchEngineProvider
@@ -86,6 +88,7 @@ class BrowserPresenter @Inject constructor(
     private val tabCountNotifier: TabCountNotifier,
     @IncognitoMode private val incognitoMode: Boolean,
     private val coroutineDispatchers: CoroutineDispatchers,
+    private val faviconModel: FaviconModel,
 ) {
 
     private val browserCoroutineScope = BrowserCoroutineScope(
@@ -112,6 +115,7 @@ class BrowserPresenter @Inject constructor(
     private var tabListState: List<TabViewState> = emptyList()
     private var currentTab: TabModel? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
+    private var currentBookmarks: List<Bookmark> = emptyList()
     private var isTabDrawerOpen = false
     private var isBookmarkDrawerOpen = false
     private var isSearchViewFocused = false
@@ -133,7 +137,13 @@ class BrowserPresenter @Inject constructor(
             cookieAdministrator.adjustCookieSettings()
 
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
-            view.updateState(viewState.copy(bookmarks = bookmarks, isRootFolder = true))
+            currentBookmarks = bookmarks
+            view.updateState(
+                viewState.copy(
+                    bookmarks = bookmarks.asListItems(),
+                    isRootFolder = true
+                )
+            )
 
             val tabs = model.initializeTabs()
             val lastTab = if (tabs.isEmpty()) {
@@ -825,7 +835,7 @@ class BrowserPresenter @Inject constructor(
      * Call when the user clicks on a bookmark from the bookmark list at the provided [index].
      */
     fun onBookmarkClick(index: Int) {
-        when (val bookmark = viewState.bookmarks[index]) {
+        when (val bookmark = currentBookmarks[index]) {
             is Bookmark.Entry -> {
                 currentTab?.loadUrl(bookmark.url)
                 view?.closeBookmarkDrawer()
@@ -836,7 +846,13 @@ class BrowserPresenter @Inject constructor(
                 currentFolder = bookmark
                 browserCoroutineScope.launch {
                     val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = bookmark)
-                    view?.updateState(viewState.copy(bookmarks = bookmarks, isRootFolder = false))
+                    currentBookmarks = bookmarks
+                    view?.updateState(
+                        viewState.copy(
+                            bookmarks = bookmarks.asListItems(),
+                            isRootFolder = false
+                        )
+                    )
                 }
             }
         }
@@ -851,11 +867,27 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
+    private suspend fun List<Bookmark>.asListItems(): List<BookmarkListItem> {
+        return map {
+            when (it) {
+                is Bookmark.Entry -> BookmarkListItem(
+                    title = it.title,
+                    icon = BookmarkListItem.Icon.Image(faviconModel.getFaviconPathForUrl(it.url))
+                )
+
+                is Bookmark.Folder -> BookmarkListItem(
+                    title = it.title,
+                    icon = BookmarkListItem.Icon.Folder
+                )
+            }
+        }
+    }
+
     /**
      * Call when the user long presses on a bookmark in the bookmark list at the provided [index].
      */
     fun onBookmarkLongClick(index: Int) {
-        when (val item = viewState.bookmarks[index]) {
+        when (val item = currentBookmarks[index]) {
             is Bookmark.Entry -> view?.showBookmarkOptionsDialog(item)
             is Bookmark.Folder.Entry -> view?.showFolderOptionsDialog(item)
             Bookmark.Folder.Root -> Unit // Root is not clickable
@@ -918,9 +950,10 @@ class BrowserPresenter @Inject constructor(
                     )
                 )
                 val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
+                currentBookmarks = bookmarks
                 view?.updateState(
                     viewState.copy(
-                        bookmarks = bookmarks,
+                        bookmarks = bookmarks.asListItems(),
                         isBookmarked = bookmarkRepository.isBookmark(url)
                     )
                 )
@@ -959,9 +992,10 @@ class BrowserPresenter @Inject constructor(
                 )
             )
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
+            currentBookmarks = bookmarks
             view?.updateState(
                 viewState.copy(
-                    bookmarks = bookmarks,
+                    bookmarks = bookmarks.asListItems(),
                     isBookmarked = bookmarkRepository.isBookmark(url)
                 )
             )
@@ -992,7 +1026,8 @@ class BrowserPresenter @Inject constructor(
                 )
             )
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
-            view?.updateState(viewState.copy(bookmarks = bookmarks))
+            currentBookmarks = bookmarks
+            view?.updateState(viewState.copy(bookmarks = bookmarks.asListItems()))
             if (currentTab?.url?.isBookmarkUrl() == true) {
                 reload()
             }
@@ -1009,7 +1044,8 @@ class BrowserPresenter @Inject constructor(
         browserCoroutineScope.launch {
             bookmarkRepository.renameFolder(oldTitle, newTitle)
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
-            view?.updateState(viewState.copy(bookmarks = bookmarks))
+            currentBookmarks = bookmarks
+            view?.updateState(viewState.copy(bookmarks = bookmarks.asListItems()))
             if (currentTab?.url?.isBookmarkUrl() == true) {
                 reload()
             }
@@ -1041,7 +1077,8 @@ class BrowserPresenter @Inject constructor(
                 browserCoroutineScope.launch {
                     bookmarkRepository.deleteBookmark(bookmark)
                     val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
-                    view?.updateState(viewState.copy(bookmarks = bookmarks))
+                    currentBookmarks = bookmarks
+                    view?.updateState(viewState.copy(bookmarks = bookmarks.asListItems()))
                     if (currentTab?.url?.isBookmarkUrl() == true) {
                         reload()
                     }
@@ -1070,7 +1107,8 @@ class BrowserPresenter @Inject constructor(
                 browserCoroutineScope.launch {
                     bookmarkRepository.deleteFolder(folder.title)
                     val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
-                    view?.updateState(viewState.copy(bookmarks = bookmarks))
+                    currentBookmarks = bookmarks
+                    view?.updateState(viewState.copy(bookmarks = bookmarks.asListItems()))
                     if (currentTab?.url?.isBookmarkUrl() == true) {
                         reload()
                         currentTab?.goBack()
@@ -1173,7 +1211,13 @@ class BrowserPresenter @Inject constructor(
             browserCoroutineScope.launch {
                 val bookmarks =
                     bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
-                view?.updateState(viewState.copy(bookmarks = bookmarks, isRootFolder = true))
+                currentBookmarks = bookmarks
+                view?.updateState(
+                    viewState.copy(
+                        bookmarks = bookmarks.asListItems(),
+                        isRootFolder = true
+                    )
+                )
             }
         }
     }

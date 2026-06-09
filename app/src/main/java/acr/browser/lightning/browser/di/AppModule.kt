@@ -235,6 +235,17 @@ class AppModule {
         application.cacheDir
     }
 
+    @FaviconCacheDir
+    @Provides
+    fun providesFaviconCacheDir(
+        application: Application,
+        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory
+    ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
+        File(application.cacheDir, "favicon-cache").apply {
+            mkdirs()
+        }
+    }
+
     @Singleton
     @OptIn(DelicateCoroutinesApi::class)
     @Provides
@@ -295,3 +306,7 @@ annotation class DataDir
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
 annotation class CacheDir
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class FaviconCacheDir

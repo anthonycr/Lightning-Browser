@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser
 
+import acr.browser.lightning.BookmarkListItem
 import acr.browser.lightning.BrowserScreenState
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.menu.MenuSelection
@@ -12,6 +13,11 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.preview.TopCropTransformation
 import acr.browser.lightning.search.SuggestionsModel
 import acr.browser.lightning.ssl.SslState
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.RectF
+import android.graphics.Typeface
 import android.widget.FrameLayout
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -87,6 +93,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -98,11 +105,18 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
+import coil3.Canvas
+import coil3.Image
 import coil3.compose.AsyncImage
+import coil3.compose.ImagePainter
 import coil3.request.ImageRequest
 import coil3.request.transformations
 import kotlinx.coroutines.launch
@@ -902,6 +916,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
             )
         }
         DropdownMenu(
+            offset = DpOffset(0.dp, (50).dp),
             modifier = Modifier.align(Alignment.BottomEnd),
             expanded = dropDownExpanded,
             onDismissRequest = { dropDownExpanded = false }
@@ -1030,6 +1045,63 @@ fun TabCountButton(countText: String, onClick: () -> Unit) {
             )
         }
     }
+}
+
+class LetterImage(
+    private val textSize: TextUnit,
+    private val radius: Dp,
+    private val character: Char,
+    override val width: Int,
+    override val height: Int,
+    val color: ULong,
+) : Image {
+
+    private val paint = Paint().apply {
+        color = this@LetterImage.color.toInt()
+        val boldText = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+        typeface = boldText
+        textSize = this@LetterImage.textSize.value
+        isAntiAlias = true
+        textAlign = Paint.Align.CENTER
+    }
+
+    override val size: Long = 0
+    override val shareable: Boolean = true
+
+    override fun draw(canvas: Canvas) {
+        val outer = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat())
+        canvas.drawRoundRect(outer, radius.value, radius.value, paint)
+
+        val xPos = (canvas.width / 2)
+        val yPos = ((canvas.height / 2) - ((paint.descent() + paint.ascent()) / 2)).toInt()
+
+        paint.color = android.graphics.Color.WHITE
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
+        canvas.drawText(character.toString(), xPos.toFloat(), yPos.toFloat(), paint)
+    }
+
+    companion object {
+        @Composable
+        fun create(
+            character: Char,
+            width: Int,
+            height: Int,
+        ) = LetterImage(
+            textSize = 14.sp,
+            radius = 6.dp,
+            character = character,
+            color = when (character.code % 4) {
+                0 -> colorResource(R.color.bookmark_default_blue)
+                1 -> colorResource(R.color.bookmark_default_green)
+                2 -> colorResource(R.color.bookmark_default_red)
+                3 -> colorResource(R.color.bookmark_default_orange)
+                else -> error("Impossible result from modulus 4")
+            }.value,
+            width = width,
+            height = height,
+        )
+    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -1255,19 +1327,34 @@ fun BookmarksBottomSheet(
                         .height(56.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // TODO: Use real icon
-                    val painter = when (bookmark) {
-                        is Bookmark.Entry -> painterResource(R.drawable.ic_webpage)
-                        is Bookmark.Folder -> painterResource(R.drawable.ic_folder)
+                    when (val icon = bookmark.icon) {
+                        BookmarkListItem.Icon.Folder -> Icon(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .padding(horizontal = 16.dp),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            painter = painterResource(R.drawable.ic_folder),
+                            contentDescription = "test"
+                        )
+
+                        is BookmarkListItem.Icon.Image -> AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(icon.path)
+                                .build(),
+                            placeholder = ImagePainter(
+                                LetterImage.create(
+                                    character = bookmark.title.toCharArray().first(),
+                                    width = 56.dp.value.toInt(),
+                                    height = 56.dp.value.toInt(),
+                                )
+                            ),
+                            contentDescription = "test",
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .size(56.dp)
+                                .padding(horizontal = 16.dp),
+                        )
                     }
-                    Icon(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .padding(horizontal = 16.dp),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        painter = painter,
-                        contentDescription = "test"
-                    )
                     Text(
                         modifier = Modifier
                             .padding(end = 16.dp)
