@@ -51,7 +51,6 @@ import android.os.Handler
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -63,6 +62,9 @@ import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.runtime.collectAsState
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ListAdapter
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -876,28 +878,20 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 //        binding.search.clearFocus()
     }
 
-    // TODO: update to use non deprecated flags
     private fun setFullscreen(enabled: Boolean, immersive: Boolean) {
-        val window = window
-        val decor = window.decorView
-        if (enabled) {
-            if (immersive) {
-                decor.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            if (enabled) {
+                systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                if (immersive) {
+                    hide(WindowInsetsCompat.Type.systemBars())
+                } else {
+                    hide(WindowInsetsCompat.Type.statusBars())
+                }
             } else {
-                decor.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+                systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+                show(WindowInsetsCompat.Type.systemBars())
             }
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
-        } else {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            decor.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
         }
     }
 
