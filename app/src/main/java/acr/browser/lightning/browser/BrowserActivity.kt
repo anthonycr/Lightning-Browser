@@ -373,8 +373,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 //        binding.bookmarkBackButton.setOnClickListener { presenter.onBookmarkMenuClick() }
 //        binding.searchSslStatus.setOnClickListener { presenter.onSslIconClick() }
 //
-//        tabPager.longPressListener = presenter::onPageLongPress
-//
+        tabPager.longPressListener = presenter::onPageLongPress
+
         onBackPressedDispatcher.addCallback {
             presenter.onNavigateBack()
         }
