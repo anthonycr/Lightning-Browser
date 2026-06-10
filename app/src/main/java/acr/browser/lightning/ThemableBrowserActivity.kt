@@ -8,12 +8,9 @@ import acr.browser.lightning.utils.ThemeUtils
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.Menu
+import androidx.activity.enableEdgeToEdge
 import androidx.annotation.StyleRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.withStyledAttributes
-import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.view.iterator
 import javax.inject.Inject
 
 /**
@@ -49,27 +46,29 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
             }
         )
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         resetPreferences()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        withStyledAttributes(attrs = intArrayOf(R.attr.iconColorState)) {
-            val iconTintList = getColorStateList(0)
-            menu.iterator().forEach { menuItem ->
-                menuItem.icon?.let {
-                    DrawableCompat.setTintList(
-                        DrawableCompat.wrap(it),
-                        iconTintList
-                    )
-                }
-            }
-        }
-
-        return super.onCreateOptionsMenu(menu)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        withStyledAttributes(attrs = intArrayOf(R.attr.iconColorState)) {
+//            val iconTintList = getColorStateList(0)
+//            menu.iterator().forEach { menuItem ->
+//                menuItem.icon?.let {
+//                    DrawableCompat.setTintList(
+//                        DrawableCompat.wrap(it),
+//                        iconTintList
+//                    )
+//                }
+//            }
+//        }
+//
+//        return super.onCreateOptionsMenu(menu)
+//    }
 
     private fun resetPreferences() {
+        // TODO: Fix
         if (userPreferencesDataStore.useBlackStatusBar.getUnsafe() ||
             userPreferencesDataStore.tabConfiguration.getUnsafe() == TabConfiguration.DESKTOP
         ) {
