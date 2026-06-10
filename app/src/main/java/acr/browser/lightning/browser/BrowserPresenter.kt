@@ -725,36 +725,6 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
-     * Call when the focus state changes for the search bar.
-     *
-     * @param isFocused True if the view is now focused, false otherwise.
-     */
-    fun onSearchFocusChanged(isFocused: Boolean) {
-        isSearchViewFocused = isFocused
-        if (isFocused) {
-            view?.updateState(
-                viewState.copy(
-                    sslState = SslState.None,
-                    isRefresh = false,
-                    displayUrl = currentTab?.url?.takeIf { !it.isSpecialUrl() }.orEmpty()
-                )
-            )
-        } else {
-            view?.updateState(
-                viewState.copy(
-                    sslState = currentTab?.sslState ?: SslState.None,
-                    isRefresh = (currentTab?.loadingProgress ?: 0) == 100,
-                    displayUrl = searchBoxModel.getDisplayContent(
-                        url = currentTab?.url.orEmpty(),
-                        title = currentTab?.title.orEmpty(),
-                        isLoading = (currentTab?.loadingProgress ?: 0) < 100
-                    )
-                )
-            )
-        }
-    }
-
-    /**
      * Call when the user submits a search [query] to the search bar. At this point the user has
      * provided intent to search and is no longer trying to manipulate the query.
      */
