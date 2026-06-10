@@ -154,9 +154,9 @@ interface BrowserContract {
         fun showFileChooser(intent: Intent)
 
         /**
-         * Show a custom [view] over everything that will play a video.
+         * Show a custom view over everything that will play a video.
          */
-        fun showCustomView(view: android.view.View)
+        fun showCustomView()
 
         /**
          * Hide the custom view that was previously shown by calling [showCustomView].

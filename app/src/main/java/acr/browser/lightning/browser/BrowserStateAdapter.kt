@@ -8,7 +8,6 @@ import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.showSslDialog
 import android.content.Intent
-import android.view.View
 
 /**
  * An adapter between [BrowserContract.View] and the [BrowserActivity] that creates partial states
@@ -147,8 +146,8 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.showFileChooser(intent)
     }
 
-    override fun showCustomView(view: View) {
-        browserActivity.showCustomView(view)
+    override fun showCustomView() {
+        browserActivity.showCustomView()
     }
 
     override fun hideCustomView() {

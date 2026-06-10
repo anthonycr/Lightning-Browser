@@ -16,6 +16,7 @@ data class BrowserScreenState(
     val dialog: Dialogs? = null,
     val openBookmarks: Boolean = false,
     val openTabs: Boolean = false,
+    val showCustomView: Boolean = false,
 ) {
 
     sealed interface Dialogs {

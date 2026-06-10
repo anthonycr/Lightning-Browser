@@ -127,34 +127,60 @@ fun BrowserScreen(
     tabConfigurationStateProvider: StateProvider<TabConfiguration>,
     browserScreenState: BrowserScreenState,
     presenter: BrowserPresenter,
-    frameLayout: FrameLayout,
+    browserFrameLayout: FrameLayout,
+    customFrameLayout: FrameLayout,
     suggestionsModel: SuggestionsModel,
 ) {
     AppTheme(isIncognito = browserScreenState.isIncognito) {
-        val tabConfiguration = tabConfigurationStateProvider.state.collectAsState()
-        when (tabConfiguration.value) {
-            TabConfiguration.DESKTOP -> DesktopTabs(
-                frameLayout,
-                browserScreenState,
-                presenter,
-                suggestionsModel
-            )
+        if (browserScreenState.showCustomView) {
+            CustomView(customFrameLayout)
+        } else {
+            val tabConfiguration = tabConfigurationStateProvider.state.collectAsState()
+            when (tabConfiguration.value) {
+                TabConfiguration.DESKTOP -> DesktopTabs(
+                    browserFrameLayout,
+                    browserScreenState,
+                    presenter,
+                    suggestionsModel
+                )
 
-            TabConfiguration.DRAWER_SIDE -> DrawerTabs(
-                frameLayout,
-                browserScreenState,
-                presenter,
-                suggestionsModel
-            )
+                TabConfiguration.DRAWER_SIDE -> DrawerTabs(
+                    browserFrameLayout,
+                    browserScreenState,
+                    presenter,
+                    suggestionsModel
+                )
 
-            TabConfiguration.DRAWER_BOTTOM -> BottomTabs(
-                frameLayout,
-                browserScreenState,
-                presenter,
-                suggestionsModel
-            )
+                TabConfiguration.DRAWER_BOTTOM -> BottomTabs(
+                    browserFrameLayout,
+                    browserScreenState,
+                    presenter,
+                    suggestionsModel
+                )
 
-            null -> Unit
+                null -> Unit
+            }
+        }
+    }
+}
+
+@Composable
+fun CustomView(
+    frameLayout: FrameLayout
+) {
+    Scaffold { innerPadding ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            AndroidView(
+                factory = { frameLayout },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surfaceDim)
+                    .weight(1f, false),
+            )
         }
     }
 }

@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.di.Browser2Scope
+import acr.browser.lightning.browser.di.BrowserFrame
 import acr.browser.lightning.browser.view.WebViewLongPressHandler
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import android.view.ViewGroup
@@ -15,7 +16,7 @@ import javax.inject.Inject
  */
 @Browser2Scope
 class TabPager @Inject constructor(
-    private val container: FrameLayout,
+    @BrowserFrame private val container: FrameLayout,
 //    private val webViewScrollCoordinator: WebViewScrollCoordinator,
     private val webViewLongPressHandler: WebViewLongPressHandler
 ) {

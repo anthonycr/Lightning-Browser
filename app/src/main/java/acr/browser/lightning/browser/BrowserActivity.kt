@@ -4,7 +4,6 @@ import acr.browser.lightning.AppTheme
 import acr.browser.lightning.BrowserScreenState
 import acr.browser.lightning.R
 import acr.browser.lightning.ThemableBrowserActivity
-import acr.browser.lightning.browser.bookmark.BookmarkRecyclerViewAdapter
 import acr.browser.lightning.browser.color.ColorAnimator
 import acr.browser.lightning.browser.di.MainHandler
 import acr.browser.lightning.browser.di.injector
@@ -46,12 +45,11 @@ import acr.browser.lightning.search.SuggestionsModel
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.Option
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.Handler
 import android.view.KeyEvent
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -67,7 +65,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -82,18 +79,16 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     private lateinit var binding: ViewDelegate
     private lateinit var tabsAdapter: ListAdapter<TabViewState, TabViewHolder>
-    private lateinit var bookmarksAdapter: BookmarkRecyclerViewAdapter
-    private var activeRecyclerView: RecyclerView? = null
+//    private lateinit var bookmarksAdapter: BookmarkRecyclerViewAdapter
+//    private var activeRecyclerView: RecyclerView? = null
 
-    private var menuItemShare: MenuItem? = null
-    private var menuItemCopyLink: MenuItem? = null
-    private var menuItemAddToHome: MenuItem? = null
-    private var menuItemAddBookmark: MenuItem? = null
+//    private var menuItemShare: MenuItem? = null
+//    private var menuItemCopyLink: MenuItem? = null
+//    private var menuItemAddToHome: MenuItem? = null
+//    private var menuItemAddBookmark: MenuItem? = null
 
     private val defaultColor by lazy { color(R.color.primary_color) }
     private val backgroundDrawable by lazy { defaultColor.toDrawable() }
-
-    private var customView: View? = null
 
     private var pendingScroll = -1
 
@@ -193,10 +188,12 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
 //        setContentView(binding.root)
 //        setSupportActionBar(binding.toolbar)
-        val frameLayout: FrameLayout = FrameLayout(this)
+        val browserFrame = FrameLayout(this)
+        val customFrame = FrameLayout(this)
         injector.browser2ComponentBuilder()
             .activity(this)
-            .browserFrame(frameLayout)
+            .browserFrame(browserFrame)
+            .customFrame(customFrame)
             .bottomTabsLayout(bottomTabsBinding)
             .toolbarRoot(binding.uiLayout)
             .browserRoot(binding.browserLayoutContainer)
@@ -211,7 +208,8 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 tabConfigurationProvider,
                 state.collectAsState().value,
                 presenter,
-                frameLayout,
+                browserFrame,
+                customFrame,
                 suggestionsModel
             )
         }
@@ -395,19 +393,19 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         presenter.onViewHidden()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(menu(), menu)
-        menuItemShare = menu.findItem(R.id.action_share)
-        menuItemCopyLink = menu.findItem(R.id.action_copy)
-        menuItemAddToHome = menu.findItem(R.id.action_add_to_homescreen)
-        menuItemAddBookmark = menu.findItem(R.id.action_add_bookmark)
-        return super.onCreateOptionsMenu(menu)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        menuInflater.inflate(menu(), menu)
+//        menuItemShare = menu.findItem(R.id.action_share)
+//        menuItemCopyLink = menu.findItem(R.id.action_copy)
+//        menuItemAddToHome = menu.findItem(R.id.action_add_to_homescreen)
+//        menuItemAddBookmark = menu.findItem(R.id.action_add_bookmark)
+//        return super.onCreateOptionsMenu(menu)
+//    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return menuItemAdapter.adaptMenuItem(item)?.let(presenter::onMenuClick)?.let { true }
-            ?: super.onOptionsItemSelected(item)
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        return menuItemAdapter.adaptMenuItem(item)?.let(presenter::onMenuClick)?.let { true }
+//            ?: super.onOptionsItemSelected(item)
+//    }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         return keyEventAdapter.adaptKeyEvent(event)?.let(presenter::onKeyComboClick)?.let { true }
@@ -850,21 +848,23 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     /**
      * @see BrowserContract.View.showCustomView
      */
-    fun showCustomView(view: View) {
-//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
-//        binding.root.addView(view)
-//        customView = view
-//        setFullscreen(enabled = true, immersive = true)
+    fun showCustomView() {
+        // TODO: Internalize state in presenter
+        lifecycleScope.launch {
+            state.emit(state.value.copy(showCustomView = true))
+        }
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
     }
 
     /**
      * @see BrowserContract.View.hideCustomView
      */
     fun hideCustomView() {
-//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-//        customView?.let(binding.root::removeView)
-//        customView = null
-//        setFullscreen(enabled = false, immersive = false)
+        // TODO: Internalize state in presenter
+        lifecycleScope.launch {
+            state.emit(state.value.copy(showCustomView = false))
+        }
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
 
     /**

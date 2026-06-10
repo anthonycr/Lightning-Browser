@@ -26,7 +26,10 @@ interface Browser2Component {
         fun activity(activity: FragmentActivity): Builder
 
         @BindsInstance
-        fun browserFrame(frameLayout: FrameLayout): Builder
+        fun browserFrame(@BrowserFrame frameLayout: FrameLayout): Builder
+
+        @BindsInstance
+        fun customFrame(@CustomFrame frameLayout: FrameLayout): Builder
 
         @BindsInstance
         fun toolbarRoot(linearLayout: LinearLayout): Builder
@@ -53,6 +56,12 @@ interface Browser2Component {
     fun inject(browserActivity: BrowserActivity)
 
 }
+
+@Qualifier
+annotation class BrowserFrame
+
+@Qualifier
+annotation class CustomFrame
 
 @Qualifier
 annotation class InitialIntent

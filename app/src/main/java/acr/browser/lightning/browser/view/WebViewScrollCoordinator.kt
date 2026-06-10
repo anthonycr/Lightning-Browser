@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser.view
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.BrowserFrame
 import acr.browser.lightning.databinding.BrowserBottomTabsBinding
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.preference.UserPreferencesDataStore
@@ -30,7 +31,7 @@ class WebViewScrollCoordinator @Inject constructor(
     activity: Activity,
     private val bottomTabsLayout: BrowserBottomTabsBinding?,
     private val browserLayoutContainer: ViewGroup?,
-    private val browserFrame: FrameLayout,
+    @BrowserFrame private val browserFrame: FrameLayout,
     private val toolbarRoot: LinearLayout,
     private val toolbar: View,
     private val userPreferencesDataStore: UserPreferencesDataStore,

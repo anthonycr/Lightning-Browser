@@ -300,7 +300,7 @@ class TabAdapter @AssistedInject constructor(
         tabWebChromeClient.onResult(activityResult)
     }
 
-    override fun showCustomViewRequests(): Flow<View> = tabWebChromeClient.showCustomViewSharedFlow
+    override fun showCustomViewRequests(): Flow<Unit> = tabWebChromeClient.showCustomViewSharedFlow
 
     override fun hideCustomViewRequests(): Flow<Unit> = tabWebChromeClient.hideCustomViewObservable
 

@@ -326,7 +326,7 @@ class BrowserPresenter @Inject constructor(
 
         tabJobs += browserCoroutineScope.launch {
             tab.showCustomViewRequests().collectLatest {
-                view?.showCustomView(it)
+                view?.showCustomView()
                 isCustomViewShowing = true
             }
         }
