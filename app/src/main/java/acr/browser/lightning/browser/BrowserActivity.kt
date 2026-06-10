@@ -854,6 +854,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             state.emit(state.value.copy(showCustomView = true))
         }
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+        setFullscreen(enabled = true, immersive = true)
     }
 
     /**
@@ -865,6 +866,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             state.emit(state.value.copy(showCustomView = false))
         }
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        setFullscreen(enabled = false, immersive = false)
     }
 
     /**
