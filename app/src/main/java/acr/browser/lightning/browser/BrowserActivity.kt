@@ -5,19 +5,14 @@ import acr.browser.lightning.BrowserScreenState
 import acr.browser.lightning.R
 import acr.browser.lightning.ThemableBrowserActivity
 import acr.browser.lightning.browser.color.ColorAnimator
-import acr.browser.lightning.browser.di.MainHandler
 import acr.browser.lightning.browser.di.injector
-import acr.browser.lightning.browser.image.ImageLoader
 import acr.browser.lightning.browser.keys.KeyEventAdapter
-import acr.browser.lightning.browser.menu.MenuItemAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.DesktopTabRecyclerViewAdapter
 import acr.browser.lightning.browser.tab.TabPager
 import acr.browser.lightning.browser.tab.TabViewHolder
 import acr.browser.lightning.browser.tab.TabViewState
-import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.browser.ui.UiConfiguration
 import acr.browser.lightning.browser.view.ViewDelegate
 import acr.browser.lightning.browser.view.delegates.BottomTabViewDelegate
 import acr.browser.lightning.browser.view.delegates.DesktopTabViewDelegate
@@ -47,11 +42,9 @@ import acr.browser.lightning.utils.Option
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.os.Handler
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.activity.addCallback
@@ -99,17 +92,17 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { presenter.onFileChooserResult(it) }
 
-    @Inject
-    internal lateinit var imageLoader: ImageLoader
+//    @Inject
+//    internal lateinit var imageLoader: ImageLoader
 
     @Inject
     internal lateinit var keyEventAdapter: KeyEventAdapter
 
-    @Inject
-    internal lateinit var menuItemAdapter: MenuItemAdapter
+//    @Inject
+//    internal lateinit var menuItemAdapter: MenuItemAdapter
 
-    @Inject
-    internal lateinit var inputMethodManager: InputMethodManager
+//    @Inject
+//    internal lateinit var inputMethodManager: InputMethodManager
 
     @Inject
     internal lateinit var presenter: BrowserPresenter
@@ -123,15 +116,15 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     @Inject
     internal lateinit var lightningDialogBuilder: LightningDialogBuilder
 
-    @Inject
-    internal lateinit var uiConfiguration: UiConfiguration
+//    @Inject
+//    internal lateinit var uiConfiguration: UiConfiguration
 
-    @Inject
-    internal lateinit var themeProvider: ThemeProvider
+//    @Inject
+//    internal lateinit var themeProvider: ThemeProvider
 
-    @MainHandler
-    @Inject
-    internal lateinit var mainHandler: Handler
+//    @MainHandler
+//    @Inject
+//    internal lateinit var mainHandler: Handler
 
     @Named("tab")
     @Inject
