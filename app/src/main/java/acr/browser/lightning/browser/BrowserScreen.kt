@@ -897,6 +897,7 @@ fun BrowserSearchBarInputField(
                     .weight(1f, false),
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
+                softWrap = false,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 text = stringResource(R.string.search_hint),
                 style = MaterialTheme.typography.bodyLarge
@@ -908,6 +909,7 @@ fun BrowserSearchBarInputField(
                     .weight(1f, false),
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
+                softWrap = false,
                 text = browserScreenState.browserViewState.displayUrl,
                 style = MaterialTheme.typography.bodyLarge
             )
