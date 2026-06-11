@@ -1,6 +1,7 @@
 package acr.browser.lightning.utils
 
 import acr.browser.lightning.browser.di.FaviconCacheDir
+import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.browser.di.PreviewCacheDir
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.history.HistoryRepository
@@ -18,6 +19,7 @@ class WebUtils @Inject constructor(
     private val historyRepository: HistoryRepository,
     @FaviconCacheDir private val faviconCacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
     @PreviewCacheDir private val previewCacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
+    @GeneratedHtmlDir private val generatedHtmlDirThreadSafeFileProvider: ThreadSafeFileProvider,
 ) {
     suspend fun clearCookies() = withContext(coroutineDispatchers.io) {
         CookieManager.getInstance().removeAllCookies(null)
@@ -34,6 +36,7 @@ class WebUtils @Inject constructor(
         webViewDatabase.clearHttpAuthUsernamePassword()
         faviconCacheDirThreadSafeFileProvider.file.await().deleteRecursively()
         previewCacheDirThreadSafeFileProvider.file.await().deleteRecursively()
+        generatedHtmlDirThreadSafeFileProvider.file.await().deleteRecursively()
     }
 
     suspend fun clearCache() = withContext(coroutineDispatchers.main) {

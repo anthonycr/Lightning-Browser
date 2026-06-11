@@ -4,6 +4,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.di.FaviconCacheDir
+import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.databinding.DialogAuthRequestBinding
 import acr.browser.lightning.databinding.DialogSslWarningBinding
@@ -38,7 +39,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayInputStream
-import java.io.File
 import kotlin.math.abs
 
 /**
@@ -55,6 +55,7 @@ class TabWebViewClient @AssistedInject constructor(
     private val textReflow: TextReflow,
     private val logger: Logger,
     @FaviconCacheDir private val faviconCacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
+    @GeneratedHtmlDir private val generatedHtmlDirThreadSafeFileProvider: ThreadSafeFileProvider,
     @Assisted("cache") private val cacheStoragePathHandler: InternalStoragePathHandler,
     @Assisted("files") private val filesStoragePathHandler: InternalStoragePathHandler,
     @Assisted private val tabCoroutineScope: TabCoroutineScope
@@ -84,7 +85,9 @@ class TabWebViewClient @AssistedInject constructor(
     }
 
     private val files by lazy {
-        File(application.filesDir, "generated-html")
+        runBlocking {
+            generatedHtmlDirThreadSafeFileProvider.file.await()
+        }
     }
 
     private val textReflowEnabled = userPreferencesDataStore.textReflowEnabled.getUnsafe()

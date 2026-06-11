@@ -2,6 +2,7 @@ package acr.browser.lightning.html.bookmark
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.FaviconCacheDir
+import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
@@ -40,6 +41,7 @@ class BookmarkPageFactory @Inject constructor(
     private val coroutineDispatchers: CoroutineDispatchers,
     private val bookmarkPageReader: BookmarkPageReader,
     private val themeProvider: ThemeProvider,
+    @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
     @FaviconCacheDir private val faviconCacheDir: ThreadSafeFileProvider,
 ) : HtmlPageFactory {
 
@@ -137,7 +139,7 @@ class BookmarkPageFactory @Inject constructor(
         is Bookmark.Entry -> createViewModelForBookmark(this, defaultIconFile)
     }
 
-    private fun createViewModelForFolder(
+    private suspend fun createViewModelForFolder(
         folder: Bookmark.Folder,
         folderIconFile: File,
     ): BookmarkViewModel {
@@ -177,13 +179,13 @@ class BookmarkPageFactory @Inject constructor(
     /**
      * Create the bookmark page file.
      */
-    fun createBookmarkPage(folder: Bookmark.Folder?): File {
+    private suspend fun createBookmarkPage(folder: Bookmark.Folder?): File {
         val prefix = if (folder?.title?.isNotBlank() == true) {
             "${folder.title}-"
         } else {
             ""
         }
-        val generatedHtml = File(application.filesDir, "generated-html")
+        val generatedHtml = generatedHtmlDir.file.await()
         generatedHtml.mkdirs()
         return File(generatedHtml, prefix + FILENAME)
     }

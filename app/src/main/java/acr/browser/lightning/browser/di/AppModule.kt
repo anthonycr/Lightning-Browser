@@ -260,6 +260,23 @@ class AppModule {
         }
     }
 
+    @GeneratedHtmlDir
+    @Provides
+    fun providesGeneratedHtmlDir(
+        application: Application,
+        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory,
+        @IncognitoMode isIncognitoMode: Boolean,
+    ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
+        val suffix = if (isIncognitoMode) {
+            "-incognito"
+        } else {
+            ""
+        }
+        File(application.filesDir, "generated-html$suffix").apply {
+            mkdirs()
+        }
+    }
+
     @Singleton
     @OptIn(DelicateCoroutinesApi::class)
     @Provides
@@ -324,3 +341,7 @@ annotation class FaviconCacheDir
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
 annotation class PreviewCacheDir
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class GeneratedHtmlDir

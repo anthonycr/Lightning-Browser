@@ -1,9 +1,10 @@
 package acr.browser.lightning.browser.tab.bundle.storage
 
+import acr.browser.lightning.browser.di.FilesDir
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.log.Logger
+import acr.browser.lightning.utils.ThreadSafeFileProvider
 import acr.browser.lightning.utils.Utils
-import android.app.Application
 import android.os.Bundle
 import android.os.Parcel
 import dagger.assisted.Assisted
@@ -20,9 +21,9 @@ import java.io.IOException
  * Reads and writes bundles to and from storage.
  */
 class BundleWriter @AssistedInject constructor(
-    private val application: Application,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val logger: Logger,
+    @FilesDir private val filesDir: ThreadSafeFileProvider,
     @Assisted private val bundleFileName: String
 ) {
 
@@ -37,7 +38,7 @@ class BundleWriter @AssistedInject constructor(
      * @param bundle the bundle to store in persistent storage.
      */
     suspend fun writeToStorage(bundle: Bundle?) = withContext(coroutineDispatchers.io) {
-        val outputFile = File(application.filesDir, bundleFileName)
+        val outputFile = File(filesDir.file.await(), bundleFileName)
         var outputStream: FileOutputStream? = null
         try {
             outputStream = FileOutputStream(outputFile)
@@ -57,7 +58,7 @@ class BundleWriter @AssistedInject constructor(
      * Use this method to delete the bundle with the specified name.
      */
     suspend fun deleteInStorage() = withContext(coroutineDispatchers.io) {
-        val outputFile = File(application.filesDir, bundleFileName)
+        val outputFile = File(filesDir.file.await(), bundleFileName)
         if (outputFile.exists()) {
             outputFile.delete()
         }
@@ -71,7 +72,7 @@ class BundleWriter @AssistedInject constructor(
      * to read the Bundle from storage.
      */
     suspend fun readFromStorage(): Bundle? = withContext(coroutineDispatchers.io) {
-        val inputFile = File(application.filesDir, bundleFileName)
+        val inputFile = File(filesDir.file.await(), bundleFileName)
         var inputStream: FileInputStream? = null
         try {
             inputStream = FileInputStream(inputFile)
