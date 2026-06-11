@@ -87,6 +87,7 @@ class BrowserApp : Application() {
         applicationComponent = DaggerAppComponent.builder()
             .application(this)
             .buildInfo(createBuildInfo())
+            .incognitoMode(getProcessName().endsWith(":incognito"))
             .build()
         injector.inject(this)
 

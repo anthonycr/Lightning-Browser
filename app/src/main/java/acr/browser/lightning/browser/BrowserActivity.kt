@@ -194,7 +194,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             .browserRoot(binding.browserLayoutContainer)
             .toolbar(binding.toolbarLayout)
             .initialIntent(intent.takeIf { savedInstanceState == null })
-            .incognitoMode(isIncognito())
             .build()
             .inject(this)
 

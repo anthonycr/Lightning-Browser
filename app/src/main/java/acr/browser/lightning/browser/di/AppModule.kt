@@ -226,22 +226,36 @@ class AppModule {
         application.dataDir
     }
 
-    @CacheDir
-    @Provides
-    fun providesCacheDir(
-        application: Application,
-        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory
-    ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
-        application.cacheDir
-    }
-
     @FaviconCacheDir
     @Provides
     fun providesFaviconCacheDir(
         application: Application,
-        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory
+        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory,
+        @IncognitoMode isIncognitoMode: Boolean,
     ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
-        File(application.cacheDir, "favicon-cache").apply {
+        val suffix = if (isIncognitoMode) {
+            "-incognito"
+        } else {
+            ""
+        }
+        File(application.cacheDir, "favicon-cache$suffix").apply {
+            mkdirs()
+        }
+    }
+
+    @PreviewCacheDir
+    @Provides
+    fun providesPreviewCacheDir(
+        application: Application,
+        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory,
+        @IncognitoMode isIncognitoMode: Boolean,
+    ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
+        val suffix = if (isIncognitoMode) {
+            "-incognito"
+        } else {
+            ""
+        }
+        File(application.cacheDir, "preview-cache$suffix").apply {
             mkdirs()
         }
     }
@@ -305,8 +319,8 @@ annotation class DataDir
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
-annotation class CacheDir
+annotation class FaviconCacheDir
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
-annotation class FaviconCacheDir
+annotation class PreviewCacheDir

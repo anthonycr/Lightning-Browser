@@ -1,6 +1,6 @@
 package acr.browser.lightning.browser.tab
 
-import acr.browser.lightning.browser.di.CacheDir
+import acr.browser.lightning.browser.di.FaviconCacheDir
 import acr.browser.lightning.browser.di.FilesDir
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.concurrency.TabCoroutineScope
@@ -23,7 +23,7 @@ class TabFactory @Inject constructor(
     private val webViewFactory: WebViewFactory,
     private val tabWebViewClientFactory: TabWebViewClient.Factory,
     private val tabAdapterFactory: TabAdapter.Factory,
-    @CacheDir private val cacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
+    @FaviconCacheDir private val faviconCacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
     @FilesDir private val filesDirThreadSafeFileProvider: ThreadSafeFileProvider,
     private val coroutineDispatchers: CoroutineDispatchers,
 ) {
@@ -39,7 +39,7 @@ class TabFactory @Inject constructor(
         val faviconHandler = async(coroutineDispatchers.io) {
             InternalStoragePathHandler(
                 app,
-                File(cacheDirThreadSafeFileProvider.file.await(), "favicon-cache")
+                faviconCacheDirThreadSafeFileProvider.file.await()
             )
         }
         val htmlHandler = async(coroutineDispatchers.io) {

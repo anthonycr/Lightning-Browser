@@ -46,9 +46,6 @@ interface Browser2Component {
         @BindsInstance
         fun initialIntent(@InitialIntent intent: Intent?): Builder
 
-        @BindsInstance
-        fun incognitoMode(@IncognitoMode incognitoMode: Boolean): Builder
-
         fun build(): Browser2Component
 
     }

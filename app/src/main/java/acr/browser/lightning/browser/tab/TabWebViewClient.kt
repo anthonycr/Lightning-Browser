@@ -3,6 +3,7 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
+import acr.browser.lightning.browser.di.FaviconCacheDir
 import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.databinding.DialogAuthRequestBinding
 import acr.browser.lightning.databinding.DialogSslWarningBinding
@@ -13,6 +14,7 @@ import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.ssl.SslWarningPreferences
+import acr.browser.lightning.utils.ThreadSafeFileProvider
 import acr.browser.lightning.utils.isSpecialUrl
 import android.annotation.SuppressLint
 import android.app.Application
@@ -34,6 +36,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayInputStream
 import java.io.File
 import kotlin.math.abs
@@ -51,6 +54,7 @@ class TabWebViewClient @AssistedInject constructor(
     private val sslWarningPreferences: SslWarningPreferences,
     private val textReflow: TextReflow,
     private val logger: Logger,
+    @FaviconCacheDir private val faviconCacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
     @Assisted("cache") private val cacheStoragePathHandler: InternalStoragePathHandler,
     @Assisted("files") private val filesStoragePathHandler: InternalStoragePathHandler,
     @Assisted private val tabCoroutineScope: TabCoroutineScope
@@ -74,7 +78,9 @@ class TabWebViewClient @AssistedInject constructor(
     }
 
     private val cache by lazy {
-        File(application.cacheDir, "favicon-cache")
+        runBlocking {
+            faviconCacheDirThreadSafeFileProvider.file.await()
+        }
     }
 
     private val files by lazy {

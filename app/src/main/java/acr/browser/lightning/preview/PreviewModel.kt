@@ -1,8 +1,7 @@
 package acr.browser.lightning.preview
 
 import acr.browser.lightning.browser.di.Browser2Scope
-import acr.browser.lightning.browser.di.CacheDir
-import acr.browser.lightning.browser.di.IncognitoMode
+import acr.browser.lightning.browser.di.PreviewCacheDir
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.extensions.safeUse
@@ -26,15 +25,14 @@ import javax.inject.Inject
 class PreviewModel @Inject constructor(
     private val logger: Logger,
     private val viewIdGenerator: ViewIdGenerator,
-    @IncognitoMode private val incognitoMode: Boolean,
-    @CacheDir private val cacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
+    @PreviewCacheDir private val previewCacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val appCoroutineScope: AppCoroutineScope,
 ) {
 
     private val eventSharedFlow = MutableSharedFlow<Event>()
 
-    private val cacheDirDeferred = cacheDirThreadSafeFileProvider.file
+    private val cacheDirDeferred = previewCacheDirThreadSafeFileProvider.file
 
     init {
         appCoroutineScope.launch(coroutineDispatchers.io) {
@@ -50,7 +48,7 @@ class PreviewModel @Inject constructor(
      * Retrieves the preview for an ID.
      */
     suspend fun previewForId(id: Int): String = withContext(coroutineDispatchers.io) {
-        val cacheFolder = previewCacheFolder(incognitoMode)
+        val cacheFolder = cacheDirDeferred.await()
         File(cacheFolder, "$id.png").path
     }
 
@@ -63,7 +61,7 @@ class PreviewModel @Inject constructor(
         id: Int,
         preview: Bitmap
     ): Unit = withContext(coroutineDispatchers.io) {
-        val cacheFolder = previewCacheFolder(incognitoMode)
+        val cacheFolder = cacheDirDeferred.await()
         logger.log(TAG, "Caching preview for tab: $id")
         FileOutputStream(getPreviewCacheFile(cacheFolder, id)).safeUse {
             preview.compress(Bitmap.CompressFormat.PNG, 100, it)
@@ -83,24 +81,10 @@ class PreviewModel @Inject constructor(
     private suspend fun pruneInternal(
         keepIds: Set<Int>
     ): Unit = withContext(coroutineDispatchers.io) {
-        val cacheFolder = previewCacheFolder(incognitoMode)
+        val cacheFolder = cacheDirDeferred.await()
         cacheFolder.listFiles()
             ?.filter { !keepIds.contains(it.name.split(".")[0].toInt()) }
             ?.forEach(File::delete)
-    }
-
-    /**
-     * The folder where favicons are cached.
-     */
-    private suspend fun previewCacheFolder(
-        incognitoMode: Boolean
-    ): File = withContext(coroutineDispatchers.io) {
-        val cacheDir = cacheDirDeferred.await()
-        if (incognitoMode) {
-            File(cacheDir, "preview-cache-incognito")
-        } else {
-            File(cacheDir, "preview-cache")
-        }
     }
 
     /**
