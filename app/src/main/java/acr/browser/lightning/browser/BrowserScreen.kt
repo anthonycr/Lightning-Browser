@@ -856,7 +856,6 @@ fun BrowserSearchBarInputField(
             .fillMaxWidth()
             .clickable {
                 coroutineScope.launch {
-                    println("test")
                     searchBarState.animateToExpanded()
                 }
             },
