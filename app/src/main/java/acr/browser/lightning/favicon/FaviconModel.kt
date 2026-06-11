@@ -105,6 +105,7 @@ class FaviconModel @Inject constructor(
     ): Unit = withContext(coroutineDispatchers.io) {
         val faviconPath = getFaviconPathForUrl(url) ?: return@withContext
 
+        // TODO: Fix incognito cache clear breaking path
         logger.log(TAG, "Caching icon: $faviconPath")
         FileOutputStream(File(faviconPath)).safeUse {
             favicon.compress(Bitmap.CompressFormat.PNG, 100, it)
