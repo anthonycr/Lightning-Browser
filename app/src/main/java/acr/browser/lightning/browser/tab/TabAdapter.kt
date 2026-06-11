@@ -75,7 +75,7 @@ class TabAdapter @AssistedInject constructor(
         ): TabAdapter
     }
 
-    private var latentInitializer: FreezableBundleInitializer? = null
+    private var latentInitializer: FreezableInitializer? = null
 
     private var findInPageQuery: String? = null
     private var toggleDesktop: Boolean = false
@@ -84,7 +84,7 @@ class TabAdapter @AssistedInject constructor(
 
     private var previewGeneratedTime = System.currentTimeMillis()
 
-    override val id: Int = if (tabInitializer is FreezableBundleInitializer) {
+    override val id: Int = if (tabInitializer is FreezableInitializer) {
         latentInitializer = tabInitializer
         val frozenId = tabInitializer.id.takeIf { it != -1 } ?: viewIdGenerator.generateViewId()
         viewIdGenerator.claimViewId(frozenId)
@@ -136,7 +136,7 @@ class TabAdapter @AssistedInject constructor(
         }
 
     init {
-        if (tabInitializer !is FreezableBundleInitializer) {
+        if (tabInitializer !is FreezableInitializer) {
             loadFromInitializer(tabInitializer)
         }
     }
