@@ -139,7 +139,7 @@ dependencies {
     implementation("com.google.android.material:material:1.14.0")
     implementation("com.google.dagger:dagger:$daggerVersion")
     implementation("com.guolindev.permissionx:permissionx:1.8.1")
-    implementation("com.squareup.okhttp3:okhttp:5.3.2")
+    implementation("com.squareup.okhttp3:okhttp:5.4.0")
     implementation("com.squareup.okio:okio:3.17.0")
     implementation("io.coil-kt.coil3:coil:$coil")
     implementation("io.coil-kt.coil3:coil-core:$coil")
