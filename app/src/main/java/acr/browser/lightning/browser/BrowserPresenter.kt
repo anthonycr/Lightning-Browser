@@ -99,6 +99,7 @@ class BrowserPresenter @Inject constructor(
     private var viewState: BrowserViewState = BrowserViewState(
         displayUrl = "",
         searchQuery = "",
+        searchQuerySelection = Pair(0, 0),
         isRefresh = true,
         sslState = SslState.None,
         progress = 0,
@@ -267,6 +268,7 @@ class BrowserPresenter @Inject constructor(
                         isLoading = progress < 100
                     ).takeIf { !isSearchViewFocused } ?: viewState.displayUrl,
                     searchQuery = tab.searchQuery,
+                    searchQuerySelection = tab.searchQuerySelection,
                     enableFullMenu = !url.isSpecialUrl(),
                     themeColor = Option.Some(themeColor),
                     isRefresh = (progress == 100).takeIf { !isSearchViewFocused }
@@ -717,10 +719,14 @@ class BrowserPresenter @Inject constructor(
     /**
      * Call when the search [query] is updated by the user so that we can remember it.
      */
-    fun onSearchQueryChanged(query: String) {
+    fun onSearchQueryChanged(query: String, selectionStart: Int, selectionEnd: Int) {
         currentTab?.searchQuery = query
+        currentTab?.searchQuerySelection = Pair(selectionStart, selectionEnd)
         view?.updateState(
-            viewState.copy(searchQuery = query)
+            viewState.copy(
+                searchQuery = query,
+                searchQuerySelection = Pair(selectionStart, selectionEnd)
+            )
         )
     }
 
@@ -790,6 +796,18 @@ class BrowserPresenter @Inject constructor(
         } ?: error("Other types cannot be search suggestions: $webPage")
 
         onSearch(url)
+    }
+
+    fun onSearchSuggestionInsertClicked(webPage: WebPage) {
+        val url = when (webPage) {
+            is HistoryEntry,
+            is Bookmark.Entry -> webPage.url
+
+            is SearchSuggestion -> webPage.title
+            else -> null
+        } ?: error("Other types cannot be search suggestions: $webPage")
+
+        onSearchQueryChanged(url, url.length, url.length)
     }
 
     /**

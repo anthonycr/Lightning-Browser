@@ -726,15 +726,23 @@ fun BrowserSearchSuggestions(
                     )
                 )
             }
+            state = state.copy(
+                text = browserScreenState.browserViewState.searchQuery,
+                selection = TextRange(
+                    browserScreenState.browserViewState.searchQuerySelection.first,
+                    browserScreenState.browserViewState.searchQuerySelection.second
+                )
+            )
             BasicTextField(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .wrapContentHeight(),
                 value = state,
                 onValueChange = {
+                    // Maybe TODO: selection switches to end when suggestions are dismissed
                     state = it
                     suggestionsModel.updateQuery(it.text)
-                    presenter.onSearchQueryChanged(it.text)
+                    presenter.onSearchQueryChanged(it.text, it.selection.min, it.selection.max)
                 },
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
                     color = MaterialTheme.colorScheme.onSurface
@@ -807,7 +815,7 @@ fun BrowserSearchSuggestions(
                         )
                     }
                     IconButton(onClick = {
-                        // TODO: insert
+                        presenter.onSearchSuggestionInsertClicked(it)
                     }) {
                         Icon(
                             modifier = Modifier.size(24.dp),

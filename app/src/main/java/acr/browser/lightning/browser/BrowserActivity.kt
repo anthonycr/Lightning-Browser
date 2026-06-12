@@ -412,6 +412,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             browserViewState = BrowserViewState(
                 displayUrl = "",
                 searchQuery = "",
+                searchQuerySelection = Pair(0, 0),
                 isRefresh = true,
                 sslState = SslState.None,
                 progress = 0,

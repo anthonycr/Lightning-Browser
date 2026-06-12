@@ -115,6 +115,12 @@ interface TabModel {
     var searchQuery: String
 
     /**
+     * The text selection in the search query, either the start and end of the selection if the
+     * values are different, or the cursor position if they are the same.
+     */
+    var searchQuerySelection: Pair<Int, Int>
+
+    /**
      * The current favicon of the webpage or null if there isn't one.
      */
     val favicon: Bitmap?

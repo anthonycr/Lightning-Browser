@@ -30,6 +30,7 @@ data class BrowserViewState(
     // search bar
     val displayUrl: String,
     val searchQuery: String,
+    val searchQuerySelection: Pair<Int, Int>,
     val sslState: SslState,
     val isRefresh: Boolean,
     val progress: Int,

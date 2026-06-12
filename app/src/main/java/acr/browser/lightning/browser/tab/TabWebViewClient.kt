@@ -129,6 +129,12 @@ class TabWebViewClient @AssistedInject constructor(
      */
     var searchQuery: String = ""
 
+    /**
+     * The text selection in the search query, either the start and end of the selection if the
+     * values are different, or the cursor position if they are the same.
+     */
+    var searchQuerySelection: Pair<Int, Int> = Pair(0, 0)
+
     private var currentUrl: String = ""
     private var isReflowRunning: Boolean = false
     private var zoomScale: Float = 0.0F
@@ -145,6 +151,7 @@ class TabWebViewClient @AssistedInject constructor(
         } else {
             ""
         }
+        searchQuerySelection = Pair(0, searchQuery.length)
         currentUrl = url
         tabCoroutineScope.launch {
             urlSharedFlow.emit(url)
