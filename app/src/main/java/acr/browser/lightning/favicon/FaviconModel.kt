@@ -3,14 +3,12 @@ package acr.browser.lightning.favicon
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.FaviconCacheDir
 import acr.browser.lightning.concurrency.CoroutineDispatchers
-import acr.browser.lightning.extensions.pad
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.DrawableUtils
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.annotation.ColorInt
 import androidx.core.net.toUri
 import kotlinx.coroutines.withContext
@@ -30,7 +28,6 @@ class FaviconModel @Inject constructor(
     @FaviconCacheDir private val faviconCacheDir: ThreadSafeFileProvider
 ) {
 
-    private val loaderOptions = BitmapFactory.Options()
     private val bookmarkIconSize =
         application.resources.getDimensionPixelSize(R.dimen.material_grid_small_icon)
 
@@ -49,32 +46,6 @@ class FaviconModel @Inject constructor(
             bookmarkIconSize,
             defaultFaviconColor
         )
-    }
-
-    /**
-     * Retrieves the favicon for a URL, may be from network or cache.
-     *
-     * @param url   The URL that we should retrieve the favicon for.
-     * @param title The title for the web page.
-     */
-    suspend fun getFaviconForUrl(
-        url: String,
-        title: String
-    ): Bitmap = withContext(coroutineDispatchers.io) {
-        val faviconPath = getFaviconPathForUrl(url)
-            ?: return@withContext createDefaultBitmapForTitle(title).pad()
-
-        val faviconCacheFile = File(faviconPath)
-
-        if (faviconCacheFile.exists()) {
-            val storedFavicon = BitmapFactory.decodeFile(faviconCacheFile.path, loaderOptions)
-
-            if (storedFavicon != null) {
-                return@withContext storedFavicon.pad()
-            }
-        }
-
-        return@withContext createDefaultBitmapForTitle(title).pad()
     }
 
     /**

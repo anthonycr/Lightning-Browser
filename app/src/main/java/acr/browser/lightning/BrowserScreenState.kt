@@ -86,31 +86,3 @@ data class BookmarkListItem(
         data class Image(val path: String?) : Icon
     }
 }
-
-//interface View {
-//
-//    /**
-//     * Show the toolbar/search box if it has been hidden due to scrolling.
-//     */
-//    fun showToolbar()
-
-//    /**
-//     * Show the file chooser with the provided [intent].
-//     */
-//    fun showFileChooser(intent: Intent)
-//
-//    /**
-//     * Show a custom [view] over everything that will play a video.
-//     */
-//    fun showCustomView(view: android.view.View)
-//
-//    /**
-//     * Hide the custom view that was previously shown by calling [showCustomView].
-//     */
-//    fun hideCustomView()
-
-//    /**
-//     * Clear focus from the search view if it has focus.
-//     */
-//    fun clearSearchFocus()
-//}

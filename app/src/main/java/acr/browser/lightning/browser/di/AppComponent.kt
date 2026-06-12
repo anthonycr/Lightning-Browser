@@ -5,7 +5,6 @@ import acr.browser.lightning.ThemableBrowserActivity
 import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.dialog.LightningDialogBuilder
-import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.SettingsActivity
 import android.app.Application
 import dagger.BindsInstance
@@ -25,7 +24,7 @@ interface AppComponent {
 
         @BindsInstance
         fun buildInfo(buildInfo: BuildInfo): Builder
-        
+
         @BindsInstance
         fun incognitoMode(@IncognitoMode incognitoMode: Boolean): Builder
 
@@ -39,8 +38,6 @@ interface AppComponent {
     fun inject(app: BrowserApp)
 
     fun inject(activity: SettingsActivity)
-
-    fun inject(suggestionsAdapter: SuggestionsAdapter)
 
     fun inject(searchBoxModel: SearchBoxModel)
 

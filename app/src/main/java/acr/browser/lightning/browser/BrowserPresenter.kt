@@ -217,8 +217,6 @@ class BrowserPresenter @Inject constructor(
         currentTab = tabModel
         currentTab?.isForeground = true
 
-        view?.clearSearchFocus()
-
         val tab = tabModel ?: return run {
             view.updateState(
                 viewState.copy(

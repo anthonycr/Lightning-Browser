@@ -51,22 +51,6 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         resetPreferences()
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        withStyledAttributes(attrs = intArrayOf(R.attr.iconColorState)) {
-//            val iconTintList = getColorStateList(0)
-//            menu.iterator().forEach { menuItem ->
-//                menuItem.icon?.let {
-//                    DrawableCompat.setTintList(
-//                        DrawableCompat.wrap(it),
-//                        iconTintList
-//                    )
-//                }
-//            }
-//        }
-//
-//        return super.onCreateOptionsMenu(menu)
-//    }
-
     private fun resetPreferences() {
         // TODO: Fix
         if (userPreferencesDataStore.useBlackStatusBar.getUnsafe() ||

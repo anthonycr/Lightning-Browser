@@ -18,7 +18,6 @@ import acr.browser.lightning.ssl.SslWarningPreferences
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import acr.browser.lightning.utils.isSpecialUrl
 import android.annotation.SuppressLint
-import android.app.Application
 import android.graphics.Bitmap
 import android.net.http.SslError
 import android.os.Message
@@ -45,7 +44,6 @@ import kotlin.math.abs
  * A [WebViewClient] that supports the tab adaptation.
  */
 class TabWebViewClient @AssistedInject constructor(
-    private val application: Application,
     private val adBlocker: AdBlocker,
     private val allowListModel: AllowListModel,
     private val urlHandler: UrlHandler,

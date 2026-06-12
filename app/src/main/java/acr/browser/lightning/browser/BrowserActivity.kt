@@ -1,32 +1,20 @@
 package acr.browser.lightning.browser
 
-import acr.browser.lightning.AppTheme
 import acr.browser.lightning.BrowserScreenState
 import acr.browser.lightning.R
 import acr.browser.lightning.ThemableBrowserActivity
-import acr.browser.lightning.browser.color.ColorAnimator
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.keys.KeyEventAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
-import acr.browser.lightning.browser.tab.DesktopTabRecyclerViewAdapter
 import acr.browser.lightning.browser.tab.TabPager
-import acr.browser.lightning.browser.tab.TabViewHolder
 import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.browser.view.ViewDelegate
-import acr.browser.lightning.browser.view.delegates.BottomTabViewDelegate
-import acr.browser.lightning.browser.view.delegates.DesktopTabViewDelegate
-import acr.browser.lightning.browser.view.delegates.DrawerTabViewDelegate
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
-import acr.browser.lightning.databinding.BrowserActivityBottomBinding
-import acr.browser.lightning.databinding.BrowserActivityDesktopBinding
-import acr.browser.lightning.databinding.BrowserActivityDrawerBinding
-import acr.browser.lightning.databinding.BrowserBottomTabsBinding
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
@@ -34,8 +22,6 @@ import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.preferredLocale
 import acr.browser.lightning.extensions.resizeAndShow
-import acr.browser.lightning.extensions.tint
-import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.search.SuggestionsModel
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.Option
@@ -43,10 +29,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -54,12 +37,10 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.runtime.collectAsState
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.ListAdapter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -72,37 +53,15 @@ import javax.inject.Named
  */
 abstract class BrowserActivity : ThemableBrowserActivity() {
 
-    private lateinit var binding: ViewDelegate
-    private lateinit var tabsAdapter: ListAdapter<TabViewState, TabViewHolder>
-//    private lateinit var bookmarksAdapter: BookmarkRecyclerViewAdapter
-//    private var activeRecyclerView: RecyclerView? = null
-
-//    private var menuItemShare: MenuItem? = null
-//    private var menuItemCopyLink: MenuItem? = null
-//    private var menuItemAddToHome: MenuItem? = null
-//    private var menuItemAddBookmark: MenuItem? = null
-
     private val defaultColor by lazy { color(R.color.primary_color) }
-    private val backgroundDrawable by lazy { defaultColor.toDrawable() }
-
-    private var pendingScroll = -1
 
     @Suppress("ConvertLambdaToReference")
     private val launcher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { presenter.onFileChooserResult(it) }
 
-//    @Inject
-//    internal lateinit var imageLoader: ImageLoader
-
     @Inject
     internal lateinit var keyEventAdapter: KeyEventAdapter
-
-//    @Inject
-//    internal lateinit var menuItemAdapter: MenuItemAdapter
-
-//    @Inject
-//    internal lateinit var inputMethodManager: InputMethodManager
 
     @Inject
     internal lateinit var presenter: BrowserPresenter
@@ -115,16 +74,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     @Inject
     internal lateinit var lightningDialogBuilder: LightningDialogBuilder
-
-//    @Inject
-//    internal lateinit var uiConfiguration: UiConfiguration
-
-//    @Inject
-//    internal lateinit var themeProvider: ThemeProvider
-
-//    @MainHandler
-//    @Inject
-//    internal lateinit var mainHandler: Handler
 
     @Named("tab")
     @Inject
@@ -157,42 +106,13 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = when (userPreferencesDataStore.tabConfiguration.getUnsafe()) {
-            TabConfiguration.DESKTOP -> {
-                val actualBinding = BrowserActivityDesktopBinding.inflate(LayoutInflater.from(this))
-                DesktopTabViewDelegate(actualBinding)
-            }
 
-            TabConfiguration.DRAWER_SIDE -> {
-                val actualBinding = BrowserActivityDrawerBinding.inflate(LayoutInflater.from(this))
-                DrawerTabViewDelegate(actualBinding)
-            }
-
-            TabConfiguration.DRAWER_BOTTOM -> {
-                val actualBinding = BrowserActivityBottomBinding.inflate(LayoutInflater.from(this))
-                BottomTabViewDelegate(actualBinding)
-            }
-        }
-
-        val bottomTabsBinding = if (binding.browserLayoutContainer != null) {
-            BrowserBottomTabsBinding.inflate(layoutInflater)
-        } else {
-            null
-        }
-
-
-//        setContentView(binding.root)
-//        setSupportActionBar(binding.toolbar)
         val browserFrame = FrameLayout(this)
         val customFrame = FrameLayout(this)
         injector.browser2ComponentBuilder()
             .activity(this)
             .browserFrame(browserFrame)
             .customFrame(customFrame)
-            .bottomTabsLayout(bottomTabsBinding)
-            .toolbarRoot(binding.uiLayout)
-            .browserRoot(binding.browserLayoutContainer)
-            .toolbar(binding.toolbarLayout)
             .initialIntent(intent.takeIf { savedInstanceState == null })
             .build()
             .inject(this)
@@ -207,164 +127,9 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 suggestionsModel
             )
         }
-//
-//        binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
-//
-//            override fun onDrawerOpened(drawerView: View) {
-//                if (drawerView == binding.tabDrawer) {
-//                    presenter.onTabDrawerMoved(isOpen = true)
-//                } else if (drawerView == binding.bookmarkDrawer) {
-//                    presenter.onBookmarkDrawerMoved(isOpen = true)
-//                }
-//            }
-//
-//            override fun onDrawerClosed(drawerView: View) {
-//                if (drawerView == binding.tabDrawer) {
-//                    presenter.onTabDrawerMoved(isOpen = false)
-//                } else if (drawerView == binding.bookmarkDrawer) {
-//                    presenter.onBookmarkDrawerMoved(isOpen = false)
-//                }
-//            }
-//        })
-//
-//        binding.bookmarkDrawer.layoutParams =
-//            (binding.bookmarkDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
-//                gravity = when (uiConfiguration.bookmarkConfiguration) {
-//                    BookmarkConfiguration.LEFT -> Gravity.START
-//                    BookmarkConfiguration.RIGHT -> Gravity.END
-//                }
-//            }
-//
-//        binding.tabDrawer.layoutParams =
-//            (binding.tabDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
-//                gravity = when (uiConfiguration.bookmarkConfiguration) {
-//                    BookmarkConfiguration.LEFT -> Gravity.END
-//                    BookmarkConfiguration.RIGHT -> Gravity.START
-//                }
-//            }
-//
-//        binding.homeImageView.isVisible =
-//            uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP || isIncognito()
-//        binding.homeImageView.setImageResource(homeIcon())
-//        binding.tabCountView.isVisible =
-//            uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP && !isIncognito()
-//
-//        if (uiConfiguration.tabConfiguration != TabConfiguration.DRAWER_SIDE) {
-//            binding.drawerLayout.setDrawerLockMode(
-//                DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
-//                binding.tabDrawer
-//            )
-//        }
-//
-//        if (uiConfiguration.tabConfiguration != TabConfiguration.DESKTOP) {
-//            if (binding.browserLayoutContainer == null) {
-//                tabsAdapter = DrawerTabRecyclerViewAdapter(
-//                    onClick = presenter::onTabClick,
-//                    onCloseClick = presenter::onTabClose,
-//                    onLongClick = presenter::onTabLongClick
-//                )
-//                binding.drawerTabsList.isVisible = true
-//                binding.drawerTabsList.adapter = tabsAdapter
-//                binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
-//                binding.drawerTabsList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
-//                    ?.supportsChangeAnimations = false
-//                binding.desktopTabsList.isVisible = false
-//                activeRecyclerView = binding.desktopTabsList
-//            } else {
-//                tabsAdapter = BottomDrawerTabRecyclerViewAdapter(
-//                    themeProvider,
-//                    onClick = presenter::onTabClick,
-//                    onLongClick = presenter::onTabLongClick,
-//                    onCloseClick = presenter::onTabClose,
-//                    onBackClick = { presenter.onBackClick() },
-//                    onForwardClick = { presenter.onForwardClick() },
-//                    onHomeClick = { presenter.onHomeClick() }
-//                )
-//                bottomTabsBinding!!.bottomTabList.adapter = tabsAdapter
-//                bottomTabsBinding.bottomTabList.layoutManager =
-//                    LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-//                bottomTabsBinding.bottomTabList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
-//                    ?.supportsChangeAnimations = false
-//                binding.drawerTabsList.isVisible = false
-//                binding.desktopTabsList.isVisible = false
-//                activeRecyclerView = bottomTabsBinding.bottomTabList
-//            }
-//        } else {
-//            tabsAdapter = DesktopTabRecyclerViewAdapter(
-//                context = this,
-//                onClick = presenter::onTabClick,
-//                onCloseClick = presenter::onTabClose,
-//                onLongClick = presenter::onTabLongClick
-//            )
-//            binding.desktopTabsList.isVisible = true
-//            binding.desktopTabsList.adapter = tabsAdapter
-//            binding.desktopTabsList.layoutManager =
-//                LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-//            binding.desktopTabsList.itemAnimator?.takeIfInstance<SimpleItemAnimator>()
-//                ?.supportsChangeAnimations = false
-//            binding.drawerTabsList.isVisible = false
-//            activeRecyclerView = binding.desktopTabsList
-//        }
-//
-//        bookmarksAdapter = BookmarkRecyclerViewAdapter(
-//            onClick = presenter::onBookmarkClick,
-//            onLongClick = presenter::onBookmarkLongClick,
-//            imageLoader = imageLoader
-//        )
-//        binding.bookmarkListView.adapter = bookmarksAdapter
-//        binding.bookmarkListView.layoutManager = LinearLayoutManager(this)
-//
+
         presenter.onViewAttached(BrowserStateAdapter(this))
-//
-//        val suggestionsAdapter = SuggestionsAdapter(this, isIncognito = isIncognito()).apply {
-//            onSuggestionInsertClick = {
-//                if (it is SearchSuggestion) {
-//                    binding.search.setText(it.title)
-//                    binding.search.setSelection(it.title.length)
-//                } else {
-//                    binding.search.setText(it.url)
-//                    binding.search.setSelection(it.url.length)
-//                }
-//            }
-//        }
-//        binding.search.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-//            binding.search.clearFocus()
-//            presenter.onSearchSuggestionClicked(suggestionsAdapter.getItem(position) as WebPage)
-//            inputMethodManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
-//        }
-//        binding.search.setAdapter(suggestionsAdapter)
-//        val searchListener = SearchListener(
-//            onConfirm = { presenter.onSearch(binding.search.text.toString()) },
-//            inputMethodManager = inputMethodManager
-//        )
-//        binding.search.setOnEditorActionListener(searchListener)
-//        binding.search.setOnKeyListener(searchListener)
-//        binding.search.addTextChangedListener(StyleRemovingTextWatcher())
-//        binding.search.setOnFocusChangeListener { _, hasFocus ->
-//            presenter.onSearchFocusChanged(hasFocus)
-//            binding.search.selectAll()
-//        }
-//
-//        binding.findPrevious.setOnClickListener { presenter.onFindPrevious() }
-//        binding.findNext.setOnClickListener { presenter.onFindNext() }
-//        binding.findQuit.setOnClickListener { presenter.onFindDismiss() }
-//
-//        binding.homeButton.setOnClickListener { presenter.onTabCountViewClick() }
-//        binding.actionBack.setOnClickListener { presenter.onBackClick() }
-//        binding.actionForward.setOnClickListener { presenter.onForwardClick() }
-//        binding.actionHome.setOnClickListener { presenter.onHomeClick() }
-//        binding.newTabButton.setOnClickListener { presenter.onNewTabClick() }
-//        binding.newTabButton.setOnLongClickListener {
-//            presenter.onNewTabLongClick()
-//            true
-//        }
-//        binding.searchRefresh.setOnClickListener { presenter.onRefreshOrStopClick() }
-//        binding.actionAddBookmark.setOnClickListener { presenter.onStarClick() }
-//        binding.actionPageTools.setOnClickListener { presenter.onToolsClick() }
-//        binding.tabHeaderButton.setOnClickListener { presenter.onTabMenuClick() }
-//        binding.bookmarkBackButton.setOnClickListener { presenter.onBookmarkMenuClick() }
-//        binding.searchSslStatus.setOnClickListener { presenter.onSslIconClick() }
-//
+
         tabPager.longPressListener = presenter::onPageLongPress
 
         onBackPressedDispatcher.addCallback {
@@ -386,20 +151,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         super.onPause()
         presenter.onViewHidden()
     }
-
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        menuInflater.inflate(menu(), menu)
-//        menuItemShare = menu.findItem(R.id.action_share)
-//        menuItemCopyLink = menu.findItem(R.id.action_copy)
-//        menuItemAddToHome = menu.findItem(R.id.action_add_to_homescreen)
-//        menuItemAddBookmark = menu.findItem(R.id.action_add_bookmark)
-//        return super.onCreateOptionsMenu(menu)
-//    }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return menuItemAdapter.adaptMenuItem(item)?.let(presenter::onMenuClick)?.let { true }
-//            ?: super.onOptionsItemSelected(item)
-//    }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         return keyEventAdapter.adaptKeyEvent(event)?.let(presenter::onKeyComboClick)?.let { true }
@@ -439,56 +190,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         lifecycleScope.launch {
             state.emit(state.value.copy(browserViewState = viewState))
         }
-//        viewState.isBackEnabled?.let { binding.actionBack.isEnabled = it }
-//        viewState.isForwardEnabled?.let { binding.actionForward.isEnabled = it }
-//        viewState.displayUrl?.let(binding.search::setText)
-//        viewState.sslState?.let {
-//            binding.searchSslStatus.setImageDrawable(createSslDrawableForState(it))
-//            binding.searchSslStatus.updateVisibilityForDrawable()
-//        }
-//        viewState.enableFullMenu?.let {
-//            menuItemShare?.isVisible = it
-//            menuItemCopyLink?.isVisible = it
-//            menuItemAddToHome?.isVisible = it
-//            menuItemAddBookmark?.isVisible = it
-//        }
-//        viewState.themeColor?.value()?.let(::animateColorChange)
-//        viewState.progress?.let {
-//            binding.progressView.isVisible = it != 100
-//            binding.progressView.progress = it
-//        }
-//        viewState.isRefresh?.let {
-//            binding.searchRefresh.setImageResource(
-//                if (it) {
-//                    R.drawable.ic_action_refresh
-//                } else {
-//                    R.drawable.ic_action_delete
-//                }
-//            )
-//        }
-//        viewState.bookmarks?.let(bookmarksAdapter::submitList)
-//        viewState.isBookmarked?.let { binding.actionAddBookmark.isSelected = it }
-//        viewState.isBookmarkEnabled?.let { binding.actionAddBookmark.isEnabled = it }
-//        viewState.isRootFolder?.let {
-//            binding.bookmarkBackButton.startAnimation(
-//                AnimationUtils.createRotationTransitionAnimation(
-//                    binding.bookmarkBackButton,
-//                    if (it) {
-//                        R.drawable.ic_action_star
-//                    } else {
-//                        R.drawable.ic_action_back
-//                    }
-//                )
-//            )
-//        }
-//        viewState.findInPage?.let {
-//            if (it.isEmpty()) {
-//                binding.findBar.isVisible = false
-//            } else {
-//                binding.findBar.isVisible = true
-//                binding.findQuery.text = it
-//            }
-//        }
     }
 
     /**
@@ -508,19 +209,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
                 )
             )
         }
-//        binding.tabCountView.updateCount(tabListState.size)
-//        val shouldScroll = tabsAdapter.itemCount < tabListState.size
-//        tabsAdapter.submitList(tabListState)
-//        val nextSelected = tabListState.indexOfFirst(TabViewState::isSelected)
-//        if (shouldScroll && nextSelected != -1) {
-//            mainHandler.post {
-//                if (tabPager.isBottomTabDrawerOpen()) {
-//                    activeRecyclerView?.smoothScrollToPosition(nextSelected)
-//                } else {
-//                    pendingScroll = nextSelected
-//                }
-//            }
-//        }
     }
 
     /**
@@ -732,8 +420,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         lifecycleScope.launch {
             state.emit(state.value.copy(openBookmarks = true))
         }
-//        binding.drawerLayout.closeDrawer(binding.tabDrawer)
-//        binding.drawerLayout.openDrawer(binding.bookmarkDrawer)
     }
 
     /**
@@ -743,7 +429,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         lifecycleScope.launch {
             state.emit(state.value.copy(openBookmarks = false))
         }
-//        binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
     }
 
     /**
@@ -753,17 +438,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         lifecycleScope.launch {
             state.emit(state.value.copy(openTabs = true))
         }
-//        binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
-//        if (binding.browserLayoutContainer == null) {
-//            binding.drawerLayout.openDrawer(binding.tabDrawer)
-//        } else {
-//            presenter.onTabDrawerMoved(isOpen = true)
-//            tabPager.openBottomTabDrawer()
-//            if (pendingScroll != -1) {
-//                activeRecyclerView?.scrollToPosition(pendingScroll)
-//                pendingScroll = -1
-//            }
-//        }
     }
 
     /**
@@ -773,19 +447,13 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         lifecycleScope.launch {
             state.emit(state.value.copy(openTabs = false))
         }
-//        if (binding.browserLayoutContainer == null) {
-//            binding.drawerLayout.closeDrawer(binding.tabDrawer)
-//        } else {
-//            presenter.onTabDrawerMoved(isOpen = false)
-//            tabPager.closeBottomTabDrawer()
-//        }
     }
 
     /**
      * @see BrowserContract.View.showToolbar
      */
     fun showToolbar() {
-//        tabPager.showToolbar()
+        // TODO: Show toolbar
     }
 
     /**
@@ -864,13 +532,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         setFullscreen(enabled = false, immersive = false)
     }
 
-    /**
-     * @see BrowserContract.View.clearSearchFocus
-     */
-    fun clearSearchFocus() {
-//        binding.search.clearFocus()
-    }
-
     private fun setFullscreen(enabled: Boolean, immersive: Boolean) {
         WindowCompat.getInsetsController(window, window.decorView).apply {
             if (enabled) {
@@ -888,32 +549,25 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
         }
     }
 
-    private fun animateColorChange(color: Int) {
-        if (!userPreferencesDataStore.colorModeEnabled.getUnsafe() || userPreferencesDataStore.useTheme.getUnsafe() != AppTheme.LIGHT || isIncognito()) {
-            return
-        }
-        val adapter = tabsAdapter as? DesktopTabRecyclerViewAdapter
-        val colorAnimator = ColorAnimator(defaultColor)
-        binding.toolbar.startAnimation(
-            colorAnimator.animateTo(
-                color
-            ) { mainColor, secondaryColor ->
-                if (userPreferencesDataStore.tabConfiguration.getUnsafe() != TabConfiguration.DESKTOP) {
-                    backgroundDrawable.color = mainColor
-                    window.setBackgroundDrawable(backgroundDrawable)
-                } else {
-                    adapter?.updateForegroundTabColor(mainColor)
-                }
-                binding.toolbar.setBackgroundColor(mainColor)
-                binding.searchContainer.background?.tint(secondaryColor)
-            })
-    }
-
-    private fun ImageView.updateVisibilityForDrawable() {
-        visibility = if (drawable == null) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-    }
+    // TODO: Animate color change
+//    private fun animateColorChange(color: Int) {
+//        if (!userPreferencesDataStore.colorModeEnabled.getUnsafe() || userPreferencesDataStore.useTheme.getUnsafe() != AppTheme.LIGHT || isIncognito()) {
+//            return
+//        }
+//        val adapter = tabsAdapter as? DesktopTabRecyclerViewAdapter
+//        val colorAnimator = ColorAnimator(defaultColor)
+//        binding.toolbar.startAnimation(
+//            colorAnimator.animateTo(
+//                color
+//            ) { mainColor, secondaryColor ->
+//                if (userPreferencesDataStore.tabConfiguration.getUnsafe() != TabConfiguration.DESKTOP) {
+//                    backgroundDrawable.color = mainColor
+//                    window.setBackgroundDrawable(backgroundDrawable)
+//                } else {
+//                    adapter?.updateForegroundTabColor(mainColor)
+//                }
+//                binding.toolbar.setBackgroundColor(mainColor)
+//                binding.searchContainer.background?.tint(secondaryColor)
+//            })
+//    }
 }
