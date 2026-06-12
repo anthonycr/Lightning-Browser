@@ -506,7 +506,7 @@ class BrowserPresenter @Inject constructor(
                 onTabClick(previousIndex)
             }
 
-            KeyCombo.SEARCH -> view?.clearSearchFocus()
+            KeyCombo.SEARCH -> currentTab?.searchQuery?.let { onSearch(it) }
             KeyCombo.ALT_0 -> onTabClick(0.coerceAtMost(tabListState.size - 1))
             KeyCombo.ALT_1 -> onTabClick(1.coerceAtMost(tabListState.size - 1))
             KeyCombo.ALT_2 -> onTabClick(2.coerceAtMost(tabListState.size - 1))
