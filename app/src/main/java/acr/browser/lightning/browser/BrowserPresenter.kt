@@ -798,6 +798,9 @@ class BrowserPresenter @Inject constructor(
         onSearch(url)
     }
 
+    /**
+     * Call when the user clicks the insert button on a search suggestion.
+     */
     fun onSearchSuggestionInsertClicked(webPage: WebPage) {
         val url = when (webPage) {
             is HistoryEntry,
