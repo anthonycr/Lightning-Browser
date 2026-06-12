@@ -3,7 +3,7 @@ plugins {
     id("com.github.ben-manes.versions")
     id("com.google.devtools.ksp") version "2.3.9"
     id("com.anthonycr.plugins.mezzanine") version "2.3.0"
-    id("com.autonomousapps.dependency-analysis") version "3.14.0"
+    id("com.autonomousapps.dependency-analysis") version "3.15.0"
     id("com.squareup.sort-dependencies") version "0.18.0"
     id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
 }
@@ -137,7 +137,7 @@ dependencies {
     implementation("com.google.android.material:material:1.14.0")
     implementation("com.google.dagger:dagger:$daggerVersion")
     implementation("com.guolindev.permissionx:permissionx:1.8.1")
-    implementation("com.squareup.okhttp3:okhttp:5.3.2")
+    implementation("com.squareup.okhttp3:okhttp:5.4.0")
     implementation("com.squareup.okio:okio:3.17.0")
     implementation("io.coil-kt.coil3:coil-compose:$coil")
     implementation("io.coil-kt.coil3:coil-compose-core:${coil}")
