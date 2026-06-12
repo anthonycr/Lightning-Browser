@@ -726,6 +726,11 @@ fun BrowserSearchSuggestions(
                     )
                 )
             }
+            // Workaround (?) for the on value change not triggering on the initial value
+            // Wouldn't be needed if suggestions were piped through presenter state
+            LaunchedEffect(null) {
+                suggestionsModel.updateQuery(state.text)
+            }
             state = state.copy(
                 text = browserScreenState.browserViewState.searchQuery,
                 selection = TextRange(
