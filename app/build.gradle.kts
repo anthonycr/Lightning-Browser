@@ -123,7 +123,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.3.0")
     implementation("androidx.core:core:1.18.0")
-    implementation("androidx.core:core-ktx:1.18.0")
+    implementation("androidx.core:core-ktx:1.19.0")
     implementation("androidx.datastore:datastore:$datastore")
     implementation("androidx.datastore:datastore-core:$datastore")
     implementation("androidx.datastore:datastore-preferences:$datastore")
