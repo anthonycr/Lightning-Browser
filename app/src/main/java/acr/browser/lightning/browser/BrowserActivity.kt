@@ -51,8 +51,6 @@ import javax.inject.Named
  */
 abstract class BrowserActivity : ThemableBrowserActivity() {
 
-    private val defaultColor by lazy { color(R.color.primary_color) }
-
     @Suppress("ConvertLambdaToReference")
     private val launcher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
