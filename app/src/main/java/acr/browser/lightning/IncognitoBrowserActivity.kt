@@ -14,10 +14,6 @@ class IncognitoBrowserActivity : BrowserActivity() {
 
     override fun isIncognito(): Boolean = true
 
-    override fun menu(): Int = R.menu.incognito
-
-    override fun homeIcon(): Int = R.drawable.incognito_mode
-
     companion object {
         /**
          * Creates an intent to launch the browser with an optional [url] to load.

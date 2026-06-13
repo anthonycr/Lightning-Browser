@@ -33,8 +33,6 @@ import android.widget.FrameLayout
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
-import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.runtime.collectAsState
 import androidx.core.view.WindowCompat
@@ -91,18 +89,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      * True if the activity is operating in incognito mode, false otherwise.
      */
     abstract fun isIncognito(): Boolean
-
-    /**
-     * Provide the menu used by the browser instance.
-     */
-    @MenuRes
-    abstract fun menu(): Int
-
-    /**
-     * Provide the home icon used by the browser instance.
-     */
-    @DrawableRes
-    abstract fun homeIcon(): Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
