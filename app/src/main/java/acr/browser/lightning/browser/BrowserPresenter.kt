@@ -124,8 +124,6 @@ class BrowserPresenter @Inject constructor(
     private var currentTab: TabModel? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
     private var currentBookmarks: List<Bookmark> = emptyList()
-    private var isTabDrawerOpen = false
-    private var isBookmarkDrawerOpen = false
     private var isSearchViewFocused = false
     private var pendingAction: BrowserContract.Action.LoadUrl? = null
     private var isCustomViewShowing = false
@@ -617,7 +615,6 @@ class BrowserPresenter @Inject constructor(
      * @param isOpen True if the drawer is now open, false if it is now closed.
      */
     fun onTabDrawerMoved(isOpen: Boolean) {
-        isTabDrawerOpen = isOpen
         updateState(viewState.copy(openTabs = isOpen))
     }
 
@@ -627,7 +624,6 @@ class BrowserPresenter @Inject constructor(
      * @param isOpen True if the drawer is now open, false if it is now closed.
      */
     fun onBookmarkDrawerMoved(isOpen: Boolean) {
-        isBookmarkDrawerOpen = isOpen
         updateState(viewState.copy(openBookmarks = isOpen))
     }
 
@@ -642,8 +638,8 @@ class BrowserPresenter @Inject constructor(
                 currentTab?.hideCustomView()
             }
 
-            isTabDrawerOpen -> updateState(viewState.copy(openTabs = false))
-            isBookmarkDrawerOpen -> if (currentFolder != Bookmark.Folder.Root) {
+            viewState.openTabs -> updateState(viewState.copy(openTabs = false))
+            viewState.openBookmarks -> if (currentFolder != Bookmark.Folder.Root) {
                 onBookmarkMenuClick()
             } else {
                 updateState(viewState.copy(openBookmarks = false))
@@ -1206,12 +1202,10 @@ class BrowserPresenter @Inject constructor(
      * incognito icon in incognito mode).
      */
     fun onTabCountViewClick() {
-        if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER_SIDE) {
-            updateState(viewState.copy(openTabs = true))
-        } else if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER_BOTTOM) {
-            updateState(viewState.copy(openTabs = !isTabDrawerOpen))
-        } else {
-            currentTab?.loadFromInitializer(homePageInitializer)
+        when (uiConfiguration.tabConfiguration) {
+            TabConfiguration.DRAWER_SIDE -> updateState(viewState.copy(openTabs = true))
+            TabConfiguration.DRAWER_BOTTOM -> updateState(viewState.copy(openTabs = !viewState.openTabs))
+            else -> currentTab?.loadFromInitializer(homePageInitializer)
         }
     }
 
