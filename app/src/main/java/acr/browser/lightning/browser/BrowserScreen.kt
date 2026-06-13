@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -103,12 +104,12 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.zIndex
 import coil3.Canvas
 import coil3.Image
@@ -951,8 +952,10 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserVi
             )
         }
         DropdownMenu(
-            offset = DpOffset(0.dp, (50).dp),
-            modifier = Modifier.align(Alignment.BottomEnd),
+            modifier = Modifier.align(Alignment.BottomEnd)
+                .defaultMinSize(minWidth = 175.dp),
+            shape = MaterialTheme.shapes.small,
+            properties = PopupProperties(clippingEnabled = false),
             expanded = dropDownExpanded,
             onDismissRequest = { dropDownExpanded = false }
         ) {
