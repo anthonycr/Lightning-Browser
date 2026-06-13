@@ -168,7 +168,12 @@ class BrowserPresenter @Inject constructor(
 
         browserCoroutineScope.launch {
             model.tabsListChanges().collectLatest { list ->
-                updateTabs(list.map { it.asViewState() })
+                updateState(
+                    state.value.copy(
+                        tabs = list.map { it.asViewState() },
+                        tabCountText = list.size.asTabCountText()
+                    )
+                )
 
                 allTabsJobs.forEach { it.cancel() }
                 allTabsJobs.clear()
@@ -241,10 +246,10 @@ class BrowserPresenter @Inject constructor(
                     isBackEnabled = false,
                     sslState = SslState.None,
                     progress = 100,
-                    findInPage = null
+                    findInPage = null,
+                    tabs = state.value.tabs.map { it.copy(isSelected = false) }
                 )
             )
-            updateTabs(state.value.tabs.map { it.copy(isSelected = false) })
         }
 
         view?.showToolbar()
@@ -252,7 +257,11 @@ class BrowserPresenter @Inject constructor(
             updateState(state.value.copy(openTabs = false))
         }
 
-        updateTabs(state.value.tabs.map { it.copy(isSelected = it.id == tab.id) })
+        updateState(
+            state.value.copy(
+                tabs = state.value.tabs.map { it.copy(isSelected = it.id == tab.id) }
+            )
+        )
 
         tabJobs.forEach { it.cancel() }
         tabJobs.clear()
@@ -369,9 +378,17 @@ class BrowserPresenter @Inject constructor(
                 }.distinctUntilChanged()
                     .flowOn(coroutineDispatchers.main)
                     .collectLatest { (title, bitmap, _) ->
-                        updateTabs(state.value.tabs.updateId(tabModel.id) {
-                            it.copy(title = title, icon = bitmap, preview = tabModel.preview)
-                        })
+                        updateState(
+                            state.value.copy(
+                                tabs = state.value.tabs.updateId(tabModel.id) {
+                                    it.copy(
+                                        title = title,
+                                        icon = bitmap,
+                                        preview = tabModel.preview
+                                    )
+                                }
+                            )
+                        )
                     }
             }
         }
@@ -1383,22 +1400,14 @@ class BrowserPresenter @Inject constructor(
         currentTab?.handleFileChooserResult(activityResult)
     }
 
-    private fun updateState(newState: BrowserViewState) {
-        state.value = newState
-        browserCoroutineScope.launch {
-            state.emit(state.value)
-        }
+    private fun Int.asTabCountText(): String = if (this > 99) {
+        resourceProvider.stringResource(R.string.infinity)
+    } else {
+        numberFormatter.formatNumber(this)
     }
 
-    private fun updateTabs(tabs: List<TabViewState>) {
-        state.value = state.value.copy(
-            tabs = tabs,
-            tabCountText = if (tabs.size > 99) {
-                resourceProvider.stringResource(R.string.infinity)
-            } else {
-                numberFormatter.formatNumber(tabs.size)
-            }
-        )
+    private fun updateState(newState: BrowserViewState) {
+        state.value = newState
         browserCoroutineScope.launch {
             state.emit(state.value)
         }
