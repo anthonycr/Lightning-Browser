@@ -1,13 +1,11 @@
 package acr.browser.lightning.browser
 
-import acr.browser.lightning.BrowserScreenState
 import acr.browser.lightning.R
 import acr.browser.lightning.ThemableBrowserActivity
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.keys.KeyEventAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.TabPager
-import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.compose.StateProvider
@@ -20,7 +18,6 @@ import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.drawable
-import acr.browser.lightning.extensions.preferredLocale
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.search.SuggestionsModel
 import acr.browser.lightning.ssl.SslState
@@ -41,7 +38,6 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -77,11 +73,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
 
     @Inject
     internal lateinit var suggestionsModel: SuggestionsModel
-
-    // TODO: Inject into presenter
-    private val numberFormat by lazy {
-        NumberFormat.getInstance(preferredLocale)
-    }
 
     /**
      * True if the activity is operating in incognito mode, false otherwise.
@@ -142,27 +133,25 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     }
 
     val state = MutableStateFlow(
-        BrowserScreenState(
-            isIncognito = isIncognito(),
-            browserViewState = BrowserViewState(
-                displayUrl = "",
-                searchQuery = "",
-                searchQuerySelection = Pair(0, 0),
-                isRefresh = true,
-                sslState = SslState.None,
-                progress = 0,
-                enableFullMenu = true,
-                themeColor = Option.None,
-                isForwardEnabled = false,
-                isBackEnabled = false,
-                bookmarks = emptyList(),
-                isBookmarked = false,
-                isBookmarkEnabled = true,
-                isRootFolder = true,
-                findInPage = null,
-            ),
-            tabState = emptyList(),
-            tabCountText = ""
+        BrowserViewState(
+            displayUrl = "",
+            searchQuery = "",
+            searchQuerySelection = Pair(0, 0),
+            isRefresh = true,
+            sslState = SslState.None,
+            progress = 0,
+            enableFullMenu = true,
+            themeColor = Option.None,
+            isForwardEnabled = false,
+            isBackEnabled = false,
+            bookmarks = emptyList(),
+            isBookmarked = false,
+            isBookmarkEnabled = true,
+            isRootFolder = true,
+            findInPage = null,
+            tabs = emptyList(),
+            tabCountText = "",
+            isIncognito = isIncognito()
         )
     )
 
@@ -172,26 +161,7 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     fun renderState(viewState: BrowserViewState) {
         // TODO: Move into presenter
         lifecycleScope.launch {
-            state.emit(state.value.copy(browserViewState = viewState))
-        }
-    }
-
-    /**
-     * @see BrowserContract.View.renderTabs
-     */
-    fun renderTabs(tabListState: List<TabViewState>) {
-        // TODO: Move into presenter
-        lifecycleScope.launch {
-            state.emit(
-                state.value.copy(
-                    tabState = tabListState,
-                    tabCountText = if (tabListState.size > 99) {
-                        getString(R.string.infinity)
-                    } else {
-                        numberFormat.format(tabListState.size)
-                    }
-                )
-            )
+            state.emit(viewState)
         }
     }
 

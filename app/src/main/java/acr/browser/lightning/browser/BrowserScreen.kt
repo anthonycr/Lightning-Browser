@@ -1,7 +1,5 @@
 package acr.browser.lightning.browser
 
-import acr.browser.lightning.BookmarkListItem
-import acr.browser.lightning.BrowserScreenState
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.menu.MenuSelection
 import acr.browser.lightning.browser.ui.TabConfiguration
@@ -124,35 +122,35 @@ import kotlin.math.tan
 @Composable
 fun BrowserScreen(
     tabConfigurationStateProvider: StateProvider<TabConfiguration>,
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
     browserFrameLayout: FrameLayout,
     customFrameLayout: FrameLayout,
     suggestionsModel: SuggestionsModel,
 ) {
-    AppTheme(isIncognito = browserScreenState.isIncognito) {
-        if (browserScreenState.showCustomView) {
+    AppTheme(isIncognito = browserViewState.isIncognito) {
+        if (browserViewState.showCustomView) {
             CustomView(customFrameLayout)
         } else {
             val tabConfiguration = tabConfigurationStateProvider.state.collectAsState()
             when (tabConfiguration.value) {
                 TabConfiguration.DESKTOP -> DesktopTabs(
                     browserFrameLayout,
-                    browserScreenState,
+                    browserViewState,
                     presenter,
                     suggestionsModel
                 )
 
                 TabConfiguration.DRAWER_SIDE -> DrawerTabs(
                     browserFrameLayout,
-                    browserScreenState,
+                    browserViewState,
                     presenter,
                     suggestionsModel
                 )
 
                 TabConfiguration.DRAWER_BOTTOM -> BottomTabs(
                     browserFrameLayout,
-                    browserScreenState,
+                    browserViewState,
                     presenter,
                     suggestionsModel
                 )
@@ -188,7 +186,7 @@ fun CustomView(
 @Composable
 fun BottomTabs(
     frameLayout: FrameLayout,
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -198,7 +196,7 @@ fun BottomTabs(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            BookmarksBottomSheet(browserScreenState, presenter)
+            BookmarksBottomSheet(browserViewState, presenter)
             AndroidView(
                 factory = { frameLayout },
                 modifier = Modifier
@@ -206,9 +204,9 @@ fun BottomTabs(
                     .background(MaterialTheme.colorScheme.surfaceDim)
                     .weight(1f, false),
             )
-            BrowserFindInPage(browserScreenState, presenter)
-            BottomTabNavigationBar(browserScreenState, presenter, suggestionsModel)
-            TabsBottomSheet(browserScreenState, presenter)
+            BrowserFindInPage(browserViewState, presenter)
+            BottomTabNavigationBar(browserViewState, presenter, suggestionsModel)
+            TabsBottomSheet(browserViewState, presenter)
         }
     }
 }
@@ -216,7 +214,7 @@ fun BottomTabs(
 @Composable
 fun DesktopTabs(
     frameLayout: FrameLayout,
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -226,9 +224,9 @@ fun DesktopTabs(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            BookmarksBottomSheet(browserScreenState, presenter)
-            TopTabDesktopNavigationBar(browserScreenState, presenter, suggestionsModel)
-            BrowserFindInPage(browserScreenState, presenter)
+            BookmarksBottomSheet(browserViewState, presenter)
+            TopTabDesktopNavigationBar(browserViewState, presenter, suggestionsModel)
+            BrowserFindInPage(browserViewState, presenter)
             AndroidView(
                 factory = { frameLayout },
                 modifier = Modifier
@@ -243,13 +241,13 @@ fun DesktopTabs(
 @Composable
 fun DrawerTabs(
     frameLayout: FrameLayout,
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
     val lazyListState = rememberLazyListState()
     val drawerState = rememberDrawerState(
-        initialValue = if (browserScreenState.openTabs) {
+        initialValue = if (browserViewState.openTabs) {
             DrawerValue.Open
         } else {
             DrawerValue.Closed
@@ -290,7 +288,7 @@ fun DrawerTabs(
                         .weight(1f, false),
                     state = lazyListState
                 ) {
-                    itemsIndexed(browserScreenState.tabState) { index, tab ->
+                    itemsIndexed(browserViewState.tabs) { index, tab ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -356,7 +354,7 @@ fun DrawerTabs(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     IconButton(
-                        enabled = browserScreenState.browserViewState.isBackEnabled,
+                        enabled = browserViewState.isBackEnabled,
                         onClick = { presenter.onBackClick() }
                     ) {
                         Icon(
@@ -365,7 +363,7 @@ fun DrawerTabs(
                         )
                     }
                     IconButton(
-                        enabled = browserScreenState.browserViewState.isForwardEnabled,
+                        enabled = browserViewState.isForwardEnabled,
                         onClick = { presenter.onForwardClick() }
                     ) {
                         Icon(
@@ -386,10 +384,10 @@ fun DrawerTabs(
                         )
                     }
                     IconButton(
-                        enabled = browserScreenState.browserViewState.isBookmarkEnabled,
+                        enabled = browserViewState.isBookmarkEnabled,
                         onClick = { presenter.onStarClick() }
                     ) {
-                        BookmarkIcon(browserScreenState.browserViewState.isBookmarked)
+                        BookmarkIcon(browserViewState.isBookmarked)
                     }
                     IconButton(onClick = { presenter.onNewTabClick() }) {
                         Icon(
@@ -407,9 +405,9 @@ fun DrawerTabs(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                BookmarksBottomSheet(browserScreenState, presenter)
-                TopTabNavigationBar(browserScreenState, drawerState, presenter, suggestionsModel)
-                BrowserFindInPage(browserScreenState, presenter)
+                BookmarksBottomSheet(browserViewState, presenter)
+                TopTabNavigationBar(browserViewState, drawerState, presenter, suggestionsModel)
+                BrowserFindInPage(browserViewState, presenter)
                 AndroidView(
                     factory = { frameLayout },
                     modifier = Modifier
@@ -443,7 +441,7 @@ fun BookmarkIcon(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomTabNavigationBar(
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -454,17 +452,17 @@ fun BottomTabNavigationBar(
             contentAlignment = Alignment.TopCenter
         ) {
             HorizontalDivider()
-            BrowserProgressIndicator(browserScreenState)
+            BrowserProgressIndicator(browserViewState)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            BrowserSearchBar(browserScreenState, presenter, suggestionsModel)
-            TabCountButton(browserScreenState.tabCountText) {
+            BrowserSearchBar(browserViewState, presenter, suggestionsModel)
+            TabCountButton(browserViewState.tabCountText) {
                 presenter.onTabCountViewClick()
             }
-            BrowserOverflowMenu(presenter, browserScreenState)
+            BrowserOverflowMenu(presenter, browserViewState)
         }
     }
 }
@@ -472,7 +470,7 @@ fun BottomTabNavigationBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopTabNavigationBar(
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     drawerState: DrawerState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
@@ -485,7 +483,7 @@ fun TopTabNavigationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val coroutineScope = rememberCoroutineScope()
-            TabCountButton(browserScreenState.tabCountText) {
+            TabCountButton(browserViewState.tabCountText) {
                 if (drawerState.isAnimationRunning) return@TabCountButton
                 // TODO: Figure out how to do this more like bottom sheet modal
                 coroutineScope.launch {
@@ -497,13 +495,13 @@ fun TopTabNavigationBar(
                     presenter.onTabCountViewClick()
                 }
             }
-            BrowserSearchBar(browserScreenState, presenter, suggestionsModel)
-            BrowserOverflowMenu(presenter, browserScreenState)
+            BrowserSearchBar(browserViewState, presenter, suggestionsModel)
+            BrowserOverflowMenu(presenter, browserViewState)
         }
         Box(
             contentAlignment = Alignment.BottomCenter
         ) {
-            BrowserProgressIndicator(browserScreenState)
+            BrowserProgressIndicator(browserViewState)
             HorizontalDivider()
         }
     }
@@ -512,7 +510,7 @@ fun TopTabNavigationBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopTabDesktopNavigationBar(
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -529,7 +527,7 @@ fun TopTabDesktopNavigationBar(
             overscrollEffect = null,
             horizontalArrangement = Arrangement.spacedBy((-16).dp)
         ) {
-            itemsIndexed(browserScreenState.tabState) { index, tab ->
+            itemsIndexed(browserViewState.tabs) { index, tab ->
                 Row(
                     modifier = Modifier
                         .width(175.dp)
@@ -605,13 +603,13 @@ fun TopTabDesktopNavigationBar(
                     contentDescription = "test"
                 )
             }
-            BrowserSearchBar(browserScreenState, presenter, suggestionsModel)
-            BrowserOverflowMenu(presenter, browserScreenState)
+            BrowserSearchBar(browserViewState, presenter, suggestionsModel)
+            BrowserOverflowMenu(presenter, browserViewState)
         }
         Box(
             contentAlignment = Alignment.BottomCenter
         ) {
-            BrowserProgressIndicator(browserScreenState)
+            BrowserProgressIndicator(browserViewState)
             HorizontalDivider()
         }
     }
@@ -619,10 +617,10 @@ fun TopTabDesktopNavigationBar(
 
 @Composable
 fun BrowserFindInPage(
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
 ) {
-    val findInPage = browserScreenState.browserViewState.findInPage ?: return
+    val findInPage = browserViewState.findInPage ?: return
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -689,15 +687,15 @@ fun BrowserFindInPage(
 }
 
 @Composable
-fun BrowserProgressIndicator(browserScreenState: BrowserScreenState) {
-    if (browserScreenState.browserViewState.progress == 100) {
+fun BrowserProgressIndicator(browserViewState: BrowserViewState) {
+    if (browserViewState.progress == 100) {
         Spacer(modifier = Modifier.height(4.dp))
     } else {
         LinearProgressIndicator(
             modifier = Modifier.fillMaxWidth(),
             trackColor = Color(0x00000000),
             drawStopIndicator = {},
-            progress = { browserScreenState.browserViewState.progress / 100f }
+            progress = { browserViewState.progress / 100f }
         )
     }
 }
@@ -705,7 +703,7 @@ fun BrowserProgressIndicator(browserScreenState: BrowserScreenState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BrowserSearchSuggestions(
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
     searchBarState: SearchBarState,
@@ -718,10 +716,10 @@ fun BrowserSearchSuggestions(
             var state by remember {
                 mutableStateOf(
                     TextFieldValue(
-                        text = browserScreenState.browserViewState.searchQuery,
+                        text = browserViewState.searchQuery,
                         selection = TextRange(
                             0,
-                            browserScreenState.browserViewState.searchQuery.length
+                            browserViewState.searchQuery.length
                         ),
                     )
                 )
@@ -732,10 +730,10 @@ fun BrowserSearchSuggestions(
                 suggestionsModel.updateQuery(state.text)
             }
             state = state.copy(
-                text = browserScreenState.browserViewState.searchQuery,
+                text = browserViewState.searchQuery,
                 selection = TextRange(
-                    browserScreenState.browserViewState.searchQuerySelection.first,
-                    browserScreenState.browserViewState.searchQuerySelection.second
+                    browserViewState.searchQuerySelection.first,
+                    browserViewState.searchQuerySelection.second
                 )
             )
             BasicTextField(
@@ -837,7 +835,7 @@ fun BrowserSearchSuggestions(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RowScope.BrowserSearchBar(
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -850,16 +848,16 @@ fun RowScope.BrowserSearchBar(
             .height(40.dp)
             .weight(1f, false),
         inputField = {
-            BrowserSearchBarInputField(browserScreenState, presenter, searchBarState)
+            BrowserSearchBarInputField(browserViewState, presenter, searchBarState)
         }
     )
-    BrowserSearchSuggestions(browserScreenState, presenter, suggestionsModel, searchBarState)
+    BrowserSearchSuggestions(browserViewState, presenter, suggestionsModel, searchBarState)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BrowserSearchBarInputField(
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
     searchBarState: SearchBarState,
 ) {
@@ -874,7 +872,7 @@ fun BrowserSearchBarInputField(
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        when (browserScreenState.browserViewState.sslState) {
+        when (browserViewState.sslState) {
             is SslState.Invalid -> IconButton(
                 modifier = Modifier.size(36.dp),
                 onClick = { presenter.onSslIconClick() }
@@ -902,7 +900,7 @@ fun BrowserSearchBarInputField(
                 )
             }
         }
-        if (browserScreenState.browserViewState.displayUrl.isEmpty()) {
+        if (browserViewState.displayUrl.isEmpty()) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -923,14 +921,14 @@ fun BrowserSearchBarInputField(
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
                 softWrap = false,
-                text = browserScreenState.browserViewState.displayUrl,
+                text = browserViewState.displayUrl,
                 style = MaterialTheme.typography.bodyLarge
             )
         }
         IconButton(onClick = { presenter.onRefreshOrStopClick() }) {
             Icon(
                 modifier = Modifier.size(24.dp),
-                painter = when (browserScreenState.browserViewState.isRefresh) {
+                painter = when (browserViewState.isRefresh) {
                     true -> painterResource(R.drawable.ic_action_refresh)
                     false -> painterResource(R.drawable.ic_action_delete)
                 },
@@ -941,7 +939,7 @@ fun BrowserSearchBarInputField(
 }
 
 @Composable
-fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: BrowserScreenState) {
+fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserViewState) {
     Box {
         var dropDownExpanded by remember { mutableStateOf(false) }
         IconButton(onClick = {
@@ -965,7 +963,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                     dropDownExpanded = false
                 }
             )
-            if (!browserScreenState.isIncognito) {
+            if (!browserViewState.isIncognito) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_incognito)) },
                     onClick = {
@@ -974,7 +972,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                     }
                 )
             }
-            if (browserScreenState.browserViewState.enableFullMenu) {
+            if (browserViewState.enableFullMenu) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_share)) },
                     onClick = {
@@ -983,7 +981,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                     }
                 )
             }
-            if (!browserScreenState.isIncognito) {
+            if (!browserViewState.isIncognito) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_history)) },
                     onClick = {
@@ -1006,7 +1004,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                     dropDownExpanded = false
                 }
             )
-            if (browserScreenState.browserViewState.enableFullMenu) {
+            if (browserViewState.enableFullMenu) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_copy)) },
                     onClick = {
@@ -1014,7 +1012,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                         dropDownExpanded = false
                     }
                 )
-                if (!browserScreenState.isIncognito) {
+                if (!browserViewState.isIncognito) {
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.action_add_to_homescreen)) },
                         onClick = {
@@ -1031,7 +1029,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                     dropDownExpanded = false
                 }
             )
-            if (browserScreenState.browserViewState.enableFullMenu && !browserScreenState.isIncognito) {
+            if (browserViewState.enableFullMenu && !browserViewState.isIncognito) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_add_bookmark)) },
                     onClick = {
@@ -1040,7 +1038,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserScreenState: Browser
                     }
                 )
             }
-            if (!browserScreenState.isIncognito) {
+            if (!browserViewState.isIncognito) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.settings)) },
                     onClick = {
@@ -1144,13 +1142,13 @@ class LetterImage(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabsBottomSheet(
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
 ) {
     val lazyListState = rememberLazyListState()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(browserScreenState.openTabs) }
-    if (showBottomSheet != browserScreenState.openTabs) {
+    var showBottomSheet by remember { mutableStateOf(browserViewState.openTabs) }
+    if (showBottomSheet != browserViewState.openTabs) {
         if (showBottomSheet) {
             LaunchedEffect(null) {
                 sheetState.hide()
@@ -1177,7 +1175,7 @@ fun TabsBottomSheet(
             horizontalArrangement = Arrangement.Center
         ) {
             IconButton(
-                enabled = browserScreenState.browserViewState.isBackEnabled,
+                enabled = browserViewState.isBackEnabled,
                 onClick = { presenter.onBackClick() }
             ) {
                 Icon(
@@ -1186,7 +1184,7 @@ fun TabsBottomSheet(
                 )
             }
             IconButton(
-                enabled = browserScreenState.browserViewState.isForwardEnabled,
+                enabled = browserViewState.isForwardEnabled,
                 onClick = { presenter.onForwardClick() }
             ) {
                 Icon(
@@ -1207,10 +1205,10 @@ fun TabsBottomSheet(
                 )
             }
             IconButton(
-                enabled = browserScreenState.browserViewState.isBookmarkEnabled,
+                enabled = browserViewState.isBookmarkEnabled,
                 onClick = { presenter.onStarClick() }
             ) {
-                BookmarkIcon(browserScreenState.browserViewState.isBookmarked)
+                BookmarkIcon(browserViewState.isBookmarked)
             }
             IconButton(onClick = { presenter.onNewTabClick() }) {
                 Icon(
@@ -1225,7 +1223,7 @@ fun TabsBottomSheet(
             contentPadding = PaddingValues(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            itemsIndexed(browserScreenState.tabState) { index, tab ->
+            itemsIndexed(browserViewState.tabs) { index, tab ->
                 Column(
                     modifier = Modifier
                         .width(150.dp)
@@ -1317,10 +1315,10 @@ fun Modifier.optionalBorder(apply: Boolean): Modifier {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookmarksBottomSheet(
-    browserScreenState: BrowserScreenState,
+    browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
 ) {
-    if (!browserScreenState.openBookmarks) return
+    if (!browserViewState.openBookmarks) return
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         sheetState = sheetState,
@@ -1337,7 +1335,7 @@ fun BookmarksBottomSheet(
                     .size(56.dp),
                 onClick = { presenter.onBookmarkMenuClick() }) {
                 Icon(
-                    painter = if (browserScreenState.browserViewState.isRootFolder) {
+                    painter = if (browserViewState.isRootFolder) {
                         painterResource(R.drawable.ic_action_star)
                     } else {
                         painterResource(R.drawable.ic_action_back)
@@ -1351,7 +1349,7 @@ fun BookmarksBottomSheet(
             )
         }
         LazyColumn {
-            itemsIndexed(browserScreenState.browserViewState.bookmarks) { index, bookmark ->
+            itemsIndexed(browserViewState.bookmarks) { index, bookmark ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1363,7 +1361,7 @@ fun BookmarksBottomSheet(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     when (val icon = bookmark.icon) {
-                        BookmarkListItem.Icon.Folder -> Icon(
+                        BrowserViewState.BookmarkListItem.Icon.Folder -> Icon(
                             modifier = Modifier
                                 .size(56.dp)
                                 .padding(horizontal = 16.dp),
@@ -1372,7 +1370,7 @@ fun BookmarksBottomSheet(
                             contentDescription = "test"
                         )
 
-                        is BookmarkListItem.Icon.Image -> AsyncImage(
+                        is BrowserViewState.BookmarkListItem.Icon.Image -> AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(icon.path)
                                 .build(),

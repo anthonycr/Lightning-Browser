@@ -1,6 +1,5 @@
 package acr.browser.lightning.browser
 
-import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
@@ -16,7 +15,6 @@ import android.content.Intent
 class BrowserStateAdapter(private val browserActivity: BrowserActivity) : BrowserContract.View {
 
     private var currentState: BrowserViewState? = null
-    private var currentTabs: List<TabViewState>? = null
 
     override fun renderState(viewState: BrowserViewState) {
 //        val (
@@ -55,10 +53,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.renderState(viewState)
 
         currentState = viewState
-    }
-
-    override fun renderTabs(tabs: List<TabViewState>) {
-        tabs.takeIf { it != currentTabs }?.let(browserActivity::renderTabs)
     }
 
     override fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {

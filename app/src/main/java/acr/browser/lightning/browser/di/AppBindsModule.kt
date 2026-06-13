@@ -16,7 +16,9 @@ import acr.browser.lightning.database.downloads.DownloadsDatabase
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.database.history.HistoryDatabase
 import acr.browser.lightning.database.history.HistoryRepository
+import acr.browser.lightning.resources.DefaultNumberFormatter
 import acr.browser.lightning.resources.DefaultResourceProvider
+import acr.browser.lightning.resources.NumberFormatter
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.adblock.DefaultHostsFileUpdater
 import acr.browser.lightning.settings.adblock.HostsFileUpdater
@@ -63,4 +65,7 @@ interface AppBindsModule {
 
     @Binds
     fun bindsHostsFileUpdater(hostsFileUpdater: DefaultHostsFileUpdater): HostsFileUpdater
+
+    @Binds
+    fun bindsNumberFormatter(defaultNumberFormatter: DefaultNumberFormatter): NumberFormatter
 }

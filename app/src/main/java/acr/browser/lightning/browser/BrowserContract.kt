@@ -3,7 +3,6 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
-import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
@@ -27,11 +26,6 @@ interface BrowserContract {
          * Render the [viewState] for the current tab in the browser.
          */
         fun renderState(viewState: BrowserViewState)
-
-        /**
-         * Render the [tabs] in the tabs list.
-         */
-        fun renderTabs(tabs: List<TabViewState>)
 
         /**
          * Show the dialog to add a bookmark for the current page.

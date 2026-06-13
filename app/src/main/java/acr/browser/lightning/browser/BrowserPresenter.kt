@@ -1,6 +1,6 @@
 package acr.browser.lightning.browser
 
-import acr.browser.lightning.BookmarkListItem
+import acr.browser.lightning.R
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.data.CookieAdministrator
 import acr.browser.lightning.browser.di.Browser2Scope
@@ -37,6 +37,8 @@ import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
+import acr.browser.lightning.resources.NumberFormatter
+import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.Option
@@ -89,6 +91,8 @@ class BrowserPresenter @Inject constructor(
     @IncognitoMode private val incognitoMode: Boolean,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val faviconModel: FaviconModel,
+    private val resourceProvider: ResourceProvider,
+    private val numberFormatter: NumberFormatter,
 ) {
 
     private val browserCoroutineScope = BrowserCoroutineScope(
@@ -111,9 +115,11 @@ class BrowserPresenter @Inject constructor(
         isBookmarked = false,
         isBookmarkEnabled = true,
         isRootFolder = true,
-        findInPage = null
+        findInPage = null,
+        tabs = emptyList(),
+        tabCountText = "",
+        isIncognito = incognitoMode,
     )
-    private var tabListState: List<TabViewState> = emptyList()
     private var currentTab: TabModel? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
     private var currentBookmarks: List<Bookmark> = emptyList()
@@ -233,7 +239,7 @@ class BrowserPresenter @Inject constructor(
                     findInPage = null
                 )
             )
-            view.updateTabs(tabListState.map { it.copy(isSelected = false) })
+            view.updateTabs(viewState.tabs.map { it.copy(isSelected = false) })
         }
 
         view?.showToolbar()
@@ -241,7 +247,7 @@ class BrowserPresenter @Inject constructor(
             view?.closeTabDrawer()
         }
 
-        view.updateTabs(tabListState.map { it.copy(isSelected = it.id == tab.id) })
+        view.updateTabs(viewState.tabs.map { it.copy(isSelected = it.id == tab.id) })
 
         tabJobs.forEach { it.cancel() }
         tabJobs.clear()
@@ -314,7 +320,7 @@ class BrowserPresenter @Inject constructor(
 
         tabJobs += browserCoroutineScope.launch {
             tab.closeWindowRequests().collectLatest {
-                onTabClose(tabListState.indexOfCurrentTab())
+                onTabClose(viewState.tabs.indexOfCurrentTab())
             }
         }
 
@@ -358,7 +364,7 @@ class BrowserPresenter @Inject constructor(
                 }.distinctUntilChanged()
                     .flowOn(coroutineDispatchers.main)
                     .collectLatest { (title, bitmap, _) ->
-                        view.updateTabs(tabListState.updateId(tabModel.id) {
+                        view.updateTabs(viewState.tabs.updateId(tabModel.id) {
                             it.copy(title = title, icon = bitmap, preview = tabModel.preview)
                         })
                     }
@@ -490,33 +496,33 @@ class BrowserPresenter @Inject constructor(
         when (keyCombo) {
             KeyCombo.CTRL_F -> view?.showFindInPageDialog()
             KeyCombo.CTRL_T -> onNewTabClick()
-            KeyCombo.CTRL_W -> onTabClose(tabListState.indexOfCurrentTab())
-            KeyCombo.CTRL_Q -> view?.showCloseBrowserDialog(tabListState.indexOfCurrentTab())
+            KeyCombo.CTRL_W -> onTabClose(viewState.tabs.indexOfCurrentTab())
+            KeyCombo.CTRL_Q -> view?.showCloseBrowserDialog(viewState.tabs.indexOfCurrentTab())
             KeyCombo.CTRL_R -> onRefreshOrStopClick()
             KeyCombo.CTRL_TAB -> {
-                val currentIndex = tabListState.indexOfCurrentTab()
-                val nextIndex = if (currentIndex + 1 < tabListState.size) currentIndex + 1 else 0
+                val currentIndex = viewState.tabs.indexOfCurrentTab()
+                val nextIndex = if (currentIndex + 1 < viewState.tabs.size) currentIndex + 1 else 0
                 onTabClick(nextIndex)
             }
 
             KeyCombo.CTRL_SHIFT_TAB -> {
-                val currentIndex = tabListState.indexOfCurrentTab()
+                val currentIndex = viewState.tabs.indexOfCurrentTab()
                 val previousIndex =
-                    if (currentIndex - 1 >= 0) currentIndex - 1 else tabListState.size - 1
+                    if (currentIndex - 1 >= 0) currentIndex - 1 else viewState.tabs.size - 1
                 onTabClick(previousIndex)
             }
 
             KeyCombo.SEARCH -> currentTab?.searchQuery?.let { onSearch(it) }
-            KeyCombo.ALT_0 -> onTabClick(0.coerceAtMost(tabListState.size - 1))
-            KeyCombo.ALT_1 -> onTabClick(1.coerceAtMost(tabListState.size - 1))
-            KeyCombo.ALT_2 -> onTabClick(2.coerceAtMost(tabListState.size - 1))
-            KeyCombo.ALT_3 -> onTabClick(3.coerceAtMost(tabListState.size - 1))
-            KeyCombo.ALT_4 -> onTabClick(4.coerceAtMost(tabListState.size - 1))
-            KeyCombo.ALT_5 -> onTabClick(5.coerceAtMost(tabListState.size - 1))
-            KeyCombo.ALT_6 -> onTabClick(6.coerceAtMost(tabListState.size - 1))
-            KeyCombo.ALT_7 -> onTabClick(7.coerceAtMost(tabListState.size - 1))
-            KeyCombo.ALT_8 -> onTabClick(8.coerceAtMost(tabListState.size - 1))
-            KeyCombo.ALT_9 -> onTabClick(9.coerceAtMost(tabListState.size - 1))
+            KeyCombo.ALT_0 -> onTabClick(0.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_1 -> onTabClick(1.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_2 -> onTabClick(2.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_3 -> onTabClick(3.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_4 -> onTabClick(4.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_5 -> onTabClick(5.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_6 -> onTabClick(6.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_7 -> onTabClick(7.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_8 -> onTabClick(8.coerceAtMost(viewState.tabs.size - 1))
+            KeyCombo.ALT_9 -> onTabClick(9.coerceAtMost(viewState.tabs.size - 1))
         }
     }
 
@@ -524,14 +530,14 @@ class BrowserPresenter @Inject constructor(
      * Call when the user selects a tab to switch to at the provided [index].
      */
     fun onTabClick(index: Int) {
-        selectTab(model.selectTab(tabListState[index].id))
+        selectTab(model.selectTab(viewState.tabs[index].id))
     }
 
     /**
      * Call when the user long presses on a tab at the provided [index].
      */
     fun onTabLongClick(index: Int) {
-        view?.showCloseBrowserDialog(tabListState[index].id)
+        view?.showCloseBrowserDialog(viewState.tabs[index].id)
     }
 
     private fun <T> List<T>.nextSelected(removedIndex: Int): T? {
@@ -556,13 +562,13 @@ class BrowserPresenter @Inject constructor(
             // process of being removed.
             return
         }
-        val nextTab = tabListState.nextSelected(index)
+        val nextTab = viewState.tabs.nextSelected(index)
 
         val currentTabId = currentTab?.id
-        val needToSelectNextTab = tabListState[index].id == currentTabId
+        val needToSelectNextTab = viewState.tabs[index].id == currentTabId
 
         browserCoroutineScope.launch {
-            model.deleteTab(tabListState[index].id)
+            model.deleteTab(viewState.tabs[index].id)
             if (needToSelectNextTab) {
                 nextTab?.id?.let {
                     val shouldClose = currentTab?.tabType == TabModel.Type.EPHEMERAL
@@ -634,7 +640,7 @@ class BrowserPresenter @Inject constructor(
                     TabModel.Type.POP_UP
                 )
             ) {
-                onTabClose(tabListState.indexOfCurrentTab())
+                onTabClose(viewState.tabs.indexOfCurrentTab())
             } else {
                 navigator.backgroundBrowser()
             }
@@ -867,17 +873,19 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private suspend fun List<Bookmark>.asListItems(): List<BookmarkListItem> {
+    private suspend fun List<Bookmark>.asListItems(): List<BrowserViewState.BookmarkListItem> {
         return map {
             when (it) {
-                is Bookmark.Entry -> BookmarkListItem(
+                is Bookmark.Entry -> BrowserViewState.BookmarkListItem(
                     title = it.title,
-                    icon = BookmarkListItem.Icon.Image(faviconModel.getFaviconPathForUrl(it.url))
+                    icon = BrowserViewState.BookmarkListItem.Icon.Image(
+                        faviconModel.getFaviconPathForUrl(it.url)
+                    )
                 )
 
-                is Bookmark.Folder -> BookmarkListItem(
+                is Bookmark.Folder -> BrowserViewState.BookmarkListItem(
                     title = it.title,
-                    icon = BookmarkListItem.Icon.Folder
+                    icon = BrowserViewState.BookmarkListItem.Icon.Folder
                 )
             }
         }
@@ -1278,7 +1286,7 @@ class BrowserPresenter @Inject constructor(
     fun onCloseBrowserEvent(id: Int, closeTabEvent: BrowserContract.CloseTabEvent) {
         when (closeTabEvent) {
             BrowserContract.CloseTabEvent.CLOSE_CURRENT ->
-                onTabClose(tabListState.tabIndexForId(id))
+                onTabClose(viewState.tabs.tabIndexForId(id))
 
             BrowserContract.CloseTabEvent.CLOSE_OTHERS -> browserCoroutineScope.launch {
                 val currentTabId = currentTab?.id
@@ -1388,7 +1396,14 @@ class BrowserPresenter @Inject constructor(
     }
 
     private fun BrowserContract.View?.updateTabs(tabs: List<TabViewState>) {
-        tabListState = tabs
-        this?.renderTabs(tabListState)
+        viewState = viewState.copy(
+            tabs = tabs,
+            tabCountText = if (tabs.size > 99) {
+                resourceProvider.stringResource(R.string.infinity)
+            } else {
+                numberFormatter.formatNumber(tabs.size)
+            }
+        )
+        this?.renderState(viewState)
     }
 }
