@@ -1,7 +1,5 @@
 package acr.browser.lightning.browser.data
 
-import acr.browser.lightning.Capabilities
-import acr.browser.lightning.isSupported
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import android.webkit.CookieManager
 import javax.inject.Inject
@@ -14,10 +12,6 @@ class IncognitoCookieAdministrator @Inject constructor(
 ) : CookieAdministrator {
     override suspend fun adjustCookieSettings() {
         val cookieManager = CookieManager.getInstance()
-        if (Capabilities.FULL_INCOGNITO.isSupported) {
-            cookieManager.setAcceptCookie(userPreferencesDataStore.cookiesEnabled.get())
-        } else {
-            cookieManager.setAcceptCookie(userPreferencesDataStore.incognitoCookiesEnabled.get())
-        }
+        cookieManager.setAcceptCookie(userPreferencesDataStore.cookiesEnabled.get())
     }
 }

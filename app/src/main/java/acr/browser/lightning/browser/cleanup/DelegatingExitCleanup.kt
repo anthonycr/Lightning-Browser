@@ -1,8 +1,6 @@
 package acr.browser.lightning.browser.cleanup
 
-import acr.browser.lightning.Capabilities
 import acr.browser.lightning.DefaultBrowserActivity
-import acr.browser.lightning.isSupported
 import android.app.Activity
 import javax.inject.Inject
 
@@ -11,7 +9,6 @@ import javax.inject.Inject
  * to perform based on the API version and whether we are in incognito mode or normal mode.
  */
 class DelegatingExitCleanup @Inject constructor(
-    private val basicIncognitoExitCleanup: BasicIncognitoExitCleanup,
     private val enhancedIncognitoExitCleanup: EnhancedIncognitoExitCleanup,
     private val normalExitCleanup: NormalExitCleanup,
     private val activity: Activity
@@ -19,8 +16,7 @@ class DelegatingExitCleanup @Inject constructor(
     override suspend fun cleanUp() {
         when {
             activity is DefaultBrowserActivity -> normalExitCleanup.cleanUp()
-            Capabilities.FULL_INCOGNITO.isSupported -> enhancedIncognitoExitCleanup.cleanUp()
-            else -> basicIncognitoExitCleanup.cleanUp()
+            else -> enhancedIncognitoExitCleanup.cleanUp()
         }
     }
 }
