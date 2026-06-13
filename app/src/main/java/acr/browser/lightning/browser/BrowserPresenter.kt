@@ -513,22 +513,25 @@ class BrowserPresenter @Inject constructor(
 
             KeyCombo.CTRL_SHIFT_TAB -> {
                 val currentIndex = state.value.tabs.indexOfCurrentTab()
-                val previousIndex =
-                    if (currentIndex - 1 >= 0) currentIndex - 1 else state.value.tabs.size - 1
+                val previousIndex = if (currentIndex - 1 >= 0) {
+                    currentIndex - 1
+                } else {
+                    state.value.tabs.lastIndex
+                }
                 onTabClick(previousIndex)
             }
 
             KeyCombo.SEARCH -> currentTab?.searchQuery?.let { onSearch(it) }
-            KeyCombo.ALT_0 -> onTabClick(0.coerceAtMost(state.value.tabs.size - 1))
-            KeyCombo.ALT_1 -> onTabClick(1.coerceAtMost(state.value.tabs.size - 1))
-            KeyCombo.ALT_2 -> onTabClick(2.coerceAtMost(state.value.tabs.size - 1))
-            KeyCombo.ALT_3 -> onTabClick(3.coerceAtMost(state.value.tabs.size - 1))
-            KeyCombo.ALT_4 -> onTabClick(4.coerceAtMost(state.value.tabs.size - 1))
-            KeyCombo.ALT_5 -> onTabClick(5.coerceAtMost(state.value.tabs.size - 1))
-            KeyCombo.ALT_6 -> onTabClick(6.coerceAtMost(state.value.tabs.size - 1))
-            KeyCombo.ALT_7 -> onTabClick(7.coerceAtMost(state.value.tabs.size - 1))
-            KeyCombo.ALT_8 -> onTabClick(8.coerceAtMost(state.value.tabs.size - 1))
-            KeyCombo.ALT_9 -> onTabClick(9.coerceAtMost(state.value.tabs.size - 1))
+            KeyCombo.ALT_0 -> onTabClick(0.coerceAtMost(state.value.tabs.lastIndex))
+            KeyCombo.ALT_1 -> onTabClick(1.coerceAtMost(state.value.tabs.lastIndex))
+            KeyCombo.ALT_2 -> onTabClick(2.coerceAtMost(state.value.tabs.lastIndex))
+            KeyCombo.ALT_3 -> onTabClick(3.coerceAtMost(state.value.tabs.lastIndex))
+            KeyCombo.ALT_4 -> onTabClick(4.coerceAtMost(state.value.tabs.lastIndex))
+            KeyCombo.ALT_5 -> onTabClick(5.coerceAtMost(state.value.tabs.lastIndex))
+            KeyCombo.ALT_6 -> onTabClick(6.coerceAtMost(state.value.tabs.lastIndex))
+            KeyCombo.ALT_7 -> onTabClick(7.coerceAtMost(state.value.tabs.lastIndex))
+            KeyCombo.ALT_8 -> onTabClick(8.coerceAtMost(state.value.tabs.lastIndex))
+            KeyCombo.ALT_9 -> onTabClick(9.coerceAtMost(state.value.tabs.lastIndex))
         }
     }
 
