@@ -133,6 +133,9 @@ class BrowserPresenter @Inject constructor(
     private val tabJobs: MutableList<Job> = mutableListOf()
     private val allTabsJobs: MutableList<Job> = mutableListOf()
 
+    /**
+     * The current state of the browser UI.
+     */
     val state: MutableStateFlow<BrowserViewState> = MutableStateFlow(
         BrowserViewState(
             displayUrl = "",
