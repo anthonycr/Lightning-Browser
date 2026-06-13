@@ -14,47 +14,6 @@ import android.content.Intent
  */
 class BrowserStateAdapter(private val browserActivity: BrowserActivity) : BrowserContract.View {
 
-    private var currentState: BrowserViewState? = null
-
-    override fun renderState(viewState: BrowserViewState) {
-//        val (
-//            displayUrl,
-//            sslState,
-//            isRefresh,
-//            progress,
-//            enableFullMenu,
-//            themeColor,
-//            isForwardEnabled,
-//            isBackEnabled,
-//            bookmarks,
-//            isBookmarked,
-//            isBookmarkEnabled,
-//            isRootFolder,
-//            findInPage
-//        ) = viewState
-//
-//        browserActivity.renderState(
-//            PartialBrowserViewState(
-//                displayUrl = displayUrl.takeIf { it != currentState?.displayUrl },
-//                sslState = sslState.takeIf { it != currentState?.sslState },
-//                isRefresh = isRefresh.takeIf { it != currentState?.isRefresh },
-//                progress = progress.takeIf { it != currentState?.progress },
-//                enableFullMenu = enableFullMenu.takeIf { it != currentState?.enableFullMenu },
-//                themeColor = themeColor.takeIf { it != currentState?.themeColor },
-//                isForwardEnabled = isForwardEnabled.takeIf { it != currentState?.isForwardEnabled },
-//                isBackEnabled = isBackEnabled.takeIf { it != currentState?.isBackEnabled },
-//                bookmarks = bookmarks.takeIf { it != currentState?.bookmarks },
-//                isBookmarked = isBookmarked.takeIf { it != currentState?.isBookmarked },
-//                isBookmarkEnabled = isBookmarkEnabled.takeIf { it != currentState?.isBookmarkEnabled },
-//                isRootFolder = isRootFolder.takeIf { it != currentState?.isRootFolder },
-//                findInPage = findInPage.takeIf { it != currentState?.findInPage }
-//            )
-//        )
-        browserActivity.renderState(viewState)
-
-        currentState = viewState
-    }
-
     override fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {
         browserActivity.showAddBookmarkDialog(title, url, folders)
     }
@@ -108,22 +67,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.showCloseBrowserDialog(id)
     }
 
-    override fun openBookmarkDrawer() {
-        browserActivity.openBookmarkDrawer()
-    }
-
-    override fun closeBookmarkDrawer() {
-        browserActivity.closeBookmarkDrawer()
-    }
-
-    override fun openTabDrawer() {
-        browserActivity.openTabDrawer()
-    }
-
-    override fun closeTabDrawer() {
-        browserActivity.closeTabDrawer()
-    }
-
     override fun showToolbar() {
         browserActivity.showToolbar()
     }
@@ -138,13 +81,5 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
 
     override fun showFileChooser(intent: Intent) {
         browserActivity.showFileChooser(intent)
-    }
-
-    override fun showCustomView() {
-        browserActivity.showCustomView()
-    }
-
-    override fun hideCustomView() {
-        browserActivity.hideCustomView()
     }
 }

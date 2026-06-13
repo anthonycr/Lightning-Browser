@@ -20,8 +20,6 @@ import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.search.SuggestionsModel
-import acr.browser.lightning.ssl.SslState
-import acr.browser.lightning.utils.Option
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -32,12 +30,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -93,14 +89,22 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
             .inject(this)
 
         setContent {
+            val currentState by presenter.state.collectAsState()
             BrowserScreen(
                 tabConfigurationProvider,
-                state.collectAsState().value,
+                currentState,
                 presenter,
                 browserFrame,
                 customFrame,
                 suggestionsModel
             )
+            if (currentState.showCustomView) {
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+                setFullscreen(enabled = true, immersive = true)
+            } else {
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                setFullscreen(enabled = false, immersive = false)
+            }
         }
 
         presenter.onViewAttached(BrowserStateAdapter(this))
@@ -130,39 +134,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         return keyEventAdapter.adaptKeyEvent(event)?.let(presenter::onKeyComboClick)?.let { true }
             ?: super.onKeyUp(keyCode, event)
-    }
-
-    val state = MutableStateFlow(
-        BrowserViewState(
-            displayUrl = "",
-            searchQuery = "",
-            searchQuerySelection = Pair(0, 0),
-            isRefresh = true,
-            sslState = SslState.None,
-            progress = 0,
-            enableFullMenu = true,
-            themeColor = Option.None,
-            isForwardEnabled = false,
-            isBackEnabled = false,
-            bookmarks = emptyList(),
-            isBookmarked = false,
-            isBookmarkEnabled = true,
-            isRootFolder = true,
-            findInPage = null,
-            tabs = emptyList(),
-            tabCountText = "",
-            isIncognito = isIncognito()
-        )
-    )
-
-    /**
-     * @see BrowserContract.View.renderState
-     */
-    fun renderState(viewState: BrowserViewState) {
-        // TODO: Move into presenter
-        lifecycleScope.launch {
-            state.emit(viewState)
-        }
     }
 
     /**
@@ -368,42 +339,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
     }
 
     /**
-     * @see BrowserContract.View.openBookmarkDrawer
-     */
-    fun openBookmarkDrawer() {
-        lifecycleScope.launch {
-            state.emit(state.value.copy(openBookmarks = true))
-        }
-    }
-
-    /**
-     * @see BrowserContract.View.closeBookmarkDrawer
-     */
-    fun closeBookmarkDrawer() {
-        lifecycleScope.launch {
-            state.emit(state.value.copy(openBookmarks = false))
-        }
-    }
-
-    /**
-     * @see BrowserContract.View.openTabDrawer
-     */
-    fun openTabDrawer() {
-        lifecycleScope.launch {
-            state.emit(state.value.copy(openTabs = true))
-        }
-    }
-
-    /**
-     * @see BrowserContract.View.closeTabDrawer
-     */
-    fun closeTabDrawer() {
-        lifecycleScope.launch {
-            state.emit(state.value.copy(openTabs = false))
-        }
-    }
-
-    /**
      * @see BrowserContract.View.showToolbar
      */
     fun showToolbar() {
@@ -460,30 +395,6 @@ abstract class BrowserActivity : ThemableBrowserActivity() {
      */
     fun showFileChooser(intent: Intent) {
         launcher.launch(intent)
-    }
-
-    /**
-     * @see BrowserContract.View.showCustomView
-     */
-    fun showCustomView() {
-        // TODO: Internalize state in presenter
-        lifecycleScope.launch {
-            state.emit(state.value.copy(showCustomView = true))
-        }
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
-        setFullscreen(enabled = true, immersive = true)
-    }
-
-    /**
-     * @see BrowserContract.View.hideCustomView
-     */
-    fun hideCustomView() {
-        // TODO: Internalize state in presenter
-        lifecycleScope.launch {
-            state.emit(state.value.copy(showCustomView = false))
-        }
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        setFullscreen(enabled = false, immersive = false)
     }
 
     private fun setFullscreen(enabled: Boolean, immersive: Boolean) {

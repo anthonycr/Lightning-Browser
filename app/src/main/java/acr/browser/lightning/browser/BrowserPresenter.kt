@@ -54,6 +54,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
@@ -132,12 +133,35 @@ class BrowserPresenter @Inject constructor(
     private val tabJobs: MutableList<Job> = mutableListOf()
     private val allTabsJobs: MutableList<Job> = mutableListOf()
 
+    val state: MutableStateFlow<BrowserViewState> = MutableStateFlow(
+        BrowserViewState(
+            displayUrl = "",
+            searchQuery = "",
+            searchQuerySelection = Pair(0, 0),
+            isRefresh = true,
+            sslState = SslState.None,
+            progress = 0,
+            enableFullMenu = true,
+            themeColor = Option.None,
+            isForwardEnabled = false,
+            isBackEnabled = false,
+            bookmarks = emptyList(),
+            isBookmarked = false,
+            isBookmarkEnabled = true,
+            isRootFolder = true,
+            findInPage = null,
+            tabs = emptyList(),
+            tabCountText = "",
+            isIncognito = incognitoMode,
+        )
+    )
+
     /**
      * Call when the view is attached to the presenter.
      */
     fun onViewAttached(view: BrowserContract.View) {
         this.view = view
-        view.updateState(viewState)
+        updateState(viewState)
 
         currentFolder = Bookmark.Folder.Root
         browserCoroutineScope.launch {
@@ -145,7 +169,7 @@ class BrowserPresenter @Inject constructor(
 
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
             currentBookmarks = bookmarks
-            view.updateState(
+            updateState(
                 viewState.copy(
                     bookmarks = bookmarks.asListItems(),
                     isRootFolder = true
@@ -163,7 +187,7 @@ class BrowserPresenter @Inject constructor(
 
         browserCoroutineScope.launch {
             model.tabsListChanges().collectLatest { list ->
-                this@BrowserPresenter.view?.updateTabs(list.map { it.asViewState() })
+                updateTabs(list.map { it.asViewState() })
 
                 allTabsJobs.forEach { it.cancel() }
                 allTabsJobs.clear()
@@ -216,7 +240,7 @@ class BrowserPresenter @Inject constructor(
 
     private fun selectTab(tabModel: TabModel?, focusTab: Boolean = true) {
         if (currentTab == tabModel) {
-            view?.closeTabDrawer()
+            updateState(viewState.copy(openTabs = false))
             return
         }
         currentTab?.isForeground = false
@@ -224,7 +248,7 @@ class BrowserPresenter @Inject constructor(
         currentTab?.isForeground = true
 
         val tab = tabModel ?: return run {
-            view.updateState(
+            updateState(
                 viewState.copy(
                     displayUrl = searchBoxModel.getDisplayContent(
                         url = "",
@@ -239,15 +263,15 @@ class BrowserPresenter @Inject constructor(
                     findInPage = null
                 )
             )
-            view.updateTabs(viewState.tabs.map { it.copy(isSelected = false) })
+            updateTabs(viewState.tabs.map { it.copy(isSelected = false) })
         }
 
         view?.showToolbar()
         if (focusTab) {
-            view?.closeTabDrawer()
+            updateState(viewState.copy(openTabs = false))
         }
 
-        view.updateTabs(viewState.tabs.map { it.copy(isSelected = it.id == tab.id) })
+        updateTabs(viewState.tabs.map { it.copy(isSelected = it.id == tab.id) })
 
         tabJobs.forEach { it.cancel() }
         tabJobs.clear()
@@ -286,7 +310,7 @@ class BrowserPresenter @Inject constructor(
                     findInPage = tab.findQuery
                 )
             }.flowOn(coroutineDispatchers.main).collectLatest {
-                view.updateState(it)
+                updateState(it)
             }
         }
 
@@ -332,21 +356,21 @@ class BrowserPresenter @Inject constructor(
 
         tabJobs += browserCoroutineScope.launch {
             tab.showCustomViewRequests().collectLatest {
-                view?.showCustomView()
+                updateState(viewState.copy(showCustomView = true))
                 isCustomViewShowing = true
             }
         }
 
         tabJobs += browserCoroutineScope.launch {
             tab.hideCustomViewRequests().collectLatest {
-                view?.hideCustomView()
+                updateState(viewState.copy(showCustomView = false))
                 isCustomViewShowing = false
             }
         }
 
         tabJobs += browserCoroutineScope.launch {
             tab.focusRequests().collectLatest {
-                view?.closeTabDrawer()
+                updateState(viewState.copy(openTabs = false))
             }
         }
     }
@@ -364,7 +388,7 @@ class BrowserPresenter @Inject constructor(
                 }.distinctUntilChanged()
                     .flowOn(coroutineDispatchers.main)
                     .collectLatest { (title, bitmap, _) ->
-                        view.updateTabs(viewState.tabs.updateId(tabModel.id) {
+                        updateTabs(viewState.tabs.updateId(tabModel.id) {
                             it.copy(title = title, icon = bitmap, preview = tabModel.preview)
                         })
                     }
@@ -455,7 +479,7 @@ class BrowserPresenter @Inject constructor(
             MenuSelection.ADD_TO_HOME -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let { addToHomeScreen() }
 
-            MenuSelection.BOOKMARKS -> view?.openBookmarkDrawer()
+            MenuSelection.BOOKMARKS -> updateState(viewState.copy(openBookmarks = true))
             MenuSelection.ADD_BOOKMARK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let { showAddBookmarkDialog() }
 
@@ -591,11 +615,7 @@ class BrowserPresenter @Inject constructor(
      */
     fun onTabDrawerMoved(isOpen: Boolean) {
         isTabDrawerOpen = isOpen
-        if (isOpen) {
-            view?.openTabDrawer()
-        } else {
-            view?.closeTabDrawer()
-        }
+        updateState(viewState.copy(openTabs = isOpen))
     }
 
     /**
@@ -605,11 +625,7 @@ class BrowserPresenter @Inject constructor(
      */
     fun onBookmarkDrawerMoved(isOpen: Boolean) {
         isBookmarkDrawerOpen = isOpen
-        if (isOpen) {
-            view?.openBookmarkDrawer()
-        } else {
-            view?.closeBookmarkDrawer()
-        }
+        updateState(viewState.copy(openBookmarks = isOpen))
     }
 
     /**
@@ -619,15 +635,15 @@ class BrowserPresenter @Inject constructor(
     fun onNavigateBack() {
         when {
             isCustomViewShowing -> {
-                view?.hideCustomView()
+                updateState(viewState.copy(showCustomView = false))
                 currentTab?.hideCustomView()
             }
 
-            isTabDrawerOpen -> view?.closeTabDrawer()
+            isTabDrawerOpen -> updateState(viewState.copy(openTabs = false))
             isBookmarkDrawerOpen -> if (currentFolder != Bookmark.Folder.Root) {
                 onBookmarkMenuClick()
             } else {
-                view?.closeBookmarkDrawer()
+                updateState(viewState.copy(openBookmarks = false))
             }
 
             currentTab?.canGoBack() == true -> currentTab?.goBack()
@@ -698,7 +714,7 @@ class BrowserPresenter @Inject constructor(
      */
     fun onRefreshOrStopClick() {
         if (isSearchViewFocused) {
-            view?.renderState(viewState.copy(displayUrl = ""))
+            updateState(viewState.copy(displayUrl = ""))
             return
         }
         if (currentTab?.loadingProgress != 100) {
@@ -737,7 +753,7 @@ class BrowserPresenter @Inject constructor(
     fun onSearchQueryChanged(query: String, selectionStart: Int, selectionEnd: Int) {
         currentTab?.searchQuery = query
         currentTab?.searchQuerySelection = Pair(selectionStart, selectionEnd)
-        view?.updateState(
+        updateState(
             viewState.copy(
                 searchQuery = query,
                 searchQuerySelection = Pair(selectionStart, selectionEnd)
@@ -756,7 +772,7 @@ class BrowserPresenter @Inject constructor(
         currentTab?.stopLoading()
         val searchUrl = searchEngineProvider.provideSearchEngine().queryUrl + QUERY_PLACE_HOLDER
         val url = smartUrlFilter(query.trim(), true, searchUrl)
-        view?.updateState(
+        updateState(
             viewState.copy(
                 displayUrl = searchBoxModel.getDisplayContent(
                     url = url,
@@ -773,7 +789,7 @@ class BrowserPresenter @Inject constructor(
      */
     fun onFindInPage(query: String) {
         currentTab?.find(query)
-        view?.updateState(viewState.copy(findInPage = query))
+        updateState(viewState.copy(findInPage = query))
     }
 
     /**
@@ -795,7 +811,7 @@ class BrowserPresenter @Inject constructor(
      */
     fun onFindDismiss() {
         currentTab?.clearFindMatches()
-        view?.updateState(viewState.copy(findInPage = null))
+        updateState(viewState.copy(findInPage = null))
     }
 
     /**
@@ -844,7 +860,7 @@ class BrowserPresenter @Inject constructor(
         when (val bookmark = currentBookmarks[index]) {
             is Bookmark.Entry -> {
                 currentTab?.loadUrl(bookmark.url)
-                view?.closeBookmarkDrawer()
+                updateState(viewState.copy(openBookmarks = false))
             }
 
             Bookmark.Folder.Root -> error("Cannot click on root folder")
@@ -853,7 +869,7 @@ class BrowserPresenter @Inject constructor(
                 browserCoroutineScope.launch {
                     val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = bookmark)
                     currentBookmarks = bookmarks
-                    view?.updateState(
+                    updateState(
                         viewState.copy(
                             bookmarks = bookmarks.asListItems(),
                             isRootFolder = false
@@ -959,7 +975,7 @@ class BrowserPresenter @Inject constructor(
                 )
                 val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
                 currentBookmarks = bookmarks
-                view?.updateState(
+                updateState(
                     viewState.copy(
                         bookmarks = bookmarks.asListItems(),
                         isBookmarked = bookmarkRepository.isBookmark(url)
@@ -1001,7 +1017,7 @@ class BrowserPresenter @Inject constructor(
             )
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
             currentBookmarks = bookmarks
-            view?.updateState(
+            updateState(
                 viewState.copy(
                     bookmarks = bookmarks.asListItems(),
                     isBookmarked = bookmarkRepository.isBookmark(url)
@@ -1035,7 +1051,7 @@ class BrowserPresenter @Inject constructor(
             )
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
             currentBookmarks = bookmarks
-            view?.updateState(viewState.copy(bookmarks = bookmarks.asListItems()))
+            updateState(viewState.copy(bookmarks = bookmarks.asListItems()))
             if (currentTab?.url?.isBookmarkUrl() == true) {
                 reload()
             }
@@ -1053,7 +1069,7 @@ class BrowserPresenter @Inject constructor(
             bookmarkRepository.renameFolder(oldTitle, newTitle)
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
             currentBookmarks = bookmarks
-            view?.updateState(viewState.copy(bookmarks = bookmarks.asListItems()))
+            updateState(viewState.copy(bookmarks = bookmarks.asListItems()))
             if (currentTab?.url?.isBookmarkUrl() == true) {
                 reload()
             }
@@ -1086,7 +1102,7 @@ class BrowserPresenter @Inject constructor(
                     bookmarkRepository.deleteBookmark(bookmark)
                     val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
                     currentBookmarks = bookmarks
-                    view?.updateState(viewState.copy(bookmarks = bookmarks.asListItems()))
+                    updateState(viewState.copy(bookmarks = bookmarks.asListItems()))
                     if (currentTab?.url?.isBookmarkUrl() == true) {
                         reload()
                     }
@@ -1116,7 +1132,7 @@ class BrowserPresenter @Inject constructor(
                     bookmarkRepository.deleteFolder(folder.title)
                     val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
                     currentBookmarks = bookmarks
-                    view?.updateState(viewState.copy(bookmarks = bookmarks.asListItems()))
+                    updateState(viewState.copy(bookmarks = bookmarks.asListItems()))
                     if (currentTab?.url?.isBookmarkUrl() == true) {
                         reload()
                         currentTab?.goBack()
@@ -1188,13 +1204,9 @@ class BrowserPresenter @Inject constructor(
      */
     fun onTabCountViewClick() {
         if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER_SIDE) {
-            view?.openTabDrawer()
+            updateState(viewState.copy(openTabs = true))
         } else if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER_BOTTOM) {
-            if (isTabDrawerOpen) {
-                view?.closeTabDrawer()
-            } else {
-                view?.openTabDrawer()
-            }
+            updateState(viewState.copy(openTabs = !isTabDrawerOpen))
         } else {
             currentTab?.loadFromInitializer(homePageInitializer)
         }
@@ -1220,7 +1232,7 @@ class BrowserPresenter @Inject constructor(
                 val bookmarks =
                     bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
                 currentBookmarks = bookmarks
-                view?.updateState(
+                updateState(
                     viewState.copy(
                         bookmarks = bookmarks.asListItems(),
                         isRootFolder = true
@@ -1390,12 +1402,14 @@ class BrowserPresenter @Inject constructor(
         currentTab?.handleFileChooserResult(activityResult)
     }
 
-    private fun BrowserContract.View?.updateState(state: BrowserViewState) {
-        viewState = state
-        this?.renderState(viewState)
+    private fun updateState(newState: BrowserViewState) {
+        viewState = newState
+        browserCoroutineScope.launch {
+            state.emit(viewState)
+        }
     }
 
-    private fun BrowserContract.View?.updateTabs(tabs: List<TabViewState>) {
+    private fun updateTabs(tabs: List<TabViewState>) {
         viewState = viewState.copy(
             tabs = tabs,
             tabCountText = if (tabs.size > 99) {
@@ -1404,6 +1418,8 @@ class BrowserPresenter @Inject constructor(
                 numberFormatter.formatNumber(tabs.size)
             }
         )
-        this?.renderState(viewState)
+        browserCoroutineScope.launch {
+            state.emit(viewState)
+        }
     }
 }

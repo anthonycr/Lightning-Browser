@@ -23,11 +23,6 @@ interface BrowserContract {
     interface View {
 
         /**
-         * Render the [viewState] for the current tab in the browser.
-         */
-        fun renderState(viewState: BrowserViewState)
-
-        /**
          * Show the dialog to add a bookmark for the current page.
          *
          * @param title The current title of the page.
@@ -102,26 +97,6 @@ interface BrowserContract {
         fun showCloseBrowserDialog(id: Int)
 
         /**
-         * Open the bookmark drawer if it is closed.
-         */
-        fun openBookmarkDrawer()
-
-        /**
-         * Close the bookmark drawer if it is open.
-         */
-        fun closeBookmarkDrawer()
-
-        /**
-         * Open the tab drawer if it is closed.
-         */
-        fun openTabDrawer()
-
-        /**
-         * Close the tab drawer if it is open.
-         */
-        fun closeTabDrawer()
-
-        /**
          * Show the toolbar/search box if it has been hidden due to scrolling.
          */
         fun showToolbar()
@@ -146,16 +121,6 @@ interface BrowserContract {
          * Show the file chooser with the provided [intent].
          */
         fun showFileChooser(intent: Intent)
-
-        /**
-         * Show a custom view over everything that will play a video.
-         */
-        fun showCustomView()
-
-        /**
-         * Hide the custom view that was previously shown by calling [showCustomView].
-         */
-        fun hideCustomView()
     }
 
     /**
