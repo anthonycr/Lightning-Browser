@@ -135,26 +135,7 @@ class BrowserPresenter @Inject constructor(
      * The current state of the browser UI.
      */
     val state: MutableStateFlow<BrowserViewState> = MutableStateFlow(
-        BrowserViewState(
-            displayUrl = "",
-            searchQuery = "",
-            searchQuerySelection = Pair(0, 0),
-            isRefresh = true,
-            sslState = SslState.None,
-            progress = 0,
-            enableFullMenu = true,
-            themeColor = Option.None,
-            isForwardEnabled = false,
-            isBackEnabled = false,
-            bookmarks = emptyList(),
-            isBookmarked = false,
-            isBookmarkEnabled = true,
-            isRootFolder = true,
-            findInPage = null,
-            tabs = emptyList(),
-            tabCountText = "",
-            isIncognito = incognitoMode,
-        )
+        viewState
     )
 
     /**
