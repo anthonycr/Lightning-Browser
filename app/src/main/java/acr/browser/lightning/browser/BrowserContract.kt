@@ -3,7 +3,6 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
-import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
@@ -22,16 +21,6 @@ interface BrowserContract {
      * The view that renders the browser state.
      */
     interface View {
-
-        /**
-         * Render the [viewState] for the current tab in the browser.
-         */
-        fun renderState(viewState: BrowserViewState)
-
-        /**
-         * Render the [tabs] in the tabs list.
-         */
-        fun renderTabs(tabs: List<TabViewState>)
 
         /**
          * Show the dialog to add a bookmark for the current page.
@@ -108,26 +97,6 @@ interface BrowserContract {
         fun showCloseBrowserDialog(id: Int)
 
         /**
-         * Open the bookmark drawer if it is closed.
-         */
-        fun openBookmarkDrawer()
-
-        /**
-         * Close the bookmark drawer if it is open.
-         */
-        fun closeBookmarkDrawer()
-
-        /**
-         * Open the tab drawer if it is closed.
-         */
-        fun openTabDrawer()
-
-        /**
-         * Close the tab drawer if it is open.
-         */
-        fun closeTabDrawer()
-
-        /**
          * Show the toolbar/search box if it has been hidden due to scrolling.
          */
         fun showToolbar()
@@ -152,21 +121,6 @@ interface BrowserContract {
          * Show the file chooser with the provided [intent].
          */
         fun showFileChooser(intent: Intent)
-
-        /**
-         * Show a custom [view] over everything that will play a video.
-         */
-        fun showCustomView(view: android.view.View)
-
-        /**
-         * Hide the custom view that was previously shown by calling [showCustomView].
-         */
-        fun hideCustomView()
-
-        /**
-         * Clear focus from the search view if it has focus.
-         */
-        fun clearSearchFocus()
     }
 
     /**

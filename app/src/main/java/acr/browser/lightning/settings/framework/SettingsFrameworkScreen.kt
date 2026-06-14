@@ -5,7 +5,6 @@ import acr.browser.lightning.settings.SettingsBottomSheetInput
 import acr.browser.lightning.settings.SettingsClickable
 import acr.browser.lightning.settings.SettingsClickableState
 import acr.browser.lightning.settings.SettingsLoader
-import acr.browser.lightning.settings.SettingsSnackBarState
 import acr.browser.lightning.settings.SettingsToggle
 import acr.browser.lightning.settings.SettingsToggleState
 import acr.browser.lightning.settings.SettingsUiState
@@ -61,11 +60,9 @@ fun SettingsFrameworkScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     state.ephemeral?.let {
         LaunchedEffect(it.message) {
-            when (it) {
-                is SettingsSnackBarState -> when (snackbarHostState.showSnackbar(it.message)) {
-                    SnackbarResult.Dismissed -> presenter.onEvent(SettingsFrameworkUiEvent.SnackbarDismissed)
-                    SnackbarResult.ActionPerformed -> presenter.onEvent(SettingsFrameworkUiEvent.SnackbarDismissed)
-                }
+            when (snackbarHostState.showSnackbar(it.message)) {
+                SnackbarResult.Dismissed -> presenter.onEvent(SettingsFrameworkUiEvent.SnackbarDismissed)
+                SnackbarResult.ActionPerformed -> presenter.onEvent(SettingsFrameworkUiEvent.SnackbarDismissed)
             }
         }
     }

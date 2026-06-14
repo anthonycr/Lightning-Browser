@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.view.CustomViewCoordinator
 import acr.browser.lightning.browser.webrtc.WebRtcPermissionsModel
 import acr.browser.lightning.browser.webrtc.WebRtcPermissionsView
 import acr.browser.lightning.concurrency.TabCoroutineScope
@@ -44,6 +45,7 @@ class TabWebChromeClient @AssistedInject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val webRtcPermissionsModel: WebRtcPermissionsModel,
     @Assisted private val tabCoroutineScope: TabCoroutineScope,
+    private val customViewCoordinator: CustomViewCoordinator,
 ) : WebChromeClient(), WebRtcPermissionsView {
 
     @AssistedFactory
@@ -92,7 +94,7 @@ class TabWebChromeClient @AssistedInject constructor(
     /**
      * Emits requests to show a custom view (i.e. full screen video).
      */
-    val showCustomViewSharedFlow: MutableSharedFlow<View> = MutableSharedFlow()
+    val showCustomViewSharedFlow: MutableSharedFlow<Unit> = MutableSharedFlow()
 
     /**
      * Emits requests to hide the custom view that was shown prior.
@@ -205,14 +207,16 @@ class TabWebChromeClient @AssistedInject constructor(
     override fun onShowCustomView(view: View, callback: CustomViewCallback) {
         customViewCallback = callback
         tabCoroutineScope.launch {
-            showCustomViewSharedFlow.emit(view)
+            showCustomViewSharedFlow.emit(Unit)
         }
+        customViewCoordinator.showCustomView(view)
     }
 
     override fun onHideCustomView() {
         tabCoroutineScope.launch {
             hideCustomViewObservable.emit(Unit)
         }
+        customViewCoordinator.hideCustomView()
         customViewCallback = null
     }
 

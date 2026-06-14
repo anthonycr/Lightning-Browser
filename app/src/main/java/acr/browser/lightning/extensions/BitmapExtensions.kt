@@ -3,8 +3,6 @@ package acr.browser.lightning.extensions
 import acr.browser.lightning.utils.Utils
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
 import androidx.core.graphics.createBitmap
 
@@ -30,18 +28,4 @@ fun Bitmap.pad(): Bitmap = let {
             )
         }
     }
-}
-
-private val desaturatedPaint = Paint().apply {
-    colorFilter = ColorMatrixColorFilter(ColorMatrix().apply {
-        setSaturation(0.5f)
-    })
-}
-
-
-/**
- * Desaturates a [Bitmap] to 50% grayscale. Note that a new bitmap will be created.
- */
-fun Bitmap.desaturate(): Bitmap = createBitmap(width, height).also {
-    Canvas(it).drawBitmap(this, 0f, 0f, desaturatedPaint)
 }

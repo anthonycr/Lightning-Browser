@@ -67,14 +67,17 @@ class TabsRepository @Inject constructor(
      */
     private suspend fun createTabUnsafe(
         tabInitializer: TabInitializer,
-        tabType: TabModel.Type
+        tabType: TabModel.Type,
+        emitUpdate: Boolean = true,
     ): TabModel = withContext(coroutineDispatchers.main) {
         val webViewLazy = webViewFactory.createWebView()
         val tabModel = tabFactory.constructTab(tabInitializer, webViewLazy, tabType)
         tabPager.addTab(tabModel.id, webViewLazy)
         tabsList = tabsList + tabModel
 
-        tabsListStateFlow.emit(tabsList)
+        if (emitUpdate) {
+            tabsListStateFlow.emit(tabsList)
+        }
 
         tabModel
     }
@@ -98,7 +101,13 @@ class TabsRepository @Inject constructor(
 
     override suspend fun initializeTabs(): List<TabModel> =
         withContext(coroutineDispatchers.default) {
-            val oldTabs = bundleStore.retrieve().map { createTabUnsafe(it, TabModel.Type.NORMAL) }
+            val oldTabs = bundleStore.retrieve().map {
+                createTabUnsafe(
+                    tabInitializer = it,
+                    tabType = TabModel.Type.NORMAL,
+                    emitUpdate = false
+                )
+            }
 
             val newTabInitializer = if (initialUrl != null && initialUrl.isFileUrl()) {
                 permissionInitializerFactory.create(initialUrl)
@@ -108,14 +117,24 @@ class TabsRepository @Inject constructor(
                 null
             }
 
-            val newTab = newTabInitializer?.let { createTabUnsafe(it, TabModel.Type.EPHEMERAL) }
+            val newTab = newTabInitializer?.let {
+                createTabUnsafe(
+                    tabInitializer = it,
+                    tabType = TabModel.Type.EPHEMERAL,
+                    emitUpdate = false
+                )
+            }
 
             isInitialized.complete(Unit)
-            if (newTab != null) {
+            tabsList = if (newTab != null) {
                 oldTabs + newTab
             } else {
                 oldTabs
             }
+
+            tabsListStateFlow.emit(tabsList)
+
+            tabsList
         }
 
     override fun markAllNonEphemeral() {

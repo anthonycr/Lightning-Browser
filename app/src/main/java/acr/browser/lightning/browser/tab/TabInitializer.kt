@@ -135,7 +135,7 @@ class ResultMessageInitializer(private val resultMessage: Message) : TabInitiali
 /**
  * An initializer that restores the [WebView] state using the [bundle].
  */
-open class BundleInitializer(private val bundle: Bundle) : TabInitializer {
+class BundleInitializer(private val bundle: Bundle) : TabInitializer {
 
     override suspend fun initialize(webView: WebView, headers: Map<String, String>) {
         webView.restoreState(bundle)
@@ -147,11 +147,21 @@ open class BundleInitializer(private val bundle: Bundle) : TabInitializer {
  * An initializer that can be delayed until the view is attached. [initialTitle] is the title that
  * should be initially set on the tab.
  */
-class FreezableBundleInitializer(
+class FreezableInitializer(
     val bundle: Bundle,
+    val delegate: TabInitializer,
     val initialTitle: String,
-    val id: Int
-) : BundleInitializer(bundle)
+    val id: Int,
+) : TabInitializer {
+
+    override suspend fun initialize(
+        webView: WebView,
+        headers: Map<String, String>
+    ) {
+        delegate.initialize(webView, headers)
+    }
+
+}
 
 /**
  * An initializer that does not load anything into the [WebView].

@@ -6,7 +6,6 @@ import acr.browser.lightning.ssl.SslState
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.annotation.ColorInt
 import kotlinx.coroutines.flow.Flow
@@ -111,6 +110,17 @@ interface TabModel {
     // Data
 
     /**
+     * The current query or the current URL that the user has entered in the search bar.
+     */
+    var searchQuery: String
+
+    /**
+     * The text selection in the search query, either the start and end of the selection if the
+     * values are different, or the cursor position if they are the same.
+     */
+    var searchQuerySelection: Pair<Int, Int>
+
+    /**
      * The current favicon of the webpage or null if there isn't one.
      */
     val favicon: Bitmap?
@@ -209,7 +219,7 @@ interface TabModel {
      * Emits requests by the browser to display a custom view (i.e. full screen video) over the
      * regular webpage content.
      */
-    fun showCustomViewRequests(): Flow<View>
+    fun showCustomViewRequests(): Flow<Unit>
 
     /**
      * Emits requests by the browser to hide the custom view it previously requested to display via

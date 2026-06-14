@@ -3,6 +3,8 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
+import acr.browser.lightning.browser.di.FaviconCacheDir
+import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.databinding.DialogAuthRequestBinding
 import acr.browser.lightning.databinding.DialogSslWarningBinding
@@ -13,8 +15,9 @@ import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.ssl.SslWarningPreferences
+import acr.browser.lightning.utils.ThreadSafeFileProvider
+import acr.browser.lightning.utils.isSpecialUrl
 import android.annotation.SuppressLint
-import android.app.Application
 import android.graphics.Bitmap
 import android.net.http.SslError
 import android.os.Message
@@ -33,15 +36,14 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayInputStream
-import java.io.File
 import kotlin.math.abs
 
 /**
  * A [WebViewClient] that supports the tab adaptation.
  */
 class TabWebViewClient @AssistedInject constructor(
-    private val application: Application,
     private val adBlocker: AdBlocker,
     private val allowListModel: AllowListModel,
     private val urlHandler: UrlHandler,
@@ -50,6 +52,8 @@ class TabWebViewClient @AssistedInject constructor(
     private val sslWarningPreferences: SslWarningPreferences,
     private val textReflow: TextReflow,
     private val logger: Logger,
+    @FaviconCacheDir private val faviconCacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
+    @GeneratedHtmlDir private val generatedHtmlDirThreadSafeFileProvider: ThreadSafeFileProvider,
     @Assisted("cache") private val cacheStoragePathHandler: InternalStoragePathHandler,
     @Assisted("files") private val filesStoragePathHandler: InternalStoragePathHandler,
     @Assisted private val tabCoroutineScope: TabCoroutineScope
@@ -73,11 +77,15 @@ class TabWebViewClient @AssistedInject constructor(
     }
 
     private val cache by lazy {
-        File(application.cacheDir, "favicon-cache")
+        runBlocking {
+            faviconCacheDirThreadSafeFileProvider.file.await()
+        }
     }
 
     private val files by lazy {
-        File(application.filesDir, "generated-html")
+        runBlocking {
+            generatedHtmlDirThreadSafeFileProvider.file.await()
+        }
     }
 
     private val textReflowEnabled = userPreferencesDataStore.textReflowEnabled.getUnsafe()
@@ -113,6 +121,18 @@ class TabWebViewClient @AssistedInject constructor(
     var sslState: SslState = SslState.None
         private set
 
+    /**
+     * The latest search query entered by the user, or the latest loaded URL, whichever event
+     * happened later.
+     */
+    var searchQuery: String = ""
+
+    /**
+     * The text selection in the search query, either the start and end of the selection if the
+     * values are different, or the cursor position if they are the same.
+     */
+    var searchQuerySelection: Pair<Int, Int> = Pair(0, 0)
+
     private var currentUrl: String = ""
     private var isReflowRunning: Boolean = false
     private var zoomScale: Float = 0.0F
@@ -124,6 +144,12 @@ class TabWebViewClient @AssistedInject constructor(
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
+        searchQuery = if (!url.isSpecialUrl()) {
+            url
+        } else {
+            ""
+        }
+        searchQuerySelection = Pair(0, searchQuery.length)
         currentUrl = url
         tabCoroutineScope.launch {
             urlSharedFlow.emit(url)

@@ -52,7 +52,7 @@ class BrowserNavigator @Inject constructor(
         exitCleanup.cleanUp()
         if (incognitoMode) {
             activityManager.appTasks
-                .first { it.taskInfo.topActivity?.className == IncognitoBrowserActivity::class.java.name }
+                .first { it.taskInfo?.topActivity?.className == IncognitoBrowserActivity::class.java.name }
                 .finishAndRemoveTask()
         } else {
             activity.finish()
@@ -80,7 +80,7 @@ class BrowserNavigator @Inject constructor(
             appCoroutineScope.launch {
                 exitCleanup.cleanUp()
                 activityManager.appTasks
-                    .first { it.taskInfo.topActivity?.className == IncognitoBrowserActivity::class.java.name }
+                    .first { it.taskInfo?.topActivity?.className == IncognitoBrowserActivity::class.java.name }
                     .finishAndRemoveTask()
             }
         } else {

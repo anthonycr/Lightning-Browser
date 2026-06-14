@@ -1,12 +1,8 @@
 package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.browser.BrowserActivity
-import acr.browser.lightning.databinding.BrowserBottomTabsBinding
 import android.content.Intent
-import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.fragment.app.FragmentActivity
 import dagger.BindsInstance
 import dagger.Subcomponent
@@ -26,25 +22,13 @@ interface Browser2Component {
         fun activity(activity: FragmentActivity): Builder
 
         @BindsInstance
-        fun browserFrame(frameLayout: FrameLayout): Builder
+        fun browserFrame(@BrowserFrame frameLayout: FrameLayout): Builder
 
         @BindsInstance
-        fun toolbarRoot(linearLayout: LinearLayout): Builder
-
-        @BindsInstance
-        fun browserRoot(viewGroup: ViewGroup?): Builder
-
-        @BindsInstance
-        fun bottomTabsLayout(bottomTabsBinding: BrowserBottomTabsBinding?): Builder
-
-        @BindsInstance
-        fun toolbar(toolbar: View): Builder
+        fun customFrame(@CustomFrame frameLayout: FrameLayout): Builder
 
         @BindsInstance
         fun initialIntent(@InitialIntent intent: Intent?): Builder
-
-        @BindsInstance
-        fun incognitoMode(@IncognitoMode incognitoMode: Boolean): Builder
 
         fun build(): Browser2Component
 
@@ -53,6 +37,12 @@ interface Browser2Component {
     fun inject(browserActivity: BrowserActivity)
 
 }
+
+@Qualifier
+annotation class BrowserFrame
+
+@Qualifier
+annotation class CustomFrame
 
 @Qualifier
 annotation class InitialIntent

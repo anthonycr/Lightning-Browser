@@ -1,11 +1,9 @@
 package acr.browser.lightning.settings.screens
 
-import acr.browser.lightning.Capabilities
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.constant.TEXT_ENCODINGS
-import acr.browser.lightning.isSupported
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.SettingsBottomSheetChooserState
@@ -47,20 +45,10 @@ class AdvancedSettingsScreen @Inject constructor(
                 }
             ),
             ToggleState(
-                enabled = { !Capabilities.FULL_INCOGNITO.isSupported },
+                enabled = { false },
                 title = resourceProvider.stringResource(R.string.incognito_cookies),
-                summary = if (Capabilities.FULL_INCOGNITO.isSupported) {
-                    { resourceProvider.stringResource(R.string.incognito_cookies_pie) }
-                } else {
-                    null
-                },
-                isChecked = {
-                    if (Capabilities.FULL_INCOGNITO.isSupported) {
-                        userPreferencesDataStore.cookiesEnabled.get()
-                    } else {
-                        userPreferencesDataStore.incognitoCookiesEnabled.get()
-                    }
-                },
+                summary = { resourceProvider.stringResource(R.string.incognito_cookies_pie) },
+                isChecked = { userPreferencesDataStore.cookiesEnabled.get() },
                 onToggle = {
                     userPreferencesDataStore.incognitoCookiesEnabled.set(it)
                     null

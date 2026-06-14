@@ -2,8 +2,9 @@ package acr.browser.lightning.browser.tab.bundle
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.tab.BookmarkPageInitializer
+import acr.browser.lightning.browser.tab.BundleInitializer
 import acr.browser.lightning.browser.tab.DownloadPageInitializer
-import acr.browser.lightning.browser.tab.FreezableBundleInitializer
+import acr.browser.lightning.browser.tab.FreezableInitializer
 import acr.browser.lightning.browser.tab.HistoryPageInitializer
 import acr.browser.lightning.browser.tab.HomePageInitializer
 import acr.browser.lightning.browser.tab.TabInitializer
@@ -64,7 +65,7 @@ class DefaultBundleStore @Inject constructor(
                     }
                 }
         }?.map { (bundle, title, id) ->
-            return@map bundle.getString(URL_KEY)?.let { url ->
+            val delegate = bundle.getString(URL_KEY)?.let { url ->
                 when {
                     url.isBookmarkUrl() -> bookmarkPageInitializer
                     url.isDownloadsUrl() -> downloadPageInitializer
@@ -72,8 +73,11 @@ class DefaultBundleStore @Inject constructor(
                     url.isHistoryUrl() -> historyPageInitializer
                     else -> homePageInitializer
                 }
-            } ?: FreezableBundleInitializer(
+            } ?: BundleInitializer(bundle)
+
+            FreezableInitializer(
                 bundle = bundle,
+                delegate = delegate,
                 initialTitle = title ?: application.getString(R.string.tab_frozen),
                 id = id
             )

@@ -226,13 +226,55 @@ class AppModule {
         application.dataDir
     }
 
-    @CacheDir
+    @FaviconCacheDir
     @Provides
-    fun providesCacheDir(
+    fun providesFaviconCacheDir(
         application: Application,
-        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory
+        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory,
+        @IncognitoMode isIncognitoMode: Boolean,
     ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
-        application.cacheDir
+        val suffix = if (isIncognitoMode) {
+            "-incognito"
+        } else {
+            ""
+        }
+        File(application.cacheDir, "favicon-cache$suffix").apply {
+            mkdirs()
+        }
+    }
+
+    @PreviewCacheDir
+    @Provides
+    fun providesPreviewCacheDir(
+        application: Application,
+        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory,
+        @IncognitoMode isIncognitoMode: Boolean,
+    ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
+        val suffix = if (isIncognitoMode) {
+            "-incognito"
+        } else {
+            ""
+        }
+        File(application.cacheDir, "preview-cache$suffix").apply {
+            mkdirs()
+        }
+    }
+
+    @GeneratedHtmlDir
+    @Provides
+    fun providesGeneratedHtmlDir(
+        application: Application,
+        threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory,
+        @IncognitoMode isIncognitoMode: Boolean,
+    ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
+        val suffix = if (isIncognitoMode) {
+            "-incognito"
+        } else {
+            ""
+        }
+        File(application.filesDir, "generated-html$suffix").apply {
+            mkdirs()
+        }
     }
 
     @Singleton
@@ -294,4 +336,12 @@ annotation class DataDir
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
-annotation class CacheDir
+annotation class FaviconCacheDir
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class PreviewCacheDir
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class GeneratedHtmlDir
