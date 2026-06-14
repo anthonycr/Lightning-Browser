@@ -1,9 +1,7 @@
 package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.BrowserApp
-import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.device.BuildInfo
-import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.settings.activity.SettingsActivity
 import android.app.Application
 import dagger.BindsInstance
@@ -30,13 +28,9 @@ interface AppComponent {
         fun build(): AppComponent
     }
 
-    fun inject(builder: LightningDialogBuilder)
-
     fun inject(app: BrowserApp)
 
     fun inject(activity: SettingsActivity)
-
-    fun inject(searchBoxModel: SearchBoxModel)
 
     fun browser2ComponentBuilder(): Browser2Component.Builder
 
