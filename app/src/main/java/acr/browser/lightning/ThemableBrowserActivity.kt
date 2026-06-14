@@ -22,8 +22,6 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     internal lateinit var userPreferencesDataStore: UserPreferencesDataStore
 
     private var themeId: AppTheme = AppTheme.LIGHT
-    private var tabConfiguration: TabConfiguration = TabConfiguration.DRAWER_BOTTOM
-    private var shouldRunOnResumeActions = false
 
     /**
      * Override this to provide an alternate theme that should be set for every instance of this
@@ -35,7 +33,6 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
         themeId = userPreferencesDataStore.useTheme.getUnsafe()
-        tabConfiguration = userPreferencesDataStore.tabConfiguration.getUnsafe()
 
         // set the theme
         setTheme(
@@ -62,28 +59,10 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         }
     }
 
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus && shouldRunOnResumeActions) {
-            shouldRunOnResumeActions = false
-            onWindowVisibleToUserAfterResume()
-        }
-    }
-
-    /**
-     * Called after the activity is resumed
-     * and the UI becomes visible to the user.
-     * Called by onWindowFocusChanged only if
-     * onResume has been called.
-     */
-    protected open fun onWindowVisibleToUserAfterResume() = Unit
-
     override fun onResume() {
         super.onResume()
         resetPreferences()
-        shouldRunOnResumeActions = true
-        val nextTabConfiguration = userPreferencesDataStore.tabConfiguration.getUnsafe()
-        if (themeId != userPreferencesDataStore.useTheme.getUnsafe() || tabConfiguration != nextTabConfiguration) {
+        if (themeId != userPreferencesDataStore.useTheme.getUnsafe()) {
             restart()
         }
     }
