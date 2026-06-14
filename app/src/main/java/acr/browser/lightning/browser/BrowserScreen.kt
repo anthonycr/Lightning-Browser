@@ -290,7 +290,10 @@ fun DrawerTabs(
                         .weight(1f, false),
                     state = lazyListState
                 ) {
-                    itemsIndexed(browserViewState.tabs) { index, tab ->
+                    itemsIndexed(
+                        items = browserViewState.tabs,
+                        key = { _, item -> item.id }
+                    ) { index, tab ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -529,7 +532,10 @@ fun TopTabDesktopNavigationBar(
             overscrollEffect = null,
             horizontalArrangement = Arrangement.spacedBy((-16).dp)
         ) {
-            itemsIndexed(browserViewState.tabs) { index, tab ->
+            itemsIndexed(
+                items = browserViewState.tabs,
+                key = { _, item -> item.id }
+            ) { index, tab ->
                 Row(
                     modifier = Modifier
                         .width(175.dp)
@@ -953,7 +959,8 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserVi
             )
         }
         DropdownMenu(
-            modifier = Modifier.align(Alignment.BottomEnd)
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
                 .defaultMinSize(minWidth = 175.dp),
             shape = MaterialTheme.shapes.small,
             properties = PopupProperties(clippingEnabled = false),
@@ -1227,7 +1234,10 @@ fun TabsBottomSheet(
             contentPadding = PaddingValues(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            itemsIndexed(browserViewState.tabs) { index, tab ->
+            itemsIndexed(
+                items = browserViewState.tabs,
+                key = { _, item -> item.id }
+            ) { index, tab ->
                 Column(
                     modifier = Modifier
                         .width(150.dp)
