@@ -1,7 +1,6 @@
 package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.BrowserApp
-import acr.browser.lightning.ThemableBrowserActivity
 import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.dialog.LightningDialogBuilder
@@ -32,8 +31,6 @@ interface AppComponent {
     }
 
     fun inject(builder: LightningDialogBuilder)
-
-    fun inject(activity: ThemableBrowserActivity)
 
     fun inject(app: BrowserApp)
 

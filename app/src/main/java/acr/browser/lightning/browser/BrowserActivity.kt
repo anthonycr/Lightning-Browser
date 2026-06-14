@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.R
-import acr.browser.lightning.ThemableBrowserActivity
+import acr.browser.lightning.ThemableActivity
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.keys.KeyEventAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
@@ -41,7 +41,7 @@ import javax.inject.Named
  * The base browser activity that governs the browsing experience for both default and incognito
  * browsers.
  */
-abstract class BrowserActivity : ThemableBrowserActivity() {
+abstract class BrowserActivity : ThemableActivity() {
 
     @Suppress("ConvertLambdaToReference")
     private val launcher = registerForActivityResult(

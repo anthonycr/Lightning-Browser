@@ -1,9 +1,10 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.R
+import acr.browser.lightning.ThemableActivity
 import acr.browser.lightning.browser.menu.MenuSelection
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.compose.AppTheme
+import acr.browser.lightning.compose.BrowserTheme
 import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
@@ -121,7 +122,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.tan
 
 @Composable
-fun BrowserScreen(
+fun ThemableActivity.BrowserScreen(
     tabConfigurationStateProvider: StateProvider<TabConfiguration>,
     browserViewState: BrowserViewState,
     presenter: BrowserPresenter,
@@ -129,7 +130,7 @@ fun BrowserScreen(
     customFrameLayout: FrameLayout,
     suggestionsModel: SuggestionsModel,
 ) {
-    AppTheme(isIncognito = browserViewState.isIncognito) {
+    BrowserTheme(isIncognito = browserViewState.isIncognito) {
         if (browserViewState.showCustomView) {
             CustomView(customFrameLayout)
         } else {
