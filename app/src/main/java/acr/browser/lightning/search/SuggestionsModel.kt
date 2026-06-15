@@ -78,9 +78,9 @@ class SuggestionsModel @Inject constructor(
             // Search - 1
 
             combine(
-                searchEntries,
                 bookmarkEntries,
-                historyEntries
+                historyEntries,
+                searchEntries,
             ) { (bookmarks, history, searches) ->
                 val bookmarkCount =
                     MAX_SUGGESTIONS - 2.coerceAtMost(history.size) - 1.coerceAtMost(searches.size)
