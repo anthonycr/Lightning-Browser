@@ -895,7 +895,7 @@ fun BrowserSearchBarInputField(
                 )
             }
 
-            SslState.None -> Unit
+            SslState.None -> Spacer(modifier = Modifier.padding(start = 16.dp))
             SslState.Valid -> IconButton(
                 modifier = Modifier.size(36.dp),
                 onClick = { presenter.onSslIconClick() }
