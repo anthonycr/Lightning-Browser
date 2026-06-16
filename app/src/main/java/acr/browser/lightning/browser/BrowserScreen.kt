@@ -91,8 +91,10 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -118,6 +120,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.ImagePainter
 import coil3.request.ImageRequest
 import coil3.request.transformations
+import coil3.transform.RoundedCornersTransformation
 import kotlinx.coroutines.launch
 import kotlin.math.tan
 
@@ -1250,7 +1253,7 @@ fun TabsBottomSheet(
                             onLongClick = { presenter.onTabLongClick(index) }
                         )
                         .optionalBorder(tab.isSelected)
-                        .padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
+                        .padding(start = 4.dp, end = 4.dp, bottom = 4.dp)
                 ) {
                     Row(
                         modifier = Modifier
@@ -1294,17 +1297,20 @@ fun TabsBottomSheet(
                             )
                         }
                     }
+                    val corners = with(LocalDensity.current) { 8.dp.toPx() }
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(tab.preview.first)
                             .memoryCacheKey("${tab.preview.second}-${tab.preview.first}")
-                            .transformations(TopCropTransformation)
+                            .transformations(
+                                TopCropTransformation,
+                                RoundedCornersTransformation(corners)
+                            )
                             .build(),
-                        placeholder = null,
+                        placeholder = ColorPainter(MaterialTheme.colorScheme.surface),
                         contentDescription = "test",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.surface)
                             .fillMaxSize()
                             .weight(1f, false),
                     )
