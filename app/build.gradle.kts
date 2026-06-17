@@ -5,7 +5,7 @@ plugins {
     id("com.anthonycr.plugins.mezzanine") version "2.3.0"
     id("com.autonomousapps.dependency-analysis") version "3.15.0"
     id("com.squareup.sort-dependencies") version "0.18.0"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.0"
 }
 
 android {
@@ -98,7 +98,7 @@ dependencies {
     val robolectric = "4.16.1"
     val mezzanineVersion = "2.3.0"
     val daggerVersion = "2.59.2"
-    val kotlin = "2.3.21"
+    val kotlin = "2.4.0"
     val datastore = "1.2.1"
     val coil = "3.4.0"
     val coroutines = "1.11.0"
