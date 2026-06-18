@@ -104,7 +104,7 @@ dependencies {
     val coroutines = "1.11.0"
     val lifecycle = "2.10.0"
 
-    implementation(platform("androidx.compose:compose-bom:2026.05.01"))
+    implementation(platform("androidx.compose:compose-bom:2026.06.00"))
     implementation("androidx.activity:activity:1.13.0")
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.annotation:annotation:1.10.0")
