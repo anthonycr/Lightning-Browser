@@ -295,7 +295,8 @@ fun DrawerTabs(
                 ) {
                     itemsIndexed(
                         items = browserViewState.tabs,
-                        key = { _, item -> item.id }
+                        key = { _, item -> item.id },
+                        contentType = { _, item -> item.isSelected },
                     ) { index, tab ->
                         Row(
                             modifier = Modifier
@@ -537,7 +538,8 @@ fun TopTabDesktopNavigationBar(
         ) {
             itemsIndexed(
                 items = browserViewState.tabs,
-                key = { _, item -> item.id }
+                key = { _, item -> item.id },
+                contentType = { _, item -> item.isSelected },
             ) { index, tab ->
                 Row(
                     modifier = Modifier
@@ -1372,7 +1374,10 @@ fun BookmarksBottomSheet(
             )
         }
         LazyColumn {
-            itemsIndexed(browserViewState.bookmarks) { index, bookmark ->
+            itemsIndexed(
+                items = browserViewState.bookmarks,
+                contentType = { _, item -> item.icon is BrowserViewState.BookmarkListItem.Icon.Folder },
+            ) { index, bookmark ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
