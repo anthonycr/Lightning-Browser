@@ -92,6 +92,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -106,9 +107,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -1102,32 +1101,32 @@ fun TabCountButton(countText: String, onClick: () -> Unit) {
 }
 
 class LetterImage(
-    private val textSize: TextUnit,
-    private val radius: Dp,
+    private val textSize: Float,
+    private val radius: Float,
     private val character: Char,
     override val width: Int,
     override val height: Int,
-    val color: ULong,
+    private val color: Int,
 ) : Image {
 
     private val paint = Paint().apply {
-        color = this@LetterImage.color.toInt()
+        color = this@LetterImage.color
         val boldText = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
         typeface = boldText
-        textSize = this@LetterImage.textSize.value
+        textSize = this@LetterImage.textSize
         isAntiAlias = true
         textAlign = Paint.Align.CENTER
     }
 
     override val size: Long = 0
-    override val shareable: Boolean = true
+    override val shareable: Boolean = false
 
     override fun draw(canvas: Canvas) {
-        val outer = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat())
-        canvas.drawRoundRect(outer, radius.value, radius.value, paint)
+        val outer = RectF(0f, 0f, width.toFloat(), height.toFloat())
+        canvas.drawRoundRect(outer, radius, radius, paint)
 
-        val xPos = (canvas.width / 2)
-        val yPos = ((canvas.height / 2) - ((paint.descent() + paint.ascent()) / 2)).toInt()
+        val xPos = (width / 2)
+        val yPos = ((height / 2) - ((paint.descent() + paint.ascent()) / 2)).toInt()
 
         paint.color = android.graphics.Color.WHITE
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
@@ -1137,12 +1136,13 @@ class LetterImage(
     companion object {
         @Composable
         fun create(
+            density: Density,
             character: Char,
             width: Int,
             height: Int,
         ) = LetterImage(
-            textSize = 14.sp,
-            radius = 6.dp,
+            textSize = with(density) { 14.sp.toPx() },
+            radius = with(density) { 6.dp.toPx() },
             character = character,
             color = when (character.code % 4) {
                 0 -> colorResource(R.color.bookmark_default_blue)
@@ -1150,12 +1150,11 @@ class LetterImage(
                 2 -> colorResource(R.color.bookmark_default_red)
                 3 -> colorResource(R.color.bookmark_default_orange)
                 else -> error("Impossible result from modulus 4")
-            }.value,
+            }.toArgb(),
             width = width,
             height = height,
         )
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -1399,23 +1398,31 @@ fun BookmarksBottomSheet(
                             contentDescription = "test"
                         )
 
-                        is BrowserViewState.BookmarkListItem.Icon.Image -> AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(icon.path)
-                                .build(),
-                            placeholder = ImagePainter(
-                                LetterImage.create(
-                                    character = bookmark.title.toCharArray().first(),
-                                    width = 56.dp.value.toInt(),
-                                    height = 56.dp.value.toInt(),
-                                )
-                            ),
-                            contentDescription = "test",
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier
-                                .size(56.dp)
-                                .padding(horizontal = 16.dp),
-                        )
+                        is BrowserViewState.BookmarkListItem.Icon.Image -> {
+                            val placeholder = ImagePainter(
+                                with(LocalDensity.current) {
+                                    LetterImage.create(
+                                        density = this,
+                                        character = bookmark.title.first(),
+                                        width = 24.dp.toPx().toInt(),
+                                        height = 24.dp.toPx().toInt(),
+                                    )
+                                }
+                            )
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(icon.path)
+                                    .build(),
+                                placeholder = placeholder,
+                                fallback = placeholder,
+                                error = placeholder,
+                                contentDescription = "test",
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .padding(horizontal = 16.dp),
+                            )
+                        }
                     }
                     Text(
                         modifier = Modifier
