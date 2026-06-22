@@ -91,7 +91,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -1312,11 +1311,14 @@ fun TabsBottomSheet(
                                 RoundedCornersTransformation(corners)
                             )
                             .build(),
-                        placeholder = ColorPainter(MaterialTheme.colorScheme.surface),
                         contentDescription = "test",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxSize()
+                            .background(
+                                color = MaterialTheme.colorScheme.surface,
+                                shape = MaterialTheme.shapes.small
+                            )
                             .weight(1f, false),
                     )
                 }
