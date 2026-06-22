@@ -1244,7 +1244,8 @@ fun TabsBottomSheet(
         ) {
             itemsIndexed(
                 items = browserViewState.tabs,
-                key = { _, item -> item.id }
+                key = { _, item -> item.id },
+                contentType = { _, item -> item.isSelected },
             ) { index, tab ->
                 Column(
                     modifier = Modifier
