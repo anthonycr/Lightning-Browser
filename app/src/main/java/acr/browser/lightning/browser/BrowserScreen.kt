@@ -125,7 +125,7 @@ import kotlin.math.tan
 @Composable
 fun ThemableActivity.BrowserScreen(
     tabConfigurationStateProvider: StateProvider<TabConfiguration>,
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     browserFrameLayout: FrameLayout,
     customFrameLayout: FrameLayout,
@@ -189,7 +189,7 @@ fun CustomView(
 @Composable
 fun BottomTabs(
     frameLayout: FrameLayout,
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -217,7 +217,7 @@ fun BottomTabs(
 @Composable
 fun DesktopTabs(
     frameLayout: FrameLayout,
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -244,7 +244,7 @@ fun DesktopTabs(
 @Composable
 fun DrawerTabs(
     frameLayout: FrameLayout,
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -449,7 +449,7 @@ fun BookmarkIcon(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomTabNavigationBar(
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -478,7 +478,7 @@ fun BottomTabNavigationBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopTabNavigationBar(
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     drawerState: DrawerState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
@@ -518,7 +518,7 @@ fun TopTabNavigationBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopTabDesktopNavigationBar(
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -630,7 +630,7 @@ fun TopTabDesktopNavigationBar(
 
 @Composable
 fun BrowserFindInPage(
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
 ) {
     val findInPage = browserViewState.findInPage ?: return
@@ -700,7 +700,7 @@ fun BrowserFindInPage(
 }
 
 @Composable
-fun BrowserProgressIndicator(browserViewState: BrowserViewState) {
+fun BrowserProgressIndicator(browserViewState: BrowserComposeState) {
     if (browserViewState.progress == 100) {
         Spacer(modifier = Modifier.height(4.dp))
     } else {
@@ -716,7 +716,7 @@ fun BrowserProgressIndicator(browserViewState: BrowserViewState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BrowserSearchSuggestions(
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
     searchBarState: SearchBarState,
@@ -848,7 +848,7 @@ fun BrowserSearchSuggestions(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RowScope.BrowserSearchBar(
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -870,7 +870,7 @@ fun RowScope.BrowserSearchBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BrowserSearchBarInputField(
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     searchBarState: SearchBarState,
 ) {
@@ -955,7 +955,7 @@ fun BrowserSearchBarInputField(
 }
 
 @Composable
-fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserViewState) {
+fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserComposeState) {
     Box {
         var dropDownExpanded by remember { mutableStateOf(false) }
         IconButton(onClick = {
@@ -1161,7 +1161,7 @@ class LetterImage(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabsBottomSheet(
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
 ) {
     val lazyListState = rememberLazyListState()
@@ -1345,7 +1345,7 @@ fun Modifier.optionalBorder(apply: Boolean): Modifier {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookmarksBottomSheet(
-    browserViewState: BrowserViewState,
+    browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
 ) {
     if (!browserViewState.openBookmarks) return

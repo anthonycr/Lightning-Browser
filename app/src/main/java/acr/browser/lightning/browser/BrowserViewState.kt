@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser
 
+import acr.browser.lightning.browser.BrowserViewState.BookmarkListItem
 import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.database.Bookmark
@@ -8,6 +9,10 @@ import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.Option
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
 /**
  * The browser view state.
@@ -140,5 +145,68 @@ data class BrowserViewState(
             data object Folder : Icon
             data class Image(val path: String?) : Icon
         }
+    }
+}
+
+class BrowserComposeState(
+    browserViewState: BrowserViewState
+) {
+    // search bar
+    var displayUrl: String by mutableStateOf(browserViewState.displayUrl)
+    var searchQuery: String by mutableStateOf(browserViewState.searchQuery)
+    var searchQuerySelection: Pair<Int, Int> by mutableStateOf(browserViewState.searchQuerySelection)
+    var sslState: SslState by mutableStateOf(browserViewState.sslState)
+    var isRefresh: Boolean by mutableStateOf(browserViewState.isRefresh)
+    var progress: Int by mutableIntStateOf(browserViewState.progress)
+    var enableFullMenu: Boolean by mutableStateOf(browserViewState.enableFullMenu)
+    var themeColor: Option<Int> by mutableStateOf(browserViewState.themeColor)
+
+    // Tabs
+    var isForwardEnabled: Boolean by mutableStateOf(browserViewState.isForwardEnabled)
+    var isBackEnabled: Boolean by mutableStateOf(browserViewState.isBackEnabled)
+
+    // Bookmarks
+    var bookmarks: List<BookmarkListItem> by mutableStateOf(browserViewState.bookmarks)
+    var isBookmarked: Boolean by mutableStateOf(browserViewState.isBookmarked)
+    var isBookmarkEnabled: Boolean by mutableStateOf(browserViewState.isBookmarkEnabled)
+    var isRootFolder: Boolean by mutableStateOf(browserViewState.isRootFolder)
+
+    // Find
+    var findInPage: String? by mutableStateOf(browserViewState.findInPage)
+
+    var isIncognito: Boolean by mutableStateOf(browserViewState.isIncognito)
+
+    // Tabs
+    var tabs: List<TabViewState> by mutableStateOf(browserViewState.tabs)
+    var tabCountText: String by mutableStateOf(browserViewState.tabCountText)
+
+    // Drawers
+    var openBookmarks: Boolean by mutableStateOf(browserViewState.openBookmarks)
+    var openTabs: Boolean by mutableStateOf(browserViewState.openTabs)
+
+    var showCustomView: Boolean by mutableStateOf(browserViewState.showCustomView)
+
+    fun updateFrom(browserViewState: BrowserViewState) {
+        displayUrl = browserViewState.displayUrl
+        searchQuery = browserViewState.searchQuery
+        searchQuerySelection = browserViewState.searchQuerySelection
+        sslState = browserViewState.sslState
+        isRefresh = browserViewState.isRefresh
+        progress = browserViewState.progress
+        enableFullMenu = browserViewState.enableFullMenu
+        themeColor = browserViewState.themeColor
+        isForwardEnabled = browserViewState.isForwardEnabled
+        isBackEnabled = browserViewState.isBackEnabled
+        bookmarks = browserViewState.bookmarks
+        isBookmarked = browserViewState.isBookmarked
+        isBookmarkEnabled = browserViewState.isBookmarkEnabled
+        isRootFolder = browserViewState.isRootFolder
+        findInPage = browserViewState.findInPage
+        isIncognito = browserViewState.isIncognito
+        tabs = browserViewState.tabs
+        tabCountText = browserViewState.tabCountText
+        openBookmarks = browserViewState.openBookmarks
+        openTabs = browserViewState.openTabs
+        showCustomView = browserViewState.showCustomView
     }
 }

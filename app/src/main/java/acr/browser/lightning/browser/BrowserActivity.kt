@@ -20,6 +20,7 @@ import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.search.SuggestionsModel
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -29,11 +30,13 @@ import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -89,7 +92,11 @@ abstract class BrowserActivity : ThemableActivity() {
             .inject(this)
 
         setContent {
-            val currentState by presenter.state.collectAsState()
+            val currentState = presenter.state.collectAsMutableState(
+                produceState = { BrowserComposeState(it) },
+                updateFrom = { updateFrom(it) }
+            )
+
             BrowserScreen(
                 tabConfigurationProvider,
                 currentState,
@@ -114,6 +121,21 @@ abstract class BrowserActivity : ThemableActivity() {
         onBackPressedDispatcher.addCallback {
             presenter.onNavigateBack()
         }
+    }
+
+    @SuppressLint("StateFlowValueCalledInComposition")
+    @Composable
+    fun <T, R> StateFlow<T>.collectAsMutableState(
+        produceState: (T) -> R,
+        updateFrom: R.(T) -> Unit
+    ): R {
+        val state = produceState(value)
+        LaunchedEffect(null) {
+            collectLatest {
+                state.updateFrom(it)
+            }
+        }
+        return state
     }
 
     override fun onNewIntent(intent: Intent) {
