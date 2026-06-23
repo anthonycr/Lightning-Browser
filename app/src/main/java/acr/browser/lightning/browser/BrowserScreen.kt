@@ -467,7 +467,7 @@ fun BottomTabNavigationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             BrowserSearchBar(browserViewState, presenter, suggestionsModel)
-            TabCountButton(browserViewState.tabCountText) {
+            TabCountButton(browserViewState) {
                 presenter.onTabCountViewClick()
             }
             BrowserOverflowMenu(presenter, browserViewState)
@@ -491,7 +491,7 @@ fun TopTabNavigationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val coroutineScope = rememberCoroutineScope()
-            TabCountButton(browserViewState.tabCountText) {
+            TabCountButton(browserViewState) {
                 if (drawerState.isAnimationRunning) return@TabCountButton
                 // TODO: Figure out how to do this more like bottom sheet modal
                 coroutineScope.launch {
@@ -1071,7 +1071,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
 }
 
 @Composable
-fun TabCountButton(countText: String, onClick: () -> Unit) {
+fun TabCountButton(browserViewState: BrowserComposeState, onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         val color = MaterialTheme.colorScheme.onSurface
         val textMeasurer = rememberTextMeasurer()
@@ -1085,12 +1085,15 @@ fun TabCountButton(countText: String, onClick: () -> Unit) {
                 cornerRadius = CornerRadius(6.dp.toPx()),
                 style = Stroke(width = 2.dp.toPx()),
             )
-            val textLayout = textMeasurer.measure(style = textStyle, text = countText)
+            val textLayout = textMeasurer.measure(
+                style = textStyle,
+                text = browserViewState.tabCountText
+            )
             val textWidth = textLayout.size.width
             val textHeight = textLayout.size.height
             drawText(
                 textMeasurer = textMeasurer,
-                text = countText,
+                text = browserViewState.tabCountText,
                 style = textStyle,
                 topLeft = Offset(
                     12.dp.toPx() - textWidth / 2,
