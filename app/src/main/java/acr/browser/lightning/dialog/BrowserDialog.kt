@@ -140,15 +140,6 @@ object BrowserDialog {
         activity: Activity,
         @StringRes title: Int,
         @StringRes hint: Int,
-        @StringRes action: Int,
-        textInputListener: (String) -> Unit
-    ) = showEditText(activity, title, hint, null, action, textInputListener)
-
-    @JvmStatic
-    fun showEditText(
-        activity: Activity,
-        @StringRes title: Int,
-        @StringRes hint: Int,
         currentText: String?,
         @StringRes action: Int,
         textInputListener: (String) -> Unit

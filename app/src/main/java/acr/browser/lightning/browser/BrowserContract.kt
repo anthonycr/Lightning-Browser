@@ -72,11 +72,6 @@ interface BrowserContract {
         fun showHistoryOptionsDialog(historyEntry: HistoryEntry)
 
         /**
-         * Show the dialog that allows the user to search the web page for a query.
-         */
-        fun showFindInPageDialog()
-
-        /**
          * Show the options menu for long pressing a link in the web page.
          */
         fun showLinkLongPressDialog(longPress: LongPress)

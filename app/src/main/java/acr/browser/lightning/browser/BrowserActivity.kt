@@ -246,19 +246,6 @@ abstract class BrowserActivity : ThemableActivity() {
     }
 
     /**
-     * @see BrowserContract.View.showFindInPageDialog
-     */
-    fun showFindInPageDialog() {
-        BrowserDialog.showEditText(
-            this,
-            R.string.action_find,
-            R.string.search_hint,
-            R.string.search_hint,
-            presenter::onFindInPage
-        )
-    }
-
-    /**
      * @see BrowserContract.View.showLinkLongPressDialog
      */
     fun showLinkLongPressDialog(longPress: LongPress) {

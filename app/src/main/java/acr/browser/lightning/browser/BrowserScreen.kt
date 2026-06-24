@@ -667,10 +667,13 @@ fun BrowserFindInPage(
                     text = it
                     presenter.onFindInPage(it)
                 },
-                textStyle = MaterialTheme.typography.bodyLarge,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
                 singleLine = true,
                 interactionSource = interactionSource,
-                decorationBox = {
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurfaceVariant),
+                decorationBox = { innerTextField ->
                     Box {
                         if (text.isEmpty()) {
                             Text(
@@ -678,7 +681,7 @@ fun BrowserFindInPage(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                        it()
+                        innerTextField()
                     }
                 }
             )

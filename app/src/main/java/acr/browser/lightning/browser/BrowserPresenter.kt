@@ -470,7 +470,7 @@ class BrowserPresenter @Inject constructor(
                 shouldSelect = true
             )
 
-            MenuSelection.FIND -> view?.showFindInPageDialog()
+            MenuSelection.FIND -> updateState(state.value.copy(findInPage = ""))
             MenuSelection.COPY_LINK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let(navigator::copyPageLink)
 
@@ -516,7 +516,7 @@ class BrowserPresenter @Inject constructor(
      */
     fun onKeyComboClick(keyCombo: KeyCombo) {
         when (keyCombo) {
-            KeyCombo.CTRL_F -> view?.showFindInPageDialog()
+            KeyCombo.CTRL_F -> updateState(state.value.copy(findInPage = ""))
             KeyCombo.CTRL_T -> onNewTabClick()
             KeyCombo.CTRL_W -> onTabClose(state.value.tabs.indexOfCurrentTab())
             KeyCombo.CTRL_Q -> view?.showCloseBrowserDialog(state.value.tabs.indexOfCurrentTab())

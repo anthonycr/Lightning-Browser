@@ -47,10 +47,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.showHistoryOptionsDialog(historyEntry)
     }
 
-    override fun showFindInPageDialog() {
-        browserActivity.showFindInPageDialog()
-    }
-
     override fun showLinkLongPressDialog(longPress: LongPress) {
         browserActivity.showLinkLongPressDialog(longPress)
     }
