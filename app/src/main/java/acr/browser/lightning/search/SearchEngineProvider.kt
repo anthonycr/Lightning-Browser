@@ -70,30 +70,10 @@ class SearchEngineProvider @Inject constructor(
         }
 
     /**
-     * Return the serializable index of the provided [BaseSearchEngine].
-     */
-    fun mapSearchEngineToPreferenceIndex(searchEngine: BaseSearchEngine): SearchEngineChoice =
-        when (searchEngine) {
-            is CustomSearch -> SearchEngineChoice.CUSTOM
-            is GoogleSearch -> SearchEngineChoice.GOOGLE
-            is AskSearch -> SearchEngineChoice.ASK
-            is BingSearch -> SearchEngineChoice.BING
-            is YahooSearch -> SearchEngineChoice.YAHOO
-            is StartPageSearch -> SearchEngineChoice.START_PAGE
-            is StartPageMobileSearch -> SearchEngineChoice.START_PAGE_MOBILE
-            is DuckSearch -> SearchEngineChoice.DUCK
-            is DuckLiteSearch -> SearchEngineChoice.DUCK_LITE
-            is BaiduSearch -> SearchEngineChoice.BAIDU
-            is YandexSearch -> SearchEngineChoice.YANDEX
-            is NaverSearch -> SearchEngineChoice.NAVER
-            else -> throw UnsupportedOperationException("Unknown search engine provided: " + searchEngine.javaClass)
-        }
-
-    /**
      * Provide a list of all supported search engines.
      */
     suspend fun provideAllSearchEngines(): List<BaseSearchEngine> = listOf(
-        CustomSearch(userPreferencesDataStore.searchUrl.getUnsafe()),
+        CustomSearch(userPreferencesDataStore.searchUrl.get()),
         GoogleSearch(),
         AskSearch(),
         BingSearch(),
