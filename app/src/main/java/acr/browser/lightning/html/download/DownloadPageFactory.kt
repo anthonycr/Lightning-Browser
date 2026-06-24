@@ -38,7 +38,7 @@ class DownloadPageFactory @Inject constructor(
     private val themeProvider: ThemeProvider,
     private val coroutineDispatchers: CoroutineDispatchers,
     @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
-    ) : HtmlPageFactory {
+) : HtmlPageFactory {
 
     private fun Int.toColor(): String {
         val string = Integer.toHexString(this)
