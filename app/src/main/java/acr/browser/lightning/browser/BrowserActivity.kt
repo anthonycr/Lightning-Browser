@@ -32,6 +32,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -129,7 +130,7 @@ abstract class BrowserActivity : ThemableActivity() {
         produceState: (T) -> R,
         updateFrom: R.(T) -> Unit
     ): R {
-        val state = produceState(value)
+        val state = remember { produceState(value) }
         LaunchedEffect(null) {
             collectLatest {
                 state.updateFrom(it)
