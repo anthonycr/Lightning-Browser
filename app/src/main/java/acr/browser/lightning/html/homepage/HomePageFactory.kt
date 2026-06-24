@@ -65,7 +65,7 @@ class HomePageFactory @Inject constructor(
                 tag("script") {
                     html(
                         html()
-                            .replace("\${BASE_URL}", queryUrl)
+                            .replace($$"${BASE_URL}", queryUrl)
                             .replace("&", "\\u0026")
                     )
                 }
