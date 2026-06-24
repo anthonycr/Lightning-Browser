@@ -27,13 +27,13 @@ import javax.inject.Inject
  * A factory for the home page.
  */
 class HomePageFactory @Inject constructor(
-    private val application: Application,
+    application: Application,
     private val searchEngineProvider: SearchEngineProvider,
     private val homePageReader: HomePageReader,
     private val themeProvider: ThemeProvider,
     private val coroutineDispatchers: CoroutineDispatchers,
     @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
-    ) : HtmlPageFactory {
+) : HtmlPageFactory {
 
     private val title = application.getString(R.string.home)
 

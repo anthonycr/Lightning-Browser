@@ -30,7 +30,7 @@ import javax.inject.Inject
  */
 class HistoryPageFactory @Inject constructor(
     private val listPageReader: ListPageReader,
-    private val application: Application,
+    application: Application,
     private val historyRepository: HistoryRepository,
     private val themeProvider: ThemeProvider,
     private val coroutineDispatchers: CoroutineDispatchers,
