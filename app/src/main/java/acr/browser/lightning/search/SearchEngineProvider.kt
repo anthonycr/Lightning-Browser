@@ -41,8 +41,8 @@ class SearchEngineProvider @Inject constructor(
     /**
      * Provide the [SuggestionsRepository] that maps to the user's current preference.
      */
-    fun provideSearchSuggestions(): SuggestionsRepository =
-        when (userPreferencesDataStore.searchSuggestionChoice.getUnsafe()) {
+    suspend fun provideSearchSuggestions(): SuggestionsRepository =
+        when (userPreferencesDataStore.searchSuggestionChoice.get()) {
             Suggestions.NONE -> NoOpSuggestionsRepository()
             Suggestions.GOOGLE -> googleSuggestionsModel.get()
             Suggestions.DUCK -> duckSuggestionsModel.get()

@@ -9,6 +9,9 @@ import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.search.suggestions.NoOpSuggestionsRepository
 import acr.browser.lightning.search.suggestions.SuggestionsRepository
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,7 +33,7 @@ class SuggestionsModel @Inject constructor(
 ) {
 
     private var allBookmarks: List<Bookmark.Entry> = emptyList()
-    private var suggestionsRepository: SuggestionsRepository
+    private var suggestionsRepository: Deferred<SuggestionsRepository>
     private val inputFlow = MutableSharedFlow<CharSequence>(replay = 1)
 
     init {
@@ -38,9 +41,9 @@ class SuggestionsModel @Inject constructor(
             allBookmarks = bookmarkRepository.getAllBookmarksSorted()
         }
         suggestionsRepository = if (incognitoMode) {
-            NoOpSuggestionsRepository()
+            CompletableDeferred(NoOpSuggestionsRepository())
         } else {
-            searchEngineProvider.provideSearchSuggestions()
+            appCoroutineScope.async { searchEngineProvider.provideSearchSuggestions() }
         }
     }
 
@@ -63,7 +66,7 @@ class SuggestionsModel @Inject constructor(
         .buffer(1, BufferOverflow.DROP_OLDEST)
         .let { sanitizedQuery ->
             val searchEntries: Flow<List<WebPage>> = sanitizedQuery.map {
-                suggestionsRepository.resultsForSearch(it)
+                suggestionsRepository.await().resultsForSearch(it)
             }
             val bookmarkEntries: Flow<List<WebPage>> = sanitizedQuery.map {
                 getBookmarksForQuery(it)
