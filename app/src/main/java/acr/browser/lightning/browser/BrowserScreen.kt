@@ -974,7 +974,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
                 .align(Alignment.BottomEnd)
                 .defaultMinSize(minWidth = 175.dp),
             shape = MaterialTheme.shapes.small,
-            properties = PopupProperties(clippingEnabled = false),
+            properties = PopupProperties(focusable = true, clippingEnabled = false),
             expanded = dropDownExpanded,
             onDismissRequest = { dropDownExpanded = false }
         ) {
