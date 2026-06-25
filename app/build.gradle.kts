@@ -3,7 +3,7 @@ plugins {
     id("com.github.ben-manes.versions")
     id("com.google.devtools.ksp") version "2.3.9"
     id("com.anthonycr.plugins.mezzanine") version "2.4.0"
-    id("com.autonomousapps.dependency-analysis") version "3.15.0"
+    id("com.autonomousapps.dependency-analysis") version "3.16.0"
     id("com.squareup.sort-dependencies") version "0.19.0"
     id("org.jetbrains.kotlin.plugin.compose") version "2.4.0"
 }
