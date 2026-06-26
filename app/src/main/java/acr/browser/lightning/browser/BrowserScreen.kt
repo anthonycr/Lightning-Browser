@@ -89,7 +89,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
@@ -312,7 +311,7 @@ fun DrawerTabs(
                                     modifier = Modifier
                                         .size(56.dp)
                                         .padding(horizontal = 16.dp),
-                                    bitmap = it.asImageBitmap(),
+                                    bitmap = it,
                                     contentDescription = "test"
                                 )
                             } ?: Icon(
@@ -572,7 +571,7 @@ fun TopTabDesktopNavigationBar(
                             modifier = Modifier
                                 .size(28.dp)
                                 .padding(horizontal = 4.dp),
-                            bitmap = it.asImageBitmap(),
+                            bitmap = it,
                             contentDescription = "test"
                         )
                     } ?: Icon(
@@ -1279,7 +1278,7 @@ fun TabsBottomSheet(
                                 modifier = Modifier
                                     .size(24.dp)
                                     .padding(horizontal = 4.dp),
-                                bitmap = it.asImageBitmap(),
+                                bitmap = it,
                                 contentDescription = "test"
                             )
                         } ?: Icon(
@@ -1310,15 +1309,19 @@ fun TabsBottomSheet(
                             )
                         }
                     }
-                    val corners = with(LocalDensity.current) { 8.dp.toPx() }
+                    val transformations = with(LocalDensity.current) {
+                        remember {
+                            listOf(
+                                TopCropTransformation,
+                                RoundedCornersTransformation(8.dp.toPx())
+                            )
+                        }
+                    }
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(tab.preview.first)
                             .memoryCacheKey("${tab.preview.second}-${tab.preview.first}")
-                            .transformations(
-                                TopCropTransformation,
-                                RoundedCornersTransformation(corners)
-                            )
+                            .transformations(transformations)
                             .build(),
                         contentDescription = "test",
                         contentScale = ContentScale.Crop,

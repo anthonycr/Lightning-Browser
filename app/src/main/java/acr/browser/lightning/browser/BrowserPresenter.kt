@@ -49,6 +49,7 @@ import acr.browser.lightning.utils.isHistoryUrl
 import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.smartUrlFilter
 import androidx.activity.result.ActivityResult
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.net.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -489,7 +490,7 @@ class BrowserPresenter @Inject constructor(
 
     private fun addToHomeScreen() {
         currentTab?.let {
-            navigator.addToHomeScreen(it.url, it.title, it.favicon)
+            navigator.addToHomeScreen(it.url, it.title, it.favicon?.asAndroidBitmap())
         }
     }
 

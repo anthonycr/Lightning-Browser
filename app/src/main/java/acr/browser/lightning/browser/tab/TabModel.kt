@@ -4,10 +4,10 @@ import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.activity.result.ActivityResult
 import androidx.annotation.ColorInt
+import androidx.compose.ui.graphics.ImageBitmap
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -123,12 +123,12 @@ interface TabModel {
     /**
      * The current favicon of the webpage or null if there isn't one.
      */
-    val favicon: Bitmap?
+    val favicon: ImageBitmap?
 
     /**
      * Emits changes to the [favicon].
      */
-    fun faviconChanges(): Flow<Bitmap?>
+    fun faviconChanges(): Flow<ImageBitmap?>
 
     /**
      * A preview of the tab's content.

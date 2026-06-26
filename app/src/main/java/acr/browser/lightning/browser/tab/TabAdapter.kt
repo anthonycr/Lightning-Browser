@@ -22,6 +22,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.createBitmap
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -247,11 +249,11 @@ class TabAdapter @AssistedInject constructor(
             tabWebViewClient.searchQuerySelection = value
         }
 
-    override val favicon: Bitmap?
-        get() = latentInitializer?.let { iconFreeze }
+    override val favicon: ImageBitmap?
+        get() = latentInitializer?.let { iconFreeze.asImageBitmap() }
             ?: tabWebChromeClient.faviconStateFlow.value
 
-    override fun faviconChanges(): Flow<Bitmap?> {
+    override fun faviconChanges(): Flow<ImageBitmap?> {
         // Treat it like a SharedFlow for consistency on presenter side and because frozen tabs have
         // their own icon that the chrome client doesn't know about.
         return tabWebChromeClient.faviconStateFlow.drop(1)
