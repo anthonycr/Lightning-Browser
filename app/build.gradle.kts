@@ -97,7 +97,7 @@ android {
 dependencies {
     val robolectric = "4.16.1"
     val mezzanineVersion = "2.4.0"
-    val daggerVersion = "2.59.2"
+    val daggerVersion = "2.60"
     val kotlin = "2.4.0"
     val datastore = "1.2.1"
     val coil = "3.5.0"
