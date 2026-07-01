@@ -30,7 +30,8 @@ class TabsRepository @Inject constructor(
 
     private val isInitialized = CompletableDeferred<Unit>()
     private val tabsListStateFlow = MutableStateFlow<List<TabModel>>(emptyList())
-    private var selectedTab: TabModel? = null
+
+    override var selectedTab: TabModel? = null
 
     override suspend fun deleteTab(id: Int): Unit = withContext(coroutineDispatchers.main) {
         if (selectedTab?.id == id) {

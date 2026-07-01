@@ -248,6 +248,12 @@ fun DrawerTabs(
     suggestionsModel: SuggestionsModel,
 ) {
     val lazyListState = rememberLazyListState()
+    if (browserViewState.scrollToTab != -1) {
+        LaunchedEffect(browserViewState.scrollToTab) {
+            lazyListState.scrollToItem(browserViewState.scrollToTab)
+            presenter.onTabScroll()
+        }
+    }
     val drawerState = rememberDrawerState(
         initialValue = if (browserViewState.openTabs) {
             DrawerValue.Open
@@ -522,6 +528,12 @@ fun TopTabDesktopNavigationBar(
     suggestionsModel: SuggestionsModel,
 ) {
     val lazyListState = rememberLazyListState()
+    if (browserViewState.scrollToTab != -1) {
+        LaunchedEffect(browserViewState.scrollToTab) {
+            lazyListState.scrollToItem(browserViewState.scrollToTab)
+            presenter.onTabScroll()
+        }
+    }
     Column(
         modifier = Modifier.height(92.dp)
     ) {
@@ -1170,6 +1182,12 @@ fun TabsBottomSheet(
     presenter: BrowserPresenter,
 ) {
     val lazyListState = rememberLazyListState()
+    if (browserViewState.scrollToTab != -1) {
+        LaunchedEffect(browserViewState.scrollToTab) {
+            lazyListState.scrollToItem(browserViewState.scrollToTab)
+            presenter.onTabScroll()
+        }
+    }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(browserViewState.openTabs) }
     if (showBottomSheet != browserViewState.openTabs) {

@@ -164,18 +164,12 @@ class BrowserPresenter @Inject constructor(
             } else {
                 tabs.last()
             }
+            updateState(state.value.updateTabViewState())
             selectTab(model.selectTab(lastTab.id))
         }
 
         browserCoroutineScope.launch {
             model.tabsListChanges().collectLatest { list ->
-                updateState(
-                    state.value.copy(
-                        tabs = list.map { it.asViewState() },
-                        tabCountText = list.size.asTabCountText()
-                    )
-                )
-
                 allTabsJobs.forEach { it.cancel() }
                 allTabsJobs.clear()
                 list.subscribeToUpdates(allTabsJobs)
@@ -183,6 +177,14 @@ class BrowserPresenter @Inject constructor(
                 tabCountNotifier.notifyTabCountChange(list.size)
             }
         }
+    }
+
+    private fun BrowserViewState.updateTabViewState(): BrowserViewState {
+        val selectedId = model.selectedTab?.id
+        return copy(
+            tabs = model.tabsList.map { it.asViewState(it.id == selectedId) },
+            tabCountText = model.tabsList.size.asTabCountText()
+        )
     }
 
     /**
@@ -206,11 +208,11 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun TabModel.asViewState(): TabViewState = TabViewState(
+    private fun TabModel.asViewState(selected: Boolean): TabViewState = TabViewState(
         id = id,
         icon = favicon,
         title = title,
-        isSelected = isForeground,
+        isSelected = selected,
         preview = preview
     )
 
@@ -258,10 +260,9 @@ class BrowserPresenter @Inject constructor(
             updateState(state.value.copy(openTabs = false))
         }
 
+        val updatedState = state.value.updateTabViewState()
         updateState(
-            state.value.copy(
-                tabs = state.value.tabs.map { it.copy(isSelected = it.id == tab.id) }
-            )
+            updatedState.copy(scrollToTab = updatedState.tabs.indexOfFirst { it.isSelected })
         )
 
         tabJobs.forEach { it.cancel() }
@@ -441,6 +442,7 @@ class BrowserPresenter @Inject constructor(
             historyPageFactory.deleteHistoryPage()
 
             model.deleteAllTabs()
+            updateState(state.value.updateTabViewState())
             navigator.closeBrowser()
 
             // System exit needed in the case of receiving
@@ -501,6 +503,7 @@ class BrowserPresenter @Inject constructor(
     ) {
         browserCoroutineScope.launch {
             val tab = model.createTab(tabInitializer, tabType = tabType)
+            updateState(state.value.updateTabViewState())
             if (shouldSelect) {
                 selectTab(model.selectTab(tab.id))
             }
@@ -557,7 +560,9 @@ class BrowserPresenter @Inject constructor(
      * Call when the user selects a tab to switch to at the provided [index].
      */
     fun onTabClick(index: Int) {
-        selectTab(model.selectTab(state.value.tabs[index].id))
+        browserCoroutineScope.launch {
+            selectTab(model.selectTab(state.value.tabs[index].id))
+        }
     }
 
     /**
@@ -596,6 +601,7 @@ class BrowserPresenter @Inject constructor(
 
         browserCoroutineScope.launch {
             model.deleteTab(state.value.tabs[index].id)
+            updateState(state.value.updateTabViewState())
             if (needToSelectNextTab) {
                 nextTab?.id?.let {
                     val shouldClose = currentTab?.tabType == TabModel.Type.EPHEMERAL
@@ -609,6 +615,13 @@ class BrowserPresenter @Inject constructor(
                 }
             }
         }
+    }
+
+    /**
+     * Call when the scroll position changes for the tab list.
+     */
+    fun onTabScroll() {
+        updateState(state.value.copy(scrollToTab = -1))
     }
 
     /**
@@ -703,6 +716,7 @@ class BrowserPresenter @Inject constructor(
     fun onNewTabLongClick() {
         browserCoroutineScope.launch {
             val tab = model.reopenTab()
+            updateState(state.value.updateTabViewState())
             if (tab != null) {
                 selectTab(model.selectTab(tab.id))
             }
@@ -1303,6 +1317,7 @@ class BrowserPresenter @Inject constructor(
                 val currentTabId = currentTab?.id
                 model.tabsList.filter { it.id != id }.forEach {
                     model.deleteTab(it.id)
+                    updateState(state.value.updateTabViewState())
                     if (currentTabId != id) {
                         selectTab(model.selectTab(id))
                     }
@@ -1311,6 +1326,7 @@ class BrowserPresenter @Inject constructor(
 
             BrowserContract.CloseTabEvent.CLOSE_ALL -> browserCoroutineScope.launch {
                 model.deleteAllTabs()
+                updateState(state.value.updateTabViewState())
                 navigator.closeBrowser()
             }
         }

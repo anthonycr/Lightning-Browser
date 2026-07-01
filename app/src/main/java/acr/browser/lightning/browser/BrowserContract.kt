@@ -147,6 +147,11 @@ interface BrowserContract {
         suspend fun reopenTab(): TabModel?
 
         /**
+         * The current selected tab, if there is one.
+         */
+        val selectedTab: TabModel?
+
+        /**
          * Select the tab with the provide [id] as the currently viewed tab.
          */
         fun selectTab(id: Int): TabModel

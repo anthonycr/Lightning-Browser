@@ -79,6 +79,8 @@ data class BrowserViewState(
     val openTabs: Boolean = false,
 
     val showCustomView: Boolean = false,
+
+    val scrollToTab: Int = -1,
 ) {
     sealed interface Dialogs {
         /**
@@ -186,6 +188,8 @@ class BrowserComposeState(
 
     var showCustomView: Boolean by mutableStateOf(browserViewState.showCustomView)
 
+    var scrollToTab: Int by mutableIntStateOf(-1)
+
     fun updateFrom(browserViewState: BrowserViewState) {
         displayUrl = browserViewState.displayUrl
         searchQuery = browserViewState.searchQuery
@@ -208,5 +212,6 @@ class BrowserComposeState(
         openBookmarks = browserViewState.openBookmarks
         openTabs = browserViewState.openTabs
         showCustomView = browserViewState.showCustomView
+        scrollToTab = browserViewState.scrollToTab
     }
 }
