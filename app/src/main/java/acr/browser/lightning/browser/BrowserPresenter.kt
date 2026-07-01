@@ -860,11 +860,18 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
+     * Call when a dialog is dismissed.
+     */
+    fun onDialogDismissed() {
+        updateState(state.value.copy(dialog = null))
+    }
+
+    /**
      * Call when the user clicks on the SSL icon in the search box.
      */
     fun onSslIconClick() {
         currentTab?.sslCertificateInfo?.let {
-            view?.showSslDialog(it)
+            updateState(state.value.copy(dialog = BrowserViewState.Dialogs.SslInfo(it)))
         }
     }
 

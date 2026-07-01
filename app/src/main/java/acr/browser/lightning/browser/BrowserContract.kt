@@ -7,7 +7,6 @@ import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
-import acr.browser.lightning.ssl.SslCertificateInfo
 import android.content.Intent
 import android.graphics.Bitmap
 import kotlinx.coroutines.flow.Flow
@@ -80,11 +79,6 @@ interface BrowserContract {
          * Show the options menu for long pressing an image in the web page.
          */
         fun showImageLongPressDialog(longPress: LongPress)
-
-        /**
-         * Show the informational dialog about the SSL certificate info.
-         */
-        fun showSslDialog(sslCertificateInfo: SslCertificateInfo)
 
         /**
          * Show the close browser dialog for the dialog with the provide [id].

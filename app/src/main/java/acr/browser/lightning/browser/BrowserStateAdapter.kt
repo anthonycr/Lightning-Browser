@@ -4,8 +4,6 @@ import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
-import acr.browser.lightning.ssl.SslCertificateInfo
-import acr.browser.lightning.ssl.showSslDialog
 import android.content.Intent
 
 /**
@@ -53,10 +51,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
 
     override fun showImageLongPressDialog(longPress: LongPress) {
         browserActivity.showImageLongPressDialog(longPress)
-    }
-
-    override fun showSslDialog(sslCertificateInfo: SslCertificateInfo) {
-        browserActivity.showSslDialog(sslCertificateInfo)
     }
 
     override fun showCloseBrowserDialog(id: Int) {

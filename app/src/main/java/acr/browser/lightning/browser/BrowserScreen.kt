@@ -11,12 +11,14 @@ import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.preview.TopCropTransformation
 import acr.browser.lightning.search.SuggestionsModel
+import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import android.graphics.Typeface
+import android.text.format.DateFormat
 import android.widget.FrameLayout
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -441,7 +443,7 @@ fun BrowserDialogs(
     browserViewState: BrowserComposeState,
     browserPresenter: BrowserPresenter,
 ) {
-    when (browserViewState.dialog) {
+    when (val dialog = browserViewState.dialog) {
         is BrowserViewState.Dialogs.AddBookmark -> TODO()
         is BrowserViewState.Dialogs.BookmarkOptions -> TODO()
         is BrowserViewState.Dialogs.CloseBrowser -> TODO()
@@ -455,8 +457,80 @@ fun BrowserDialogs(
         is BrowserViewState.Dialogs.LinkLongPress -> TODO()
         BrowserViewState.Dialogs.LocalFileBlocked -> TODO()
         is BrowserViewState.Dialogs.PageTools -> TODO()
-        is BrowserViewState.Dialogs.SslInfo -> TODO()
+        is BrowserViewState.Dialogs.SslInfo -> SslInfoSheet(dialog.sslDialog, browserPresenter)
         null -> Unit // No dialog
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SslInfoSheet(
+    sslCertificateInfo: SslCertificateInfo,
+    presenter: BrowserPresenter,
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = { presenter.onDialogDismissed() }
+    ) {
+        Row(
+            modifier = Modifier
+                .height(56.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(56.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = when (sslCertificateInfo.sslState) {
+                        is SslState.Invalid -> painterResource(R.drawable.ic_unsecured)
+                        SslState.None -> error("This icon shouldn't show")
+                        SslState.Valid -> painterResource(R.drawable.ic_secured)
+                    },
+                    tint = null,
+                    contentDescription = "test"
+                )
+            }
+            Text(
+                text = sslCertificateInfo.issuedToCommonName,
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(R.string.ssl_info_issued_by),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(text = sslCertificateInfo.issuedByCommonName)
+
+            Text(
+                text = stringResource(R.string.ssl_info_issued_to),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = sslCertificateInfo.issuedToOrganizationName?.takeIf { it.isNotBlank() }
+                    ?: sslCertificateInfo.issuedToCommonName
+            )
+
+            val dateFormat = with(LocalContext.current) {
+                remember { DateFormat.getDateFormat(this) }
+            }
+
+            Text(
+                text = stringResource(R.string.ssl_info_issued_on),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(text = dateFormat.format(sslCertificateInfo.issueDate))
+
+            Text(
+                text = stringResource(R.string.ssl_info_expires_on),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(text = dateFormat.format(sslCertificateInfo.expireDate))
+        }
     }
 }
 
