@@ -209,6 +209,7 @@ fun BottomTabs(
             BrowserFindInPage(browserViewState, presenter)
             BottomTabNavigationBar(browserViewState, presenter, suggestionsModel)
             TabsBottomSheet(browserViewState, presenter)
+            BrowserDialogs(browserViewState, presenter)
         }
     }
 }
@@ -236,6 +237,7 @@ fun DesktopTabs(
                     .background(MaterialTheme.colorScheme.surfaceDim)
                     .weight(1f, false),
             )
+            BrowserDialogs(browserViewState, presenter)
         }
     }
 }
@@ -428,8 +430,33 @@ fun DrawerTabs(
                         .background(MaterialTheme.colorScheme.surfaceDim)
                         .weight(1f, false),
                 )
+                BrowserDialogs(browserViewState, presenter)
             }
         }
+    }
+}
+
+@Composable
+fun BrowserDialogs(
+    browserViewState: BrowserComposeState,
+    browserPresenter: BrowserPresenter,
+) {
+    when (browserViewState.dialog) {
+        is BrowserViewState.Dialogs.AddBookmark -> TODO()
+        is BrowserViewState.Dialogs.BookmarkOptions -> TODO()
+        is BrowserViewState.Dialogs.CloseBrowser -> TODO()
+        is BrowserViewState.Dialogs.DownloadOptions -> TODO()
+        is BrowserViewState.Dialogs.EditBookmark -> TODO()
+        is BrowserViewState.Dialogs.EditFolder -> TODO()
+        BrowserViewState.Dialogs.FindInPage -> TODO()
+        is BrowserViewState.Dialogs.FolderOptions -> TODO()
+        is BrowserViewState.Dialogs.HistoryOptions -> TODO()
+        is BrowserViewState.Dialogs.ImageLongPress -> TODO()
+        is BrowserViewState.Dialogs.LinkLongPress -> TODO()
+        BrowserViewState.Dialogs.LocalFileBlocked -> TODO()
+        is BrowserViewState.Dialogs.PageTools -> TODO()
+        is BrowserViewState.Dialogs.SslInfo -> TODO()
+        null -> Unit // No dialog
     }
 }
 

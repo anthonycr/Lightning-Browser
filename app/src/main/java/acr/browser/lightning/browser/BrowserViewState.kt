@@ -182,6 +182,8 @@ class BrowserComposeState(
     var tabs: List<TabViewState> by mutableStateOf(browserViewState.tabs)
     var tabCountText: String by mutableStateOf(browserViewState.tabCountText)
 
+    var dialog: BrowserViewState.Dialogs? by mutableStateOf(browserViewState.dialog)
+
     // Drawers
     var openBookmarks: Boolean by mutableStateOf(browserViewState.openBookmarks)
     var openTabs: Boolean by mutableStateOf(browserViewState.openTabs)
@@ -209,6 +211,7 @@ class BrowserComposeState(
         isIncognito = browserViewState.isIncognito
         tabs = browserViewState.tabs
         tabCountText = browserViewState.tabCountText
+        dialog = browserViewState.dialog
         openBookmarks = browserViewState.openBookmarks
         openTabs = browserViewState.openTabs
         showCustomView = browserViewState.showCustomView
