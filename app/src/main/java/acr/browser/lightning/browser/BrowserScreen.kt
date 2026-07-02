@@ -450,7 +450,6 @@ fun BrowserDialogs(
         is BrowserViewState.Dialogs.DownloadOptions -> TODO()
         is BrowserViewState.Dialogs.EditBookmark -> TODO()
         is BrowserViewState.Dialogs.EditFolder -> TODO()
-        BrowserViewState.Dialogs.FindInPage -> TODO()
         is BrowserViewState.Dialogs.FolderOptions -> TODO()
         is BrowserViewState.Dialogs.HistoryOptions -> TODO()
         is BrowserViewState.Dialogs.ImageLongPress -> TODO()

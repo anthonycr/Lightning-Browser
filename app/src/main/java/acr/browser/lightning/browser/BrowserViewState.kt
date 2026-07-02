@@ -117,7 +117,6 @@ data class BrowserViewState(
         data class EditFolder(val title: String) : Dialogs
         data class DownloadOptions(val downloadOptionsDialog: DownloadEntry) : Dialogs
         data class HistoryOptions(val historyOptionsDialog: HistoryEntry) : Dialogs
-        data object FindInPage : Dialogs
         data class LinkLongPress(val linkLongPressDialog: LongPress) : Dialogs
         data class ImageLongPress(val imageLongPressDialog: LongPress) : Dialogs
         data class SslInfo(val sslDialog: SslCertificateInfo) : Dialogs
