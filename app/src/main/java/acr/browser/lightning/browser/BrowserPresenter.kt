@@ -938,7 +938,10 @@ class BrowserPresenter @Inject constructor(
                 state.value.copy(dialog = BrowserViewState.Dialogs.BookmarkOptions(item))
             )
 
-            is Bookmark.Folder.Entry -> view?.showFolderOptionsDialog(item)
+            is Bookmark.Folder.Entry -> updateState(
+                state.value.copy(dialog = BrowserViewState.Dialogs.FolderOptions(item))
+            )
+
             Bookmark.Folder.Root -> Unit // Root is not clickable
         }
     }
@@ -1165,6 +1168,7 @@ class BrowserPresenter @Inject constructor(
                     }
                 }
         }
+        updateState(state.value.copy(dialog = null))
     }
 
     /**
@@ -1283,7 +1287,11 @@ class BrowserPresenter @Inject constructor(
                         0,
                         filename.length - BookmarkPageFactory.FILENAME.length - 1
                     )
-                    view?.showFolderOptionsDialog(folderTitle.asFolder())
+                    updateState(
+                        state.value.copy(
+                            dialog = BrowserViewState.Dialogs.FolderOptions(folderTitle.asFolder())
+                        )
+                    )
                 } else {
                     browserCoroutineScope.launch {
                         val bookmark = bookmarkRepository.findBookmarkForUrl(url)

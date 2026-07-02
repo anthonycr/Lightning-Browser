@@ -10,7 +10,6 @@ import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.constant.HTTP
-import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
@@ -182,18 +181,6 @@ abstract class BrowserActivity : ThemableActivity() {
             currentFolder = folder,
             folders = folders,
             onSave = presenter::onBookmarkEditConfirmed
-        )
-    }
-
-    /**
-     * @see BrowserContract.View.showFolderOptionsDialog
-     */
-    fun showFolderOptionsDialog(folder: Bookmark.Folder) {
-        lightningDialogBuilder.showBookmarkFolderLongPressedDialog(
-            activity = this,
-            onClick = {
-                presenter.onFolderOptionClick(folder, it)
-            }
         )
     }
 

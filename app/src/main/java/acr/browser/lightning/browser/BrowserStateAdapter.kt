@@ -1,7 +1,6 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.browser.view.targetUrl.LongPress
-import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.downloads.DownloadEntry
 import android.content.Intent
 
@@ -22,10 +21,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         folders: List<String>
     ) {
         browserActivity.showEditBookmarkDialog(title, url, folder, folders)
-    }
-
-    override fun showFolderOptionsDialog(folder: Bookmark.Folder) {
-        browserActivity.showFolderOptionsDialog(folder)
     }
 
     override fun showEditFolderDialog(title: String) {

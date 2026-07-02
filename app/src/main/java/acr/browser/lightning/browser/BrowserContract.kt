@@ -4,7 +4,6 @@ import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.view.targetUrl.LongPress
-import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.downloads.DownloadEntry
 import android.content.Intent
 import android.graphics.Bitmap
@@ -43,11 +42,6 @@ interface BrowserContract {
             folder: String,
             folders: List<String>
         )
-
-        /**
-         * Show the options dialog for the provided [folder].
-         */
-        fun showFolderOptionsDialog(folder: Bookmark.Folder)
 
         /**
          * Show the edit folder dialog for the folder with the provided [title].

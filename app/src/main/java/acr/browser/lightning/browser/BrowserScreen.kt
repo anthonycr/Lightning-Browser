@@ -456,7 +456,12 @@ fun BrowserDialogs(
         is BrowserViewState.Dialogs.DownloadOptions -> TODO()
         is BrowserViewState.Dialogs.EditBookmark -> TODO()
         is BrowserViewState.Dialogs.EditFolder -> TODO()
-        is BrowserViewState.Dialogs.FolderOptions -> TODO()
+        is BrowserViewState.Dialogs.FolderOptions -> LongPressFolderLinkSheet(
+            browserViewState = browserViewState,
+            presenter = browserPresenter,
+            onClick = { browserPresenter.onFolderOptionClick(dialog.folderOptionsDialog, it) }
+
+        )
         is BrowserViewState.Dialogs.HistoryOptions -> LongPressHistoryLinkSheet(
             browserViewState = browserViewState,
             presenter = browserPresenter,
@@ -470,6 +475,26 @@ fun BrowserDialogs(
         is BrowserViewState.Dialogs.SslInfo -> SslInfoSheet(dialog.sslDialog, browserPresenter)
         null -> Unit // No dialog
     }
+}
+
+@Composable
+fun LongPressFolderLinkSheet(
+    browserViewState: BrowserComposeState,
+    presenter: BrowserPresenter,
+    onClick: (BrowserContract.FolderOptionEvent) -> Unit
+) {
+    ListItemSheet(
+        title = stringResource(R.string.action_folder),
+        items = listOf(
+            DialogItem(title = R.string.dialog_rename_folder) {
+                onClick(BrowserContract.FolderOptionEvent.RENAME)
+            },
+            DialogItem(title = R.string.dialog_remove_folder) {
+                onClick(BrowserContract.FolderOptionEvent.REMOVE)
+            }
+        ),
+        presenter = presenter
+    )
 }
 
 @Composable

@@ -103,18 +103,6 @@ class LightningDialogBuilder @Inject constructor() {
         editBookmarkDialog.resizeAndShow()
     }
 
-    fun showBookmarkFolderLongPressedDialog(
-        activity: Activity,
-        onClick: (BrowserContract.FolderOptionEvent) -> Unit
-    ) = BrowserDialog.show(
-        activity, R.string.action_folder,
-        DialogItem(title = R.string.dialog_rename_folder) {
-            onClick(BrowserContract.FolderOptionEvent.RENAME)
-        },
-        DialogItem(title = R.string.dialog_remove_folder) {
-            onClick(BrowserContract.FolderOptionEvent.REMOVE)
-        })
-
     fun showRenameFolderDialog(
         activity: Activity,
         oldTitle: String,
