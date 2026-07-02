@@ -1218,6 +1218,7 @@ class BrowserPresenter @Inject constructor(
                     }
                 }
         }
+        updateState(state.value.copy(dialog = null))
     }
 
     /**
@@ -1297,9 +1298,14 @@ class BrowserPresenter @Inject constructor(
             } else if (pageUrl.isHistoryUrl()) {
                 browserCoroutineScope.launch {
                     val entries = historyRepository.findHistoryEntriesContaining(url)
-                    entries.firstOrNull()?.let {
-                        view?.showHistoryOptionsDialog(it)
-                    } ?: view?.showHistoryOptionsDialog(HistoryEntry(url = url, title = ""))
+                    updateState(
+                        state.value.copy(
+                            dialog = BrowserViewState.Dialogs.HistoryOptions(
+                                entries.firstOrNull()
+                                    ?: HistoryEntry(url = url, title = "")
+                            )
+                        )
+                    )
                 }
             }
         } else {

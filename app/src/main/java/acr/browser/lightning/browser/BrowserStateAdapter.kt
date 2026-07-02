@@ -2,7 +2,6 @@ package acr.browser.lightning.browser
 
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.database.Bookmark
-import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
 import android.content.Intent
 
@@ -39,10 +38,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
 
     override fun showDownloadOptionsDialog(download: DownloadEntry) {
         browserActivity.showDownloadOptionsDialog(download)
-    }
-
-    override fun showHistoryOptionsDialog(historyEntry: HistoryEntry) {
-        browserActivity.showHistoryOptionsDialog(historyEntry)
     }
 
     override fun showLinkLongPressDialog(longPress: LongPress) {

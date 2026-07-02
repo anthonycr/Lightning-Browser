@@ -11,7 +11,6 @@ import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.database.Bookmark
-import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
@@ -229,18 +228,6 @@ abstract class BrowserActivity : ThemableActivity() {
             activity = this,
             onClick = {
                 presenter.onDownloadOptionClick(download, it)
-            }
-        )
-    }
-
-    /**
-     * @see BrowserContract.View.showHistoryOptionsDialog
-     */
-    fun showHistoryOptionsDialog(historyEntry: HistoryEntry) {
-        lightningDialogBuilder.showLongPressedHistoryLinkDialog(
-            activity = this,
-            onClick = {
-                presenter.onHistoryOptionClick(historyEntry, it)
             }
         )
     }

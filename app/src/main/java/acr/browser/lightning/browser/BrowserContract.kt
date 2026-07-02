@@ -5,7 +5,6 @@ import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.database.Bookmark
-import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
 import android.content.Intent
 import android.graphics.Bitmap
@@ -64,11 +63,6 @@ interface BrowserContract {
          * Show the options dialog for the provided [download].
          */
         fun showDownloadOptionsDialog(download: DownloadEntry)
-
-        /**
-         * Show the options dialog for the provided [historyEntry].
-         */
-        fun showHistoryOptionsDialog(historyEntry: HistoryEntry)
 
         /**
          * Show the options menu for long pressing a link in the web page.

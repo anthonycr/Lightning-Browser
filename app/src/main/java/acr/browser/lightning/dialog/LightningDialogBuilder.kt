@@ -167,31 +167,4 @@ class LightningDialogBuilder @Inject constructor() {
             onSave(oldTitle, text)
         }
     }
-
-    fun showLongPressedHistoryLinkDialog(
-        activity: Activity,
-        onClick: (BrowserContract.HistoryOptionEvent) -> Unit
-    ) = BrowserDialog.show(
-        activity, R.string.action_history,
-        DialogItem(title = R.string.dialog_open_new_tab) {
-            onClick(BrowserContract.HistoryOptionEvent.NEW_TAB)
-        },
-        DialogItem(title = R.string.dialog_open_background_tab) {
-            onClick(BrowserContract.HistoryOptionEvent.BACKGROUND_TAB)
-        },
-        DialogItem(
-            title = R.string.dialog_open_incognito_tab,
-            isConditionMet = activity is DefaultBrowserActivity
-        ) {
-            onClick(BrowserContract.HistoryOptionEvent.INCOGNITO_TAB)
-        },
-        DialogItem(title = R.string.action_share) {
-            onClick(BrowserContract.HistoryOptionEvent.SHARE)
-        },
-        DialogItem(title = R.string.dialog_copy_link) {
-            onClick(BrowserContract.HistoryOptionEvent.COPY_LINK)
-        },
-        DialogItem(title = R.string.dialog_remove_from_history) {
-            onClick(BrowserContract.HistoryOptionEvent.REMOVE)
-        })
 }

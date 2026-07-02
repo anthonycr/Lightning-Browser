@@ -9,6 +9,7 @@ import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
+import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.preview.TopCropTransformation
 import acr.browser.lightning.search.SuggestionsModel
 import acr.browser.lightning.ssl.SslCertificateInfo
@@ -451,13 +452,100 @@ fun BrowserDialogs(
         is BrowserViewState.Dialogs.EditBookmark -> TODO()
         is BrowserViewState.Dialogs.EditFolder -> TODO()
         is BrowserViewState.Dialogs.FolderOptions -> TODO()
-        is BrowserViewState.Dialogs.HistoryOptions -> TODO()
+        is BrowserViewState.Dialogs.HistoryOptions -> LongPressHistoryLinkSheet(
+            browserViewState = browserViewState,
+            presenter = browserPresenter,
+            onClick = { browserPresenter.onHistoryOptionClick(dialog.historyOptionsDialog, it) }
+        )
+
         is BrowserViewState.Dialogs.ImageLongPress -> TODO()
         is BrowserViewState.Dialogs.LinkLongPress -> TODO()
         BrowserViewState.Dialogs.LocalFileBlocked -> TODO()
         is BrowserViewState.Dialogs.PageTools -> TODO()
         is BrowserViewState.Dialogs.SslInfo -> SslInfoSheet(dialog.sslDialog, browserPresenter)
         null -> Unit // No dialog
+    }
+}
+
+@Composable
+fun LongPressHistoryLinkSheet(
+    browserViewState: BrowserComposeState,
+    presenter: BrowserPresenter,
+    onClick: (BrowserContract.HistoryOptionEvent) -> Unit
+) {
+    ListItemSheet(
+        title = stringResource(R.string.action_history),
+        items = listOf(
+            DialogItem(title = R.string.dialog_open_new_tab) {
+                onClick(BrowserContract.HistoryOptionEvent.NEW_TAB)
+            },
+            DialogItem(title = R.string.dialog_open_background_tab) {
+                onClick(BrowserContract.HistoryOptionEvent.BACKGROUND_TAB)
+            },
+            DialogItem(
+                title = R.string.dialog_open_incognito_tab,
+                isConditionMet = !browserViewState.isIncognito
+            ) {
+                onClick(BrowserContract.HistoryOptionEvent.INCOGNITO_TAB)
+            },
+            DialogItem(title = R.string.action_share) {
+                onClick(BrowserContract.HistoryOptionEvent.SHARE)
+            },
+            DialogItem(title = R.string.dialog_copy_link) {
+                onClick(BrowserContract.HistoryOptionEvent.COPY_LINK)
+            },
+            DialogItem(title = R.string.dialog_remove_from_history) {
+                onClick(BrowserContract.HistoryOptionEvent.REMOVE)
+            }
+        ),
+        presenter = presenter
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ListItemSheet(
+    title: String,
+    items: List<DialogItem>,
+    presenter: BrowserPresenter,
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = { presenter.onDialogDismissed() }
+    ) {
+        Row(
+            modifier = Modifier
+                .height(56.dp)
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
+        Column {
+            items.forEach { item ->
+                if (item.isConditionMet) {
+                    Row(
+                        modifier = Modifier
+                            .height(56.dp)
+                            .fillMaxWidth()
+                            .clickable(onClick = { item.onClick() }),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(16.dp),
+                            text = stringResource(item.title),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
