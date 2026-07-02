@@ -1192,7 +1192,7 @@ class BrowserPresenter @Inject constructor(
         when (option) {
             BrowserContract.DownloadOptionEvent.DELETE ->
                 browserCoroutineScope.launch {
-                    downloadsRepository.deleteAllDownloads()
+                    downloadsRepository.deleteDownload(download.url)
                     if (currentTab?.url?.isDownloadsUrl() == true) {
                         reload()
                     }
@@ -1200,7 +1200,7 @@ class BrowserPresenter @Inject constructor(
 
             BrowserContract.DownloadOptionEvent.DELETE_ALL ->
                 browserCoroutineScope.launch {
-                    downloadsRepository.deleteDownload(download.url)
+                    downloadsRepository.deleteAllDownloads()
                     if (currentTab?.url?.isDownloadsUrl() == true) {
                         reload()
                     }
@@ -1321,7 +1321,11 @@ class BrowserPresenter @Inject constructor(
                 browserCoroutineScope.launch {
                     val download = downloadsRepository.findDownloadForUrl(url)
                     if (download != null) {
-                        view?.showDownloadOptionsDialog(download)
+                        updateState(
+                            state.value.copy(
+                                dialog = BrowserViewState.Dialogs.DownloadOptions(download)
+                            )
+                        )
                     }
                 }
             } else if (pageUrl.isHistoryUrl()) {

@@ -8,7 +8,6 @@ import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.TabPager
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.compose.StateProvider
-import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
@@ -190,18 +189,6 @@ abstract class BrowserActivity : ThemableActivity() {
             activity = this,
             oldTitle = oldTitle,
             onSave = presenter::onBookmarkFolderRenameConfirmed
-        )
-    }
-
-    /**
-     * @see BrowserContract.View.showDownloadOptionsDialog
-     */
-    fun showDownloadOptionsDialog(download: DownloadEntry) {
-        lightningDialogBuilder.showLongPressedDialogForDownloadUrl(
-            activity = this,
-            onClick = {
-                presenter.onDownloadOptionClick(download, it)
-            }
         )
     }
 

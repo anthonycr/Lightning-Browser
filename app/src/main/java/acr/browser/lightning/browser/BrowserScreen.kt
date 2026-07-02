@@ -459,7 +459,11 @@ fun BrowserDialogs(
             onClick = { browserPresenter.onCloseBrowserEvent(dialog.selectedTab, it) }
         )
 
-        is BrowserViewState.Dialogs.DownloadOptions -> TODO()
+        is BrowserViewState.Dialogs.DownloadOptions -> DownloadOptionsSheet(
+            presenter = browserPresenter,
+            onClick = { browserPresenter.onDownloadOptionClick(dialog.downloadOptionsDialog, it) }
+        )
+
         is BrowserViewState.Dialogs.EditBookmark -> TODO()
         is BrowserViewState.Dialogs.EditFolder -> TODO()
         is BrowserViewState.Dialogs.FolderOptions -> LongPressFolderLinkSheet(
@@ -492,6 +496,25 @@ fun BrowserDialogs(
         is BrowserViewState.Dialogs.SslInfo -> SslInfoSheet(dialog.sslDialog, browserPresenter)
         null -> Unit // No dialog
     }
+}
+
+@Composable
+fun DownloadOptionsSheet(
+    presenter: BrowserPresenter,
+    onClick: (BrowserContract.DownloadOptionEvent) -> Unit
+) {
+    ListItemSheet(
+        title = stringResource(R.string.action_downloads),
+        items = listOf(
+            DialogItem(title = R.string.dialog_delete_all_downloads) {
+                onClick(BrowserContract.DownloadOptionEvent.DELETE_ALL)
+            },
+            DialogItem(title = R.string.dialog_delete_download) {
+                onClick(BrowserContract.DownloadOptionEvent.DELETE)
+            },
+        ),
+        presenter = presenter
+    )
 }
 
 @Composable

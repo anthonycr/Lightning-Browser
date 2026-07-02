@@ -1,7 +1,6 @@
 package acr.browser.lightning.dialog
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.BrowserContract
 import acr.browser.lightning.databinding.DialogEditBookmarkBinding
 import acr.browser.lightning.extensions.resizeAndShow
 import android.app.Activity
@@ -16,25 +15,6 @@ import javax.inject.Inject
  */
 @Reusable
 class LightningDialogBuilder @Inject constructor() {
-
-    /**
-     * Show the appropriated dialog for the long pressed link.
-     *
-     * @param activity used to show the dialog
-     */
-    // TODO allow individual downloads to be deleted.
-    fun showLongPressedDialogForDownloadUrl(
-        activity: Activity,
-        onClick: (BrowserContract.DownloadOptionEvent) -> Unit
-    ) = BrowserDialog.show(
-        activity, R.string.action_downloads,
-        DialogItem(title = R.string.dialog_delete_all_downloads) {
-            onClick(BrowserContract.DownloadOptionEvent.DELETE_ALL)
-        },
-        DialogItem(title = R.string.dialog_delete_all_downloads) {
-            onClick(BrowserContract.DownloadOptionEvent.DELETE)
-        }
-    )
 
     /**
      * Show the add bookmark dialog. Shows a dialog with the title and URL pre-populated.

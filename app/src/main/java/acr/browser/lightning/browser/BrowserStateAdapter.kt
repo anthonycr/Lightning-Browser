@@ -1,6 +1,5 @@
 package acr.browser.lightning.browser
 
-import acr.browser.lightning.database.downloads.DownloadEntry
 import android.content.Intent
 
 /**
@@ -24,10 +23,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
 
     override fun showEditFolderDialog(title: String) {
         browserActivity.showEditFolderDialog(title)
-    }
-
-    override fun showDownloadOptionsDialog(download: DownloadEntry) {
-        browserActivity.showDownloadOptionsDialog(download)
     }
 
     override fun showToolbar() {

@@ -3,7 +3,6 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
-import acr.browser.lightning.database.downloads.DownloadEntry
 import android.content.Intent
 import android.graphics.Bitmap
 import kotlinx.coroutines.flow.Flow
@@ -46,11 +45,6 @@ interface BrowserContract {
          * Show the edit folder dialog for the folder with the provided [title].
          */
         fun showEditFolderDialog(title: String)
-
-        /**
-         * Show the options dialog for the provided [download].
-         */
-        fun showDownloadOptionsDialog(download: DownloadEntry)
 
         /**
          * Show the toolbar/search box if it has been hidden due to scrolling.
