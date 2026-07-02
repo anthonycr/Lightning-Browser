@@ -454,14 +454,17 @@ fun BrowserDialogs(
             onClick = { browserPresenter.onBookmarkOptionClick(dialog.bookmarkOptionsDialog, it) }
         )
 
-        is BrowserViewState.Dialogs.CloseBrowser -> TODO()
+        is BrowserViewState.Dialogs.CloseBrowser -> CloseBrowserSheet(
+            presenter = browserPresenter,
+            onClick = { browserPresenter.onCloseBrowserEvent(dialog.selectedTab, it) }
+        )
+
         is BrowserViewState.Dialogs.DownloadOptions -> TODO()
         is BrowserViewState.Dialogs.EditBookmark -> TODO()
         is BrowserViewState.Dialogs.EditFolder -> TODO()
         is BrowserViewState.Dialogs.FolderOptions -> LongPressFolderLinkSheet(
             presenter = browserPresenter,
             onClick = { browserPresenter.onFolderOptionClick(dialog.folderOptionsDialog, it) }
-
         )
 
         is BrowserViewState.Dialogs.HistoryOptions -> LongPressHistoryLinkSheet(
@@ -489,6 +492,28 @@ fun BrowserDialogs(
         is BrowserViewState.Dialogs.SslInfo -> SslInfoSheet(dialog.sslDialog, browserPresenter)
         null -> Unit // No dialog
     }
+}
+
+@Composable
+fun CloseBrowserSheet(
+    presenter: BrowserPresenter,
+    onClick: (BrowserContract.CloseTabEvent) -> Unit
+) {
+    ListItemSheet(
+        title = stringResource(R.string.dialog_title_close_browser),
+        items = listOf(
+            DialogItem(title = R.string.close_tab) {
+                onClick(BrowserContract.CloseTabEvent.CLOSE_CURRENT)
+            },
+            DialogItem(title = R.string.close_other_tabs) {
+                onClick(BrowserContract.CloseTabEvent.CLOSE_OTHERS)
+            },
+            DialogItem(title = R.string.close_all_tabs) {
+                onClick(BrowserContract.CloseTabEvent.CLOSE_ALL)
+            },
+        ),
+        presenter = presenter
+    )
 }
 
 @Composable

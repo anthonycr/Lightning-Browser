@@ -53,11 +53,6 @@ interface BrowserContract {
         fun showDownloadOptionsDialog(download: DownloadEntry)
 
         /**
-         * Show the close browser dialog for the dialog with the provide [id].
-         */
-        fun showCloseBrowserDialog(id: Int)
-
-        /**
          * Show the toolbar/search box if it has been hidden due to scrolling.
          */
         fun showToolbar()

@@ -206,24 +206,6 @@ abstract class BrowserActivity : ThemableActivity() {
     }
 
     /**
-     * @see BrowserContract.View.showCloseBrowserDialog
-     */
-    fun showCloseBrowserDialog(id: Int) {
-        BrowserDialog.show(
-            this, R.string.dialog_title_close_browser,
-            DialogItem(title = R.string.close_tab) {
-                presenter.onCloseBrowserEvent(id, BrowserContract.CloseTabEvent.CLOSE_CURRENT)
-            },
-            DialogItem(title = R.string.close_other_tabs) {
-                presenter.onCloseBrowserEvent(id, BrowserContract.CloseTabEvent.CLOSE_OTHERS)
-            },
-            DialogItem(title = R.string.close_all_tabs, onClick = {
-                presenter.onCloseBrowserEvent(id, BrowserContract.CloseTabEvent.CLOSE_ALL)
-            })
-        )
-    }
-
-    /**
      * @see BrowserContract.View.showToolbar
      */
     fun showToolbar() {

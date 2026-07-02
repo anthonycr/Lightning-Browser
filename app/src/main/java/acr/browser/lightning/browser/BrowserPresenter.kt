@@ -523,7 +523,12 @@ class BrowserPresenter @Inject constructor(
             KeyCombo.CTRL_F -> updateState(state.value.copy(findInPage = ""))
             KeyCombo.CTRL_T -> onNewTabClick()
             KeyCombo.CTRL_W -> onTabClose(state.value.tabs.indexOfCurrentTab())
-            KeyCombo.CTRL_Q -> view?.showCloseBrowserDialog(state.value.tabs.indexOfCurrentTab())
+            KeyCombo.CTRL_Q -> updateState(
+                state.value.copy(
+                    dialog = BrowserViewState.Dialogs.CloseBrowser(state.value.tabs.indexOfCurrentTab())
+                )
+            )
+
             KeyCombo.CTRL_R -> onRefreshOrStopClick()
             KeyCombo.CTRL_TAB -> {
                 val currentIndex = state.value.tabs.indexOfCurrentTab()
@@ -569,7 +574,11 @@ class BrowserPresenter @Inject constructor(
      * Call when the user long presses on a tab at the provided [index].
      */
     fun onTabLongClick(index: Int) {
-        view?.showCloseBrowserDialog(state.value.tabs[index].id)
+        updateState(
+            state.value.copy(
+                dialog = BrowserViewState.Dialogs.CloseBrowser(state.value.tabs[index].id)
+            )
+        )
     }
 
     private fun <T> List<T>.nextSelected(removedIndex: Int): T? {
@@ -663,7 +672,9 @@ class BrowserPresenter @Inject constructor(
             currentTab?.canGoBack() == true -> currentTab?.goBack()
             currentTab?.canGoBack() == false -> if (incognitoMode) {
                 currentTab?.id?.let {
-                    view?.showCloseBrowserDialog(it)
+                    updateState(
+                        state.value.copy(dialog = BrowserViewState.Dialogs.CloseBrowser(it))
+                    )
                 }
             } else if (currentTab?.tabType in listOf(
                     TabModel.Type.EPHEMERAL,
@@ -1246,7 +1257,9 @@ class BrowserPresenter @Inject constructor(
      */
     fun onTabMenuClick() {
         currentTab?.let {
-            view?.showCloseBrowserDialog(it.id)
+            updateState(
+                state.value.copy(dialog = BrowserViewState.Dialogs.CloseBrowser(it.id))
+            )
         }
     }
 
