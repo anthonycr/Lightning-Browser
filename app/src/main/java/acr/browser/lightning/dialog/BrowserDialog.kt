@@ -75,26 +75,6 @@ object BrowserDialog {
         }
     }
 
-    /**
-     * Show a singly selectable list of [DialogItem] with the provided [title]. All items will be
-     * shown, and the first [DialogItem] where [DialogItem.isConditionMet] returns `true` will be
-     * the selected item when the dialog is shown. The dialog has an OK button which just dismisses
-     * the dialog.
-     */
-    fun showListChoices(activity: Activity, @StringRes title: Int, vararg items: DialogItem) {
-        AlertDialog.Builder(activity).apply {
-            setTitle(title)
-
-            val choices = items.map { activity.getString(it.title) }.toTypedArray()
-            val currentChoice = items.indexOfFirst(DialogItem::isConditionMet)
-
-            setSingleChoiceItems(choices, currentChoice) { _, which ->
-                items[which].onClick()
-            }
-            setPositiveButton(activity.getString(R.string.action_ok), null)
-        }.resizeAndShow()
-    }
-
     @JvmStatic
     fun show(activity: Activity, title: String?, vararg items: DialogItem) {
         val builder = AlertDialog.Builder(activity)
@@ -160,15 +140,6 @@ object BrowserDialog {
         activity: Activity,
         @StringRes title: Int,
         @StringRes hint: Int,
-        @StringRes action: Int,
-        textInputListener: (String) -> Unit
-    ) = showEditText(activity, title, hint, null, action, textInputListener)
-
-    @JvmStatic
-    fun showEditText(
-        activity: Activity,
-        @StringRes title: Int,
-        @StringRes hint: Int,
         currentText: String?,
         @StringRes action: Int,
         textInputListener: (String) -> Unit
@@ -197,18 +168,6 @@ object BrowserDialog {
             maxWidth = screenSize - 2 * padding
         }
         dialog.window?.setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
-
-    /**
-     * Show the custom dialog with the custom builder arguments applied.
-     */
-    fun showCustomDialog(activity: Activity?, block: AlertDialog.Builder.(Activity) -> Unit) {
-        activity?.let {
-            AlertDialog.Builder(activity).apply {
-                block(it)
-                resizeAndShow()
-            }
-        }
     }
 
 }

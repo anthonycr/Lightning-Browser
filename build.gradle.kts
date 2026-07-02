@@ -4,12 +4,6 @@ buildscript {
         google()
         mavenCentral()
     }
-
-    extra.apply {
-        set("minSdkVersion", 21)
-        set("targetSdkVersion", 30)
-        set("buildToolsVersion", 30)
-    }
 }
 
 allprojects {

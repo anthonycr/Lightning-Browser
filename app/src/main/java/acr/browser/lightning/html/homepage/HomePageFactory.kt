@@ -1,6 +1,7 @@
 package acr.browser.lightning.html.homepage
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
@@ -15,6 +16,7 @@ import acr.browser.lightning.html.jsoup.style
 import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.search.SearchEngineProvider
+import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -25,11 +27,12 @@ import javax.inject.Inject
  * A factory for the home page.
  */
 class HomePageFactory @Inject constructor(
-    private val application: Application,
+    application: Application,
     private val searchEngineProvider: SearchEngineProvider,
     private val homePageReader: HomePageReader,
     private val themeProvider: ThemeProvider,
     private val coroutineDispatchers: CoroutineDispatchers,
+    @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
 ) : HtmlPageFactory {
 
     private val title = application.getString(R.string.home)
@@ -62,7 +65,7 @@ class HomePageFactory @Inject constructor(
                 tag("script") {
                     html(
                         html()
-                            .replace("\${BASE_URL}", queryUrl)
+                            .replace($$"${BASE_URL}", queryUrl)
                             .replace("&", "\\u0026")
                     )
                 }
@@ -79,8 +82,8 @@ class HomePageFactory @Inject constructor(
     /**
      * Create the home page file.
      */
-    fun createHomePage(): File {
-        val generatedHtml = File(application.filesDir, "generated-html")
+    private suspend fun createHomePage(): File {
+        val generatedHtml = generatedHtmlDir.file.await()
         generatedHtml.mkdirs()
         return File(generatedHtml, FILENAME)
     }

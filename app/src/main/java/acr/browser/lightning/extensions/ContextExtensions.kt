@@ -56,15 +56,6 @@ inline val Context.inflater: LayoutInflater
 inline fun Context.drawable(@DrawableRes drawableRes: Int): Drawable =
     ContextCompat.getDrawable(this, drawableRes)!!
 
-inline fun Context.themedDrawable(
-    @DrawableRes drawableRes: Int,
-    @ColorInt colorInt: Int
-): Drawable {
-    val drawable = ContextCompat.getDrawable(this, drawableRes)!!
-    drawable.setTint(colorInt)
-    return drawable
-}
-
 /**
  * The preferred locale of the user.
  */

@@ -1,6 +1,7 @@
 package acr.browser.lightning.html.history
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
@@ -17,6 +18,7 @@ import acr.browser.lightning.html.jsoup.removeElement
 import acr.browser.lightning.html.jsoup.style
 import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
+import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -28,10 +30,11 @@ import javax.inject.Inject
  */
 class HistoryPageFactory @Inject constructor(
     private val listPageReader: ListPageReader,
-    private val application: Application,
+    application: Application,
     private val historyRepository: HistoryRepository,
     private val themeProvider: ThemeProvider,
     private val coroutineDispatchers: CoroutineDispatchers,
+    @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
 ) : HtmlPageFactory {
 
     private val title = application.getString(R.string.action_history)
@@ -95,8 +98,8 @@ class HistoryPageFactory @Inject constructor(
         }
     }
 
-    private fun createHistoryPage(): File {
-        val generatedHtml = File(application.filesDir, "generated-html")
+    private suspend fun createHistoryPage(): File {
+        val generatedHtml = generatedHtmlDir.file.await()
         generatedHtml.mkdirs()
         return File(generatedHtml, FILENAME)
     }

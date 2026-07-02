@@ -1,16 +1,15 @@
 package acr.browser.lightning.favicon
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.FaviconCacheDir
 import acr.browser.lightning.concurrency.CoroutineDispatchers
-import acr.browser.lightning.extensions.pad
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.DrawableUtils
+import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.annotation.ColorInt
-import androidx.annotation.WorkerThread
 import androidx.core.net.toUri
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -26,9 +25,9 @@ class FaviconModel @Inject constructor(
     private val application: Application,
     private val logger: Logger,
     private val coroutineDispatchers: CoroutineDispatchers,
+    @FaviconCacheDir private val faviconCacheDir: ThreadSafeFileProvider
 ) {
 
-    private val loaderOptions = BitmapFactory.Options()
     private val bookmarkIconSize =
         application.resources.getDimensionPixelSize(R.dimen.material_grid_small_icon)
 
@@ -50,29 +49,18 @@ class FaviconModel @Inject constructor(
     }
 
     /**
-     * Retrieves the favicon for a URL, may be from network or cache.
+     * Creates the cache file path for the favicon image. Path will be in the form of
+     * `[hash of URI host].png`
      *
-     * @param url   The URL that we should retrieve the favicon for.
-     * @param title The title for the web page.
+     * @param url The URI to use as a unique identifier.
+     * @return The path to the cache file or null if the [url] was invalid.
      */
-    suspend fun faviconForUrl(
-        url: String,
-        title: String
-    ): Bitmap = withContext(coroutineDispatchers.io) {
-        val uri = url.toUri().toValidUri()
-            ?: return@withContext createDefaultBitmapForTitle(title).pad()
+    suspend fun getFaviconPathForUrl(url: String): String? = withContext(coroutineDispatchers.io) {
+        val validUri = url.toUri().toValidUri() ?: return@withContext null
 
-        val faviconCacheFile = getFaviconCacheFile(application, uri)
+        val hash = validUri.host.hashCode().toString()
 
-        if (faviconCacheFile.exists()) {
-            val storedFavicon = BitmapFactory.decodeFile(faviconCacheFile.path, loaderOptions)
-
-            if (storedFavicon != null) {
-                return@withContext storedFavicon.pad()
-            }
-        }
-
-        return@withContext createDefaultBitmapForTitle(title).pad()
+        "${faviconCacheDir.file.await().path}/$hash.png"
     }
 
     /**
@@ -86,40 +74,18 @@ class FaviconModel @Inject constructor(
         favicon: Bitmap,
         url: String
     ): Unit = withContext(coroutineDispatchers.io) {
-        val uri = url.toUri().toValidUri() ?: return@withContext
+        val faviconPath = getFaviconPathForUrl(url) ?: return@withContext
 
-        logger.log(TAG, "Caching icon for ${uri.host}")
-        FileOutputStream(getFaviconCacheFile(application, uri)).safeUse {
+        // TODO: Fix incognito cache clear breaking path
+        logger.log(TAG, "Caching icon: $faviconPath")
+        FileOutputStream(File(faviconPath)).safeUse {
             favicon.compress(Bitmap.CompressFormat.PNG, 100, it)
             it.flush()
         }
     }
 
     companion object {
-
-        /**
-         * The folder where favicons are cached.
-         */
-        fun faviconCacheFolder(application: Application): File =
-            File(application.cacheDir, "favicon-cache")
-
         private const val TAG = "FaviconModel"
-
-        /**
-         * Creates the cache file for the favicon image. File name will be in the form of "hash of URI host".png
-         *
-         * @param app the context needed to retrieve the cache directory.
-         * @param validUri the URI to use as a unique identifier.
-         * @return a valid cache file.
-         */
-        @WorkerThread
-        fun getFaviconCacheFile(app: Application, validUri: ValidUri): File {
-            val hash = validUri.host.hashCode().toString()
-
-            val faviconCache = faviconCacheFolder(app)
-            faviconCache.mkdirs()
-            return File(faviconCache, "$hash.png")
-        }
     }
 
 }

@@ -1,6 +1,6 @@
 package acr.browser.lightning.browser.tab
 
-import android.graphics.Bitmap
+import androidx.compose.ui.graphics.ImageBitmap
 
 /**
  * The view state for a tab.
@@ -12,7 +12,7 @@ import android.graphics.Bitmap
  */
 data class TabViewState(
     val id: Int,
-    val icon: Bitmap?,
+    val icon: ImageBitmap?,
     val title: String,
     val isSelected: Boolean,
     val preview: Pair<String?, Long>

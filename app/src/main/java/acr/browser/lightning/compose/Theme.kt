@@ -2,12 +2,16 @@ package acr.browser.lightning.compose
 
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.ThemableActivity
+import android.graphics.Color
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.toArgb
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -86,36 +90,17 @@ private val darkScheme = darkColorScheme(
 )
 
 @Composable
-fun AppTheme(
+fun ThemableActivity.BrowserTheme(
+    isIncognito: Boolean = false,
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    // TODO: Fix settings theme
-    val colorScheme = when {
 //        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
 //            val context = LocalContext.current
 //            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 //        }
-
-        darkTheme -> darkScheme
-        else -> lightScheme
-    }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        content = content
-    )
-}
-
-@Composable
-fun ThemableActivity.BrowserTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
-) {
     val colorScheme = when (appThemePreferenceStoreStateProvider.state.collectAsState().value) {
         null -> null
         AppTheme.LIGHT -> lightScheme
@@ -124,8 +109,24 @@ fun ThemableActivity.BrowserTheme(
     }
 
     if (colorScheme == null) return
+
+    enableEdgeToEdge(
+        statusBarStyle = SystemBarStyle.auto(
+            Color.TRANSPARENT,
+            Color.TRANSPARENT,
+        ) { colorScheme == darkScheme },
+        navigationBarStyle = SystemBarStyle.auto(
+            colorScheme.scrim.toArgb(),
+            colorScheme.scrim.toArgb(),
+        ) { darkTheme },
+    )
+
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = if (isIncognito) {
+            darkScheme
+        } else {
+            colorScheme
+        },
         content = content
     )
 }

@@ -1,7 +1,6 @@
 package acr.browser.lightning.browser.view
 
-import acr.browser.lightning.R
-import acr.browser.lightning.databinding.BrowserBottomTabsBinding
+import acr.browser.lightning.browser.di.BrowserFrame
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
@@ -9,7 +8,6 @@ import acr.browser.lightning.utils.Utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.GestureDetector
-import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -21,16 +19,15 @@ import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.core.view.doOnLayout
-import javax.inject.Inject
 
 /**
  * Coordinates scrolling behavior between a [WebView] and a toolbar/search box.
  */
-class WebViewScrollCoordinator @Inject constructor(
+class WebViewScrollCoordinator constructor(
     activity: Activity,
-    private val bottomTabsLayout: BrowserBottomTabsBinding?,
+//    private val bottomTabsLayout: BrowserBottomTabsBinding?,
     private val browserLayoutContainer: ViewGroup?,
-    private val browserFrame: FrameLayout,
+    @BrowserFrame private val browserFrame: FrameLayout,
     private val toolbarRoot: LinearLayout,
     private val toolbar: View,
     private val userPreferencesDataStore: UserPreferencesDataStore,
@@ -84,28 +81,28 @@ class WebViewScrollCoordinator @Inject constructor(
             }
         } else {
 
-            val tabs = bottomTabsLayout!!
-
-            if (tabs.root.parent == null) {
-                (toolbar.parent as ViewGroup?)?.removeView(toolbar)
-                tabs.bottomTabContainer.addView(toolbar)
-                browserLayoutContainer.addView(
-                    tabs.root,
-                    FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        gravity = Gravity.BOTTOM
-                    }
-                )
-                tabs.root.doOnLayout {
-                    tabs.root.translationY = tabs.bottomTabList.height.toFloat()
-                    val anchor = toolbarRoot.findViewById<View>(R.id.bottom_tabs_anchor)
-                    anchor.layoutParams = anchor.layoutParams.apply {
-                        height = toolbar.height
-                    }
-                }
-            }
+//            val tabs = bottomTabsLayout!!
+//
+//            if (tabs.root.parent == null) {
+//                (toolbar.parent as ViewGroup?)?.removeView(toolbar)
+//                tabs.bottomTabContainer.addView(toolbar)
+//                browserLayoutContainer.addView(
+//                    tabs.root,
+//                    FrameLayout.LayoutParams(
+//                        FrameLayout.LayoutParams.MATCH_PARENT,
+//                        FrameLayout.LayoutParams.WRAP_CONTENT
+//                    ).apply {
+//                        gravity = Gravity.BOTTOM
+//                    }
+//                )
+//                tabs.root.doOnLayout {
+//                    tabs.root.translationY = tabs.bottomTabList.height.toFloat()
+//                    val anchor = toolbarRoot.findViewById<View>(R.id.bottom_tabs_anchor)
+//                    anchor.layoutParams = anchor.layoutParams.apply {
+//                        height = toolbar.height
+//                    }
+//                }
+//            }
         }
     }
 
@@ -124,23 +121,23 @@ class WebViewScrollCoordinator @Inject constructor(
             .translationY(y)
     }
 
-    fun isBottomTabDrawerOpen(): Boolean = bottomTabsLayout?.root?.translationY == 0F
-
-    fun openBottomTabDrawer() {
-        if (bottomTabsLayout!!.root.translationY > 0F) {
-            bottomTabsLayout.root.doOnLayout {
-                bottomTabsLayout.root.animateTranslation(0F)
-            }
-        }
-    }
-
-    fun closeBottomTabDrawer() {
-        if (bottomTabsLayout!!.root.translationY == 0F) {
-            bottomTabsLayout.root.doOnLayout {
-                bottomTabsLayout.root.animateTranslation(bottomTabsLayout.bottomTabList.height.toFloat())
-            }
-        }
-    }
+//    fun isBottomTabDrawerOpen(): Boolean = bottomTabsLayout?.root?.translationY == 0F
+//
+//    fun openBottomTabDrawer() {
+//        if (bottomTabsLayout!!.root.translationY > 0F) {
+//            bottomTabsLayout.root.doOnLayout {
+//                bottomTabsLayout.root.animateTranslation(0F)
+//            }
+//        }
+//    }
+//
+//    fun closeBottomTabDrawer() {
+//        if (bottomTabsLayout!!.root.translationY == 0F) {
+//            bottomTabsLayout.root.doOnLayout {
+//                bottomTabsLayout.root.animateTranslation(bottomTabsLayout.bottomTabList.height.toFloat())
+//            }
+//        }
+//    }
 
     private fun coordinate(toolbar: View, webView: WebView) {
         webView.setCompositeTouchListener("scroll", touchListener)

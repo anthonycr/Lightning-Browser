@@ -1,6 +1,7 @@
 package acr.browser.lightning.html.download
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
@@ -19,6 +20,7 @@ import acr.browser.lightning.html.jsoup.style
 import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -35,6 +37,7 @@ class DownloadPageFactory @Inject constructor(
     private val listPageReader: ListPageReader,
     private val themeProvider: ThemeProvider,
     private val coroutineDispatchers: CoroutineDispatchers,
+    @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
 ) : HtmlPageFactory {
 
     private fun Int.toColor(): String {
@@ -81,8 +84,8 @@ class DownloadPageFactory @Inject constructor(
         "$FILE$page"
     }
 
-    private fun createDownloadsPageFile(): File {
-        val generatedHtml = File(application.filesDir, "generated-html")
+    private suspend fun createDownloadsPageFile(): File {
+        val generatedHtml = generatedHtmlDir.file.await()
         generatedHtml.mkdirs()
         return File(generatedHtml, FILENAME)
     }
