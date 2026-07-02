@@ -446,7 +446,12 @@ fun BrowserDialogs(
 ) {
     when (val dialog = browserViewState.dialog) {
         is BrowserViewState.Dialogs.AddBookmark -> TODO()
-        is BrowserViewState.Dialogs.BookmarkOptions -> TODO()
+        is BrowserViewState.Dialogs.BookmarkOptions -> LongPressBookmarkLinkSheet(
+            browserViewState = browserViewState,
+            presenter = browserPresenter,
+            onClick = { browserPresenter.onBookmarkOptionClick(dialog.bookmarkOptionsDialog, it) }
+        )
+
         is BrowserViewState.Dialogs.CloseBrowser -> TODO()
         is BrowserViewState.Dialogs.DownloadOptions -> TODO()
         is BrowserViewState.Dialogs.EditBookmark -> TODO()
@@ -465,6 +470,44 @@ fun BrowserDialogs(
         is BrowserViewState.Dialogs.SslInfo -> SslInfoSheet(dialog.sslDialog, browserPresenter)
         null -> Unit // No dialog
     }
+}
+
+@Composable
+fun LongPressBookmarkLinkSheet(
+    browserViewState: BrowserComposeState,
+    presenter: BrowserPresenter,
+    onClick: (BrowserContract.BookmarkOptionEvent) -> Unit
+) {
+    ListItemSheet(
+        title = stringResource(R.string.action_bookmarks),
+        items = listOf(
+            DialogItem(title = R.string.dialog_open_new_tab) {
+                onClick(BrowserContract.BookmarkOptionEvent.NEW_TAB)
+            },
+            DialogItem(title = R.string.dialog_open_background_tab) {
+                onClick(BrowserContract.BookmarkOptionEvent.BACKGROUND_TAB)
+            },
+            DialogItem(
+                title = R.string.dialog_open_incognito_tab,
+                isConditionMet = !browserViewState.isIncognito
+            ) {
+                onClick(BrowserContract.BookmarkOptionEvent.INCOGNITO_TAB)
+            },
+            DialogItem(title = R.string.action_share) {
+                onClick(BrowserContract.BookmarkOptionEvent.SHARE)
+            },
+            DialogItem(title = R.string.dialog_copy_link) {
+                onClick(BrowserContract.BookmarkOptionEvent.COPY_LINK)
+            },
+            DialogItem(title = R.string.dialog_remove_bookmark) {
+                onClick(BrowserContract.BookmarkOptionEvent.REMOVE)
+            },
+            DialogItem(title = R.string.dialog_edit_bookmark) {
+                onClick(BrowserContract.BookmarkOptionEvent.EDIT)
+            }
+        ),
+        presenter = presenter
+    )
 }
 
 @Composable

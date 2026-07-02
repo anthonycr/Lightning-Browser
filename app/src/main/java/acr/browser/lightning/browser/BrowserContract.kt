@@ -30,11 +30,6 @@ interface BrowserContract {
         fun showAddBookmarkDialog(title: String, url: String, folders: List<String>)
 
         /**
-         * Show the options dialog for the provided [bookmark].
-         */
-        fun showBookmarkOptionsDialog(bookmark: Bookmark.Entry)
-
-        /**
          * Show the dialog to edit a bookmark.
          *
          * @param title The current title of the bookmark.

@@ -934,7 +934,10 @@ class BrowserPresenter @Inject constructor(
      */
     fun onBookmarkLongClick(index: Int) {
         when (val item = currentBookmarks[index]) {
-            is Bookmark.Entry -> view?.showBookmarkOptionsDialog(item)
+            is Bookmark.Entry -> updateState(
+                state.value.copy(dialog = BrowserViewState.Dialogs.BookmarkOptions(item))
+            )
+
             is Bookmark.Folder.Entry -> view?.showFolderOptionsDialog(item)
             Bookmark.Folder.Root -> Unit // Root is not clickable
         }
@@ -1141,6 +1144,7 @@ class BrowserPresenter @Inject constructor(
                     )
                 }
         }
+        updateState(state.value.copy(dialog = null))
     }
 
     /**
@@ -1284,7 +1288,11 @@ class BrowserPresenter @Inject constructor(
                     browserCoroutineScope.launch {
                         val bookmark = bookmarkRepository.findBookmarkForUrl(url)
                         if (bookmark != null) {
-                            view?.showBookmarkOptionsDialog(bookmark)
+                            updateState(
+                                state.value.copy(
+                                    dialog = BrowserViewState.Dialogs.BookmarkOptions(bookmark)
+                                )
+                            )
                         }
                     }
                 }

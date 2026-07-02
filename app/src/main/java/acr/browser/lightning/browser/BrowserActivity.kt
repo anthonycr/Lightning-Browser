@@ -172,18 +172,6 @@ abstract class BrowserActivity : ThemableActivity() {
     }
 
     /**
-     * @see BrowserContract.View.showBookmarkOptionsDialog
-     */
-    fun showBookmarkOptionsDialog(bookmark: Bookmark.Entry) {
-        lightningDialogBuilder.showLongPressedDialogForBookmarkUrl(
-            activity = this,
-            onClick = {
-                presenter.onBookmarkOptionClick(bookmark, it)
-            }
-        )
-    }
-
-    /**
      * @see BrowserContract.View.showEditBookmarkDialog
      */
     fun showEditBookmarkDialog(title: String, url: String, folder: String, folders: List<String>) {

@@ -1,6 +1,5 @@
 package acr.browser.lightning.dialog
 
-import acr.browser.lightning.DefaultBrowserActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserContract
 import acr.browser.lightning.databinding.DialogEditBookmarkBinding
@@ -17,42 +16,6 @@ import javax.inject.Inject
  */
 @Reusable
 class LightningDialogBuilder @Inject constructor() {
-
-    /**
-     * Show the appropriated dialog for the long pressed link. It means that we try to understand
-     * if the link is relative to a bookmark or is just a folder.
-     *
-     * @param activity used to show the dialog
-     */
-    fun showLongPressedDialogForBookmarkUrl(
-        activity: Activity,
-        onClick: (BrowserContract.BookmarkOptionEvent) -> Unit
-    ) = BrowserDialog.show(
-        activity, R.string.action_bookmarks,
-        DialogItem(title = R.string.dialog_open_new_tab) {
-            onClick(BrowserContract.BookmarkOptionEvent.NEW_TAB)
-        },
-        DialogItem(title = R.string.dialog_open_background_tab) {
-            onClick(BrowserContract.BookmarkOptionEvent.BACKGROUND_TAB)
-        },
-        DialogItem(
-            title = R.string.dialog_open_incognito_tab,
-            isConditionMet = activity is DefaultBrowserActivity
-        ) {
-            onClick(BrowserContract.BookmarkOptionEvent.INCOGNITO_TAB)
-        },
-        DialogItem(title = R.string.action_share) {
-            onClick(BrowserContract.BookmarkOptionEvent.SHARE)
-        },
-        DialogItem(title = R.string.dialog_copy_link) {
-            onClick(BrowserContract.BookmarkOptionEvent.COPY_LINK)
-        },
-        DialogItem(title = R.string.dialog_remove_bookmark) {
-            onClick(BrowserContract.BookmarkOptionEvent.REMOVE)
-        },
-        DialogItem(title = R.string.dialog_edit_bookmark) {
-            onClick(BrowserContract.BookmarkOptionEvent.EDIT)
-        })
 
     /**
      * Show the appropriated dialog for the long pressed link.
