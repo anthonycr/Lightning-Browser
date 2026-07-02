@@ -1326,7 +1326,12 @@ class BrowserPresenter @Inject constructor(
             }
         } else {
             when (longPress.hitCategory) {
-                LongPress.Category.IMAGE -> view?.showImageLongPressDialog(longPress)
+                LongPress.Category.IMAGE -> updateState(
+                    state.value.copy(
+                        dialog = BrowserViewState.Dialogs.ImageLongPress(longPress)
+                    )
+                )
+
                 LongPress.Category.LINK -> updateState(
                     state.value.copy(
                         dialog = BrowserViewState.Dialogs.LinkLongPress(longPress)

@@ -3,7 +3,6 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
-import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.database.downloads.DownloadEntry
 import android.content.Intent
 import android.graphics.Bitmap
@@ -52,11 +51,6 @@ interface BrowserContract {
          * Show the options dialog for the provided [download].
          */
         fun showDownloadOptionsDialog(download: DownloadEntry)
-
-        /**
-         * Show the options menu for long pressing an image in the web page.
-         */
-        fun showImageLongPressDialog(longPress: LongPress)
 
         /**
          * Show the close browser dialog for the dialog with the provide [id].

@@ -7,9 +7,7 @@ import acr.browser.lightning.browser.keys.KeyEventAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.TabPager
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.compose.StateProvider
-import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
@@ -205,53 +203,6 @@ abstract class BrowserActivity : ThemableActivity() {
                 presenter.onDownloadOptionClick(download, it)
             }
         )
-    }
-
-    /**
-     * @see BrowserContract.View.showImageLongPressDialog
-     */
-    fun showImageLongPressDialog(longPress: LongPress) {
-        BrowserDialog.show(
-            this, longPress.targetUrl?.replace(HTTP, ""),
-            DialogItem(title = R.string.dialog_open_new_tab) {
-                presenter.onImageLongPressEvent(
-                    longPress,
-                    BrowserContract.ImageLongPressEvent.NEW_TAB
-                )
-            },
-            DialogItem(title = R.string.dialog_open_background_tab) {
-                presenter.onImageLongPressEvent(
-                    longPress,
-                    BrowserContract.ImageLongPressEvent.BACKGROUND_TAB
-                )
-            },
-            DialogItem(
-                title = R.string.dialog_open_incognito_tab,
-                isConditionMet = !isIncognito()
-            ) {
-                presenter.onImageLongPressEvent(
-                    longPress,
-                    BrowserContract.ImageLongPressEvent.INCOGNITO_TAB
-                )
-            },
-            DialogItem(title = R.string.action_share) {
-                presenter.onImageLongPressEvent(
-                    longPress,
-                    BrowserContract.ImageLongPressEvent.SHARE
-                )
-            },
-            DialogItem(title = R.string.dialog_copy_link) {
-                presenter.onImageLongPressEvent(
-                    longPress,
-                    BrowserContract.ImageLongPressEvent.COPY_LINK
-                )
-            },
-            DialogItem(title = R.string.dialog_download_image) {
-                presenter.onImageLongPressEvent(
-                    longPress,
-                    BrowserContract.ImageLongPressEvent.DOWNLOAD
-                )
-            })
     }
 
     /**

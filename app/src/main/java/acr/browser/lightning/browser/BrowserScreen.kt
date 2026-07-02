@@ -470,13 +470,18 @@ fun BrowserDialogs(
             onClick = { browserPresenter.onHistoryOptionClick(dialog.historyOptionsDialog, it) }
         )
 
-        is BrowserViewState.Dialogs.ImageLongPress -> TODO()
+        is BrowserViewState.Dialogs.ImageLongPress -> LongPressImageLinkSheet(
+            browserViewState = browserViewState,
+            longPress = dialog.imageLongPressDialog,
+            presenter = browserPresenter,
+            onClick = { browserPresenter.onImageLongPressEvent(dialog.imageLongPressDialog, it) }
+        )
+
         is BrowserViewState.Dialogs.LinkLongPress -> LongPressLinkSheet(
             browserViewState = browserViewState,
             longPress = dialog.linkLongPressDialog,
             presenter = browserPresenter,
             onClick = { browserPresenter.onLinkLongPressEvent(dialog.linkLongPressDialog, it) }
-
         )
 
         BrowserViewState.Dialogs.LocalFileBlocked -> TODO()
@@ -484,6 +489,42 @@ fun BrowserDialogs(
         is BrowserViewState.Dialogs.SslInfo -> SslInfoSheet(dialog.sslDialog, browserPresenter)
         null -> Unit // No dialog
     }
+}
+
+@Composable
+fun LongPressImageLinkSheet(
+    browserViewState: BrowserComposeState,
+    longPress: LongPress,
+    presenter: BrowserPresenter,
+    onClick: (BrowserContract.ImageLongPressEvent) -> Unit
+) {
+    ListItemSheet(
+        title = longPress.targetUrl?.replace(HTTP, "").orEmpty(),
+        items = listOf(
+            DialogItem(title = R.string.dialog_open_new_tab) {
+                onClick(BrowserContract.ImageLongPressEvent.NEW_TAB)
+            },
+            DialogItem(title = R.string.dialog_open_background_tab) {
+                onClick(BrowserContract.ImageLongPressEvent.BACKGROUND_TAB)
+            },
+            DialogItem(
+                title = R.string.dialog_open_incognito_tab,
+                isConditionMet = !browserViewState.isIncognito
+            ) {
+                onClick(BrowserContract.ImageLongPressEvent.INCOGNITO_TAB)
+            },
+            DialogItem(title = R.string.action_share) {
+                onClick(BrowserContract.ImageLongPressEvent.SHARE)
+            },
+            DialogItem(title = R.string.dialog_copy_link) {
+                onClick(BrowserContract.ImageLongPressEvent.COPY_LINK)
+            },
+            DialogItem(title = R.string.dialog_download_image) {
+                onClick(BrowserContract.ImageLongPressEvent.DOWNLOAD)
+            }
+        ),
+        presenter = presenter
+    )
 }
 
 @Composable
