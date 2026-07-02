@@ -1206,6 +1206,7 @@ class BrowserPresenter @Inject constructor(
                     }
                 }
         }
+        updateState(state.value.copy(dialog = null))
     }
 
     /**
@@ -1386,6 +1387,7 @@ class BrowserPresenter @Inject constructor(
                 navigator.closeBrowser()
             }
         }
+        updateState(state.value.copy(dialog = null))
     }
 
     /**
@@ -1465,6 +1467,7 @@ class BrowserPresenter @Inject constructor(
                 )
             )
         }
+        updateState(state.value.copy(dialog = null))
     }
 
     /**
