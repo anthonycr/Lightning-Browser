@@ -4,8 +4,10 @@ import acr.browser.lightning.R
 import acr.browser.lightning.ThemableActivity
 import acr.browser.lightning.browser.menu.MenuSelection
 import acr.browser.lightning.browser.ui.TabConfiguration
+import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.compose.BrowserTheme
 import acr.browser.lightning.compose.StateProvider
+import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
@@ -457,11 +459,11 @@ fun BrowserDialogs(
         is BrowserViewState.Dialogs.EditBookmark -> TODO()
         is BrowserViewState.Dialogs.EditFolder -> TODO()
         is BrowserViewState.Dialogs.FolderOptions -> LongPressFolderLinkSheet(
-            browserViewState = browserViewState,
             presenter = browserPresenter,
             onClick = { browserPresenter.onFolderOptionClick(dialog.folderOptionsDialog, it) }
 
         )
+
         is BrowserViewState.Dialogs.HistoryOptions -> LongPressHistoryLinkSheet(
             browserViewState = browserViewState,
             presenter = browserPresenter,
@@ -469,7 +471,14 @@ fun BrowserDialogs(
         )
 
         is BrowserViewState.Dialogs.ImageLongPress -> TODO()
-        is BrowserViewState.Dialogs.LinkLongPress -> TODO()
+        is BrowserViewState.Dialogs.LinkLongPress -> LongPressLinkSheet(
+            browserViewState = browserViewState,
+            longPress = dialog.linkLongPressDialog,
+            presenter = browserPresenter,
+            onClick = { browserPresenter.onLinkLongPressEvent(dialog.linkLongPressDialog, it) }
+
+        )
+
         BrowserViewState.Dialogs.LocalFileBlocked -> TODO()
         is BrowserViewState.Dialogs.PageTools -> TODO()
         is BrowserViewState.Dialogs.SslInfo -> SslInfoSheet(dialog.sslDialog, browserPresenter)
@@ -478,8 +487,40 @@ fun BrowserDialogs(
 }
 
 @Composable
-fun LongPressFolderLinkSheet(
+fun LongPressLinkSheet(
     browserViewState: BrowserComposeState,
+    longPress: LongPress,
+    presenter: BrowserPresenter,
+    onClick: (BrowserContract.LinkLongPressEvent) -> Unit
+) {
+    ListItemSheet(
+        title = longPress.targetUrl?.replace(HTTP, "").orEmpty(),
+        items = listOf(
+            DialogItem(title = R.string.dialog_open_new_tab) {
+                onClick(BrowserContract.LinkLongPressEvent.NEW_TAB)
+            },
+            DialogItem(title = R.string.dialog_open_background_tab) {
+                onClick(BrowserContract.LinkLongPressEvent.BACKGROUND_TAB)
+            },
+            DialogItem(
+                title = R.string.dialog_open_incognito_tab,
+                isConditionMet = !browserViewState.isIncognito
+            ) {
+                onClick(BrowserContract.LinkLongPressEvent.INCOGNITO_TAB)
+            },
+            DialogItem(title = R.string.action_share) {
+                onClick(BrowserContract.LinkLongPressEvent.SHARE)
+            },
+            DialogItem(title = R.string.dialog_copy_link) {
+                onClick(BrowserContract.LinkLongPressEvent.COPY_LINK)
+            }
+        ),
+        presenter = presenter
+    )
+}
+
+@Composable
+fun LongPressFolderLinkSheet(
     presenter: BrowserPresenter,
     onClick: (BrowserContract.FolderOptionEvent) -> Unit
 ) {

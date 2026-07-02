@@ -208,44 +208,6 @@ abstract class BrowserActivity : ThemableActivity() {
     }
 
     /**
-     * @see BrowserContract.View.showLinkLongPressDialog
-     */
-    fun showLinkLongPressDialog(longPress: LongPress) {
-        BrowserDialog.show(
-            this, longPress.targetUrl?.replace(HTTP, ""),
-            DialogItem(title = R.string.dialog_open_new_tab) {
-                presenter.onLinkLongPressEvent(
-                    longPress,
-                    BrowserContract.LinkLongPressEvent.NEW_TAB
-                )
-            },
-            DialogItem(title = R.string.dialog_open_background_tab) {
-                presenter.onLinkLongPressEvent(
-                    longPress,
-                    BrowserContract.LinkLongPressEvent.BACKGROUND_TAB
-                )
-            },
-            DialogItem(
-                title = R.string.dialog_open_incognito_tab,
-                isConditionMet = !isIncognito()
-            ) {
-                presenter.onLinkLongPressEvent(
-                    longPress,
-                    BrowserContract.LinkLongPressEvent.INCOGNITO_TAB
-                )
-            },
-            DialogItem(title = R.string.action_share) {
-                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.SHARE)
-            },
-            DialogItem(title = R.string.dialog_copy_link) {
-                presenter.onLinkLongPressEvent(
-                    longPress,
-                    BrowserContract.LinkLongPressEvent.COPY_LINK
-                )
-            })
-    }
-
-    /**
      * @see BrowserContract.View.showImageLongPressDialog
      */
     fun showImageLongPressDialog(longPress: LongPress) {

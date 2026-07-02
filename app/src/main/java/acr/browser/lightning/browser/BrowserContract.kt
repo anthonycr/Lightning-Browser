@@ -54,11 +54,6 @@ interface BrowserContract {
         fun showDownloadOptionsDialog(download: DownloadEntry)
 
         /**
-         * Show the options menu for long pressing a link in the web page.
-         */
-        fun showLinkLongPressDialog(longPress: LongPress)
-
-        /**
          * Show the options menu for long pressing an image in the web page.
          */
         fun showImageLongPressDialog(longPress: LongPress)

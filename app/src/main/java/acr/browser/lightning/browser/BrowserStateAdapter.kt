@@ -31,10 +31,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.showDownloadOptionsDialog(download)
     }
 
-    override fun showLinkLongPressDialog(longPress: LongPress) {
-        browserActivity.showLinkLongPressDialog(longPress)
-    }
-
     override fun showImageLongPressDialog(longPress: LongPress) {
         browserActivity.showImageLongPressDialog(longPress)
     }

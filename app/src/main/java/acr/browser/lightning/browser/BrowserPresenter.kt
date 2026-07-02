@@ -1327,7 +1327,12 @@ class BrowserPresenter @Inject constructor(
         } else {
             when (longPress.hitCategory) {
                 LongPress.Category.IMAGE -> view?.showImageLongPressDialog(longPress)
-                LongPress.Category.LINK -> view?.showLinkLongPressDialog(longPress)
+                LongPress.Category.LINK -> updateState(
+                    state.value.copy(
+                        dialog = BrowserViewState.Dialogs.LinkLongPress(longPress)
+                    )
+                )
+
                 LongPress.Category.UNKNOWN -> Unit // Do nothing
             }
         }
@@ -1393,6 +1398,7 @@ class BrowserPresenter @Inject constructor(
             BrowserContract.LinkLongPressEvent.COPY_LINK ->
                 longPress.targetUrl?.let(navigator::copyPageLink)
         }
+        updateState(state.value.copy(dialog = null))
     }
 
     /**
