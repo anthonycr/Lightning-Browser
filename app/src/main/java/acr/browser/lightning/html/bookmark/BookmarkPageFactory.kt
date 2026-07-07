@@ -68,17 +68,11 @@ class BookmarkPageFactory @Inject constructor(
             .mapValues { (folder, bookmarks) ->
                 if (folder == Bookmark.Folder.Root) {
                     construct((bookmarks + bookmarkModel.getFoldersSorted()).map {
-                        it.asViewModel(
-                            folderIcon,
-                            defaultIcon
-                        )
+                        it.asViewModel(folderIcon, defaultIcon)
                     })
                 } else {
                     construct(bookmarks.map {
-                        it.asViewModel(
-                            folderIcon,
-                            defaultIcon
-                        )
+                        it.asViewModel(folderIcon, defaultIcon)
                     })
                 }
             }.forEach { (folder, content) ->
