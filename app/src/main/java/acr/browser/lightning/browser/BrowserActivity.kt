@@ -182,17 +182,6 @@ abstract class BrowserActivity : ThemableActivity() {
     }
 
     /**
-     * @see BrowserContract.View.showEditFolderDialog
-     */
-    fun showEditFolderDialog(oldTitle: String) {
-        lightningDialogBuilder.showRenameFolderDialog(
-            activity = this,
-            oldTitle = oldTitle,
-            onSave = presenter::onBookmarkFolderRenameConfirmed
-        )
-    }
-
-    /**
      * @see BrowserContract.View.showToolbar
      */
     fun showToolbar() {

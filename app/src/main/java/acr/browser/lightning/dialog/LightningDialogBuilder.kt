@@ -82,20 +82,4 @@ class LightningDialogBuilder @Inject constructor() {
         }
         editBookmarkDialog.resizeAndShow()
     }
-
-    fun showRenameFolderDialog(
-        activity: Activity,
-        oldTitle: String,
-        onSave: (oldTitle: String, newTitle: String) -> Unit
-    ) = BrowserDialog.showEditText(
-        activity,
-        R.string.title_rename_folder,
-        R.string.hint_title,
-        oldTitle,
-        R.string.action_ok
-    ) { text ->
-        if (text.isNotBlank()) {
-            onSave(oldTitle, text)
-        }
-    }
 }

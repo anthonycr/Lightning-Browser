@@ -1104,6 +1104,7 @@ class BrowserPresenter @Inject constructor(
      * @param newTitle The new title of the folder.
      */
     fun onBookmarkFolderRenameConfirmed(oldTitle: String, newTitle: String) {
+        updateState(state.value.copy(dialog = null))
         browserCoroutineScope.launch {
             bookmarkRepository.renameFolder(oldTitle, newTitle)
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
@@ -1165,8 +1166,12 @@ class BrowserPresenter @Inject constructor(
      * Call when the user clicks on a menu [option] for the provided [folder].
      */
     fun onFolderOptionClick(folder: Bookmark.Folder, option: BrowserContract.FolderOptionEvent) {
+        updateState(state.value.copy(dialog = null))
         when (option) {
-            BrowserContract.FolderOptionEvent.RENAME -> view?.showEditFolderDialog(folder.title)
+            BrowserContract.FolderOptionEvent.RENAME -> updateState(
+                state.value.copy(dialog = BrowserViewState.Dialogs.EditFolder(title = folder.title))
+            )
+
             BrowserContract.FolderOptionEvent.REMOVE ->
                 browserCoroutineScope.launch {
                     bookmarkRepository.deleteFolder(folder.title)
@@ -1179,7 +1184,6 @@ class BrowserPresenter @Inject constructor(
                     }
                 }
         }
-        updateState(state.value.copy(dialog = null))
     }
 
     /**

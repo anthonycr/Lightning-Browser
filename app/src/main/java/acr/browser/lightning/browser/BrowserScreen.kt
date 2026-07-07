@@ -53,6 +53,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -71,6 +73,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -123,8 +126,10 @@ import coil3.compose.ImagePainter
 import coil3.request.ImageRequest
 import coil3.request.transformations
 import coil3.transform.RoundedCornersTransformation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.tan
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun ThemableActivity.BrowserScreen(
@@ -465,7 +470,17 @@ fun BrowserDialogs(
         )
 
         is BrowserViewState.Dialogs.EditBookmark -> TODO()
-        is BrowserViewState.Dialogs.EditFolder -> TODO()
+        is BrowserViewState.Dialogs.EditFolder -> BookmarkFolderRenameSheet(
+            oldTitle = dialog.title,
+            presenter = browserPresenter,
+            onSelected = {
+                browserPresenter.onBookmarkFolderRenameConfirmed(
+                    dialog.title,
+                    it.toString()
+                )
+            }
+        )
+
         is BrowserViewState.Dialogs.FolderOptions -> LongPressFolderLinkSheet(
             presenter = browserPresenter,
             onClick = { browserPresenter.onFolderOptionClick(dialog.folderOptionsDialog, it) }
@@ -1858,6 +1873,50 @@ fun BookmarksBottomSheet(
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BookmarkFolderRenameSheet(
+    oldTitle: String,
+    presenter: BrowserPresenter,
+    onSelected: (CharSequence) -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+
+    ModalBottomSheet(
+        onDismissRequest = { presenter.onDialogDismissed() },
+        sheetState = sheetState
+    ) {
+        Text(
+            text = stringResource(R.string.title_rename_folder),
+            modifier = Modifier.padding(start = 16.dp),
+            style = MaterialTheme.typography.titleMedium
+        )
+        val textFieldState = rememberTextFieldState(oldTitle)
+        TextField(
+            textFieldState,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            placeholder = { Text(stringResource(R.string.hint_title)) }
+        )
+        Button(
+            modifier = Modifier
+                .padding(start = 16.dp),
+            onClick = {
+                scope.launch {
+                    delay(500.milliseconds)
+                    sheetState.hide()
+                    onSelected(textFieldState.text)
+                }
+            }
+        ) {
+            Text(stringResource(R.string.action_ok))
+        }
+    }
+}
+
 
 val TabBackground: Shape = object : Shape {
     override fun createOutline(

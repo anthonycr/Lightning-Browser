@@ -42,11 +42,6 @@ interface BrowserContract {
         )
 
         /**
-         * Show the edit folder dialog for the folder with the provided [title].
-         */
-        fun showEditFolderDialog(title: String)
-
-        /**
          * Show the toolbar/search box if it has been hidden due to scrolling.
          */
         fun showToolbar()

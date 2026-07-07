@@ -21,10 +21,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.showEditBookmarkDialog(title, url, folder, folders)
     }
 
-    override fun showEditFolderDialog(title: String) {
-        browserActivity.showEditFolderDialog(title)
-    }
-
     override fun showToolbar() {
         browserActivity.showToolbar()
     }
