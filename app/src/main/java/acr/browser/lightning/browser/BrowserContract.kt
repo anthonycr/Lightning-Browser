@@ -27,21 +27,6 @@ interface BrowserContract {
         fun showAddBookmarkDialog(title: String, url: String, folders: List<String>)
 
         /**
-         * Show the dialog to edit a bookmark.
-         *
-         * @param title The current title of the bookmark.
-         * @param url The current URL of the bookmark.
-         * @param folder The current folder the bookmark is in.
-         * @param folders The available folders that the bookmark can be moved to.
-         */
-        fun showEditBookmarkDialog(
-            title: String,
-            url: String,
-            folder: String,
-            folders: List<String>
-        )
-
-        /**
          * Show the toolbar/search box if it has been hidden due to scrolling.
          */
         fun showToolbar()

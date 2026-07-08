@@ -1073,6 +1073,7 @@ class BrowserPresenter @Inject constructor(
      * @param folder The name of the folder the bookmark is in.
      */
     fun onBookmarkEditConfirmed(title: String, url: String, folder: String) {
+        updateState(state.value.copy(dialog = null))
         browserCoroutineScope.launch {
             bookmarkRepository.editBookmark(
                 oldBookmark = Bookmark.Entry(
@@ -1151,11 +1152,15 @@ class BrowserPresenter @Inject constructor(
             BrowserContract.BookmarkOptionEvent.EDIT ->
                 browserCoroutineScope.launch {
                     val folders = bookmarkRepository.getFolderNames()
-                    view?.showEditBookmarkDialog(
-                        bookmark.title,
-                        bookmark.url,
-                        bookmark.folder.title,
-                        folders
+                    updateState(
+                        state.value.copy(
+                            dialog = BrowserViewState.Dialogs.EditBookmark(
+                                title = bookmark.title,
+                                url = bookmark.url,
+                                folder = bookmark.folder.title,
+                                folders = folders
+                            )
+                        )
                     )
                 }
         }

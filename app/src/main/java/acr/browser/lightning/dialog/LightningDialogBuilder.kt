@@ -50,36 +50,4 @@ class LightningDialogBuilder @Inject constructor() {
         editBookmarkDialog.setNegativeButton(R.string.action_cancel) { _, _ -> }
         editBookmarkDialog.resizeAndShow()
     }
-
-    fun showEditBookmarkDialog(
-        activity: Activity,
-        currentTitle: String,
-        currentUrl: String,
-        currentFolder: String,
-        folders: List<String>,
-        onSave: (title: String, url: String, folder: String) -> Unit
-    ) {
-        val editBookmarkDialog = AlertDialog.Builder(activity)
-        editBookmarkDialog.setTitle(R.string.dialog_edit_bookmark)
-        val dialogLayout = View.inflate(activity, R.layout.dialog_edit_bookmark, null)
-        val binding = DialogEditBookmarkBinding.bind(dialogLayout)
-        binding.bookmarkTitle.setText(currentTitle)
-        binding.bookmarkUrl.setText(currentUrl)
-        binding.bookmarkFolder.setText(currentFolder)
-
-        val suggestionsAdapter = ArrayAdapter(
-            activity,
-            android.R.layout.simple_dropdown_item_1line, folders
-        )
-        binding.bookmarkFolder.setAdapter(suggestionsAdapter)
-        editBookmarkDialog.setView(dialogLayout)
-        editBookmarkDialog.setPositiveButton(activity.getString(R.string.action_ok)) { _, _ ->
-            onSave(
-                binding.bookmarkTitle.text.toString(),
-                binding.bookmarkUrl.text.toString(),
-                binding.bookmarkFolder.text.toString()
-            )
-        }
-        editBookmarkDialog.resizeAndShow()
-    }
 }

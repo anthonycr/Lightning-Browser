@@ -168,20 +168,6 @@ abstract class BrowserActivity : ThemableActivity() {
     }
 
     /**
-     * @see BrowserContract.View.showEditBookmarkDialog
-     */
-    fun showEditBookmarkDialog(title: String, url: String, folder: String, folders: List<String>) {
-        lightningDialogBuilder.showEditBookmarkDialog(
-            activity = this,
-            currentTitle = title,
-            currentUrl = url,
-            currentFolder = folder,
-            folders = folders,
-            onSave = presenter::onBookmarkEditConfirmed
-        )
-    }
-
-    /**
      * @see BrowserContract.View.showToolbar
      */
     fun showToolbar() {

@@ -61,6 +61,9 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -469,7 +472,17 @@ fun BrowserDialogs(
             onClick = { browserPresenter.onDownloadOptionClick(dialog.downloadOptionsDialog, it) }
         )
 
-        is BrowserViewState.Dialogs.EditBookmark -> TODO()
+        is BrowserViewState.Dialogs.EditBookmark -> BookmarkEditSheet(
+            title = dialog.title,
+            url = dialog.url,
+            folder = dialog.folder,
+            folders = dialog.folders,
+            presenter = browserPresenter,
+            onUpdated = { title, url, folder ->
+                browserPresenter.onBookmarkEditConfirmed(title, url, folder)
+            }
+        )
+
         is BrowserViewState.Dialogs.EditFolder -> BookmarkFolderRenameSheet(
             oldTitle = dialog.title,
             presenter = browserPresenter,
@@ -1870,6 +1883,109 @@ fun BookmarksBottomSheet(
                     )
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BookmarkEditSheet(
+    title: String,
+    url: String,
+    folder: String,
+    folders: List<String>,
+    presenter: BrowserPresenter,
+    onUpdated: (title: String, url: String, folder: String) -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+
+    ModalBottomSheet(
+        onDismissRequest = { presenter.onDialogDismissed() },
+        sheetState = sheetState
+    ) {
+        Text(
+            text = stringResource(R.string.title_edit_bookmark),
+            modifier = Modifier.padding(start = 16.dp),
+            style = MaterialTheme.typography.titleMedium
+        )
+        val titleTextFieldState = rememberTextFieldState(title)
+        TextField(
+            titleTextFieldState,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            label = { Text(stringResource(R.string.hint_title)) },
+            placeholder = { Text(stringResource(R.string.hint_title)) }
+        )
+
+        val urlTextFieldState = rememberTextFieldState(url)
+        TextField(
+            urlTextFieldState,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            label = { Text(stringResource(R.string.hint_url)) },
+            placeholder = { Text(stringResource(R.string.hint_url)) }
+        )
+
+        var expanded by remember { mutableStateOf(false) }
+        var selectedFolder by remember { mutableStateOf(folder) }
+
+        ExposedDropdownMenuBox(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            TextField(
+                value = selectedFolder,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                label = { Text(stringResource(R.string.folder)) },
+                placeholder = { Text(stringResource(R.string.folder)) },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                (listOf("") + folders).forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option, color = MaterialTheme.colorScheme.onSurface) },
+                        onClick = {
+                            selectedFolder = option
+                            expanded = false
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    )
+                }
+            }
+        }
+        Button(
+            modifier = Modifier
+                .padding(start = 16.dp),
+            onClick = {
+                scope.launch {
+                    delay(500.milliseconds)
+                    sheetState.hide()
+                    onUpdated(
+                        titleTextFieldState.text.toString(),
+                        urlTextFieldState.text.toString(),
+                        selectedFolder
+                    )
+                }
+            }
+        ) {
+            Text(stringResource(R.string.action_ok))
         }
     }
 }
