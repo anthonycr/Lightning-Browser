@@ -12,7 +12,6 @@ import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.drawable
-import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.search.SuggestionsModel
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -23,7 +22,6 @@ import android.widget.FrameLayout
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -182,24 +180,6 @@ abstract class BrowserActivity : ThemableActivity() {
                 onClick = presenter::onToggleAdBlocking
             )
         )
-    }
-
-    /**
-     * @see BrowserContract.View.showLocalFileBlockedDialog
-     */
-    fun showLocalFileBlockedDialog() {
-        AlertDialog.Builder(this)
-            .setCancelable(true)
-            .setTitle(R.string.title_warning)
-            .setMessage(R.string.message_blocked_local)
-            .setNegativeButton(android.R.string.cancel) { _, _ ->
-                presenter.onConfirmOpenLocalFile(allow = false)
-            }
-            .setPositiveButton(R.string.action_open) { _, _ ->
-                presenter.onConfirmOpenLocalFile(allow = true)
-            }
-            .setOnCancelListener { presenter.onConfirmOpenLocalFile(allow = false) }
-            .resizeAndShow()
     }
 
     /**

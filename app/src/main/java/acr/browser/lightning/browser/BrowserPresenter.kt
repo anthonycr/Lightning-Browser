@@ -402,7 +402,7 @@ class BrowserPresenter @Inject constructor(
     fun onNewAction(action: BrowserContract.Action) {
         when (action) {
             is BrowserContract.Action.LoadUrl -> if (action.url.isSpecialUrl()) {
-                view?.showLocalFileBlockedDialog()
+                updateState(state.value.copy(dialog = BrowserViewState.Dialogs.LocalFileBlocked))
                 pendingAction = action
             } else {
                 createNewTabAndSelect(
@@ -422,6 +422,7 @@ class BrowserPresenter @Inject constructor(
      * in the browser without the user's knowledge.
      */
     fun onConfirmOpenLocalFile(allow: Boolean) {
+        updateState(state.value.copy(dialog = null))
         if (allow) {
             pendingAction?.let {
                 createNewTabAndSelect(

@@ -16,10 +16,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.showToolsDialog(areAdsAllowed, shouldShowAdBlockOption)
     }
 
-    override fun showLocalFileBlockedDialog() {
-        browserActivity.showLocalFileBlockedDialog()
-    }
-
     override fun showFileChooser(intent: Intent) {
         browserActivity.showFileChooser(intent)
     }

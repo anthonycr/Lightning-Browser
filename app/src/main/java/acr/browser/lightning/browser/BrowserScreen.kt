@@ -466,6 +466,7 @@ fun BrowserDialogs(
                 browserPresenter.onBookmarkConfirmed(title, url, folder)
             }
         )
+
         is BrowserViewState.Dialogs.BookmarkOptions -> LongPressBookmarkLinkSheet(
             browserViewState = browserViewState,
             presenter = browserPresenter,
@@ -530,7 +531,10 @@ fun BrowserDialogs(
             onClick = { browserPresenter.onLinkLongPressEvent(dialog.linkLongPressDialog, it) }
         )
 
-        BrowserViewState.Dialogs.LocalFileBlocked -> TODO()
+        BrowserViewState.Dialogs.LocalFileBlocked -> LocalFileBlockedSheet {
+            browserPresenter.onConfirmOpenLocalFile(it)
+        }
+
         is BrowserViewState.Dialogs.PageTools -> TODO()
         is BrowserViewState.Dialogs.SslInfo -> SslInfoSheet(dialog.sslDialog, browserPresenter)
         null -> Unit // No dialog
@@ -781,6 +785,61 @@ fun ListItemSheet(
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LocalFileBlockedSheet(
+    onConfirmed: (Boolean) -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+
+    ModalBottomSheet(
+        onDismissRequest = { onConfirmed(false) },
+        sheetState = sheetState
+    ) {
+        Text(
+            text = stringResource(R.string.title_warning),
+            modifier = Modifier.padding(start = 16.dp),
+            style = MaterialTheme.typography.titleMedium
+        )
+        Text(
+            text = stringResource(R.string.message_blocked_local),
+            modifier = Modifier.padding(start = 16.dp),
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Button(
+                modifier = Modifier
+                    .padding(start = 16.dp),
+                onClick = {
+                    scope.launch {
+                        delay(500.milliseconds)
+                        sheetState.hide()
+                        onConfirmed(true)
+                    }
+                }
+            ) {
+                Text(stringResource(R.string.action_open))
+            }
+            Button(
+                modifier = Modifier
+                    .padding(start = 16.dp),
+                onClick = {
+                    scope.launch {
+                        delay(500.milliseconds)
+                        sheetState.hide()
+                        onConfirmed(false)
+                    }
+                }
+            ) {
+                Text(stringResource(R.string.action_cancel))
             }
         }
     }

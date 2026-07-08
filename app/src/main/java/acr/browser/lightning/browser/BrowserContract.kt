@@ -33,12 +33,6 @@ interface BrowserContract {
         fun showToolsDialog(areAdsAllowed: Boolean, shouldShowAdBlockOption: Boolean)
 
         /**
-         * Show a warning to the user that they are about to open a local file in the browser that
-         * could be potentially dangerous.
-         */
-        fun showLocalFileBlockedDialog()
-
-        /**
          * Show the file chooser with the provided [intent].
          */
         fun showFileChooser(intent: Intent)
