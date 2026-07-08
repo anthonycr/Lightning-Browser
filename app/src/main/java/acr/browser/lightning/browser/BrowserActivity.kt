@@ -10,7 +10,6 @@ import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
-import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.extensions.resizeAndShow
@@ -58,9 +57,6 @@ abstract class BrowserActivity : ThemableActivity() {
 
     @Inject
     internal lateinit var intentExtractor: IntentExtractor
-
-    @Inject
-    internal lateinit var lightningDialogBuilder: LightningDialogBuilder
 
     @Named("tab")
     @Inject
@@ -152,19 +148,6 @@ abstract class BrowserActivity : ThemableActivity() {
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         return keyEventAdapter.adaptKeyEvent(event)?.let(presenter::onKeyComboClick)?.let { true }
             ?: super.onKeyUp(keyCode, event)
-    }
-
-    /**
-     * @see BrowserContract.View.showAddBookmarkDialog
-     */
-    fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {
-        lightningDialogBuilder.showAddBookmarkDialog(
-            activity = this,
-            currentTitle = title,
-            currentUrl = url,
-            folders = folders,
-            onSave = presenter::onBookmarkConfirmed
-        )
     }
 
     /**

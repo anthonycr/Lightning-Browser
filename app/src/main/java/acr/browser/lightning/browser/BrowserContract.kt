@@ -18,15 +18,6 @@ interface BrowserContract {
     interface View {
 
         /**
-         * Show the dialog to add a bookmark for the current page.
-         *
-         * @param title The current title of the page.
-         * @param url The current URL of the page.
-         * @param folders The available folders that the bookmark can be moved to.
-         */
-        fun showAddBookmarkDialog(title: String, url: String, folders: List<String>)
-
-        /**
          * Show the toolbar/search box if it has been hidden due to scrolling.
          */
         fun showToolbar()

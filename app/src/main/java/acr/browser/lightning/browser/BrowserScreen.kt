@@ -455,7 +455,17 @@ fun BrowserDialogs(
     browserPresenter: BrowserPresenter,
 ) {
     when (val dialog = browserViewState.dialog) {
-        is BrowserViewState.Dialogs.AddBookmark -> TODO()
+        is BrowserViewState.Dialogs.AddBookmark -> BookmarkAddOrEditSheet(
+            edit = false,
+            title = dialog.title,
+            url = dialog.url,
+            folder = "",
+            folders = dialog.folders,
+            presenter = browserPresenter,
+            onConfirmed = { title, url, folder ->
+                browserPresenter.onBookmarkConfirmed(title, url, folder)
+            }
+        )
         is BrowserViewState.Dialogs.BookmarkOptions -> LongPressBookmarkLinkSheet(
             browserViewState = browserViewState,
             presenter = browserPresenter,
@@ -472,13 +482,14 @@ fun BrowserDialogs(
             onClick = { browserPresenter.onDownloadOptionClick(dialog.downloadOptionsDialog, it) }
         )
 
-        is BrowserViewState.Dialogs.EditBookmark -> BookmarkEditSheet(
+        is BrowserViewState.Dialogs.EditBookmark -> BookmarkAddOrEditSheet(
+            edit = true,
             title = dialog.title,
             url = dialog.url,
             folder = dialog.folder,
             folders = dialog.folders,
             presenter = browserPresenter,
-            onUpdated = { title, url, folder ->
+            onConfirmed = { title, url, folder ->
                 browserPresenter.onBookmarkEditConfirmed(title, url, folder)
             }
         )
@@ -1889,13 +1900,14 @@ fun BookmarksBottomSheet(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookmarkEditSheet(
+fun BookmarkAddOrEditSheet(
+    edit: Boolean,
     title: String,
     url: String,
     folder: String,
     folders: List<String>,
     presenter: BrowserPresenter,
-    onUpdated: (title: String, url: String, folder: String) -> Unit,
+    onConfirmed: (title: String, url: String, folder: String) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -1905,7 +1917,11 @@ fun BookmarkEditSheet(
         sheetState = sheetState
     ) {
         Text(
-            text = stringResource(R.string.title_edit_bookmark),
+            text = if (edit) {
+                stringResource(R.string.title_edit_bookmark)
+            } else {
+                stringResource(R.string.action_add_bookmark)
+            },
             modifier = Modifier.padding(start = 16.dp),
             style = MaterialTheme.typography.titleMedium
         )
@@ -1970,22 +1986,41 @@ fun BookmarkEditSheet(
                 }
             }
         }
-        Button(
-            modifier = Modifier
-                .padding(start = 16.dp),
-            onClick = {
-                scope.launch {
-                    delay(500.milliseconds)
-                    sheetState.hide()
-                    onUpdated(
-                        titleTextFieldState.text.toString(),
-                        urlTextFieldState.text.toString(),
-                        selectedFolder
-                    )
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Button(
+                modifier = Modifier
+                    .padding(start = 16.dp),
+                onClick = {
+                    scope.launch {
+                        delay(500.milliseconds)
+                        sheetState.hide()
+                        onConfirmed(
+                            titleTextFieldState.text.toString(),
+                            urlTextFieldState.text.toString(),
+                            selectedFolder
+                        )
+                    }
+                }
+            ) {
+                Text(stringResource(R.string.action_ok))
+            }
+            if (!edit) {
+                Button(
+                    modifier = Modifier
+                        .padding(start = 16.dp),
+                    onClick = {
+                        scope.launch {
+                            delay(500.milliseconds)
+                            sheetState.hide()
+                            presenter.onDialogDismissed()
+                        }
+                    }
+                ) {
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
-        ) {
-            Text(stringResource(R.string.action_ok))
         }
     }
 }

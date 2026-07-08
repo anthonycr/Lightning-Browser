@@ -8,10 +8,6 @@ import android.content.Intent
  */
 class BrowserStateAdapter(private val browserActivity: BrowserActivity) : BrowserContract.View {
 
-    override fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {
-        browserActivity.showAddBookmarkDialog(title, url, folders)
-    }
-
     override fun showToolbar() {
         browserActivity.showToolbar()
     }

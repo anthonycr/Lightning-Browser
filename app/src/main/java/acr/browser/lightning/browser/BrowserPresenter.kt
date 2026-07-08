@@ -1029,11 +1029,29 @@ class BrowserPresenter @Inject constructor(
     private fun showAddBookmarkDialog() {
         browserCoroutineScope.launch {
             val folders = bookmarkRepository.getFolderNames()
-            view?.showAddBookmarkDialog(
-                title = currentTab?.title.orEmpty(),
-                url = currentTab?.url.orEmpty(),
-                folders = folders
-            )
+            val existing = bookmarkRepository.findBookmarkForUrl(currentTab?.url.orEmpty())
+            if (existing != null) {
+                updateState(
+                    state.value.copy(
+                        dialog = BrowserViewState.Dialogs.EditBookmark(
+                            title = existing.title,
+                            url = existing.url,
+                            folder = existing.folder.title,
+                            folders = folders
+                        )
+                    )
+                )
+            } else {
+                updateState(
+                    state.value.copy(
+                        dialog = BrowserViewState.Dialogs.AddBookmark(
+                            title = currentTab?.title.orEmpty(),
+                            url = currentTab?.url.orEmpty(),
+                            folders = folders
+                        )
+                    )
+                )
+            }
         }
     }
 
@@ -1045,6 +1063,7 @@ class BrowserPresenter @Inject constructor(
      * @param folder The name of the folder the bookmark is in.
      */
     fun onBookmarkConfirmed(title: String, url: String, folder: String) {
+        updateState(state.value.copy(dialog = null))
         browserCoroutineScope.launch {
             bookmarkRepository.addBookmarkIfNotExists(
                 Bookmark.Entry(
