@@ -23,16 +23,6 @@ interface BrowserContract {
         fun showToolbar()
 
         /**
-         * Show the tools dialog that allows the user to toggle ad blocking and user agent for the
-         * current page.
-         *
-         * @param areAdsAllowed True if ads are currently allowed on the page, false otherwise.
-         * @param shouldShowAdBlockOption True if ad block toggling is available for the current
-         * page.
-         */
-        fun showToolsDialog(areAdsAllowed: Boolean, shouldShowAdBlockOption: Boolean)
-
-        /**
          * Show the file chooser with the provided [intent].
          */
         fun showFileChooser(intent: Intent)

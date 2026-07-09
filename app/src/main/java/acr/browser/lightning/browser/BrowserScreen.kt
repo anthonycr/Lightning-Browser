@@ -68,6 +68,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
@@ -535,7 +536,12 @@ fun BrowserDialogs(
             browserPresenter.onConfirmOpenLocalFile(it)
         }
 
-        is BrowserViewState.Dialogs.PageTools -> TODO()
+        is BrowserViewState.Dialogs.PageTools -> PageToolsSheet(
+            areAdsAllowed = dialog.areAdsAllowed,
+            shouldShowAdBlockOption = dialog.shouldShowAdBlockOption,
+            presenter = browserPresenter,
+        )
+
         is BrowserViewState.Dialogs.SslInfo -> SslInfoSheet(dialog.sslDialog, browserPresenter)
         null -> Unit // No dialog
     }
@@ -785,6 +791,99 @@ fun ListItemSheet(
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PageToolsSheet(
+    areAdsAllowed: Boolean,
+    shouldShowAdBlockOption: Boolean,
+    presenter: BrowserPresenter,
+) {
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+
+    ModalBottomSheet(
+        onDismissRequest = { presenter.onDialogDismissed() },
+        sheetState = sheetState
+    ) {
+        Row(
+            modifier = Modifier
+                .height(56.dp)
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.dialog_tools_title),
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
+        Column {
+            Row(
+                modifier = Modifier
+                    .height(56.dp)
+                    .fillMaxWidth()
+                    .clickable(onClick = {
+                        scope.launch {
+                            delay(500.milliseconds)
+                            sheetState.hide()
+                            presenter.onToggleDesktopAgent()
+                        }
+                    }),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier.padding(start = 16.dp),
+                    painter = painterResource(R.drawable.ic_action_desktop),
+                    contentDescription = "test"
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    text = stringResource(R.string.dialog_toggle_desktop),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+            if (!shouldShowAdBlockOption) return@Column
+            Row(
+                modifier = Modifier
+                    .height(56.dp)
+                    .fillMaxWidth()
+                    .clickable(onClick = {
+                        scope.launch {
+                            delay(500.milliseconds)
+                            sheetState.hide()
+                            presenter.onToggleAdBlocking()
+                        }
+                    }),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier.padding(start = 16.dp),
+                    painter = painterResource(R.drawable.ic_block),
+                    contentDescription = "test",
+                    tint = if (areAdsAllowed) {
+                        colorResource(R.color.error_red)
+                    } else {
+                        LocalContentColor.current
+                    }
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    text = stringResource(
+                        if (areAdsAllowed) {
+                            R.string.dialog_adblock_enable_for_site
+                        } else {
+                            R.string.dialog_adblock_disable_for_site
+                        }
+                    ),
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
     }

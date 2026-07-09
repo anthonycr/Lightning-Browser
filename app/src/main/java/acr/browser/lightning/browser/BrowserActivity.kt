@@ -1,6 +1,5 @@
 package acr.browser.lightning.browser
 
-import acr.browser.lightning.R
 import acr.browser.lightning.ThemableActivity
 import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.keys.KeyEventAdapter
@@ -8,10 +7,6 @@ import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.TabPager
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.compose.StateProvider
-import acr.browser.lightning.dialog.BrowserDialog
-import acr.browser.lightning.dialog.DialogItem
-import acr.browser.lightning.extensions.color
-import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.search.SuggestionsModel
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -153,33 +148,6 @@ abstract class BrowserActivity : ThemableActivity() {
      */
     fun showToolbar() {
         // TODO: Show toolbar
-    }
-
-    /**
-     * @see BrowserContract.View.showToolsDialog
-     */
-    fun showToolsDialog(areAdsAllowed: Boolean, shouldShowAdBlockOption: Boolean) {
-        val whitelistString = if (areAdsAllowed) {
-            R.string.dialog_adblock_enable_for_site
-        } else {
-            R.string.dialog_adblock_disable_for_site
-        }
-
-        BrowserDialog.showWithIcons(
-            this, getString(R.string.dialog_tools_title),
-            DialogItem(
-                icon = drawable(R.drawable.ic_action_desktop),
-                title = R.string.dialog_toggle_desktop,
-                onClick = presenter::onToggleDesktopAgent
-            ),
-            DialogItem(
-                icon = drawable(R.drawable.ic_block),
-                colorTint = color(R.color.error_red).takeIf { areAdsAllowed },
-                title = whitelistString,
-                isConditionMet = shouldShowAdBlockOption,
-                onClick = presenter::onToggleAdBlocking
-            )
-        )
     }
 
     /**

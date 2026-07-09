@@ -963,9 +963,13 @@ class BrowserPresenter @Inject constructor(
      */
     fun onToolsClick() {
         val currentUrl = currentTab?.url ?: return
-        view?.showToolsDialog(
-            areAdsAllowed = allowListModel.isUrlAllowedAds(currentUrl),
-            shouldShowAdBlockOption = !currentUrl.isSpecialUrl()
+        updateState(
+            state.value.copy(
+                dialog = BrowserViewState.Dialogs.PageTools(
+                    areAdsAllowed = allowListModel.isUrlAllowedAds(currentUrl),
+                    shouldShowAdBlockOption = !currentUrl.isSpecialUrl()
+                )
+            )
         )
     }
 
@@ -973,6 +977,7 @@ class BrowserPresenter @Inject constructor(
      * Call when the user chooses to toggle the desktop user agent on/off.
      */
     fun onToggleDesktopAgent() {
+        updateState(state.value.copy(dialog = null))
         browserCoroutineScope.launch {
             currentTab?.toggleDesktopAgent()
             currentTab?.reload()
@@ -983,6 +988,7 @@ class BrowserPresenter @Inject constructor(
      * Call when the user chooses to toggle ad blocking on/off for the current web page.
      */
     fun onToggleAdBlocking() {
+        updateState(state.value.copy(dialog = null))
         val currentUrl = currentTab?.url ?: return
         if (allowListModel.isUrlAllowedAds(currentUrl)) {
             allowListModel.removeUrlFromAllowList(currentUrl)

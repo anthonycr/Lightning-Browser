@@ -12,10 +12,6 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.showToolbar()
     }
 
-    override fun showToolsDialog(areAdsAllowed: Boolean, shouldShowAdBlockOption: Boolean) {
-        browserActivity.showToolsDialog(areAdsAllowed, shouldShowAdBlockOption)
-    }
-
     override fun showFileChooser(intent: Intent) {
         browserActivity.showFileChooser(intent)
     }
