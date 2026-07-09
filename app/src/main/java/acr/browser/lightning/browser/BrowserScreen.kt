@@ -813,9 +813,6 @@ fun PageToolsSheet(
     shouldShowAdBlockOption: Boolean,
     presenter: BrowserPresenter,
 ) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
-
     ListItemSheet(
         title = stringResource(R.string.dialog_tools_title),
         items = listOf(
