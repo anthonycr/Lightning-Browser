@@ -32,7 +32,7 @@ import javax.inject.Named
  * The base browser activity that governs the browsing experience for both default and incognito
  * browsers.
  */
-abstract class BrowserActivity : ThemableActivity() {
+abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
 
     @Suppress("ConvertLambdaToReference")
     private val launcher = registerForActivityResult(
@@ -99,7 +99,7 @@ abstract class BrowserActivity : ThemableActivity() {
             }
         }
 
-        presenter.onViewAttached(BrowserStateAdapter(this))
+        presenter.onViewAttached(this)
 
         tabPager.longPressListener = presenter::onPageLongPress
 
@@ -146,14 +146,14 @@ abstract class BrowserActivity : ThemableActivity() {
     /**
      * @see BrowserContract.View.showToolbar
      */
-    fun showToolbar() {
+    override fun showToolbar() {
         // TODO: Show toolbar
     }
 
     /**
      * @see BrowserContract.View.showFileChooser
      */
-    fun showFileChooser(intent: Intent) {
+    override fun showFileChooser(intent: Intent) {
         launcher.launch(intent)
     }
 
