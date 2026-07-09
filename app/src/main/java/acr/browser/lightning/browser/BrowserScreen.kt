@@ -783,6 +783,16 @@ fun ListItemSheet(
                             .clickable(onClick = { item.onClick() }),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        item.icon?.let { icon ->
+                            Icon(
+                                modifier = Modifier.padding(start = 16.dp),
+                                painter = painterResource(icon),
+                                contentDescription = "test",
+                                tint = item.colorTint?.let {
+                                    colorResource(it)
+                                } ?: LocalContentColor.current
+                            )
+                        }
                         Text(
                             modifier = Modifier
                                 .padding(16.dp),
@@ -806,87 +816,33 @@ fun PageToolsSheet(
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
-    ModalBottomSheet(
-        onDismissRequest = { presenter.onDialogDismissed() },
-        sheetState = sheetState
-    ) {
-        Row(
-            modifier = Modifier
-                .height(56.dp)
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.dialog_tools_title),
-                style = MaterialTheme.typography.titleLarge
+    ListItemSheet(
+        title = stringResource(R.string.dialog_tools_title),
+        items = listOf(
+            DialogItem(
+                icon = R.drawable.ic_action_desktop,
+                title = R.string.dialog_toggle_desktop,
+                isConditionMet = true,
+                onClick = { presenter.onToggleDesktopAgent() }
+            ),
+            DialogItem(
+                icon = R.drawable.ic_block,
+                colorTint = if (areAdsAllowed) {
+                    R.color.error_red
+                } else {
+                    null
+                },
+                title = if (areAdsAllowed) {
+                    R.string.dialog_adblock_enable_for_site
+                } else {
+                    R.string.dialog_adblock_disable_for_site
+                },
+                isConditionMet = shouldShowAdBlockOption,
+                onClick = { presenter.onToggleAdBlocking() }
             )
-        }
-        Column {
-            Row(
-                modifier = Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-                    .clickable(onClick = {
-                        scope.launch {
-                            delay(500.milliseconds)
-                            sheetState.hide()
-                            presenter.onToggleDesktopAgent()
-                        }
-                    }),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier.padding(start = 16.dp),
-                    painter = painterResource(R.drawable.ic_action_desktop),
-                    contentDescription = "test"
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(16.dp),
-                    text = stringResource(R.string.dialog_toggle_desktop),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-            if (!shouldShowAdBlockOption) return@Column
-            Row(
-                modifier = Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-                    .clickable(onClick = {
-                        scope.launch {
-                            delay(500.milliseconds)
-                            sheetState.hide()
-                            presenter.onToggleAdBlocking()
-                        }
-                    }),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier.padding(start = 16.dp),
-                    painter = painterResource(R.drawable.ic_block),
-                    contentDescription = "test",
-                    tint = if (areAdsAllowed) {
-                        colorResource(R.color.error_red)
-                    } else {
-                        LocalContentColor.current
-                    }
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(16.dp),
-                    text = stringResource(
-                        if (areAdsAllowed) {
-                            R.string.dialog_adblock_enable_for_site
-                        } else {
-                            R.string.dialog_adblock_disable_for_site
-                        }
-                    ),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        }
-    }
+        ),
+        presenter = presenter
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

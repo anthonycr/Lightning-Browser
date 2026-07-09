@@ -1,7 +1,6 @@
 package acr.browser.lightning.dialog
 
-import android.graphics.drawable.Drawable
-import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 
 
@@ -11,8 +10,8 @@ import androidx.annotation.StringRes
  * defaults to true and allows the consumer to control the visibility of the item in the list.
  */
 class DialogItem(
-    val icon: Drawable? = null,
-    @param:ColorInt
+    val icon: Int? = null,
+    @param:ColorRes
     val colorTint: Int? = null,
     @param:StringRes
     val title: Int,
