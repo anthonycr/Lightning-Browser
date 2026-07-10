@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.view.CustomViewCoordinator
 import acr.browser.lightning.browser.webrtc.WebRtcPermissionsModel
 import acr.browser.lightning.browser.webrtc.WebRtcPermissionsView
 import acr.browser.lightning.concurrency.TabCoroutineScope
@@ -25,6 +26,8 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AlertDialog
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.fragment.app.FragmentActivity
 import androidx.palette.graphics.Palette
 import com.permissionx.guolindev.PermissionX
@@ -44,6 +47,7 @@ class TabWebChromeClient @AssistedInject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val webRtcPermissionsModel: WebRtcPermissionsModel,
     @Assisted private val tabCoroutineScope: TabCoroutineScope,
+    private val customViewCoordinator: CustomViewCoordinator,
 ) : WebChromeClient(), WebRtcPermissionsView {
 
     @AssistedFactory
@@ -67,7 +71,7 @@ class TabWebChromeClient @AssistedInject constructor(
     /**
      * Emits changes to the page favicon. Always emits the last emitted favicon.
      */
-    val faviconStateFlow: MutableStateFlow<Bitmap?> = MutableStateFlow(null)
+    val faviconStateFlow: MutableStateFlow<ImageBitmap?> = MutableStateFlow(null)
 
     /**
      * Emits create window requests.
@@ -92,7 +96,7 @@ class TabWebChromeClient @AssistedInject constructor(
     /**
      * Emits requests to show a custom view (i.e. full screen video).
      */
-    val showCustomViewSharedFlow: MutableSharedFlow<View> = MutableSharedFlow()
+    val showCustomViewSharedFlow: MutableSharedFlow<Unit> = MutableSharedFlow()
 
     /**
      * Emits requests to hide the custom view that was shown prior.
@@ -157,7 +161,7 @@ class TabWebChromeClient @AssistedInject constructor(
 
     override fun onReceivedIcon(view: WebView, icon: Bitmap) {
         tabCoroutineScope.launch {
-            faviconStateFlow.emit(icon)
+            faviconStateFlow.emit(icon.asImageBitmap())
             val url = view.url ?: return@launch
             tabCoroutineScope.launch {
                 faviconModel.cacheFaviconForUrl(icon, url)
@@ -205,14 +209,16 @@ class TabWebChromeClient @AssistedInject constructor(
     override fun onShowCustomView(view: View, callback: CustomViewCallback) {
         customViewCallback = callback
         tabCoroutineScope.launch {
-            showCustomViewSharedFlow.emit(view)
+            showCustomViewSharedFlow.emit(Unit)
         }
+        customViewCoordinator.showCustomView(view)
     }
 
     override fun onHideCustomView() {
         tabCoroutineScope.launch {
             hideCustomViewObservable.emit(Unit)
         }
+        customViewCoordinator.hideCustomView()
         customViewCallback = null
     }
 

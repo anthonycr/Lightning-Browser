@@ -43,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 enum class SettingsNavigation {
     ROOT,
@@ -266,7 +267,7 @@ fun SettingsBottomSheetChooser(
                     .clickable {
                         selectedState = index
                         scope.launch {
-                            delay(500)
+                            delay(500.milliseconds)
                             sheetState.hide()
                             onSelected(index)
                         }
@@ -281,7 +282,7 @@ fun SettingsBottomSheetChooser(
                         selected = index == selectedState,
                         onClick = {
                             scope.launch {
-                                delay(500)
+                                delay(500.milliseconds)
                                 sheetState.hide()
                                 onSelected(index)
                             }
@@ -335,7 +336,7 @@ fun SettingsBottomSheetInput(
                 .padding(start = 16.dp),
             onClick = {
                 scope.launch {
-                    delay(500)
+                    delay(500.milliseconds)
                     sheetState.hide()
                     onSelected(textFieldState.text)
                 }

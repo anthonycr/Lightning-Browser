@@ -22,6 +22,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.createBitmap
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -75,7 +77,7 @@ class TabAdapter @AssistedInject constructor(
         ): TabAdapter
     }
 
-    private var latentInitializer: FreezableBundleInitializer? = null
+    private var latentInitializer: FreezableInitializer? = null
 
     private var findInPageQuery: String? = null
     private var toggleDesktop: Boolean = false
@@ -84,7 +86,7 @@ class TabAdapter @AssistedInject constructor(
 
     private var previewGeneratedTime = System.currentTimeMillis()
 
-    override val id: Int = if (tabInitializer is FreezableBundleInitializer) {
+    override val id: Int = if (tabInitializer is FreezableInitializer) {
         latentInitializer = tabInitializer
         val frozenId = tabInitializer.id.takeIf { it != -1 } ?: viewIdGenerator.generateViewId()
         viewIdGenerator.claimViewId(frozenId)
@@ -136,7 +138,7 @@ class TabAdapter @AssistedInject constructor(
         }
 
     init {
-        if (tabInitializer !is FreezableBundleInitializer) {
+        if (tabInitializer !is FreezableInitializer) {
             loadFromInitializer(tabInitializer)
         }
     }
@@ -235,11 +237,23 @@ class TabAdapter @AssistedInject constructor(
     override val findQuery: String?
         get() = findInPageQuery
 
-    override val favicon: Bitmap?
-        get() = latentInitializer?.let { iconFreeze }
+    override var searchQuery: String
+        get() = tabWebViewClient.searchQuery
+        set(value) {
+            tabWebViewClient.searchQuery = value
+        }
+
+    override var searchQuerySelection: Pair<Int, Int>
+        get() = tabWebViewClient.searchQuerySelection
+        set(value) {
+            tabWebViewClient.searchQuerySelection = value
+        }
+
+    override val favicon: ImageBitmap?
+        get() = latentInitializer?.let { iconFreeze.asImageBitmap() }
             ?: tabWebChromeClient.faviconStateFlow.value
 
-    override fun faviconChanges(): Flow<Bitmap?> {
+    override fun faviconChanges(): Flow<ImageBitmap?> {
         // Treat it like a SharedFlow for consistency on presenter side and because frozen tabs have
         // their own icon that the chrome client doesn't know about.
         return tabWebChromeClient.faviconStateFlow.drop(1)
@@ -294,7 +308,7 @@ class TabAdapter @AssistedInject constructor(
         tabWebChromeClient.onResult(activityResult)
     }
 
-    override fun showCustomViewRequests(): Flow<View> = tabWebChromeClient.showCustomViewSharedFlow
+    override fun showCustomViewRequests(): Flow<Unit> = tabWebChromeClient.showCustomViewSharedFlow
 
     override fun hideCustomViewRequests(): Flow<Unit> = tabWebChromeClient.hideCustomViewObservable
 
@@ -306,7 +320,7 @@ class TabAdapter @AssistedInject constructor(
         tabWebChromeClient.createWindowSharedFlow
 
     override fun closeWindowRequests(): Flow<Unit> = tabWebChromeClient.closeWindowSharedFlow
-    
+
     override fun focusRequests(): Flow<Unit> = focusSharedFlow
 
     override var isForeground: Boolean = false

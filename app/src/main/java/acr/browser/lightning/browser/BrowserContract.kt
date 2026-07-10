@@ -3,12 +3,6 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
-import acr.browser.lightning.browser.tab.TabViewState
-import acr.browser.lightning.browser.view.targetUrl.LongPress
-import acr.browser.lightning.database.Bookmark
-import acr.browser.lightning.database.HistoryEntry
-import acr.browser.lightning.database.downloads.DownloadEntry
-import acr.browser.lightning.ssl.SslCertificateInfo
 import android.content.Intent
 import android.graphics.Bitmap
 import kotlinx.coroutines.flow.Flow
@@ -24,149 +18,14 @@ interface BrowserContract {
     interface View {
 
         /**
-         * Render the [viewState] for the current tab in the browser.
-         */
-        fun renderState(viewState: BrowserViewState)
-
-        /**
-         * Render the [tabs] in the tabs list.
-         */
-        fun renderTabs(tabs: List<TabViewState>)
-
-        /**
-         * Show the dialog to add a bookmark for the current page.
-         *
-         * @param title The current title of the page.
-         * @param url The current URL of the page.
-         * @param folders The available folders that the bookmark can be moved to.
-         */
-        fun showAddBookmarkDialog(title: String, url: String, folders: List<String>)
-
-        /**
-         * Show the options dialog for the provided [bookmark].
-         */
-        fun showBookmarkOptionsDialog(bookmark: Bookmark.Entry)
-
-        /**
-         * Show the dialog to edit a bookmark.
-         *
-         * @param title The current title of the bookmark.
-         * @param url The current URL of the bookmark.
-         * @param folder The current folder the bookmark is in.
-         * @param folders The available folders that the bookmark can be moved to.
-         */
-        fun showEditBookmarkDialog(
-            title: String,
-            url: String,
-            folder: String,
-            folders: List<String>
-        )
-
-        /**
-         * Show the options dialog for the provided [folder].
-         */
-        fun showFolderOptionsDialog(folder: Bookmark.Folder)
-
-        /**
-         * Show the edit folder dialog for the folder with the provided [title].
-         */
-        fun showEditFolderDialog(title: String)
-
-        /**
-         * Show the options dialog for the provided [download].
-         */
-        fun showDownloadOptionsDialog(download: DownloadEntry)
-
-        /**
-         * Show the options dialog for the provided [historyEntry].
-         */
-        fun showHistoryOptionsDialog(historyEntry: HistoryEntry)
-
-        /**
-         * Show the dialog that allows the user to search the web page for a query.
-         */
-        fun showFindInPageDialog()
-
-        /**
-         * Show the options menu for long pressing a link in the web page.
-         */
-        fun showLinkLongPressDialog(longPress: LongPress)
-
-        /**
-         * Show the options menu for long pressing an image in the web page.
-         */
-        fun showImageLongPressDialog(longPress: LongPress)
-
-        /**
-         * Show the informational dialog about the SSL certificate info.
-         */
-        fun showSslDialog(sslCertificateInfo: SslCertificateInfo)
-
-        /**
-         * Show the close browser dialog for the dialog with the provide [id].
-         */
-        fun showCloseBrowserDialog(id: Int)
-
-        /**
-         * Open the bookmark drawer if it is closed.
-         */
-        fun openBookmarkDrawer()
-
-        /**
-         * Close the bookmark drawer if it is open.
-         */
-        fun closeBookmarkDrawer()
-
-        /**
-         * Open the tab drawer if it is closed.
-         */
-        fun openTabDrawer()
-
-        /**
-         * Close the tab drawer if it is open.
-         */
-        fun closeTabDrawer()
-
-        /**
          * Show the toolbar/search box if it has been hidden due to scrolling.
          */
         fun showToolbar()
 
         /**
-         * Show the tools dialog that allows the user to toggle ad blocking and user agent for the
-         * current page.
-         *
-         * @param areAdsAllowed True if ads are currently allowed on the page, false otherwise.
-         * @param shouldShowAdBlockOption True if ad block toggling is available for the current
-         * page.
-         */
-        fun showToolsDialog(areAdsAllowed: Boolean, shouldShowAdBlockOption: Boolean)
-
-        /**
-         * Show a warning to the user that they are about to open a local file in the browser that
-         * could be potentially dangerous.
-         */
-        fun showLocalFileBlockedDialog()
-
-        /**
          * Show the file chooser with the provided [intent].
          */
         fun showFileChooser(intent: Intent)
-
-        /**
-         * Show a custom [view] over everything that will play a video.
-         */
-        fun showCustomView(view: android.view.View)
-
-        /**
-         * Hide the custom view that was previously shown by calling [showCustomView].
-         */
-        fun hideCustomView()
-
-        /**
-         * Clear focus from the search view if it has focus.
-         */
-        fun clearSearchFocus()
     }
 
     /**
@@ -196,6 +55,11 @@ interface BrowserContract {
          * Reopen the most recently closed tab if there is a closed tab to re-open.
          */
         suspend fun reopenTab(): TabModel?
+
+        /**
+         * The current selected tab, if there is one.
+         */
+        val selectedTab: TabModel?
 
         /**
          * Select the tab with the provide [id] as the currently viewed tab.

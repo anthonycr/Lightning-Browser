@@ -17,119 +17,16 @@ package acr.browser.lightning.dialog
 
 import acr.browser.lightning.R
 import acr.browser.lightning.extensions.dimen
-import acr.browser.lightning.extensions.inflater
 import acr.browser.lightning.extensions.resizeAndShow
-import acr.browser.lightning.list.RecyclerViewDialogItemAdapter
-import acr.browser.lightning.list.RecyclerViewStringAdapter
 import acr.browser.lightning.utils.DeviceUtils
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 
 object BrowserDialog {
-
-    @JvmStatic
-    fun show(
-        activity: Activity,
-        @StringRes title: Int,
-        vararg items: DialogItem
-    ) = show(activity, activity.getString(title), *items)
-
-    fun showWithIcons(context: Context, title: String?, vararg items: DialogItem) {
-        val builder = AlertDialog.Builder(context)
-
-        val layout = context.inflater.inflate(R.layout.list_dialog, null)
-
-        val titleView = layout.findViewById<TextView>(R.id.dialog_title)
-        val recyclerView = layout.findViewById<RecyclerView>(R.id.dialog_list)
-
-        val itemList = items.filter(DialogItem::isConditionMet)
-
-        val adapter = RecyclerViewDialogItemAdapter(itemList)
-
-        if (title?.isNotEmpty() == true) {
-            titleView.text = title
-        }
-
-        recyclerView.apply {
-            this.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            this.adapter = adapter
-            setHasFixedSize(true)
-        }
-
-        builder.setView(layout)
-
-        val dialog = builder.resizeAndShow()
-
-        adapter.onItemClickListener = { item ->
-            item.onClick()
-            dialog.dismiss()
-        }
-    }
-
-    /**
-     * Show a singly selectable list of [DialogItem] with the provided [title]. All items will be
-     * shown, and the first [DialogItem] where [DialogItem.isConditionMet] returns `true` will be
-     * the selected item when the dialog is shown. The dialog has an OK button which just dismisses
-     * the dialog.
-     */
-    fun showListChoices(activity: Activity, @StringRes title: Int, vararg items: DialogItem) {
-        AlertDialog.Builder(activity).apply {
-            setTitle(title)
-
-            val choices = items.map { activity.getString(it.title) }.toTypedArray()
-            val currentChoice = items.indexOfFirst(DialogItem::isConditionMet)
-
-            setSingleChoiceItems(choices, currentChoice) { _, which ->
-                items[which].onClick()
-            }
-            setPositiveButton(activity.getString(R.string.action_ok), null)
-        }.resizeAndShow()
-    }
-
-    @JvmStatic
-    fun show(activity: Activity, title: String?, vararg items: DialogItem) {
-        val builder = AlertDialog.Builder(activity)
-
-        val layout = activity.inflater.inflate(R.layout.list_dialog, null)
-
-        val titleView = layout.findViewById<TextView>(R.id.dialog_title)
-        val recyclerView = layout.findViewById<RecyclerView>(R.id.dialog_list)
-
-        val itemList = items.filter(DialogItem::isConditionMet)
-
-        val adapter = RecyclerViewStringAdapter(
-            listItems = itemList,
-            convertToString = { activity.getString(this.title) }
-        )
-
-        if (title?.isNotEmpty() == true) {
-            titleView.text = title
-        }
-
-        recyclerView.apply {
-            this.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            this.adapter = adapter
-            setHasFixedSize(true)
-        }
-
-        builder.setView(layout)
-
-        val dialog = builder.resizeAndShow()
-
-        adapter.onItemClickListener = { item ->
-            item.onClick()
-            dialog.dismiss()
-        }
-    }
 
     @JvmStatic
     fun showPositiveNegativeDialog(
@@ -156,39 +53,6 @@ object BrowserDialog {
     }
 
     @JvmStatic
-    fun showEditText(
-        activity: Activity,
-        @StringRes title: Int,
-        @StringRes hint: Int,
-        @StringRes action: Int,
-        textInputListener: (String) -> Unit
-    ) = showEditText(activity, title, hint, null, action, textInputListener)
-
-    @JvmStatic
-    fun showEditText(
-        activity: Activity,
-        @StringRes title: Int,
-        @StringRes hint: Int,
-        currentText: String?,
-        @StringRes action: Int,
-        textInputListener: (String) -> Unit
-    ) {
-        val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null)
-        val editText = dialogView.findViewById<EditText>(R.id.dialog_edit_text)
-
-        editText.setHint(hint)
-        if (currentText != null) {
-            editText.setText(currentText)
-        }
-
-        AlertDialog.Builder(activity)
-            .setTitle(title)
-            .setView(dialogView)
-            .setPositiveButton(action) { _, _ -> textInputListener(editText.text.toString()) }
-            .resizeAndShow()
-    }
-
-    @JvmStatic
     fun setDialogSize(context: Context, dialog: Dialog) {
         var maxWidth = context.dimen(R.dimen.dialog_max_size)
         val padding = context.dimen(R.dimen.dialog_padding)
@@ -197,18 +61,6 @@ object BrowserDialog {
             maxWidth = screenSize - 2 * padding
         }
         dialog.window?.setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
-
-    /**
-     * Show the custom dialog with the custom builder arguments applied.
-     */
-    fun showCustomDialog(activity: Activity?, block: AlertDialog.Builder.(Activity) -> Unit) {
-        activity?.let {
-            AlertDialog.Builder(activity).apply {
-                block(it)
-                resizeAndShow()
-            }
-        }
     }
 
 }

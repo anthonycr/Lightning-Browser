@@ -24,12 +24,9 @@ import java.net.URISyntaxException;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.extensions.ActivityExtensions;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableKt;
 
@@ -60,26 +57,6 @@ public final class Utils {
         intent.putExtra(Intent.EXTRA_CC, cc);
         intent.setType("message/rfc822");
         return intent;
-    }
-
-    /**
-     * Creates a dialog with only a title, message, and okay button.
-     *
-     * @param activity the activity needed to create a dialog.
-     * @param title    the title of the dialog.
-     * @param message  the message of the dialog.
-     */
-    public static void createInformativeDialog(@NonNull Activity activity, @StringRes int title, @StringRes int message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(title);
-        builder.setMessage(message)
-            .setCancelable(true)
-            .setPositiveButton(activity.getResources().getString(R.string.action_ok),
-                (dialog, id) -> {
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
-        BrowserDialog.setDialogSize(activity, alert);
     }
 
     /**

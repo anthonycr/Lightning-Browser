@@ -10,13 +10,7 @@ import androidx.core.net.toUri
  */
 class IncognitoBrowserActivity : BrowserActivity() {
 
-    override fun provideThemeOverride(): Int = R.style.Theme_DarkTheme
-
     override fun isIncognito(): Boolean = true
-
-    override fun menu(): Int = R.menu.incognito
-
-    override fun homeIcon(): Int = R.drawable.incognito_mode
 
     companion object {
         /**

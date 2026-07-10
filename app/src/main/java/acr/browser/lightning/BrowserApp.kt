@@ -12,7 +12,6 @@ import acr.browser.lightning.migration.Cleanup
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.LeakCanaryUtils
 import android.app.Application
-import android.os.Build
 import android.os.StrictMode
 import android.webkit.WebView
 import kotlinx.coroutines.cancel
@@ -63,11 +62,9 @@ class BrowserApp : Application() {
             )
         }
 
-        if (Build.VERSION.SDK_INT >= 28) {
-            if (getProcessName() == "$packageName:incognito") {
-                File(dataDir, "app_webview_incognito").deleteRecursively()
-                WebView.setDataDirectorySuffix("incognito")
-            }
+        if (getProcessName() == "$packageName:incognito") {
+            File(dataDir, "app_webview_incognito").deleteRecursively()
+            WebView.setDataDirectorySuffix("incognito")
         }
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
@@ -87,6 +84,7 @@ class BrowserApp : Application() {
         applicationComponent = DaggerAppComponent.builder()
             .application(this)
             .buildInfo(createBuildInfo())
+            .incognitoMode(getProcessName().endsWith(":incognito"))
             .build()
         injector.inject(this)
 

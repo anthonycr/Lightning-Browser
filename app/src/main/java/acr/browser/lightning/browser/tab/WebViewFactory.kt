@@ -1,10 +1,8 @@
 package acr.browser.lightning.browser.tab
 
-import acr.browser.lightning.Capabilities
 import acr.browser.lightning.browser.di.IncognitoMode
 import acr.browser.lightning.browser.view.CompositeTouchListener
 import acr.browser.lightning.browser.view.RenderingMode
-import acr.browser.lightning.isSupported
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
@@ -86,15 +84,9 @@ class WebViewFactory @Inject constructor(
                     WebSettings.MIXED_CONTENT_NEVER_ALLOW
                 }
 
-                if (!incognitoMode || Capabilities.FULL_INCOGNITO.isSupported) {
-                    domStorageEnabled = true
-                    databaseEnabled = true
-                    cacheMode = WebSettings.LOAD_DEFAULT
-                } else {
-                    domStorageEnabled = false
-                    databaseEnabled = false
-                    cacheMode = WebSettings.LOAD_NO_CACHE
-                }
+                domStorageEnabled = true
+                databaseEnabled = true
+                cacheMode = WebSettings.LOAD_DEFAULT
 
                 setSupportZoom(true)
                 builtInZoomControls = true

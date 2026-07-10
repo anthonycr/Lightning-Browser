@@ -1,8 +1,8 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.di.Browser2Scope
+import acr.browser.lightning.browser.di.BrowserFrame
 import acr.browser.lightning.browser.view.WebViewLongPressHandler
-import acr.browser.lightning.browser.view.WebViewScrollCoordinator
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import android.view.ViewGroup
 import android.webkit.WebView
@@ -16,8 +16,8 @@ import javax.inject.Inject
  */
 @Browser2Scope
 class TabPager @Inject constructor(
-    private val container: FrameLayout,
-    private val webViewScrollCoordinator: WebViewScrollCoordinator,
+    @BrowserFrame private val container: FrameLayout,
+//    private val webViewScrollCoordinator: WebViewScrollCoordinator,
     private val webViewLongPressHandler: WebViewLongPressHandler
 ) {
 
@@ -39,7 +39,7 @@ class TabPager @Inject constructor(
             )
         }
 
-        webViewScrollCoordinator.configure(webView)
+//        webViewScrollCoordinator.configure(webView)
         webViewLongPressHandler.configure(webView, onLongClick = {
             longPressListener?.invoke(id, it)
         })
@@ -63,17 +63,17 @@ class TabPager @Inject constructor(
      * Show the toolbar/search box if it is currently hidden.
      */
     fun showToolbar() {
-        webViewScrollCoordinator.showToolbar()
+//        webViewScrollCoordinator.showToolbar()
     }
 
-    fun isBottomTabDrawerOpen() = webViewScrollCoordinator.isBottomTabDrawerOpen()
+    fun isBottomTabDrawerOpen(): Boolean = false//= webViewScrollCoordinator.isBottomTabDrawerOpen()
 
     fun openBottomTabDrawer() {
-        webViewScrollCoordinator.openBottomTabDrawer()
+//        webViewScrollCoordinator.openBottomTabDrawer()
     }
 
     fun closeBottomTabDrawer() {
-        webViewScrollCoordinator.closeBottomTabDrawer()
+//        webViewScrollCoordinator.closeBottomTabDrawer()
     }
 
     private fun FrameLayout.removeWebViews(excludeId: Int = -1) {
