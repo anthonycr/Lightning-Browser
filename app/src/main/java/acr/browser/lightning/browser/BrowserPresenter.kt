@@ -465,13 +465,15 @@ class BrowserPresenter @Inject constructor(
             }
 
             MenuSelection.HISTORY -> createNewTabAndSelect(
-                historyPageInitializer,
-                shouldSelect = true
+                tabInitializer = historyPageInitializer,
+                shouldSelect = true,
+                tabType = TabModel.Type.POP_UP
             )
 
             MenuSelection.DOWNLOADS -> createNewTabAndSelect(
-                downloadPageInitializer,
-                shouldSelect = true
+                tabInitializer = downloadPageInitializer,
+                shouldSelect = true,
+                tabType = TabModel.Type.POP_UP
             )
 
             MenuSelection.FIND -> updateState(state.value.copy(findInPage = ""))
