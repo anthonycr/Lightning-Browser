@@ -83,7 +83,7 @@ class HomePageFactory @Inject constructor(
      * Create the home page file.
      */
     private suspend fun createHomePage(): File {
-        val generatedHtml = generatedHtmlDir.file.await()
+        val generatedHtml = generatedHtmlDir.file()
         generatedHtml.mkdirs()
         return File(generatedHtml, FILENAME)
     }

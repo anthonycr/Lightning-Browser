@@ -32,8 +32,6 @@ class PreviewModel @Inject constructor(
 
     private val eventSharedFlow = MutableSharedFlow<Event>()
 
-    private val cacheDirDeferred = previewCacheDirThreadSafeFileProvider.file
-
     init {
         appCoroutineScope.launch(coroutineDispatchers.io) {
             eventSharedFlow.collectLatest {
@@ -48,7 +46,7 @@ class PreviewModel @Inject constructor(
      * Retrieves the preview for an ID.
      */
     suspend fun previewForId(id: Int): String = withContext(coroutineDispatchers.io) {
-        val cacheFolder = cacheDirDeferred.await()
+        val cacheFolder = cacheDir()
         File(cacheFolder, "$id.png").path
     }
 
@@ -61,7 +59,7 @@ class PreviewModel @Inject constructor(
         id: Int,
         preview: Bitmap
     ): Unit = withContext(coroutineDispatchers.io) {
-        val cacheFolder = cacheDirDeferred.await()
+        val cacheFolder = cacheDir()
         logger.log(TAG, "Caching preview for tab: $id")
         FileOutputStream(getPreviewCacheFile(cacheFolder, id)).safeUse {
             preview.compress(Bitmap.CompressFormat.PNG, 100, it)
@@ -81,11 +79,13 @@ class PreviewModel @Inject constructor(
     private suspend fun pruneInternal(
         keepIds: Set<Int>
     ): Unit = withContext(coroutineDispatchers.io) {
-        val cacheFolder = cacheDirDeferred.await()
+        val cacheFolder = cacheDir()
         cacheFolder.listFiles()
             ?.filter { !keepIds.contains(it.name.split(".")[0].toInt()) }
             ?.forEach(File::delete)
     }
+    
+    private suspend fun cacheDir(): File = previewCacheDirThreadSafeFileProvider.file()
 
     /**
      * Creates the cache file for the preview image. File name will be in the form of "hash of URI host".png

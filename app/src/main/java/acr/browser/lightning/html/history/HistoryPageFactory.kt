@@ -99,7 +99,7 @@ class HistoryPageFactory @Inject constructor(
     }
 
     private suspend fun createHistoryPage(): File {
-        val generatedHtml = generatedHtmlDir.file.await()
+        val generatedHtml = generatedHtmlDir.file()
         generatedHtml.mkdirs()
         return File(generatedHtml, FILENAME)
     }

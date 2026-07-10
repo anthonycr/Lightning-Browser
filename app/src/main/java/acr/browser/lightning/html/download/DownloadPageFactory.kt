@@ -85,7 +85,7 @@ class DownloadPageFactory @Inject constructor(
     }
 
     private suspend fun createDownloadsPageFile(): File {
-        val generatedHtml = generatedHtmlDir.file.await()
+        val generatedHtml = generatedHtmlDir.file()
         generatedHtml.mkdirs()
         return File(generatedHtml, FILENAME)
     }

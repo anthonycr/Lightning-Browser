@@ -34,16 +34,16 @@ class WebUtils @Inject constructor(
         val webViewDatabase = WebViewDatabase.getInstance(application)
         webViewDatabase.clearFormData()
         webViewDatabase.clearHttpAuthUsernamePassword()
-        faviconCacheDirThreadSafeFileProvider.file.await().deleteRecursively()
-        previewCacheDirThreadSafeFileProvider.file.await().deleteRecursively()
-        generatedHtmlDirThreadSafeFileProvider.file.await().deleteRecursively()
+        faviconCacheDirThreadSafeFileProvider.file().deleteRecursively()
+        previewCacheDirThreadSafeFileProvider.file().deleteRecursively()
+        generatedHtmlDirThreadSafeFileProvider.file().deleteRecursively()
     }
 
     suspend fun clearCache() = withContext(coroutineDispatchers.main) {
         val webView = WebView(application)
         webView.clearCache(true)
         webView.destroy()
-        faviconCacheDirThreadSafeFileProvider.file.await().deleteRecursively()
-        previewCacheDirThreadSafeFileProvider.file.await().deleteRecursively()
+        faviconCacheDirThreadSafeFileProvider.file().deleteRecursively()
+        previewCacheDirThreadSafeFileProvider.file().deleteRecursively()
     }
 }

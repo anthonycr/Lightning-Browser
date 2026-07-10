@@ -38,13 +38,13 @@ class TabFactory @Inject constructor(
         val faviconHandler = async(coroutineDispatchers.io) {
             InternalStoragePathHandler(
                 app,
-                faviconCacheDirThreadSafeFileProvider.file.await()
+                faviconCacheDirThreadSafeFileProvider.file()
             )
         }
         val htmlHandler = async(coroutineDispatchers.io) {
             InternalStoragePathHandler(
                 app,
-                generatedHtmlDirThreadSafeFileProvider.file.await()
+                generatedHtmlDirThreadSafeFileProvider.file()
             )
         }
 

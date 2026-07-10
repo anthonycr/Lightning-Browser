@@ -60,7 +60,7 @@ class FaviconModel @Inject constructor(
 
         val hash = validUri.host.hashCode().toString()
 
-        "${faviconCacheDir.file.await().path}/$hash.png"
+        "${faviconCacheDir.file().path}/$hash.png"
     }
 
     /**

@@ -78,13 +78,13 @@ class TabWebViewClient @AssistedInject constructor(
 
     private val cache by lazy {
         runBlocking {
-            faviconCacheDirThreadSafeFileProvider.file.await()
+            faviconCacheDirThreadSafeFileProvider.file()
         }
     }
 
     private val files by lazy {
         runBlocking {
-            generatedHtmlDirThreadSafeFileProvider.file.await()
+            generatedHtmlDirThreadSafeFileProvider.file()
         }
     }
 

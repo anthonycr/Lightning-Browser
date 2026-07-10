@@ -61,8 +61,8 @@ class BookmarkPageFactory @Inject constructor(
         get() = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
 
     override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
-        val folderIcon = File(faviconCacheDir.file.await(), FOLDER_ICON)
-        val defaultIcon = File(faviconCacheDir.file.await(), DEFAULT_ICON)
+        val folderIcon = File(faviconCacheDir.file(), FOLDER_ICON)
+        val defaultIcon = File(faviconCacheDir.file(), DEFAULT_ICON)
         val bookmarks = bookmarkModel.getAllBookmarksSorted()
         bookmarks.groupBy { it.folder }
             .mapValues { (folder, bookmarks) ->
@@ -179,7 +179,7 @@ class BookmarkPageFactory @Inject constructor(
         } else {
             ""
         }
-        val generatedHtml = generatedHtmlDir.file.await()
+        val generatedHtml = generatedHtmlDir.file()
         generatedHtml.mkdirs()
         return File(generatedHtml, prefix + FILENAME)
     }

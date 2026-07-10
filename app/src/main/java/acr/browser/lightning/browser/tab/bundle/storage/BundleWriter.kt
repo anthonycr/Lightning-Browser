@@ -38,7 +38,7 @@ class BundleWriter @AssistedInject constructor(
      * @param bundle the bundle to store in persistent storage.
      */
     suspend fun writeToStorage(bundle: Bundle?) = withContext(coroutineDispatchers.io) {
-        val outputFile = File(filesDir.file.await(), bundleFileName)
+        val outputFile = File(filesDir.file(), bundleFileName)
         var outputStream: FileOutputStream? = null
         try {
             outputStream = FileOutputStream(outputFile)
@@ -58,7 +58,7 @@ class BundleWriter @AssistedInject constructor(
      * Use this method to delete the bundle with the specified name.
      */
     suspend fun deleteInStorage() = withContext(coroutineDispatchers.io) {
-        val outputFile = File(filesDir.file.await(), bundleFileName)
+        val outputFile = File(filesDir.file(), bundleFileName)
         if (outputFile.exists()) {
             outputFile.delete()
         }
@@ -72,7 +72,7 @@ class BundleWriter @AssistedInject constructor(
      * to read the Bundle from storage.
      */
     suspend fun readFromStorage(): Bundle? = withContext(coroutineDispatchers.io) {
-        val inputFile = File(filesDir.file.await(), bundleFileName)
+        val inputFile = File(filesDir.file(), bundleFileName)
         var inputStream: FileInputStream? = null
         try {
             inputStream = FileInputStream(inputFile)
