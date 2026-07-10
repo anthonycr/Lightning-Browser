@@ -102,7 +102,7 @@ dependencies {
     val datastore = "1.2.1"
     val coil = "3.5.0"
     val coroutines = "1.11.0"
-    val lifecycle = "2.10.0"
+    val lifecycle = "2.11.0"
 
     implementation(platform("androidx.compose:compose-bom:2026.06.01"))
     implementation("androidx.activity:activity:1.13.0")
