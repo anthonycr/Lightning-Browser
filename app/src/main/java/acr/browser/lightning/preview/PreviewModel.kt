@@ -84,7 +84,7 @@ class PreviewModel @Inject constructor(
             ?.filter { !keepIds.contains(it.name.split(".")[0].toInt()) }
             ?.forEach(File::delete)
     }
-    
+
     private suspend fun cacheDir(): File = previewCacheDirThreadSafeFileProvider.file()
 
     /**
