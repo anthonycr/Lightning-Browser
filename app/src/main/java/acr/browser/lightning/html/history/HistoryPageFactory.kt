@@ -2,7 +2,9 @@ package acr.browser.lightning.html.history
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.GeneratedHtmlDir
-import acr.browser.lightning.browser.theme.ThemeProvider
+import acr.browser.lightning.browser.di.IncognitoMode
+import acr.browser.lightning.compose.asColorScheme
+import acr.browser.lightning.compose.toRgbHexString
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.history.HistoryRepository
@@ -18,6 +20,7 @@ import acr.browser.lightning.html.jsoup.removeElement
 import acr.browser.lightning.html.jsoup.style
 import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
+import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import kotlinx.coroutines.withContext
@@ -32,37 +35,34 @@ class HistoryPageFactory @Inject constructor(
     private val listPageReader: ListPageReader,
     application: Application,
     private val historyRepository: HistoryRepository,
-    private val themeProvider: ThemeProvider,
+    @IncognitoMode private val isIncognito: Boolean,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     private val coroutineDispatchers: CoroutineDispatchers,
     @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
 ) : HtmlPageFactory {
 
     private val title = application.getString(R.string.action_history)
 
-    private fun Int.toColor(): String {
-        val string = Integer.toHexString(this)
-
-        return string.substring(2) + string.substring(0, 2)
-    }
-
-    private val backgroundColor: String
-        get() = themeProvider.color(R.attr.colorPrimary).toColor()
-    private val dividerColor: String
-        get() = themeProvider.color(R.attr.autoCompleteBackgroundColor).toColor()
-    private val textColor: String
-        get() = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
-    private val subtitleColor: String
-        get() = themeProvider.color(R.attr.autoCompleteUrlColor).toColor()
-
     override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
+        val appTheme = userPreferencesDataStore.useTheme.get()
+        val colorScheme = appTheme.asColorScheme(isIncognito)
         val list = historyRepository.lastHundredVisitedHistoryEntries()
         val content = parse(listPageReader.provideHtml()) andBuild {
             title { title }
             style { content ->
-                content.replace("--body-bg: {COLOR}", "--body-bg: #$backgroundColor;")
-                    .replace("--divider-color: {COLOR}", "--divider-color: #$dividerColor;")
-                    .replace("--title-color: {COLOR}", "--title-color: #$textColor;")
-                    .replace("--subtitle-color: {COLOR}", "--subtitle-color: #$subtitleColor;")
+                content.replace(
+                    "--body-bg: {COLOR}",
+                    "--body-bg: #${colorScheme.surface.toRgbHexString()};"
+                ).replace(
+                    "--divider-color: {COLOR}",
+                    "--divider-color: #${colorScheme.outlineVariant.toRgbHexString()};"
+                ).replace(
+                    "--title-color: {COLOR}",
+                    "--title-color: #${colorScheme.onSurface.toRgbHexString()};"
+                ).replace(
+                    "--subtitle-color: {COLOR}",
+                    "--subtitle-color: #${colorScheme.onSurfaceVariant.toRgbHexString()};"
+                )
             }
             body {
                 val repeatedElement = findId("repeated").removeElement()

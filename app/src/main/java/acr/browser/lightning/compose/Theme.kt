@@ -6,6 +6,7 @@ import android.graphics.Color
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -89,6 +90,17 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
+fun AppTheme.asColorScheme(isIncognito: Boolean): ColorScheme {
+    if (isIncognito) {
+        return darkScheme
+    }
+    return when (this) {
+        AppTheme.LIGHT -> lightScheme
+        AppTheme.DARK -> darkScheme
+        AppTheme.BLACK -> darkScheme
+    }
+}
+
 @Composable
 fun ThemableActivity.BrowserTheme(
     isIncognito: Boolean = false,
@@ -101,12 +113,11 @@ fun ThemableActivity.BrowserTheme(
 //            val context = LocalContext.current
 //            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 //        }
-    val colorScheme = when (appThemePreferenceStoreStateProvider.state.collectAsState().value) {
-        null -> null
-        AppTheme.LIGHT -> lightScheme
-        AppTheme.DARK -> darkScheme
-        AppTheme.BLACK -> darkScheme
-    }
+    val colorScheme =
+        when (val appTheme = appThemePreferenceStoreStateProvider.state.collectAsState().value) {
+            null -> null
+            else -> appTheme.asColorScheme(isIncognito)
+        }
 
     if (colorScheme == null) return
 
@@ -122,11 +133,7 @@ fun ThemableActivity.BrowserTheme(
     )
 
     MaterialTheme(
-        colorScheme = if (isIncognito) {
-            darkScheme
-        } else {
-            colorScheme
-        },
+        colorScheme = colorScheme,
         content = content
     )
 }

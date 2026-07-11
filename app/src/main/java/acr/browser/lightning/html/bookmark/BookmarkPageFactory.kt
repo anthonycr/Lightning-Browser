@@ -3,7 +3,10 @@ package acr.browser.lightning.html.bookmark
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.FaviconCacheDir
 import acr.browser.lightning.browser.di.GeneratedHtmlDir
+import acr.browser.lightning.browser.di.IncognitoMode
 import acr.browser.lightning.browser.theme.ThemeProvider
+import acr.browser.lightning.compose.asColorScheme
+import acr.browser.lightning.compose.toRgbHexString
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.Bookmark
@@ -21,6 +24,7 @@ import acr.browser.lightning.html.jsoup.removeElement
 import acr.browser.lightning.html.jsoup.style
 import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
+import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.utils.ThemeUtils
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
@@ -41,24 +45,13 @@ class BookmarkPageFactory @Inject constructor(
     private val coroutineDispatchers: CoroutineDispatchers,
     private val bookmarkPageReader: BookmarkPageReader,
     private val themeProvider: ThemeProvider,
+    @IncognitoMode private val isIncognito: Boolean,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
     @FaviconCacheDir private val faviconCacheDir: ThreadSafeFileProvider,
 ) : HtmlPageFactory {
 
     private val title = application.getString(R.string.action_bookmarks)
-
-    private fun Int.toColor(): String {
-        val string = Integer.toHexString(this)
-
-        return string.substring(2) + string.substring(0, 2)
-    }
-
-    private val backgroundColor: String
-        get() = themeProvider.color(R.attr.colorPrimary).toColor()
-    private val cardColor: String
-        get() = themeProvider.color(R.attr.autoCompleteBackgroundColor).toColor()
-    private val textColor: String
-        get() = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
 
     override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
         val folderIcon = File(faviconCacheDir.file(), FOLDER_ICON)
@@ -102,13 +95,22 @@ class BookmarkPageFactory @Inject constructor(
         icon.recycle()
     }
 
-    private fun construct(list: List<BookmarkViewModel>): String {
+    private suspend fun construct(list: List<BookmarkViewModel>): String {
+        val appTheme = userPreferencesDataStore.useTheme.get()
+        val colorScheme = appTheme.asColorScheme(isIncognito)
         return parse(bookmarkPageReader.provideHtml()) andBuild {
             title { title }
             style { content ->
-                content.replace("--body-bg: {COLOR}", "--body-bg: #$backgroundColor;")
-                    .replace("--box-bg: {COLOR}", "--box-bg: #$cardColor;")
-                    .replace("--box-txt: {COLOR}", "--box-txt: #$textColor;")
+                content.replace(
+                    "--body-bg: {COLOR}",
+                    "--body-bg: #${colorScheme.surface.toRgbHexString()};"
+                ).replace(
+                    "--box-bg: {COLOR}",
+                    "--box-bg: #${colorScheme.surfaceContainer.toRgbHexString()};"
+                ).replace(
+                    "--box-txt: {COLOR}",
+                    "--box-txt: #${colorScheme.onSurfaceVariant.toRgbHexString()};"
+                )
             }
             body {
                 val repeatableElement = findId("repeated").removeElement()
