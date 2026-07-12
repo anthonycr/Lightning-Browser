@@ -6,6 +6,8 @@ import acr.browser.lightning.adblock.source.AssetsHostsDataSource
 import acr.browser.lightning.adblock.source.HostsDataSource
 import acr.browser.lightning.adblock.source.HostsDataSourceProvider
 import acr.browser.lightning.adblock.source.PreferencesHostsDataSourceProvider
+import acr.browser.lightning.browser.theme.DefaultThemeProvider
+import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.database.adblock.HostsDatabase
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.database.allowlist.AdBlockAllowListDatabase
@@ -68,4 +70,7 @@ interface AppBindsModule {
 
     @Binds
     fun bindsNumberFormatter(defaultNumberFormatter: DefaultNumberFormatter): NumberFormatter
+
+    @Binds
+    fun bindsThemeProvider(themeProvider: DefaultThemeProvider): ThemeProvider
 }

@@ -5,8 +5,6 @@ import acr.browser.lightning.browser.BrowserNavigator
 import acr.browser.lightning.browser.cleanup.DelegatingExitCleanup
 import acr.browser.lightning.browser.cleanup.ExitCleanup
 import acr.browser.lightning.browser.tab.TabsRepository
-import acr.browser.lightning.browser.theme.DefaultThemeProvider
-import acr.browser.lightning.browser.theme.ThemeProvider
 import android.app.Activity
 import androidx.fragment.app.FragmentActivity
 import dagger.Binds
@@ -29,7 +27,4 @@ interface Browser2BindsModule {
 
     @Binds
     fun bindsExitCleanup(delegatingExitCleanup: DelegatingExitCleanup): ExitCleanup
-
-    @Binds
-    fun bindsThemeProvider(legacyThemeProvider: DefaultThemeProvider): ThemeProvider
 }

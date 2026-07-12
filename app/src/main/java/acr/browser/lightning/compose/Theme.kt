@@ -90,20 +90,14 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
-fun AppTheme.asColorScheme(isIncognito: Boolean): ColorScheme {
-    if (isIncognito) {
-        return darkScheme
-    }
-    return when (this) {
-        AppTheme.LIGHT -> lightScheme
-        AppTheme.DARK -> darkScheme
-        AppTheme.BLACK -> darkScheme
-    }
+fun AppTheme.asColorScheme(): ColorScheme = when (this) {
+    AppTheme.LIGHT -> lightScheme
+    AppTheme.DARK -> darkScheme
+    AppTheme.BLACK -> darkScheme
 }
 
 @Composable
 fun ThemableActivity.BrowserTheme(
-    isIncognito: Boolean = false,
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -116,7 +110,7 @@ fun ThemableActivity.BrowserTheme(
     val colorScheme =
         when (val appTheme = appThemePreferenceStoreStateProvider.state.collectAsState().value) {
             null -> null
-            else -> appTheme.asColorScheme(isIncognito)
+            else -> appTheme.asColorScheme()
         }
 
     if (colorScheme == null) return

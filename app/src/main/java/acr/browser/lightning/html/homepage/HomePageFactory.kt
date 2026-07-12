@@ -2,7 +2,7 @@ package acr.browser.lightning.html.homepage
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.GeneratedHtmlDir
-import acr.browser.lightning.browser.di.IncognitoMode
+import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.compose.asColorScheme
 import acr.browser.lightning.compose.toRgbHexString
 import acr.browser.lightning.concurrency.CoroutineDispatchers
@@ -17,7 +17,6 @@ import acr.browser.lightning.html.jsoup.parse
 import acr.browser.lightning.html.jsoup.style
 import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
-import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
@@ -33,8 +32,7 @@ class HomePageFactory @Inject constructor(
     application: Application,
     private val searchEngineProvider: SearchEngineProvider,
     private val homePageReader: HomePageReader,
-    @IncognitoMode private val isIncognito: Boolean,
-    private val userPreferencesDataStore: UserPreferencesDataStore,
+    private val themeProvider: ThemeProvider,
     private val coroutineDispatchers: CoroutineDispatchers,
     @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
 ) : HtmlPageFactory {
@@ -42,8 +40,8 @@ class HomePageFactory @Inject constructor(
     private val title = application.getString(R.string.home)
 
     override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
-        val appTheme = userPreferencesDataStore.useTheme.get()
-        val colorScheme = appTheme.asColorScheme(isIncognito)
+        val appTheme = themeProvider.appTheme()
+        val colorScheme = appTheme.asColorScheme()
         val (iconUrl, queryUrl, _) = searchEngineProvider.provideSearchEngine()
         val content = parse(homePageReader.provideHtml()) andBuild {
             title { title }

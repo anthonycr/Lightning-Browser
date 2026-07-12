@@ -17,6 +17,8 @@ import android.view.View
 import android.webkit.CookieManager
 import android.webkit.WebSettings
 import android.webkit.WebView
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 import javax.inject.Inject
 
 /**
@@ -76,6 +78,10 @@ class WebViewFactory @Inject constructor(
             setNetworkAvailable(true)
 
             settings.apply {
+                // TODO: Maybe algorithmic darkening should be a setting
+                if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
+                    WebSettingsCompat.setAlgorithmicDarkeningAllowed(this, true)
+                }
                 mediaPlaybackRequiresUserGesture = true
 
                 mixedContentMode = if (!incognitoMode) {

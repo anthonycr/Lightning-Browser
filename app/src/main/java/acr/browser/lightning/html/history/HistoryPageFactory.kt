@@ -2,7 +2,7 @@ package acr.browser.lightning.html.history
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.GeneratedHtmlDir
-import acr.browser.lightning.browser.di.IncognitoMode
+import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.compose.asColorScheme
 import acr.browser.lightning.compose.toRgbHexString
 import acr.browser.lightning.concurrency.CoroutineDispatchers
@@ -20,7 +20,6 @@ import acr.browser.lightning.html.jsoup.removeElement
 import acr.browser.lightning.html.jsoup.style
 import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
-import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import kotlinx.coroutines.withContext
@@ -35,8 +34,7 @@ class HistoryPageFactory @Inject constructor(
     private val listPageReader: ListPageReader,
     application: Application,
     private val historyRepository: HistoryRepository,
-    @IncognitoMode private val isIncognito: Boolean,
-    private val userPreferencesDataStore: UserPreferencesDataStore,
+    private val themeProvider: ThemeProvider,
     private val coroutineDispatchers: CoroutineDispatchers,
     @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
 ) : HtmlPageFactory {
@@ -44,8 +42,8 @@ class HistoryPageFactory @Inject constructor(
     private val title = application.getString(R.string.action_history)
 
     override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
-        val appTheme = userPreferencesDataStore.useTheme.get()
-        val colorScheme = appTheme.asColorScheme(isIncognito)
+        val appTheme = themeProvider.appTheme()
+        val colorScheme = appTheme.asColorScheme()
         val list = historyRepository.lastHundredVisitedHistoryEntries()
         val content = parse(listPageReader.provideHtml()) andBuild {
             title { title }

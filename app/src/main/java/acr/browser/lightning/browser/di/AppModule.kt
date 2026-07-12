@@ -3,8 +3,9 @@ package acr.browser.lightning.browser.di
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.tab.DefaultTabTitle
+import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.compose.PreferenceStoreStateProvider
+import acr.browser.lightning.compose.DeferredStateProvider
 import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatcherProvider
@@ -294,23 +295,23 @@ class AppModule {
     @Named("theme")
     @Singleton
     @Provides
-    fun providesThemePreferenceStoreStateProvider(
-        userPreferencesDataStore: UserPreferencesDataStore,
+    fun providesThemeDeferredStateProvider(
+        themeProvider: ThemeProvider,
         appCoroutineScope: AppCoroutineScope,
-    ): StateProvider<AppTheme> = PreferenceStoreStateProvider(
-        userPreferencesDataStore.useTheme,
-        appCoroutineScope,
+    ): StateProvider<AppTheme> = DeferredStateProvider(
+        provideState = { themeProvider.appTheme() },
+        appCoroutineScope = appCoroutineScope
     )
 
     @Named("tab")
     @Singleton
     @Provides
-    fun providesTabConfigurationStoreStateProvider(
+    fun providesTabConfigurationDeferredStateProvider(
         userPreferencesDataStore: UserPreferencesDataStore,
         appCoroutineScope: AppCoroutineScope,
-    ): StateProvider<TabConfiguration> = PreferenceStoreStateProvider(
-        userPreferencesDataStore.tabConfiguration,
-        appCoroutineScope,
+    ): StateProvider<TabConfiguration> = DeferredStateProvider(
+        provideState = { userPreferencesDataStore.tabConfiguration.get() },
+        appCoroutineScope = appCoroutineScope,
     )
 }
 

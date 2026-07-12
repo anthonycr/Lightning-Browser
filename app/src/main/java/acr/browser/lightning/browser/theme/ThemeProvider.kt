@@ -1,17 +1,15 @@
 package acr.browser.lightning.browser.theme
 
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
+import acr.browser.lightning.AppTheme
 
 /**
- * Provides themed attributes.
+ * Provides the current app theme.
  */
 interface ThemeProvider {
 
     /**
-     * Provide a themed color attribute.
+     * The current app theme.
      */
-    @ColorInt
-    fun color(@AttrRes attrRes: Int): Int
+    suspend fun appTheme(): AppTheme
 
 }

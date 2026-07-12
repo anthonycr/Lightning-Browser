@@ -3,7 +3,6 @@ package acr.browser.lightning.html.bookmark
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.FaviconCacheDir
 import acr.browser.lightning.browser.di.GeneratedHtmlDir
-import acr.browser.lightning.browser.di.IncognitoMode
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.compose.asColorScheme
 import acr.browser.lightning.compose.toRgbHexString
@@ -24,11 +23,11 @@ import acr.browser.lightning.html.jsoup.removeElement
 import acr.browser.lightning.html.jsoup.style
 import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
-import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.utils.ThemeUtils
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import android.graphics.Bitmap
+import androidx.compose.ui.graphics.toArgb
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -45,8 +44,6 @@ class BookmarkPageFactory @Inject constructor(
     private val coroutineDispatchers: CoroutineDispatchers,
     private val bookmarkPageReader: BookmarkPageReader,
     private val themeProvider: ThemeProvider,
-    @IncognitoMode private val isIncognito: Boolean,
-    private val userPreferencesDataStore: UserPreferencesDataStore,
     @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
     @FaviconCacheDir private val faviconCacheDir: ThreadSafeFileProvider,
 ) : HtmlPageFactory {
@@ -74,11 +71,13 @@ class BookmarkPageFactory @Inject constructor(
                 }
             }
 
+        val appTheme = themeProvider.appTheme()
+        val colorScheme = appTheme.asColorScheme()
         cacheIcon(
             ThemeUtils.createThemedBitmap(
                 application,
                 R.drawable.ic_folder,
-                themeProvider.color(R.attr.autoCompleteTitleColor)
+                colorScheme.onSurfaceVariant.toArgb()
             ),
             folderIcon
         )
@@ -96,8 +95,8 @@ class BookmarkPageFactory @Inject constructor(
     }
 
     private suspend fun construct(list: List<BookmarkViewModel>): String {
-        val appTheme = userPreferencesDataStore.useTheme.get()
-        val colorScheme = appTheme.asColorScheme(isIncognito)
+        val appTheme = themeProvider.appTheme()
+        val colorScheme = appTheme.asColorScheme()
         return parse(bookmarkPageReader.provideHtml()) andBuild {
             title { title }
             style { content ->

@@ -2,7 +2,7 @@ package acr.browser.lightning.html.download
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.GeneratedHtmlDir
-import acr.browser.lightning.browser.di.IncognitoMode
+import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.compose.asColorScheme
 import acr.browser.lightning.compose.toRgbHexString
 import acr.browser.lightning.concurrency.CoroutineDispatchers
@@ -34,17 +34,17 @@ import javax.inject.Inject
  */
 class DownloadPageFactory @Inject constructor(
     private val application: Application,
-    private val userPreferencesDataStore: UserPreferencesDataStore,
     private val manager: DownloadsRepository,
     private val listPageReader: ListPageReader,
-    @IncognitoMode private val isIncognito: Boolean,
+    private val themeProvider: ThemeProvider,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
     private val coroutineDispatchers: CoroutineDispatchers,
     @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
 ) : HtmlPageFactory {
 
     override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
-        val appTheme = userPreferencesDataStore.useTheme.get()
-        val colorScheme = appTheme.asColorScheme(isIncognito)
+        val appTheme = themeProvider.appTheme()
+        val colorScheme = appTheme.asColorScheme()
         val downloads = manager.getAllDownloads().map { it to createFileUrl(it.title) }
         val content = parse(listPageReader.provideHtml()) andBuild {
             title { application.getString(R.string.action_downloads) }

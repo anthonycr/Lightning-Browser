@@ -64,7 +64,6 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
     abstract fun isIncognito(): Boolean
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
         val browserFrame = FrameLayout(this)
         val customFrame = FrameLayout(this)
@@ -75,6 +74,8 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
             .initialIntent(intent.takeIf { savedInstanceState == null })
             .build()
             .inject(this)
+
+        super.onCreate(savedInstanceState)
 
         setContent {
             val currentState = presenter.state.collectAsMutableState(

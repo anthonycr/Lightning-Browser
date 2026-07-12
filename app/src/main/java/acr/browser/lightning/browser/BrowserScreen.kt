@@ -144,7 +144,7 @@ fun ThemableActivity.BrowserScreen(
     customFrameLayout: FrameLayout,
     suggestionsModel: SuggestionsModel,
 ) {
-    BrowserTheme(isIncognito = browserViewState.isIncognito) {
+    BrowserTheme {
         if (browserViewState.showCustomView) {
             CustomView(customFrameLayout)
         } else {
