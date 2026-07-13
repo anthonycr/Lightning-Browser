@@ -1,58 +1,23 @@
 package acr.browser.lightning.utils;
 
 import android.app.Application;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 
 import acr.browser.lightning.R;
 import androidx.annotation.ColorInt;
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 public final class DrawableUtils {
 
     private DrawableUtils() {}
-
-    /**
-     * Creates a white rounded drawable with an inset image of a different color.
-     *
-     * @param context     the context needed to work with resources.
-     * @param drawableRes the drawable to inset on the rounded drawable.
-     * @return a bitmap with the desired content.
-     */
-    @NonNull
-    public static Bitmap createImageInsetInRoundedSquare(Context context,
-                                                         @DrawableRes int drawableRes) {
-        final Bitmap icon = ThemeUtils.getBitmapFromVectorDrawable(context, drawableRes);
-
-        final Bitmap image = Bitmap.createBitmap(icon.getWidth(), icon.getHeight(), Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(image);
-        final Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
-        paint.setAntiAlias(true);
-        paint.setFilterBitmap(true);
-        paint.setDither(true);
-
-        final int radius = Utils.dpToPx(6);
-        final int padding = Utils.dpToPx(2);
-
-        final RectF outer = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.drawRoundRect(outer, radius, radius, paint);
-
-        final Rect dest = new Rect(Math.round(outer.left + padding), Math.round(outer.top + padding), Math.round(outer.right - padding), Math.round(outer.bottom - padding));
-        canvas.drawBitmap(icon, null, dest, paint);
-
-        return image;
-    }
 
     /**
      * Creates a rounded square of a certain color with

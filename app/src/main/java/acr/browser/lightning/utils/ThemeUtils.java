@@ -25,28 +25,6 @@ public final class ThemeUtils {
     private ThemeUtils() {}
 
     /**
-     * Gets the primary color of the current theme.
-     *
-     * @param context the context to get the theme from.
-     * @return the primary color of the current theme.
-     */
-    @ColorInt
-    public static int getPrimaryColor(@NonNull Context context) {
-        return getColor(context, R.attr.colorPrimary);
-    }
-
-    /**
-     * Gets the primary dark color of the current theme.
-     *
-     * @param context the context to get the theme from.
-     * @return the primary dark color of the current theme.
-     */
-    @ColorInt
-    public static int getPrimaryColorDark(@NonNull Context context) {
-        return getColor(context, R.attr.colorPrimaryDark);
-    }
-
-    /**
      * Gets the accent color of the current theme.
      *
      * @param context the context to get the theme from.
@@ -55,18 +33,6 @@ public final class ThemeUtils {
     @ColorInt
     public static int getAccentColor(@NonNull Context context) {
         return getColor(context, R.attr.colorAccent);
-    }
-
-    /**
-     * Gets the color of the status bar as set in styles
-     * for the current theme.
-     *
-     * @param context the context to get the theme from.
-     * @return the status bar color of the current theme.
-     */
-    @ColorInt
-    public static int getStatusBarColor(@NonNull Context context) {
-        return getColor(context, android.R.attr.statusBarColor);
     }
 
     /**
@@ -82,42 +48,6 @@ public final class ThemeUtils {
         int color = a.getColor(0, 0);
         a.recycle();
         return color;
-    }
-
-    /**
-     * Gets the icon color for the light theme.
-     *
-     * @param context the context to use.
-     * @return the color of the icon.
-     */
-    @ColorInt
-    private static int getIconLightThemeColor(@NonNull Context context) {
-        return ContextCompat.getColor(context, R.color.icon_light_theme);
-    }
-
-    /**
-     * Gets the icon color for the dark theme.
-     *
-     * @param context the context to use.
-     * @return the color of the icon.
-     */
-    @ColorInt
-    private static int getIconDarkThemeColor(@NonNull Context context) {
-        return ContextCompat.getColor(context, R.color.icon_dark_theme);
-    }
-
-    /**
-     * Gets the color icon for the light or
-     * dark theme.
-     *
-     * @param context the context to use.
-     * @param dark    true for the dark theme,
-     *                false for the light theme.
-     * @return the color of the icon.
-     */
-    @ColorInt
-    public static int getIconThemeColor(@NonNull Context context, boolean dark) {
-        return (dark) ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
     }
 
     @NonNull
@@ -139,23 +69,6 @@ public final class ThemeUtils {
         return bitmap;
     }
 
-    /**
-     * Gets the icon with an applied color filter
-     * for the correct theme.
-     *
-     * @param context the context to use.
-     * @param res     the drawable resource to use.
-     * @param dark    true for icon suitable for use with a dark theme,
-     *                false for icon suitable for use with a light theme.
-     * @return a themed icon.
-     */
-    @NonNull
-    public static Bitmap createThemedBitmap(@NonNull Context context, @DrawableRes int res, boolean dark) {
-        int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
-
-        return createThemedBitmap(context, res, color);
-    }
-
     @NonNull
     public static Bitmap createThemedBitmap(@NonNull Context context, @DrawableRes int res, @ColorInt int color) {
         Bitmap sourceBitmap = getBitmapFromVectorDrawable(context, res);
@@ -170,14 +83,4 @@ public final class ThemeUtils {
         return resultBitmap;
     }
 
-    /**
-     * Gets the edit text text color for the current theme.
-     *
-     * @param context the context to use.
-     * @return a text color.
-     */
-    @ColorInt
-    public static int getTextColor(@NonNull Context context) {
-        return getColor(context, android.R.attr.editTextColor);
-    }
 }
