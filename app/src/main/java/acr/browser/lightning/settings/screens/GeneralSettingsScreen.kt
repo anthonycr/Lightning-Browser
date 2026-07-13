@@ -21,7 +21,6 @@ import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
 import acr.browser.lightning.utils.FileUtils
-import android.os.Environment
 import android.webkit.URLUtil
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -111,6 +110,10 @@ class GeneralSettingsScreen @Inject constructor(
                 )
             ),
             ClickableState(
+                enabled = {
+                    // TODO: Fix download location to only allow external downloads directory
+                    false
+                },
                 title = resourceProvider.stringResource(R.string.download),
                 summary = { userPreferencesDataStore.downloadDirectory.get() },
                 onClick = ClickableOnClick.ItemSelector(
@@ -121,8 +124,8 @@ class GeneralSettingsScreen @Inject constructor(
                                 resourceProvider.stringResource(R.string.folder_default),
                                 resourceProvider.stringResource(R.string.folder_custom)
                             ),
-                            selected = if (userPreferencesDataStore.downloadDirectory.get()
-                                    .contains(Environment.DIRECTORY_DOWNLOADS)
+                            selected = if (userPreferencesDataStore.downloadDirectory.get() ==
+                                FileUtils.DEFAULT_DOWNLOAD_PATH
                             ) {
                                 0
                             } else {

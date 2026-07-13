@@ -66,9 +66,9 @@ class DownloadPageFactory @Inject constructor(
             body {
                 val repeatableElement = findId("repeated").removeElement()
                 id("content") {
-                    downloads.forEach { (download, title) ->
+                    downloads.forEach { (download, url) ->
                         appendChild(repeatableElement.clone {
-                            tag("a") { attr("href", title) }
+                            tag("a") { attr("href", url) }
                             id("title") { text(createFileTitle(download)) }
                             id("url") { text(download.url) }
                         })

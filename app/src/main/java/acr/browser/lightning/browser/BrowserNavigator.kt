@@ -4,9 +4,9 @@ import acr.browser.lightning.IncognitoBrowserActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.cleanup.ExitCleanup
 import acr.browser.lightning.browser.di.IncognitoMode
-import acr.browser.lightning.browser.download.DownloadPermissionsHelper
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.concurrency.AppCoroutineScope
+import acr.browser.lightning.download.FileDownloader
 import acr.browser.lightning.extensions.copyToClipboard
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.log.Logger
@@ -28,11 +28,11 @@ class BrowserNavigator @Inject constructor(
     private val activity: FragmentActivity,
     private val clipboardManager: ClipboardManager,
     private val logger: Logger,
-    private val downloadPermissionsHelper: DownloadPermissionsHelper,
     private val exitCleanup: ExitCleanup,
     @IncognitoMode private val incognitoMode: Boolean,
     private val activityManager: ActivityManager,
     private val appCoroutineScope: AppCoroutineScope,
+    private val fileDownloader: FileDownloader,
 ) : BrowserContract.Navigator {
 
     override fun openSettings() {
@@ -65,14 +65,9 @@ class BrowserNavigator @Inject constructor(
     }
 
     override fun download(pendingDownload: PendingDownload) {
-        downloadPermissionsHelper.download(
-            activity = activity,
-            url = pendingDownload.url,
-            userAgent = pendingDownload.userAgent,
-            contentDisposition = pendingDownload.contentDisposition,
-            mimeType = pendingDownload.mimeType,
-            contentLength = pendingDownload.contentLength
-        )
+        appCoroutineScope.launch {
+            fileDownloader.download(pendingDownload)
+        }
     }
 
     override fun backgroundBrowser() {

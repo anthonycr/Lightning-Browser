@@ -52,7 +52,6 @@ class UserPreferencesDataStore @Inject constructor(
                     migrateBoolean(blockImagesEnabled)
                     migrateBoolean(clearCacheExit)
                     migrateBoolean(cookiesEnabled)
-                    migrateString(downloadDirectory)
                     migrateBoolean(fullScreenEnabled)
                     migrateBoolean(hideStatusBarEnabled)
                     migrateString(homepage)
@@ -501,7 +500,7 @@ private const val BLOCK_ADS = "AdBlock"
 private const val BLOCK_IMAGES = "blockimages"
 private const val CLEAR_CACHE_EXIT = "cache"
 private const val COOKIES = "cookies"
-private const val DOWNLOAD_DIRECTORY = "downloadLocation"
+private const val DOWNLOAD_DIRECTORY = "downloadDirectory"
 private const val FULL_SCREEN = "fullscreen"
 private const val HIDE_STATUS_BAR = "hidestatus"
 private const val HOMEPAGE = "home"
