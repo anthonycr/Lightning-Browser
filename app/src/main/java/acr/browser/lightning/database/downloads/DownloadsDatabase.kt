@@ -34,6 +34,7 @@ class DownloadsDatabase @Inject constructor(
             "CREATE TABLE ${DatabaseUtils.sqlEscapeString(TABLE_DOWNLOADS)}(" +
                 "${DatabaseUtils.sqlEscapeString(KEY_ID)} INTEGER PRIMARY KEY," +
                 "${DatabaseUtils.sqlEscapeString(KEY_URL)} TEXT," +
+                "${DatabaseUtils.sqlEscapeString(KEY_LOCATION)} TEXT," +
                 "${DatabaseUtils.sqlEscapeString(KEY_TITLE)} TEXT," +
                 "${DatabaseUtils.sqlEscapeString(KEY_SIZE)} TEXT" +
                 ')'
@@ -49,25 +50,25 @@ class DownloadsDatabase @Inject constructor(
     }
 
     override suspend fun findDownloadForUrl(
-        url: String
+        location: String
     ): DownloadEntry? = withContext(databaseDispatcher) {
         database.query(
             TABLE_DOWNLOADS,
             null,
-            "$KEY_URL=?",
-            arrayOf(url),
+            "$KEY_LOCATION=?",
+            arrayOf(location),
             null,
             null,
             "1"
         ).firstOrNullMap { it.bindToDownloadItem() }
     }
 
-    override suspend fun isDownload(url: String): Boolean = withContext(databaseDispatcher) {
+    override suspend fun isDownload(location: String): Boolean = withContext(databaseDispatcher) {
         database.query(
             TABLE_DOWNLOADS,
             null,
-            "$KEY_URL=?",
-            arrayOf(url),
+            "$KEY_LOCATION=?",
+            arrayOf(location),
             null,
             null,
             null,
@@ -81,8 +82,8 @@ class DownloadsDatabase @Inject constructor(
         database.query(
             TABLE_DOWNLOADS,
             null,
-            "$KEY_URL=?",
-            arrayOf(entry.url),
+            "$KEY_LOCATION=?",
+            arrayOf(entry.location),
             null,
             null,
             "1"
@@ -102,19 +103,20 @@ class DownloadsDatabase @Inject constructor(
     ): Unit = withContext(databaseDispatcher) {
         database.apply {
             beginTransaction()
-            setTransactionSuccessful()
 
             for (item in downloadEntries) {
                 addDownloadIfNotExists(item)
             }
 
+            setTransactionSuccessful()
             endTransaction()
         }
     }
 
-    override suspend fun deleteDownload(url: String): Boolean = withContext(databaseDispatcher) {
-        database.delete(TABLE_DOWNLOADS, "$KEY_URL=?", arrayOf(url)) > 0
-    }
+    override suspend fun deleteDownload(location: String): Boolean =
+        withContext(databaseDispatcher) {
+            database.delete(TABLE_DOWNLOADS, "$KEY_LOCATION = ?", arrayOf(location)) > 0
+        }
 
     override suspend fun deleteAllDownloads(): Unit = withContext(databaseDispatcher) {
         database.run {
@@ -142,9 +144,10 @@ class DownloadsDatabase @Inject constructor(
     /**
      * Maps the fields of [DownloadEntry] to [ContentValues].
      */
-    private fun DownloadEntry.toContentValues() = ContentValues(3).apply {
+    private fun DownloadEntry.toContentValues() = ContentValues(4).apply {
         put(KEY_TITLE, title)
         put(KEY_URL, url)
+        put(KEY_LOCATION, location)
         put(KEY_SIZE, contentSize)
     }
 
@@ -153,14 +156,15 @@ class DownloadsDatabase @Inject constructor(
      */
     private fun Cursor.bindToDownloadItem() = DownloadEntry(
         url = getString(getColumnIndex(KEY_URL)),
+        location = getString(getColumnIndex(KEY_LOCATION)),
         title = getString(getColumnIndex(KEY_TITLE)),
-        contentSize = getString(getColumnIndex(KEY_SIZE))
+        contentSize = getString(getColumnIndex(KEY_SIZE)),
     )
 
     companion object {
 
         // Database version
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
 
         // Database name
         private const val DATABASE_NAME = "downloadManager"
@@ -171,9 +175,9 @@ class DownloadsDatabase @Inject constructor(
         // DownloadItem table columns names
         private const val KEY_ID = "id"
         private const val KEY_URL = "url"
+        private const val KEY_LOCATION = "location"
         private const val KEY_TITLE = "title"
         private const val KEY_SIZE = "size"
-
     }
 
 }

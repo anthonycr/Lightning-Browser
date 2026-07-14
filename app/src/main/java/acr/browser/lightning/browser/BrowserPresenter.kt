@@ -1237,7 +1237,7 @@ class BrowserPresenter @Inject constructor(
         when (option) {
             BrowserContract.DownloadOptionEvent.DELETE ->
                 browserCoroutineScope.launch {
-                    downloadsRepository.deleteDownload(download.url)
+                    downloadsRepository.deleteDownload(download.location)
                     if (currentTab?.url?.isDownloadsUrl() == true) {
                         reload()
                     }

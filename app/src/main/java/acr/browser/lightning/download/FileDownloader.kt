@@ -3,10 +3,12 @@ package acr.browser.lightning.download
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.concurrency.CoroutineDispatchers
+import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.resources.ResourceProvider
+import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import android.app.DownloadManager
 import android.os.Environment
@@ -76,16 +78,16 @@ class DefaultFileDownloader @Inject constructor(
                 resourceProvider.stringResource(R.string.unknown_size)
             }
 
+            downloadManager.enqueue(request)
+
             downloadsRepository.addDownloadIfNotExists(
                 DownloadEntry(
                     url = normalizedPendingDownload.url,
+                    location = "$FILE${FileUtils.DEFAULT_DOWNLOAD_PATH}/$guessFileName",
                     title = guessFileName,
-                    contentSize = contentSize
+                    contentSize = contentSize,
                 )
             )
-
-            // TODO: Save download id to delete from downloads
-            downloadManager.enqueue(request)
             Unit
         }
 

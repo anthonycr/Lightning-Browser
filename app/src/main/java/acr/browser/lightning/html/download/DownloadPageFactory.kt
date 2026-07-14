@@ -21,7 +21,6 @@ import acr.browser.lightning.html.jsoup.removeElement
 import acr.browser.lightning.html.jsoup.style
 import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
-import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import kotlinx.coroutines.withContext
@@ -37,7 +36,6 @@ class DownloadPageFactory @Inject constructor(
     private val manager: DownloadsRepository,
     private val listPageReader: ListPageReader,
     private val themeProvider: ThemeProvider,
-    private val userPreferencesDataStore: UserPreferencesDataStore,
     private val coroutineDispatchers: CoroutineDispatchers,
     @GeneratedHtmlDir private val generatedHtmlDir: ThreadSafeFileProvider,
 ) : HtmlPageFactory {
@@ -45,7 +43,7 @@ class DownloadPageFactory @Inject constructor(
     override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
         val appTheme = themeProvider.appTheme()
         val colorScheme = appTheme.asColorScheme()
-        val downloads = manager.getAllDownloads().map { it to createFileUrl(it.title) }
+        val downloads = manager.getAllDownloads()
         val content = parse(listPageReader.provideHtml()) andBuild {
             title { application.getString(R.string.action_downloads) }
             style { content ->
@@ -66,9 +64,9 @@ class DownloadPageFactory @Inject constructor(
             body {
                 val repeatableElement = findId("repeated").removeElement()
                 id("content") {
-                    downloads.forEach { (download, url) ->
+                    downloads.forEach { download ->
                         appendChild(repeatableElement.clone {
-                            tag("a") { attr("href", url) }
+                            tag("a") { attr("href", download.location) }
                             id("title") { text(createFileTitle(download)) }
                             id("url") { text(download.url) }
                         })
@@ -87,9 +85,6 @@ class DownloadPageFactory @Inject constructor(
         generatedHtml.mkdirs()
         return File(generatedHtml, FILENAME)
     }
-
-    private suspend fun createFileUrl(fileName: String): String =
-        "$FILE${userPreferencesDataStore.downloadDirectory.get()}/$fileName"
 
     private fun createFileTitle(downloadItem: DownloadEntry): String {
         val contentSize = if (downloadItem.contentSize.isNotBlank()) {

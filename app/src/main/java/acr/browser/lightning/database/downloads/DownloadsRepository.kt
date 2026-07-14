@@ -8,20 +8,20 @@ package acr.browser.lightning.database.downloads
 interface DownloadsRepository {
 
     /**
-     * Determines if a URL is associated with a download.
+     * Determines if a location is associated with a download.
      *
-     * @param url the URL to check.
-     * @return an observable that will emit true if the URL is a download, false otherwise.
+     * @param location the location to check.
+     * @return an observable that will emit true if the location is a download, false otherwise.
      */
-    suspend fun isDownload(url: String): Boolean
+    suspend fun isDownload(location: String): Boolean
 
     /**
      * Gets the download associated with the URL.
      *
-     * @param url the URL to look for.
-     * @return an observable that will emit either the download associated with the URL or null.
+     * @param location the location to look for.
+     * @return an observable that will emit either the download associated with the location or null.
      */
-    suspend fun findDownloadForUrl(url: String): DownloadEntry?
+    suspend fun findDownloadForUrl(location: String): DownloadEntry?
 
     /**
      * Adds a download if one does not already exist with the same URL.
@@ -42,10 +42,10 @@ interface DownloadsRepository {
     /**
      * Deletes a download from the database.
      *
-     * @param url the download url to delete.
+     * @param location the download location to delete.
      * @return an observable that emits true when the download is deleted, false otherwise.
      */
-    suspend fun deleteDownload(url: String): Boolean
+    suspend fun deleteDownload(location: String): Boolean
 
     /**
      * Deletes all downloads in the database.
