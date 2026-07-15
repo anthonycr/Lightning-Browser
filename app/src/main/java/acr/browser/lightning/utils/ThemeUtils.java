@@ -11,7 +11,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 
-import acr.browser.lightning.R;
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
@@ -32,7 +31,7 @@ public final class ThemeUtils {
      */
     @ColorInt
     public static int getAccentColor(@NonNull Context context) {
-        return getColor(context, R.attr.colorAccent);
+        return getColor(context, androidx.appcompat.R.attr.colorAccent);
     }
 
     /**

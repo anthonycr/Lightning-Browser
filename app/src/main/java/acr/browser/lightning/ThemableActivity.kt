@@ -23,9 +23,9 @@ abstract class ThemableActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val appTheme = themeProvider.appTheme()
             when (appTheme) {
-                AppTheme.LIGHT -> setTheme(R.style.Theme_AppCompat_Light_NoActionBar)
-                AppTheme.DARK -> setTheme(R.style.Theme_AppCompat_NoActionBar)
-                AppTheme.BLACK -> setTheme(R.style.Theme_AppCompat_NoActionBar)
+                AppTheme.LIGHT -> setTheme(androidx.appcompat.R.style.Theme_AppCompat_Light_NoActionBar)
+                AppTheme.DARK -> setTheme(androidx.appcompat.R.style.Theme_AppCompat_NoActionBar)
+                AppTheme.BLACK -> setTheme(androidx.appcompat.R.style.Theme_AppCompat_NoActionBar)
             }
         }
     }
