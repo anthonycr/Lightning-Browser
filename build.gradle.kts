@@ -1,20 +1,8 @@
 buildscript {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
     dependencies {
         // Force metadata to match Kotlin version
         // See https://github.com/autonomousapps/dependency-analysis-gradle-plugin/issues/1661
         classpath("org.jetbrains.kotlin:kotlin-metadata-jvm:2.4.10")
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
     }
 }
 
