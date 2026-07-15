@@ -102,6 +102,7 @@ dependencies {
     val datastore = "1.2.1"
     val coil = "3.5.0"
     val coroutines = "1.11.0"
+    val leakcanary = "2.14"
     val lifecycle = "2.11.0"
 
     implementation(platform("androidx.compose:compose-bom:2026.06.01"))
@@ -131,7 +132,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-common:$lifecycle")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle")
     implementation("androidx.palette:palette:1.0.0")
-    implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.webkit:webkit:1.16.0")
     implementation("com.anthonycr.mezzanine:core:$mezzanineVersion")
     implementation("com.google.android.material:material:1.14.0")
@@ -150,9 +150,12 @@ dependencies {
     implementation("org.jspecify:jspecify:1.0.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android-core:$leakcanary")
+    debugImplementation("com.squareup.leakcanary:shark:$leakcanary")
 
     compileOnly("javax.annotation:jsr250-api:1.0")
+
+    debugRuntimeOnly("com.squareup.leakcanary:leakcanary-android:$leakcanary")
 
     testImplementation("com.nhaarman:mockito-kotlin:1.6.0") {
         exclude(group = "org.jetbrains.kotlin")
