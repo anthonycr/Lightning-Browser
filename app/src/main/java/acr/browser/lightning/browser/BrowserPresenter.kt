@@ -1504,7 +1504,7 @@ class BrowserPresenter @Inject constructor(
 
             BrowserContract.ImageLongPressEvent.DOWNLOAD -> navigator.download(
                 PendingDownload(
-                    url = longPress.targetUrl.orEmpty(),
+                    url = longPress.hitUrl.orEmpty(),
                     userAgent = null,
                     contentDisposition = "attachment",
                     mimeType = null,

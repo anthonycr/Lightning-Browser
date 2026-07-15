@@ -31,11 +31,11 @@ class WebViewLongPressHandler @Inject constructor(private val activity: Activity
                 GestureDetector(
                     activity,
                     CustomGestureListener(
-                        messageHandler = MessageHandler {
+                        messageHandler = MessageHandler { url, _, src ->
                             val hitTestResult = webView.hitTestResult
                             val longPress = LongPress(
-                                targetUrl = it ?: hitTestResult.extra,
-                                hitUrl = hitTestResult.extra,
+                                targetUrl = url ?: hitTestResult.extra,
+                                hitUrl = src ?: hitTestResult.extra,
                                 hitCategory = hitTestResult.type.asLongPressCategory()
                             )
                             if (longPress.targetUrl != null && longPress.hitUrl != null) {
@@ -72,12 +72,18 @@ class WebViewLongPressHandler @Inject constructor(private val activity: Activity
     }
 
     private class MessageHandler(
-        private val onUrlLongPress: (String?) -> Unit
+        private val onUrlLongPress: (String?, String?, String?) -> Unit
     ) : Handler(Looper.getMainLooper()) {
-        override fun handleMessage(msg: Message) = onUrlLongPress(msg.data.getString(KEY_URL))
+        override fun handleMessage(msg: Message) = onUrlLongPress(
+            msg.data.getString(KEY_URL),
+            msg.data.getString(KEY_TITLE),
+            msg.data.getString(KEY_SRC),
+        )
 
         companion object {
             private const val KEY_URL = "url"
+            private const val KEY_TITLE = "title"
+            private const val KEY_SRC = "src"
         }
     }
 
