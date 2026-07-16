@@ -83,6 +83,8 @@ class WebViewFactory @Inject constructor(
                         this,
                         userPreferencesDataStore.algorithmicDarkeningEnabled.getUnsafe()
                     )
+                } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                    WebSettingsCompat.setForceDark(this, WebSettingsCompat.FORCE_DARK_ON)
                 }
                 mediaPlaybackRequiresUserGesture = true
 

@@ -86,7 +86,10 @@ class DisplaySettingsScreen @Inject constructor(
                 }
             ),
             ToggleState(
-                enabled = { WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING) },
+                enabled = {
+                    WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING) ||
+                        WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)
+                },
                 title = resourceProvider.stringResource(R.string.algorithmic_darkening_title),
                 summary = { resourceProvider.stringResource(R.string.algorithmic_darkening_summary) },
                 isChecked = { userPreferencesDataStore.algorithmicDarkeningEnabled.get() },
