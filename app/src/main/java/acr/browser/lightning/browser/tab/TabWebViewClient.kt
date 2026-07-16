@@ -297,12 +297,6 @@ class TabWebViewClient @AssistedInject constructor(
         }.resizeAndShow()
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-        return urlHandler.shouldOverrideLoading(view, url, headers) ||
-            super.shouldOverrideUrlLoading(view, url)
-    }
-
     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
         return urlHandler.shouldOverrideLoading(view, request.url.toString(), headers) ||
             super.shouldOverrideUrlLoading(view, request)
