@@ -52,14 +52,12 @@ class Browser2Module {
         noOpAdBlocker
     }
 
-    // TODO: dont force cast
     @Provides
-    @InitialUrl
+    @InitialAction
     fun providesInitialUrl(
         @InitialIntent initialIntent: Intent?,
         intentExtractor: IntentExtractor
-    ): String? =
-        (intentExtractor.extractUrlFromIntent(initialIntent) as? BrowserContract.Action.LoadUrl)?.url
+    ): BrowserContract.Action? = intentExtractor.extractUrlFromIntent(initialIntent)
 
     // TODO: auto inject intent utils
     @Provides

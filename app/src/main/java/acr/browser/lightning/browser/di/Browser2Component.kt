@@ -48,7 +48,7 @@ annotation class CustomFrame
 annotation class InitialIntent
 
 @Qualifier
-annotation class InitialUrl
+annotation class InitialAction
 
 @Qualifier
 annotation class IncognitoMode

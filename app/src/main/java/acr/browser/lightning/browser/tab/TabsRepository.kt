@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.BrowserContract
-import acr.browser.lightning.browser.di.InitialUrl
+import acr.browser.lightning.browser.di.InitialAction
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.preference.UserPreferencesDataStore
@@ -23,7 +23,7 @@ class TabsRepository @Inject constructor(
     private val recentTabModel: RecentTabModel,
     private val tabFactory: TabFactory,
     private val userPreferencesDataStore: UserPreferencesDataStore,
-    @InitialUrl private val initialUrl: String?,
+    @InitialAction private val initialAction: BrowserContract.Action?,
     private val permissionInitializerFactory: PermissionInitializer.Factory,
     private val coroutineDispatchers: CoroutineDispatchers,
 ) : BrowserContract.Model {
@@ -110,6 +110,7 @@ class TabsRepository @Inject constructor(
                 )
             }
 
+            val initialUrl = (initialAction as? BrowserContract.Action.LoadUrl)?.url
             val newTabInitializer = if (initialUrl != null && initialUrl.isFileUrl()) {
                 permissionInitializerFactory.create(initialUrl)
             } else if (initialUrl != null) {
