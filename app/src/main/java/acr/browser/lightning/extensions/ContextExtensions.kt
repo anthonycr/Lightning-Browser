@@ -8,7 +8,6 @@ import android.database.Cursor
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.provider.MediaStore
-import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -43,12 +42,6 @@ inline fun Context.color(@ColorRes colorRes: Int): Int = ContextCompat.getColor(
  */
 inline fun Context.toast(@StringRes stringRes: Int) =
     Toast.makeText(this, stringRes, Toast.LENGTH_SHORT).show()
-
-/**
- * The [LayoutInflater] available on the [Context].
- */
-inline val Context.inflater: LayoutInflater
-    get() = LayoutInflater.from(this)
 
 /**
  * Gets a drawable from the context.
