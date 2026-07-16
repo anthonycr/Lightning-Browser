@@ -84,6 +84,8 @@ class WebViewFactory @Inject constructor(
                         userPreferencesDataStore.algorithmicDarkeningEnabled.getUnsafe()
                     )
                 } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                    // Remove when minSdk >= 33
+                    @Suppress("DEPRECATION")
                     WebSettingsCompat.setForceDark(this, WebSettingsCompat.FORCE_DARK_ON)
                 }
                 mediaPlaybackRequiresUserGesture = true
@@ -95,6 +97,8 @@ class WebViewFactory @Inject constructor(
                 }
 
                 domStorageEnabled = true
+                // Remove when minSdk >= 35
+                @Suppress("DEPRECATION")
                 databaseEnabled = true
                 cacheMode = WebSettings.LOAD_DEFAULT
 

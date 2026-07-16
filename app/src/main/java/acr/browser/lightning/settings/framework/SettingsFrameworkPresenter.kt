@@ -102,6 +102,7 @@ class SettingsFrameworkPresenter(
     class Factory(
         private val settingsFrameworkState: () -> SettingsFrameworkState
     ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             require(modelClass == SettingsFrameworkPresenter::class.java)
             return SettingsFrameworkPresenter(
