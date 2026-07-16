@@ -32,7 +32,6 @@ class WebUtils @Inject constructor(
     suspend fun clearHistory() = withContext(coroutineDispatchers.io) {
         historyRepository.deleteHistory()
         val webViewDatabase = WebViewDatabase.getInstance(application)
-        webViewDatabase.clearFormData()
         webViewDatabase.clearHttpAuthUsernamePassword()
         faviconCacheDirThreadSafeFileProvider.file().deleteRecursively()
         previewCacheDirThreadSafeFileProvider.file().deleteRecursively()
