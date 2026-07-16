@@ -3,7 +3,6 @@ package acr.browser.lightning.html.homepage
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.browser.theme.ThemeProvider
-import acr.browser.lightning.compose.asColorScheme
 import acr.browser.lightning.compose.toRgbHexString
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
@@ -40,8 +39,7 @@ class HomePageFactory @Inject constructor(
     private val title = application.getString(R.string.home)
 
     override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
-        val appTheme = themeProvider.appTheme()
-        val colorScheme = appTheme.asColorScheme()
+        val colorScheme = themeProvider.colorScheme()
         val (iconUrl, queryUrl, _) = searchEngineProvider.provideSearchEngine()
         val content = parse(homePageReader.provideHtml()) andBuild {
             title { title }

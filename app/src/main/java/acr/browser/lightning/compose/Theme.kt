@@ -90,10 +90,15 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
-fun AppTheme.asColorScheme(): ColorScheme = when (this) {
+fun AppTheme.asColorScheme(darkTheme: Boolean): ColorScheme = when (this) {
     AppTheme.LIGHT -> lightScheme
     AppTheme.DARK -> darkScheme
     AppTheme.BLACK -> darkScheme
+    AppTheme.SYSTEM -> if (darkTheme) {
+        darkScheme
+    } else {
+        lightScheme
+    }
 }
 
 @Composable
@@ -110,7 +115,7 @@ fun ThemableActivity.BrowserTheme(
     val colorScheme =
         when (val appTheme = appThemePreferenceStoreStateProvider.state.collectAsState().value) {
             null -> null
-            else -> appTheme.asColorScheme()
+            else -> appTheme.asColorScheme(darkTheme)
         }
 
     if (colorScheme == null) return
@@ -123,7 +128,7 @@ fun ThemableActivity.BrowserTheme(
         navigationBarStyle = SystemBarStyle.auto(
             colorScheme.scrim.toArgb(),
             colorScheme.scrim.toArgb(),
-        ) { darkTheme },
+        ) { colorScheme == darkScheme },
     )
 
     MaterialTheme(

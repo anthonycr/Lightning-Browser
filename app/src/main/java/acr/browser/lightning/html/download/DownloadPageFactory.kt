@@ -3,7 +3,6 @@ package acr.browser.lightning.html.download
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.browser.theme.ThemeProvider
-import acr.browser.lightning.compose.asColorScheme
 import acr.browser.lightning.compose.toRgbHexString
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
@@ -41,8 +40,7 @@ class DownloadPageFactory @Inject constructor(
 ) : HtmlPageFactory {
 
     override suspend fun buildPage(): String = withContext(coroutineDispatchers.io) {
-        val appTheme = themeProvider.appTheme()
-        val colorScheme = appTheme.asColorScheme()
+        val colorScheme = themeProvider.colorScheme()
         val downloads = manager.getAllDownloads()
         val content = parse(listPageReader.provideHtml()) andBuild {
             title { application.getString(R.string.action_downloads) }

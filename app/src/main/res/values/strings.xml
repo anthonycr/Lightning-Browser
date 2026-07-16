@@ -246,6 +246,7 @@
     <string name="theme">App theme</string>
     <string name="light_theme">Light theme</string>
     <string name="black_theme">Black theme (AMOLED)</string>
+    <string name="system_theme">System default theme</string>
     <string name="folder">Folder name</string>
     <string name="action_folder">Folder</string>
     <string name="action_rename">Rename</string>

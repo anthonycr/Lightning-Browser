@@ -2,8 +2,10 @@ package acr.browser.lightning
 
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.compose.StateProvider
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.R
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -23,9 +25,15 @@ abstract class ThemableActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val appTheme = themeProvider.appTheme()
             when (appTheme) {
-                AppTheme.LIGHT -> setTheme(androidx.appcompat.R.style.Theme_AppCompat_Light_NoActionBar)
-                AppTheme.DARK -> setTheme(androidx.appcompat.R.style.Theme_AppCompat_NoActionBar)
-                AppTheme.BLACK -> setTheme(androidx.appcompat.R.style.Theme_AppCompat_NoActionBar)
+                AppTheme.LIGHT -> setTheme(R.style.Theme_AppCompat_Light_NoActionBar)
+                AppTheme.DARK -> setTheme(R.style.Theme_AppCompat_NoActionBar)
+                AppTheme.BLACK -> setTheme(R.style.Theme_AppCompat_NoActionBar)
+                AppTheme.SYSTEM ->
+                    if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+                        setTheme(R.style.Theme_AppCompat_NoActionBar)
+                    } else {
+                        setTheme(R.style.Theme_AppCompat_Light_NoActionBar)
+                    }
             }
         }
     }

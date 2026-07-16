@@ -379,7 +379,7 @@ class UserPreferencesDataStore @Inject constructor(
     val useTheme: EnumPreferenceStore<AppTheme> = EnumPreferenceStore(
         key = intPreferencesKey(THEME),
         dataStore = dataStore,
-        defaultValue = AppTheme.LIGHT
+        defaultValue = AppTheme.SYSTEM
     )
 
     /**

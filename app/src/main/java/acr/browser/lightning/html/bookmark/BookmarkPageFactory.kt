@@ -4,7 +4,6 @@ import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.FaviconCacheDir
 import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.browser.theme.ThemeProvider
-import acr.browser.lightning.compose.asColorScheme
 import acr.browser.lightning.compose.toRgbHexString
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
@@ -71,8 +70,7 @@ class BookmarkPageFactory @Inject constructor(
                 }
             }
 
-        val appTheme = themeProvider.appTheme()
-        val colorScheme = appTheme.asColorScheme()
+        val colorScheme = themeProvider.colorScheme()
         cacheIcon(
             ThemeUtils.createThemedBitmap(
                 application,
@@ -95,8 +93,7 @@ class BookmarkPageFactory @Inject constructor(
     }
 
     private suspend fun construct(list: List<BookmarkViewModel>): String {
-        val appTheme = themeProvider.appTheme()
-        val colorScheme = appTheme.asColorScheme()
+        val colorScheme = themeProvider.colorScheme()
         return parse(bookmarkPageReader.provideHtml()) andBuild {
             title { title }
             style { content ->
