@@ -269,6 +269,15 @@ class UserPreferencesDataStore @Inject constructor(
     )
 
     /**
+     * True if web content should be algorithmically darkened in dark mode, false otherwise.
+     */
+    val algorithmicDarkeningEnabled: NonNullPreferenceStore<Boolean> = NonNullPreferenceStore(
+        key = booleanPreferencesKey(ALGORITHMIC_DARKENING),
+        dataStore = dataStore,
+        defaultValue = false
+    )
+
+    /**
      * The index of the text size that should be used in the browser.
      */
     val textSize: NonNullPreferenceStore<Int> = NonNullPreferenceStore(
@@ -495,6 +504,7 @@ class UserPreferencesDataStore @Inject constructor(
     }
 }
 
+private const val ALGORITHMIC_DARKENING = "algorithmicDarkening"
 private const val WEB_RTC = "webRtc"
 private const val BLOCK_ADS = "AdBlock"
 private const val BLOCK_IMAGES = "blockimages"

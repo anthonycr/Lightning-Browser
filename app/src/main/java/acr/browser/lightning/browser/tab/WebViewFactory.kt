@@ -78,9 +78,11 @@ class WebViewFactory @Inject constructor(
             setNetworkAvailable(true)
 
             settings.apply {
-                // TODO: Maybe algorithmic darkening should be a setting
                 if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
-                    WebSettingsCompat.setAlgorithmicDarkeningAllowed(this, true)
+                    WebSettingsCompat.setAlgorithmicDarkeningAllowed(
+                        this,
+                        userPreferencesDataStore.algorithmicDarkeningEnabled.getUnsafe()
+                    )
                 }
                 mediaPlaybackRequiresUserGesture = true
 

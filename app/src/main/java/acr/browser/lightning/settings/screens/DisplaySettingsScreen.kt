@@ -15,6 +15,7 @@ import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.webkit.WebViewFeature
 import javax.inject.Inject
 
 class DisplaySettingsScreen @Inject constructor(
@@ -81,6 +82,16 @@ class DisplaySettingsScreen @Inject constructor(
                 isChecked = { userPreferencesDataStore.textReflowEnabled.get() },
                 onToggle = {
                     userPreferencesDataStore.textReflowEnabled.set(it)
+                    null
+                }
+            ),
+            ToggleState(
+                enabled = { WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING) },
+                title = resourceProvider.stringResource(R.string.algorithmic_darkening_title),
+                summary = { resourceProvider.stringResource(R.string.algorithmic_darkening_summary) },
+                isChecked = { userPreferencesDataStore.algorithmicDarkeningEnabled.get() },
+                onToggle = {
+                    userPreferencesDataStore.algorithmicDarkeningEnabled.set(it)
                     null
                 }
             ),

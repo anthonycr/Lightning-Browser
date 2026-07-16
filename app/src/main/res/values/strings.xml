@@ -23,6 +23,8 @@
     <string name="version">Application version</string>
     <string name="cache">Clear cache on exit</string>
     <string name="reflow">Enable text reflow</string>
+    <string name="algorithmic_darkening_title">Force websites to use dark theme</string>
+    <string name="algorithmic_darkening_summary">Darken website content if possible when using dark theme</string>
     <string name="block">Block images</string>
     <string name="window">Allow sites to open new windows</string>
     <string name="cookies">Enable cookies</string>
