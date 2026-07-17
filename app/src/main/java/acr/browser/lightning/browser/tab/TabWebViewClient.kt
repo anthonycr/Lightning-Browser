@@ -19,6 +19,7 @@ import acr.browser.lightning.utils.ThreadSafeFileProvider
 import acr.browser.lightning.utils.isSpecialUrl
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.net.Uri
 import android.net.http.SslError
 import android.os.Message
 import android.view.LayoutInflater
@@ -138,9 +139,9 @@ class TabWebViewClient @AssistedInject constructor(
     private var zoomScale: Float = 0.0F
     private var urlWithSslError: String? = null
 
-    private fun shouldBlockRequest(pageUrl: String, requestUrl: String) =
+    private fun shouldBlockRequest(pageUrl: String, requestUri: Uri) =
         !allowListModel.isUrlAllowedAds(pageUrl) &&
-            adBlocker.isAd(requestUrl)
+            adBlocker.isAd(requestUri)
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
@@ -306,7 +307,7 @@ class TabWebViewClient @AssistedInject constructor(
         view: WebView,
         request: WebResourceRequest
     ): WebResourceResponse? {
-        if (shouldBlockRequest(currentUrl, request.url.toString())) {
+        if (shouldBlockRequest(currentUrl, request.url)) {
             val empty = ByteArrayInputStream(emptyResponseByteArray)
             return WebResourceResponse(BLOCKED_RESPONSE_MIME_TYPE, BLOCKED_RESPONSE_ENCODING, empty)
         }

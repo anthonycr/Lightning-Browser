@@ -18,7 +18,7 @@ import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.log.Logger
 import android.app.Application
-import androidx.core.net.toUri
+import android.net.Uri
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.buffer
@@ -129,24 +129,24 @@ class BloomFilterAdBlocker @Inject constructor(
         return bloomFilter
     }
 
-    override fun isAd(url: String): Boolean {
-        val domain = url.host() ?: return false
+    override fun isAd(uri: Uri): Boolean {
+        val domain = uri.host() ?: return false
 
-        val mightBeOnBlockList = bloomFilter.mightContain(domain)
+        val mightBeOnBlockList = bloomFilter.mightContain(domain) ||
+            (domain.name.startsWith("www.") && bloomFilter.mightContain(Host(domain.name.substring(4))))
 
         return when {
             mightBeOnBlockList -> {
                 val isOnBlockList = hostsRepository.containsHost(domain)
                 if (isOnBlockList) {
-                    logger.log(TAG, "URL '$url' is an ad")
+                    logger.log(TAG, "URL '$uri' is an ad")
                 } else {
-                    logger.log(TAG, "False positive for $url")
+                    logger.log(TAG, "False positive for $uri")
                 }
 
                 isOnBlockList
             }
 
-            domain.name.startsWith("www.") -> isAd(domain.name.substring(4))
             else -> false
         }
     }
@@ -154,8 +154,8 @@ class BloomFilterAdBlocker @Inject constructor(
     /**
      * Extract the [Host] from a [String] representing a URL. Returns null if no host was extracted.
      */
-    private fun String.host(): Host? = try {
-        this.toUri().host?.let(::Host)
+    private fun Uri.host(): Host? = try {
+        this.host?.let(::Host)
     } catch (exception: URISyntaxException) {
         logger.log(TAG, "Invalid URL: $this", exception)
         null

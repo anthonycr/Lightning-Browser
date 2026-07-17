@@ -1,5 +1,6 @@
 package acr.browser.lightning.adblock
 
+import android.net.Uri
 import dagger.Reusable
 import javax.inject.Inject
 
@@ -9,6 +10,6 @@ import javax.inject.Inject
 @Reusable
 class NoOpAdBlocker @Inject constructor() : AdBlocker {
 
-    override fun isAd(url: String) = false
+    override fun isAd(uri: Uri): Boolean = false
 
 }
