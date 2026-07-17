@@ -337,7 +337,7 @@ class UserPreferencesDataStore @Inject constructor(
     val blockThirdPartyCookiesEnabled: NonNullPreferenceStore<Boolean> = NonNullPreferenceStore(
         key = booleanPreferencesKey(BLOCK_THIRD_PARTY),
         dataStore = dataStore,
-        defaultValue = false
+        defaultValue = true
     )
 
     /**
