@@ -45,16 +45,6 @@ class AdvancedSettingsScreen @Inject constructor(
                 }
             ),
             ToggleState(
-                enabled = { false },
-                title = resourceProvider.stringResource(R.string.incognito_cookies),
-                summary = { resourceProvider.stringResource(R.string.incognito_cookies_pie) },
-                isChecked = { userPreferencesDataStore.cookiesEnabled.get() },
-                onToggle = {
-                    userPreferencesDataStore.incognitoCookiesEnabled.set(it)
-                    null
-                }
-            ),
-            ToggleState(
                 title = resourceProvider.stringResource(R.string.restore),
                 isChecked = { userPreferencesDataStore.restoreLostTabsEnabled.get() },
                 onToggle = {

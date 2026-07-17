@@ -55,7 +55,6 @@ class UserPreferencesDataStore @Inject constructor(
                     migrateBoolean(fullScreenEnabled)
                     migrateBoolean(hideStatusBarEnabled)
                     migrateString(homepage)
-                    migrateBoolean(incognitoCookiesEnabled)
                     migrateBoolean(javaScriptEnabled)
                     migrateBoolean(locationEnabled)
                     migrateBoolean(overviewModeEnabled)
@@ -176,17 +175,6 @@ class UserPreferencesDataStore @Inject constructor(
         key = stringPreferencesKey(HOMEPAGE),
         dataStore = dataStore,
         defaultValue = SCHEME_BOOKMARKS
-    )
-
-    /**
-     * True if cookies should be enabled in incognito mode, false otherwise.
-     *
-     * WARNING: Cookies will be shared between regular and incognito modes if this is enabled.
-     */
-    val incognitoCookiesEnabled: NonNullPreferenceStore<Boolean> = NonNullPreferenceStore(
-        key = booleanPreferencesKey(INCOGNITO_COOKIES),
-        dataStore = dataStore,
-        defaultValue = false
     )
 
     /**
