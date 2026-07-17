@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.tab
 
-import acr.browser.lightning.browser.di.Browser2Scope
 import acr.browser.lightning.browser.di.BrowserFrame
+import acr.browser.lightning.browser.di.BrowserScope
 import acr.browser.lightning.browser.view.WebViewLongPressHandler
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import android.view.ViewGroup
@@ -14,7 +14,7 @@ import javax.inject.Inject
  * A sort of coordinator that manages the relationship between [WebViews][WebView] and the container
  * the views are placed in.
  */
-@Browser2Scope
+@BrowserScope
 class TabPager @Inject constructor(
     @BrowserFrame private val container: FrameLayout,
 //    private val webViewScrollCoordinator: WebViewScrollCoordinator,

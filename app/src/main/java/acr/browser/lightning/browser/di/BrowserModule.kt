@@ -39,7 +39,7 @@ import javax.inject.Provider
  * Constructs dependencies for the browser scope.
  */
 @Module
-class Browser2Module {
+class BrowserModule {
 
     @Provides
     fun providesAdBlocker(

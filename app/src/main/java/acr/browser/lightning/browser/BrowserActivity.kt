@@ -67,7 +67,7 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
 
         val browserFrame = FrameLayout(this)
         val customFrame = FrameLayout(this)
-        injector.browser2ComponentBuilder()
+        injector.browserComponentBuilder()
             .activity(this)
             .browserFrame(browserFrame)
             .customFrame(customFrame)

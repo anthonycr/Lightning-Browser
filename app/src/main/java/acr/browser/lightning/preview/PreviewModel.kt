@@ -1,6 +1,6 @@
 package acr.browser.lightning.preview
 
-import acr.browser.lightning.browser.di.Browser2Scope
+import acr.browser.lightning.browser.di.BrowserScope
 import acr.browser.lightning.browser.di.PreviewCacheDir
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
@@ -21,7 +21,7 @@ import javax.inject.Inject
 /**
  * Reactive model that can store and retrieve previews from a disk cache.
  */
-@Browser2Scope
+@BrowserScope
 class PreviewModel @Inject constructor(
     private val logger: Logger,
     private val viewIdGenerator: ViewIdGenerator,

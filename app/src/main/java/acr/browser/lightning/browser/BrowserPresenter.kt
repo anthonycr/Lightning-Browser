@@ -3,7 +3,7 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.data.CookieAdministrator
-import acr.browser.lightning.browser.di.Browser2Scope
+import acr.browser.lightning.browser.di.BrowserScope
 import acr.browser.lightning.browser.di.IncognitoMode
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.history.HistoryRecord
@@ -71,7 +71,7 @@ import kotlin.system.exitProcess
  * duration of the browser activity, which itself should not be recreated during configuration
  * changes.
  */
-@Browser2Scope
+@BrowserScope
 class BrowserPresenter @Inject constructor(
     private val model: BrowserContract.Model,
     private val navigator: BrowserContract.Navigator,

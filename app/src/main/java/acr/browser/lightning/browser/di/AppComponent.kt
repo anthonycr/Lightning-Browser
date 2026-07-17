@@ -32,9 +32,9 @@ interface AppComponent {
 
     fun inject(activity: SettingsActivity)
 
-    fun browser2ComponentBuilder(): Browser2Component.Builder
+    fun browserComponentBuilder(): BrowserComponent.Builder
 
 }
 
-@Module(subcomponents = [Browser2Component::class])
+@Module(subcomponents = [BrowserComponent::class])
 internal class Submodules

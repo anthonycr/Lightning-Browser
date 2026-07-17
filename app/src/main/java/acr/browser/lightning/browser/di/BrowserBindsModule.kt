@@ -14,7 +14,7 @@ import dagger.Module
  * Binds implementations to interfaces for the browser scope.
  */
 @Module
-interface Browser2BindsModule {
+interface BrowserBindsModule {
 
     @Binds
     fun bindsActivity(fragmentActivity: FragmentActivity): Activity

@@ -11,9 +11,9 @@ import javax.inject.Qualifier
 /**
  * The component for the browser scope.
  */
-@Browser2Scope
-@Subcomponent(modules = [Browser2Module::class, Browser2BindsModule::class])
-interface Browser2Component {
+@BrowserScope
+@Subcomponent(modules = [BrowserModule::class, BrowserBindsModule::class])
+interface BrowserComponent {
 
     @Subcomponent.Builder
     interface Builder {
@@ -30,7 +30,7 @@ interface Browser2Component {
         @BindsInstance
         fun initialIntent(@InitialIntent intent: Intent?): Builder
 
-        fun build(): Browser2Component
+        fun build(): BrowserComponent
 
     }
 
