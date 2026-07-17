@@ -193,7 +193,7 @@ class WebViewFactory @Inject constructor(
                     negativeColorArray
                 )
                 paint.colorFilter = filterInvert
-                setLayerType(View.LAYER_TYPE_HARDWARE, null)
+                setLayerType(View.LAYER_TYPE_HARDWARE, paint)
             }
 
             RenderingMode.GRAYSCALE -> {
@@ -201,7 +201,7 @@ class WebViewFactory @Inject constructor(
                 cm.setSaturation(0f)
                 val filterGray = ColorMatrixColorFilter(cm)
                 paint.colorFilter = filterGray
-                setLayerType(View.LAYER_TYPE_HARDWARE, null)
+                setLayerType(View.LAYER_TYPE_HARDWARE, paint)
             }
 
             RenderingMode.INVERTED_GRAYSCALE -> {
@@ -213,13 +213,13 @@ class WebViewFactory @Inject constructor(
                 concat.setConcat(matrix, matrixGray)
                 val filterInvertGray = ColorMatrixColorFilter(concat)
                 paint.colorFilter = filterInvertGray
-                setLayerType(View.LAYER_TYPE_HARDWARE, null)
+                setLayerType(View.LAYER_TYPE_HARDWARE, paint)
             }
 
             RenderingMode.INCREASE_CONTRAST -> {
                 val increaseHighContrast = ColorMatrixColorFilter(increaseContrastColorArray)
                 paint.colorFilter = increaseHighContrast
-                setLayerType(View.LAYER_TYPE_HARDWARE, null)
+                setLayerType(View.LAYER_TYPE_HARDWARE, paint)
             }
         }
     }
