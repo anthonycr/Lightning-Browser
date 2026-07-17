@@ -93,14 +93,8 @@ class BrowserModule {
 
     @Provides
     fun providesCookieAdministrator(
-        @IncognitoMode incognitoMode: Boolean,
         defaultCookieAdministrator: DefaultCookieAdministrator,
-        incognitoCookieAdministrator: DefaultCookieAdministrator
-    ): CookieAdministrator = if (incognitoMode) {
-        incognitoCookieAdministrator
-    } else {
-        defaultCookieAdministrator
-    }
+    ): CookieAdministrator = defaultCookieAdministrator
 
     @Provides
     fun providesTabCountNotifier(
