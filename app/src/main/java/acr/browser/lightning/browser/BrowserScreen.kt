@@ -874,24 +874,12 @@ fun LocalFileBlockedSheet(
             style = MaterialTheme.typography.bodyLarge
         )
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
         ) {
             Button(
                 modifier = Modifier
-                    .padding(start = 16.dp),
-                onClick = {
-                    scope.launch {
-                        delay(500.milliseconds)
-                        sheetState.hide()
-                        onConfirmed(true)
-                    }
-                }
-            ) {
-                Text(stringResource(R.string.action_open))
-            }
-            Button(
-                modifier = Modifier
-                    .padding(start = 16.dp),
+                    .padding(end = 16.dp),
                 onClick = {
                     scope.launch {
                         delay(500.milliseconds)
@@ -901,6 +889,19 @@ fun LocalFileBlockedSheet(
                 }
             ) {
                 Text(stringResource(R.string.action_cancel))
+            }
+            Button(
+                modifier = Modifier
+                    .padding(end = 16.dp),
+                onClick = {
+                    scope.launch {
+                        delay(500.milliseconds)
+                        sheetState.hide()
+                        onConfirmed(true)
+                    }
+                }
+            ) {
+                Text(stringResource(R.string.action_open))
             }
         }
     }
@@ -2129,11 +2130,27 @@ fun BookmarkAddOrEditSheet(
             }
         }
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
         ) {
+            if (!edit) {
+                Button(
+                    modifier = Modifier
+                        .padding(end = 16.dp),
+                    onClick = {
+                        scope.launch {
+                            delay(500.milliseconds)
+                            sheetState.hide()
+                            presenter.onDialogDismissed()
+                        }
+                    }
+                ) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
             Button(
                 modifier = Modifier
-                    .padding(start = 16.dp),
+                    .padding(end = 16.dp),
                 onClick = {
                     scope.launch {
                         delay(500.milliseconds)
@@ -2147,21 +2164,6 @@ fun BookmarkAddOrEditSheet(
                 }
             ) {
                 Text(stringResource(R.string.action_ok))
-            }
-            if (!edit) {
-                Button(
-                    modifier = Modifier
-                        .padding(start = 16.dp),
-                    onClick = {
-                        scope.launch {
-                            delay(500.milliseconds)
-                            sheetState.hide()
-                            presenter.onDialogDismissed()
-                        }
-                    }
-                ) {
-                    Text(stringResource(R.string.action_cancel))
-                }
             }
         }
     }
@@ -2200,18 +2202,23 @@ fun BookmarkFolderRenameSheet(
                 .fillMaxWidth(),
             placeholder = { Text(stringResource(R.string.hint_title)) }
         )
-        Button(
-            modifier = Modifier
-                .padding(start = 16.dp),
-            onClick = {
-                scope.launch {
-                    delay(500.milliseconds)
-                    sheetState.hide()
-                    onSelected(textFieldState.text)
-                }
-            }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
         ) {
-            Text(stringResource(R.string.action_ok))
+            Button(
+                modifier = Modifier
+                    .padding(end = 16.dp),
+                onClick = {
+                    scope.launch {
+                        delay(500.milliseconds)
+                        sheetState.hide()
+                        onSelected(textFieldState.text)
+                    }
+                }
+            ) {
+                Text(stringResource(R.string.action_ok))
+            }
         }
     }
 }
