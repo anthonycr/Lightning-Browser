@@ -2072,7 +2072,7 @@ fun BookmarkAddOrEditSheet(
         TextField(
             titleTextFieldState,
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
             label = { Text(stringResource(R.string.hint_title)) },
             placeholder = { Text(stringResource(R.string.hint_title)) }
@@ -2082,7 +2082,7 @@ fun BookmarkAddOrEditSheet(
         TextField(
             urlTextFieldState,
             modifier = Modifier
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 16.dp)
                 .fillMaxWidth(),
             label = { Text(stringResource(R.string.hint_url)) },
             placeholder = { Text(stringResource(R.string.hint_url)) }
@@ -2093,7 +2093,7 @@ fun BookmarkAddOrEditSheet(
 
         ExposedDropdownMenuBox(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }
@@ -2130,7 +2130,9 @@ fun BookmarkAddOrEditSheet(
             }
         }
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
             horizontalArrangement = Arrangement.End
         ) {
             if (!edit) {
@@ -2191,7 +2193,7 @@ fun BookmarkFolderRenameSheet(
             Text(
                 text = stringResource(R.string.title_rename_folder),
                 modifier = Modifier.padding(start = 16.dp),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge
             )
         }
         val textFieldState = rememberTextFieldState(oldTitle)
