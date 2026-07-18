@@ -1109,11 +1109,12 @@ class BrowserPresenter @Inject constructor(
      * @param folder The name of the folder the bookmark is in.
      */
     fun onBookmarkEditConfirmed(title: String, url: String, folder: String) {
+        val oldUrl = (state.value.dialog as? BrowserViewState.Dialogs.EditBookmark)?.url ?: return
         updateState(state.value.copy(dialog = null))
         browserCoroutineScope.launch {
             bookmarkRepository.editBookmark(
                 oldBookmark = Bookmark.Entry(
-                    url = url,
+                    url = oldUrl,
                     title = "",
                     position = 0,
                     folder = Bookmark.Folder.Root
@@ -1127,7 +1128,13 @@ class BrowserPresenter @Inject constructor(
             )
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
             currentBookmarks = bookmarks
-            updateState(state.value.copy(bookmarks = bookmarks.asListItems()))
+            val isBookmarked = currentTab?.url?.let { bookmarkRepository.isBookmark(it) } ?: false
+            updateState(
+                state.value.copy(
+                    bookmarks = bookmarks.asListItems(),
+                    isBookmarked = isBookmarked
+                )
+            )
             if (currentTab?.url?.isBookmarkUrl() == true) {
                 reload()
             }

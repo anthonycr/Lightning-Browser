@@ -2070,7 +2070,7 @@ fun BookmarkAddOrEditSheet(
         }
         val titleTextFieldState = rememberTextFieldState(title)
         TextField(
-            titleTextFieldState,
+            state = titleTextFieldState,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
@@ -2080,7 +2080,7 @@ fun BookmarkAddOrEditSheet(
 
         val urlTextFieldState = rememberTextFieldState(url)
         TextField(
-            urlTextFieldState,
+            state = urlTextFieldState,
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 16.dp)
                 .fillMaxWidth(),
