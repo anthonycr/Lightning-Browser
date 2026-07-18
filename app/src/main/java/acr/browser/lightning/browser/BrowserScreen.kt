@@ -759,18 +759,21 @@ fun ListItemSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         sheetState = sheetState,
+        dragHandle = {},
         onDismissRequest = { presenter.onDialogDismissed() }
     ) {
         Row(
             modifier = Modifier
-                .height(56.dp)
+                .height(64.dp)
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
         Column {
@@ -852,17 +855,23 @@ fun LocalFileBlockedSheet(
 
     ModalBottomSheet(
         onDismissRequest = { onConfirmed(false) },
+        dragHandle = {},
         sheetState = sheetState
     ) {
-        Text(
-            text = stringResource(R.string.title_warning),
-            modifier = Modifier.padding(start = 16.dp),
-            style = MaterialTheme.typography.titleMedium
-        )
+        Row(
+            modifier = Modifier.height(64.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.title_warning),
+                modifier = Modifier.padding(horizontal = 16.dp),
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
         Text(
             text = stringResource(R.string.message_blocked_local),
-            modifier = Modifier.padding(start = 16.dp),
-            style = MaterialTheme.typography.bodyMedium
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge
         )
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -911,7 +920,7 @@ fun SslInfoSheet(
     ) {
         Row(
             modifier = Modifier
-                .height(56.dp)
+                .height(64.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -1762,7 +1771,7 @@ fun TabsBottomSheet(
     ) {
         Row(
             modifier = Modifier
-                .height(56.dp)
+                .height(64.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
@@ -1930,11 +1939,12 @@ fun BookmarksBottomSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         sheetState = sheetState,
+        dragHandle = {},
         onDismissRequest = { presenter.onBookmarkDrawerMoved(false) }
     ) {
         Row(
             modifier = Modifier
-                .height(56.dp)
+                .height(64.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -2040,22 +2050,28 @@ fun BookmarkAddOrEditSheet(
 
     ModalBottomSheet(
         onDismissRequest = { presenter.onDialogDismissed() },
+        dragHandle = {},
         sheetState = sheetState
     ) {
-        Text(
-            text = if (edit) {
-                stringResource(R.string.title_edit_bookmark)
-            } else {
-                stringResource(R.string.action_add_bookmark)
-            },
-            modifier = Modifier.padding(start = 16.dp),
-            style = MaterialTheme.typography.titleMedium
-        )
+        Row(
+            modifier = Modifier.height(64.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = if (edit) {
+                    stringResource(R.string.title_edit_bookmark)
+                } else {
+                    stringResource(R.string.action_add_bookmark)
+                },
+                modifier = Modifier.padding(horizontal = 16.dp),
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
         val titleTextFieldState = rememberTextFieldState(title)
         TextField(
             titleTextFieldState,
             modifier = Modifier
-                .padding(16.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 .fillMaxWidth(),
             label = { Text(stringResource(R.string.hint_title)) },
             placeholder = { Text(stringResource(R.string.hint_title)) }
@@ -2163,18 +2179,24 @@ fun BookmarkFolderRenameSheet(
 
     ModalBottomSheet(
         onDismissRequest = { presenter.onDialogDismissed() },
+        dragHandle = {},
         sheetState = sheetState
     ) {
-        Text(
-            text = stringResource(R.string.title_rename_folder),
-            modifier = Modifier.padding(start = 16.dp),
-            style = MaterialTheme.typography.titleMedium
-        )
+        Row(
+            modifier = Modifier.height(64.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.title_rename_folder),
+                modifier = Modifier.padding(start = 16.dp),
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
         val textFieldState = rememberTextFieldState(oldTitle)
         TextField(
             textFieldState,
             modifier = Modifier
-                .padding(16.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 .fillMaxWidth(),
             placeholder = { Text(stringResource(R.string.hint_title)) }
         )
