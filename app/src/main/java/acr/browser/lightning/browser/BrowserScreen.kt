@@ -906,6 +906,7 @@ fun SslInfoSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         sheetState = sheetState,
+        dragHandle = {},
         onDismissRequest = { presenter.onDialogDismissed() }
     ) {
         Row(
@@ -934,37 +935,51 @@ fun SslInfoSheet(
                 style = MaterialTheme.typography.titleLarge
             )
         }
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             Text(
                 text = stringResource(R.string.ssl_info_issued_by),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.labelLarge
             )
-            Text(text = sslCertificateInfo.issuedByCommonName)
+            Text(
+                text = sslCertificateInfo.issuedByCommonName,
+                style = MaterialTheme.typography.bodyLarge
+            )
 
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(R.string.ssl_info_issued_to),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.labelLarge
             )
             Text(
                 text = sslCertificateInfo.issuedToOrganizationName?.takeIf { it.isNotBlank() }
-                    ?: sslCertificateInfo.issuedToCommonName
+                    ?: sslCertificateInfo.issuedToCommonName,
+                style = MaterialTheme.typography.bodyLarge
             )
 
             val dateFormat = with(LocalContext.current) {
                 remember { DateFormat.getDateFormat(this) }
             }
 
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(R.string.ssl_info_issued_on),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.labelLarge
             )
-            Text(text = dateFormat.format(sslCertificateInfo.issueDate))
+            Text(
+                text = dateFormat.format(sslCertificateInfo.issueDate),
+                style = MaterialTheme.typography.bodyLarge
+            )
 
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(R.string.ssl_info_expires_on),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.labelLarge
             )
-            Text(text = dateFormat.format(sslCertificateInfo.expireDate))
+            Text(
+                text = dateFormat.format(sslCertificateInfo.expireDate),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
