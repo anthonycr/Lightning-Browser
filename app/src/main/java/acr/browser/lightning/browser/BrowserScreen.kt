@@ -54,6 +54,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -2089,7 +2090,7 @@ fun BookmarkAddOrEditSheet(
         )
 
         var expanded by remember { mutableStateOf(false) }
-        var selectedFolder by remember { mutableStateOf(folder) }
+        val selectedFolder = rememberTextFieldState(folder)
 
         ExposedDropdownMenuBox(
             modifier = Modifier
@@ -2099,9 +2100,7 @@ fun BookmarkAddOrEditSheet(
             onExpandedChange = { expanded = !expanded }
         ) {
             TextField(
-                value = selectedFolder,
-                onValueChange = {},
-                readOnly = true,
+                state = selectedFolder,
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                 },
@@ -2113,15 +2112,16 @@ fun BookmarkAddOrEditSheet(
                     .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
             )
 
+            // TODO: Fix suggestions UX (partially works)
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                (listOf("") + folders).forEach { option ->
+                folders.forEach { option ->
                     DropdownMenuItem(
                         text = { Text(option, color = MaterialTheme.colorScheme.onSurface) },
                         onClick = {
-                            selectedFolder = option
+                            selectedFolder.setTextAndPlaceCursorAtEnd(option)
                             expanded = false
                         },
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
@@ -2160,7 +2160,7 @@ fun BookmarkAddOrEditSheet(
                         onConfirmed(
                             titleTextFieldState.text.toString(),
                             urlTextFieldState.text.toString(),
-                            selectedFolder
+                            selectedFolder.text.toString()
                         )
                     }
                 }
