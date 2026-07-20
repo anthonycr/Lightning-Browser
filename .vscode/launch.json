@@ -1,0 +1,16 @@
+{
+    // Gunakan IntelliSense untuk informasi tentang kemungkinan atribut.
+    // Arahkan kursor untuk melihat deskripsi atribut yang ada.
+    // Informasi lebih lanjut dapat ditemukan di sini: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}
