@@ -77,6 +77,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarState
+import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults.indicatorLine
@@ -1298,6 +1299,19 @@ fun BrowserSearchSuggestions(
     searchBarState: SearchBarState,
 ) {
     val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(browserViewState.isSearchBarExpanded) {
+        if (searchBarState.currentValue == SearchBarValue.Expanded &&
+            !browserViewState.isSearchBarExpanded
+        ) {
+            searchBarState.animateToCollapsed()
+            presenter.onSearchBarExpandedOrCollapsed(false)
+        } else if (searchBarState.currentValue == SearchBarValue.Collapsed &&
+            browserViewState.isSearchBarExpanded
+        ) {
+            searchBarState.animateToExpanded()
+            presenter.onSearchBarExpandedOrCollapsed(true)
+        }
+    }
     ExpandedFullScreenSearchBar(
         collapsedShape = MaterialTheme.shapes.small,
         state = searchBarState,
@@ -1344,6 +1358,7 @@ fun BrowserSearchSuggestions(
                 keyboardActions = KeyboardActions(onSearch = {
                     coroutineScope.launch {
                         searchBarState.animateToCollapsed()
+                        presenter.onSearchBarExpandedOrCollapsed(false)
                     }
                     presenter.onSearch(state.text)
                 }),
@@ -1371,6 +1386,7 @@ fun BrowserSearchSuggestions(
                         presenter.onSearchSuggestionClicked(it)
                         coroutineScope.launch {
                             searchBarState.animateToCollapsed()
+                            presenter.onSearchBarExpandedOrCollapsed(false)
                         }
                     }
             ) {
@@ -1457,6 +1473,7 @@ fun BrowserSearchBarInputField(
             .clickable {
                 coroutineScope.launch {
                     searchBarState.animateToExpanded()
+                    presenter.onSearchBarExpandedOrCollapsed(true)
                 }
             },
         verticalAlignment = Alignment.CenterVertically

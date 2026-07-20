@@ -125,6 +125,7 @@ class BrowserPresenter @Inject constructor(
             progress = 0,
             enableFullMenu = true,
             themeColor = Option.None,
+            isSearchBarExpanded = false,
             isForwardEnabled = false,
             isBackEnabled = false,
             bookmarks = emptyList(),
@@ -183,7 +184,8 @@ class BrowserPresenter @Inject constructor(
         val selectedId = model.selectedTab?.id
         return copy(
             tabs = model.tabsList.map { it.asViewState(it.id == selectedId) },
-            tabCountText = model.tabsList.size.asTabCountText()
+            tabCountText = model.tabsList.size.asTabCountText(),
+            isSearchBarExpanded = false,
         )
     }
 
@@ -402,7 +404,12 @@ class BrowserPresenter @Inject constructor(
     fun onNewAction(action: BrowserContract.Action) {
         when (action) {
             is BrowserContract.Action.LoadUrl -> if (action.url.isSpecialUrl()) {
-                updateState(state.value.copy(dialog = BrowserViewState.Dialogs.LocalFileBlocked))
+                updateState(
+                    state.value.copy(
+                        dialog = BrowserViewState.Dialogs.LocalFileBlocked,
+                        isSearchBarExpanded = false,
+                    )
+                )
                 pendingAction = action
             } else {
                 createNewTabAndSelect(
@@ -819,6 +826,13 @@ class BrowserPresenter @Inject constructor(
             )
         )
         currentTab?.loadUrl(url)
+    }
+
+    /**
+     * Call when the search bar is expanded or collapsed by the user.
+     */
+    fun onSearchBarExpandedOrCollapsed(expanded: Boolean) {
+        updateState(state.value.copy(isSearchBarExpanded = expanded))
     }
 
     /**

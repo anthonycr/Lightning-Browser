@@ -25,6 +25,8 @@ import androidx.compose.runtime.setValue
  * @param enableFullMenu True if the full options menu should be shown, false if the limited one
  * should be shown for a local web page.
  * @param themeColor The UI theme as determined from the current web page.
+ * @param isSearchBarExpanded True if the search bar is expanded showing suggestions, false
+ * otherwise.
  * @param isForwardEnabled True if the go forward button should be enabled, false otherwise.
  * @param isBackEnabled True if the go back button should be enabled, false otherwise.
  * @param bookmarks The current list of bookmarks that is displayed.
@@ -52,6 +54,7 @@ data class BrowserViewState(
     val progress: Int,
     val enableFullMenu: Boolean,
     val themeColor: Option<Int>,
+    val isSearchBarExpanded: Boolean,
 
     // Tabs
     val isForwardEnabled: Boolean,
@@ -161,6 +164,7 @@ class BrowserComposeState(
     var progress: Int by mutableIntStateOf(browserViewState.progress)
     var enableFullMenu: Boolean by mutableStateOf(browserViewState.enableFullMenu)
     var themeColor: Option<Int> by mutableStateOf(browserViewState.themeColor)
+    var isSearchBarExpanded: Boolean by mutableStateOf(browserViewState.isSearchBarExpanded)
 
     // Tabs
     var isForwardEnabled: Boolean by mutableStateOf(browserViewState.isForwardEnabled)
@@ -200,6 +204,7 @@ class BrowserComposeState(
         progress = browserViewState.progress
         enableFullMenu = browserViewState.enableFullMenu
         themeColor = browserViewState.themeColor
+        isSearchBarExpanded = browserViewState.isSearchBarExpanded
         isForwardEnabled = browserViewState.isForwardEnabled
         isBackEnabled = browserViewState.isBackEnabled
         bookmarks = browserViewState.bookmarks
