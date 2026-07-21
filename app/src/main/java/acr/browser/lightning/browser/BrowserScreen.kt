@@ -2,6 +2,7 @@ package acr.browser.lightning.browser
 
 import acr.browser.lightning.R
 import acr.browser.lightning.ThemableActivity
+import acr.browser.lightning.browser.image.LetterImagePainter
 import acr.browser.lightning.browser.menu.MenuSelection
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.view.targetUrl.LongPress
@@ -16,11 +17,6 @@ import acr.browser.lightning.preview.TopCropTransformation
 import acr.browser.lightning.search.SuggestionsModel
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.RectF
-import android.graphics.Typeface
 import android.text.format.DateFormat
 import android.widget.FrameLayout
 import androidx.compose.foundation.Canvas
@@ -1730,36 +1726,16 @@ fun TabCountButton(browserViewState: BrowserComposeState, onClick: () -> Unit) {
 }
 
 class LetterImage(
-    private val textSize: Float,
-    private val radius: Float,
-    private val character: Char,
+    private val letterImagePainter: LetterImagePainter,
     override val width: Int,
     override val height: Int,
-    private val color: Int,
 ) : Image {
-
-    private val paint = Paint().apply {
-        color = this@LetterImage.color
-        val boldText = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
-        typeface = boldText
-        textSize = this@LetterImage.textSize
-        isAntiAlias = true
-        textAlign = Paint.Align.CENTER
-    }
 
     override val size: Long = 0
     override val shareable: Boolean = false
 
     override fun draw(canvas: Canvas) {
-        val outer = RectF(0f, 0f, width.toFloat(), height.toFloat())
-        canvas.drawRoundRect(outer, radius, radius, paint)
-
-        val xPos = (width / 2)
-        val yPos = ((height / 2) - ((paint.descent() + paint.ascent()) / 2)).toInt()
-
-        paint.color = android.graphics.Color.WHITE
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
-        canvas.drawText(character.toString(), xPos.toFloat(), yPos.toFloat(), paint)
+        letterImagePainter.drawOn(canvas)
     }
 
     companion object {
@@ -1767,21 +1743,17 @@ class LetterImage(
         fun create(
             density: Density,
             character: Char,
-            width: Int,
-            height: Int,
+            size: Int,
         ) = LetterImage(
-            textSize = with(density) { 14.sp.toPx() },
-            radius = with(density) { 6.dp.toPx() },
-            character = character,
-            color = when (character.code % 4) {
-                0 -> colorResource(R.color.bookmark_default_blue)
-                1 -> colorResource(R.color.bookmark_default_green)
-                2 -> colorResource(R.color.bookmark_default_red)
-                3 -> colorResource(R.color.bookmark_default_orange)
-                else -> error("Impossible result from modulus 4")
-            }.toArgb(),
-            width = width,
-            height = height,
+            letterImagePainter = LetterImagePainter(
+                textSize = with(density) { 14.sp.toPx() },
+                radius = with(density) { 6.dp.toPx() },
+                character = character,
+                size = size,
+                color = colorResource(LetterImagePainter.colorForCharacter(character).resource).toArgb()
+            ),
+            width = size,
+            height = size,
         )
     }
 }
@@ -2049,8 +2021,7 @@ fun BookmarksBottomSheet(
                                     LetterImage.create(
                                         density = this,
                                         character = bookmark.title.first(),
-                                        width = 24.dp.toPx().toInt(),
-                                        height = 24.dp.toPx().toInt(),
+                                        size = 24.dp.toPx().toInt(),
                                     )
                                 }
                             )

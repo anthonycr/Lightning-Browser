@@ -2,14 +2,17 @@ package acr.browser.lightning.favicon
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.FaviconCacheDir
+import acr.browser.lightning.browser.image.LetterImagePainter
 import acr.browser.lightning.concurrency.CoroutineDispatchers
+import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.log.Logger
-import acr.browser.lightning.utils.DrawableUtils
 import acr.browser.lightning.utils.ThreadSafeFileProvider
+import acr.browser.lightning.utils.Utils
 import android.app.Application
 import android.graphics.Bitmap
-import androidx.annotation.ColorInt
+import android.graphics.Canvas
+import androidx.core.graphics.createBitmap
 import androidx.core.net.toUri
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -37,15 +40,20 @@ class FaviconModel @Inject constructor(
     fun createDefaultBitmapForTitle(title: String?): Bitmap {
         val firstTitleCharacter = title?.takeIf(String::isNotBlank)?.let { it[0] } ?: '?'
 
-        @ColorInt val defaultFaviconColor =
-            DrawableUtils.characterToColorHash(firstTitleCharacter, application)
+        val image = createBitmap(bookmarkIconSize, bookmarkIconSize)
+        val canvas = Canvas(image)
 
-        return DrawableUtils.createRoundedLetterImage(
-            firstTitleCharacter,
-            bookmarkIconSize,
-            bookmarkIconSize,
-            defaultFaviconColor
+        val letterImagePainter = LetterImagePainter(
+            textSize = Utils.dpToPx(14f).toFloat(),
+            radius = Utils.dpToPx(6f).toFloat(),
+            character = firstTitleCharacter,
+            size = bookmarkIconSize,
+            color = application.color(LetterImagePainter.colorForCharacter(firstTitleCharacter).resource)
         )
+
+        letterImagePainter.drawOn(canvas)
+
+        return image
     }
 
     /**

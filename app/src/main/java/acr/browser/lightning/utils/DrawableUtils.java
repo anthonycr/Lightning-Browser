@@ -1,83 +1,8 @@
 package acr.browser.lightning.utils;
 
-import android.app.Application;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.RectF;
-import android.graphics.Typeface;
-
-import acr.browser.lightning.R;
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-
 public final class DrawableUtils {
 
     private DrawableUtils() {}
-
-    /**
-     * Creates a rounded square of a certain color with
-     * a character imprinted in white on it.
-     *
-     * @param character the character to write on the image.
-     * @param width     the width of the final image.
-     * @param height    the height of the final image.
-     * @param color     the background color of the rounded square.
-     * @return a valid bitmap of a rounded square with a character on it.
-     */
-    @NonNull
-    public static Bitmap createRoundedLetterImage(@NonNull Character character,
-                                                  int width,
-                                                  int height,
-                                                  int color) {
-        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(image);
-        Paint paint = new Paint();
-        paint.setColor(color);
-        Typeface boldText = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
-        paint.setTypeface(boldText);
-        paint.setTextSize(Utils.dpToPx(14));
-        paint.setAntiAlias(true);
-        paint.setTextAlign(Paint.Align.CENTER);
-
-        final int radius = Utils.dpToPx(6);
-
-        RectF outer = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.drawRoundRect(outer, radius, radius, paint);
-
-        int xPos = (canvas.getWidth() / 2);
-        int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
-
-        paint.setColor(Color.WHITE);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-        canvas.drawText(character.toString(), xPos, yPos, paint);
-
-        return image;
-    }
-
-    /**
-     * Hashes a character to one of four colors:
-     * blue, green, red, or orange.
-     *
-     * @param character the character to hash.
-     * @param app       the application needed to get the color.
-     * @return one of the above colors, or black something goes wrong.
-     */
-    @ColorInt
-    public static int characterToColorHash(@NonNull Character character, @NonNull Application app) {
-        int smallHash = Character.getNumericValue(character) % 4;
-        return switch (Math.abs(smallHash)) {
-            case 0 -> ContextCompat.getColor(app, R.color.bookmark_default_blue);
-            case 1 -> ContextCompat.getColor(app, R.color.bookmark_default_green);
-            case 2 -> ContextCompat.getColor(app, R.color.bookmark_default_red);
-            case 3 -> ContextCompat.getColor(app, R.color.bookmark_default_orange);
-            default -> Color.BLACK;
-        };
-    }
 
 
     public static int mixColor(float fraction, int startValue, int endValue) {
