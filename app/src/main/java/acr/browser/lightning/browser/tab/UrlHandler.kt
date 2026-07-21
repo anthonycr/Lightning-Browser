@@ -127,7 +127,7 @@ class UrlHandler @Inject constructor(
                 try {
                     activity.startActivity(intent)
                 } catch (e: Exception) {
-                    println("LightningWebClient: cannot open downloaded file")
+                    logger.log(TAG, "Cannot open downloaded file: $url")
                 }
 
             } else {
