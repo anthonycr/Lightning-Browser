@@ -1,14 +1,12 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.IncognitoBrowserActivity
-import acr.browser.lightning.R
 import acr.browser.lightning.browser.cleanup.ExitCleanup
 import acr.browser.lightning.browser.di.IncognitoMode
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.download.FileDownloader
 import acr.browser.lightning.extensions.copyToClipboard
-import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.settings.activity.SettingsActivity
 import acr.browser.lightning.utils.IntentUtils
@@ -45,7 +43,6 @@ class BrowserNavigator @Inject constructor(
 
     override fun copyPageLink(url: String) {
         clipboardManager.copyToClipboard(url)
-        activity.snackbar(R.string.message_link_copied)
     }
 
     override suspend fun closeBrowser() {
@@ -59,9 +56,9 @@ class BrowserNavigator @Inject constructor(
         }
     }
 
-    override fun addToHomeScreen(url: String, title: String, favicon: Bitmap?) {
-        Utils.createShortcut(activity, url, title, favicon)
+    override fun addToHomeScreen(url: String, title: String, favicon: Bitmap?): Boolean {
         logger.log(TAG, "Creating shortcut: $title $url")
+        return Utils.createShortcut(activity, url, title, favicon)
     }
 
     override fun download(pendingDownload: PendingDownload) {

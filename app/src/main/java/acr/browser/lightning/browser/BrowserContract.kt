@@ -127,9 +127,9 @@ interface BrowserContract {
 
         /**
          * Add a shortcut to the home screen that opens the [url]. Use the provided [title] and
-         * [favicon] to create the shortcut.
+         * [favicon] to create the shortcut. Returns true if successful, false otherwise.
          */
-        fun addToHomeScreen(url: String, title: String, favicon: Bitmap?)
+        fun addToHomeScreen(url: String, title: String, favicon: Bitmap?): Boolean
 
         /**
          * Download the file provided by the [pendingDownload].

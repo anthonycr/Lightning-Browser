@@ -488,8 +488,11 @@ class BrowserPresenter @Inject constructor(
                 updateState(state.value.copy(findInPage = ""))
             }
 
-            MenuSelection.COPY_LINK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
-                ?.let(navigator::copyPageLink)
+            MenuSelection.COPY_LINK -> {
+                currentTab?.url?.takeIf { !it.isSpecialUrl() }
+                    ?.let(navigator::copyPageLink)
+                showSnackbar(resourceProvider.stringResource(R.string.message_link_copied))
+            }
 
             MenuSelection.ADD_TO_HOME -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let { addToHomeScreen() }
@@ -506,7 +509,12 @@ class BrowserPresenter @Inject constructor(
 
     private fun addToHomeScreen() {
         currentTab?.let {
-            navigator.addToHomeScreen(it.url, it.title, it.favicon?.asAndroidBitmap())
+            val result = navigator.addToHomeScreen(it.url, it.title, it.favicon?.asAndroidBitmap())
+            if (result) {
+                showSnackbar(resourceProvider.stringResource(R.string.message_added_to_homescreen))
+            } else {
+                showSnackbar(resourceProvider.stringResource(R.string.shortcut_message_failed_to_add))
+            }
         }
     }
 
@@ -1192,8 +1200,10 @@ class BrowserPresenter @Inject constructor(
             BrowserContract.BookmarkOptionEvent.SHARE ->
                 navigator.sharePage(url = bookmark.url, title = bookmark.title)
 
-            BrowserContract.BookmarkOptionEvent.COPY_LINK ->
+            BrowserContract.BookmarkOptionEvent.COPY_LINK -> {
                 navigator.copyPageLink(bookmark.url)
+                showSnackbar(resourceProvider.stringResource(R.string.message_link_copied))
+            }
 
             BrowserContract.BookmarkOptionEvent.REMOVE ->
                 browserCoroutineScope.launch {
@@ -1295,7 +1305,11 @@ class BrowserPresenter @Inject constructor(
             BrowserContract.HistoryOptionEvent.SHARE ->
                 navigator.sharePage(url = historyEntry.url, title = historyEntry.title)
 
-            BrowserContract.HistoryOptionEvent.COPY_LINK -> navigator.copyPageLink(historyEntry.url)
+            BrowserContract.HistoryOptionEvent.COPY_LINK -> {
+                navigator.copyPageLink(historyEntry.url)
+                showSnackbar(resourceProvider.stringResource(R.string.message_link_copied))
+            }
+
             BrowserContract.HistoryOptionEvent.REMOVE ->
                 browserCoroutineScope.launch {
                     historyRepository.deleteHistoryEntry(historyEntry.url)
@@ -1485,8 +1499,10 @@ class BrowserPresenter @Inject constructor(
             BrowserContract.LinkLongPressEvent.SHARE ->
                 longPress.targetUrl?.let { navigator.sharePage(url = it, title = null) }
 
-            BrowserContract.LinkLongPressEvent.COPY_LINK ->
+            BrowserContract.LinkLongPressEvent.COPY_LINK -> {
                 longPress.targetUrl?.let(navigator::copyPageLink)
+                showSnackbar(resourceProvider.stringResource(R.string.message_link_copied))
+            }
         }
         updateState(state.value.copy(dialog = null))
     }
@@ -1520,8 +1536,10 @@ class BrowserPresenter @Inject constructor(
             BrowserContract.ImageLongPressEvent.SHARE ->
                 longPress.targetUrl?.let { navigator.sharePage(url = it, title = null) }
 
-            BrowserContract.ImageLongPressEvent.COPY_LINK ->
+            BrowserContract.ImageLongPressEvent.COPY_LINK -> {
                 longPress.targetUrl?.let(navigator::copyPageLink)
+                showSnackbar(resourceProvider.stringResource(R.string.message_link_copied))
+            }
 
             BrowserContract.ImageLongPressEvent.DOWNLOAD -> navigator.download(
                 PendingDownload(
@@ -1554,6 +1572,12 @@ class BrowserPresenter @Inject constructor(
         resourceProvider.stringResource(R.string.infinity)
     } else {
         numberFormatter.formatNumber(this)
+    }
+
+    private fun showSnackbar(message: String) {
+        updateState(
+            state.value.copy(ephemeral = BrowserViewState.Ephemeral(message = message))
+        )
     }
 
     private fun updateState(newState: BrowserViewState) {

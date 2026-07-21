@@ -24,7 +24,6 @@ import java.net.URISyntaxException;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.extensions.ActivityExtensions;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -164,10 +163,10 @@ public final class Utils {
         }
     }
 
-    public static void createShortcut(@NonNull Activity activity,
-                                      @NonNull String url,
-                                      @NonNull String unsafeTitle,
-                                      @Nullable Bitmap unsafeFavicon) {
+    public static boolean createShortcut(@NonNull Activity activity,
+                                         @NonNull String url,
+                                         @NonNull String unsafeTitle,
+                                         @Nullable Bitmap unsafeFavicon) {
         Intent shortcutIntent = new Intent(Intent.ACTION_VIEW);
         shortcutIntent.setData(Uri.parse(url));
 
@@ -190,9 +189,9 @@ public final class Utils {
                     .build();
 
             shortcutManager.requestPinShortcut(pinShortcutInfo, null);
-            ActivityExtensions.snackbar(activity, R.string.message_added_to_homescreen);
+            return true;
         } else {
-            ActivityExtensions.snackbar(activity, R.string.shortcut_message_failed_to_add);
+            return false;
         }
     }
 
