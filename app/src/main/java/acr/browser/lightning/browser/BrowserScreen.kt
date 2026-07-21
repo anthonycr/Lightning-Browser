@@ -228,7 +228,12 @@ fun BottomTabs(
     snackbarHostState: SnackbarHostState,
 ) {
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.padding(56.dp)
+            )
+        }
     ) { innerPadding ->
         Column(
             Modifier
