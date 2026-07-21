@@ -2,7 +2,6 @@ package acr.browser.lightning.browser.search
 
 import acr.browser.lightning.R
 import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.preference.datastore.getUnsafe
 import acr.browser.lightning.utils.Utils
 import acr.browser.lightning.utils.isSpecialUrl
 import android.app.Application
@@ -35,11 +34,11 @@ class SearchBoxModel @Inject constructor(
      * @param isLoading whether the page is currently loading or not.
      * @return the string that should be displayed by the search box.
      */
-    fun getDisplayContent(url: String, title: String?, isLoading: Boolean): String =
+    suspend fun getDisplayContent(url: String, title: String?, isLoading: Boolean): String =
         when {
             url.isSpecialUrl() -> ""
             isLoading -> url
-            else -> when (userPreferencesDataStore.urlBoxContentChoice.getUnsafe()) {
+            else -> when (userPreferencesDataStore.urlBoxContentChoice.get()) {
                 SearchBoxDisplayChoice.DOMAIN -> safeDomain(url)
                 SearchBoxDisplayChoice.URL -> url
                 SearchBoxDisplayChoice.TITLE ->

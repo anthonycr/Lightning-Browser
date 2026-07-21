@@ -239,22 +239,24 @@ class BrowserPresenter @Inject constructor(
         currentTab?.isForeground = true
 
         val tab = tabModel ?: return run {
-            updateState(
-                state.value.copy(
-                    displayUrl = searchBoxModel.getDisplayContent(
-                        url = "",
-                        title = null,
-                        isLoading = false
-                    ),
-                    enableFullMenu = false,
-                    isForwardEnabled = false,
-                    isBackEnabled = false,
-                    sslState = SslState.None,
-                    progress = 100,
-                    findInPage = null,
-                    tabs = state.value.tabs.map { it.copy(isSelected = false) }
+            browserCoroutineScope.launch {
+                updateState(
+                    state.value.copy(
+                        displayUrl = searchBoxModel.getDisplayContent(
+                            url = "",
+                            title = null,
+                            isLoading = false
+                        ),
+                        enableFullMenu = false,
+                        isForwardEnabled = false,
+                        isBackEnabled = false,
+                        sslState = SslState.None,
+                        progress = 100,
+                        findInPage = null,
+                        tabs = state.value.tabs.map { it.copy(isSelected = false) }
+                    )
                 )
-            )
+            }
         }
 
         view?.showToolbar()
@@ -823,19 +825,21 @@ class BrowserPresenter @Inject constructor(
         if (query.isEmpty()) {
             return
         }
-        currentTab?.stopLoading()
-        val searchUrl = searchEngineProvider.provideSearchEngine().queryUrl + QUERY_PLACE_HOLDER
-        val url = smartUrlFilter(query.trim(), true, searchUrl)
-        updateState(
-            state.value.copy(
-                displayUrl = searchBoxModel.getDisplayContent(
-                    url = url,
-                    title = currentTab?.title,
-                    isLoading = (currentTab?.loadingProgress ?: 0) < 100
+        browserCoroutineScope.launch {
+            currentTab?.stopLoading()
+            val searchUrl = searchEngineProvider.provideSearchEngine().queryUrl + QUERY_PLACE_HOLDER
+            val url = smartUrlFilter(query.trim(), true, searchUrl)
+            updateState(
+                state.value.copy(
+                    displayUrl = searchBoxModel.getDisplayContent(
+                        url = url,
+                        title = currentTab?.title,
+                        isLoading = (currentTab?.loadingProgress ?: 0) < 100
+                    )
                 )
             )
-        )
-        currentTab?.loadUrl(url)
+            currentTab?.loadUrl(url)
+        }
     }
 
     /**
