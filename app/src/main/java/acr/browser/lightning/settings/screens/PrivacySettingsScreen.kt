@@ -39,7 +39,7 @@ class PrivacySettingsScreen @Inject constructor(
                 title = resourceProvider.stringResource(R.string.third_party),
                 isChecked = { userPreferencesDataStore.blockThirdPartyCookiesEnabled.get() },
                 onToggle = {
-                    userPreferencesDataStore.blockThirdPartyCookiesEnabled.get()
+                    userPreferencesDataStore.blockThirdPartyCookiesEnabled.set(it)
                     null
                 }
             ),
@@ -88,7 +88,7 @@ class PrivacySettingsScreen @Inject constructor(
                 title = resourceProvider.stringResource(R.string.clear_cookies_exit),
                 isChecked = { userPreferencesDataStore.clearCookiesExitEnabled.get() },
                 onToggle = {
-                    userPreferencesDataStore.clearCookiesExitEnabled.get()
+                    userPreferencesDataStore.clearCookiesExitEnabled.set(it)
                     null
                 }
             ),
