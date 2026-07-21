@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
  * @param tabs The state for each currently open tab.
  * @param tabCountText The text to display in the tab count icon.
  * @param dialog The currently open dialog if any.
+ * @param ephemeral The currently shown ephemeral message, if any.
  * @param openBookmarks True if the bookmark drawer should be open, false otherwise.
  * @param openTabs True if the tab drawer should be open, false otherwise.
  * @param showCustomView True if the custom view from the WebView should be shown, false otherwise.
@@ -77,6 +78,8 @@ data class BrowserViewState(
 
     val dialog: Dialogs? = null,
 
+    val ephemeral: Ephemeral? = null,
+
     // Drawers
     val openBookmarks: Boolean = false,
     val openTabs: Boolean = false,
@@ -85,6 +88,14 @@ data class BrowserViewState(
 
     val scrollToTab: Int = -1,
 ) {
+
+    /**
+     * Represents an ephemeral message like a snackbar.
+     */
+    data class Ephemeral(
+        val message: String
+    )
+
     sealed interface Dialogs {
         /**
          * Show the dialog to add a bookmark for the current page.
@@ -187,6 +198,8 @@ class BrowserComposeState(
 
     var dialog: BrowserViewState.Dialogs? by mutableStateOf(browserViewState.dialog)
 
+    var ephemeral: BrowserViewState.Ephemeral? by mutableStateOf(browserViewState.ephemeral)
+
     // Drawers
     var openBookmarks: Boolean by mutableStateOf(browserViewState.openBookmarks)
     var openTabs: Boolean by mutableStateOf(browserViewState.openTabs)
@@ -216,6 +229,7 @@ class BrowserComposeState(
         tabs = browserViewState.tabs
         tabCountText = browserViewState.tabCountText
         dialog = browserViewState.dialog
+        ephemeral = browserViewState.ephemeral
         openBookmarks = browserViewState.openBookmarks
         openTabs = browserViewState.openTabs
         showCustomView = browserViewState.showCustomView

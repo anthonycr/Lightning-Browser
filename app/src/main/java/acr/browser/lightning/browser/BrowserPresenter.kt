@@ -1543,6 +1543,13 @@ class BrowserPresenter @Inject constructor(
         currentTab?.handleFileChooserResult(activityResult)
     }
 
+    /**
+     * Call when a snackbar has been dismissed.
+     */
+    fun onSnackbarDismissed() {
+        updateState(state.value.copy(ephemeral = null))
+    }
+
     private fun Int.asTabCountText(): String = if (this > 99) {
         resourceProvider.stringResource(R.string.infinity)
     } else {

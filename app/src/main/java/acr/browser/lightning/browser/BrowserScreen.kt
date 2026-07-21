@@ -78,6 +78,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults.indicatorLine
@@ -147,8 +150,17 @@ fun ThemableActivity.BrowserScreen(
     suggestionsModel: SuggestionsModel,
 ) {
     BrowserTheme {
+        val snackbarHostState = remember { SnackbarHostState() }
+        browserViewState.ephemeral?.let {
+            LaunchedEffect(it.message) {
+                when (snackbarHostState.showSnackbar(it.message)) {
+                    SnackbarResult.Dismissed -> presenter.onSnackbarDismissed()
+                    SnackbarResult.ActionPerformed -> presenter.onSnackbarDismissed()
+                }
+            }
+        }
         if (browserViewState.showCustomView) {
-            CustomView(customFrameLayout)
+            CustomView(customFrameLayout, snackbarHostState)
         } else {
             val tabConfiguration = tabConfigurationStateProvider.state.collectAsState()
             when (tabConfiguration.value) {
@@ -156,21 +168,24 @@ fun ThemableActivity.BrowserScreen(
                     browserFrameLayout,
                     browserViewState,
                     presenter,
-                    suggestionsModel
+                    suggestionsModel,
+                    snackbarHostState
                 )
 
                 TabConfiguration.DRAWER_SIDE -> DrawerTabs(
                     browserFrameLayout,
                     browserViewState,
                     presenter,
-                    suggestionsModel
+                    suggestionsModel,
+                    snackbarHostState
                 )
 
                 TabConfiguration.DRAWER_BOTTOM -> BottomTabs(
                     browserFrameLayout,
                     browserViewState,
                     presenter,
-                    suggestionsModel
+                    suggestionsModel,
+                    snackbarHostState
                 )
 
                 null -> Unit
@@ -181,9 +196,12 @@ fun ThemableActivity.BrowserScreen(
 
 @Composable
 fun CustomView(
-    frameLayout: FrameLayout
+    frameLayout: FrameLayout,
+    snackbarHostState: SnackbarHostState,
 ) {
-    Scaffold { innerPadding ->
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
         Column(
             Modifier
                 .fillMaxSize()
@@ -207,8 +225,11 @@ fun BottomTabs(
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
+    snackbarHostState: SnackbarHostState,
 ) {
-    Scaffold { innerPadding ->
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
         Column(
             Modifier
                 .fillMaxSize()
@@ -236,8 +257,11 @@ fun DesktopTabs(
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
+    snackbarHostState: SnackbarHostState,
 ) {
-    Scaffold { innerPadding ->
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
         Column(
             Modifier
                 .fillMaxSize()
@@ -264,6 +288,7 @@ fun DrawerTabs(
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
+    snackbarHostState: SnackbarHostState,
 ) {
     val lazyListState = rememberLazyListState()
     if (browserViewState.scrollToTab != -1) {
@@ -430,7 +455,9 @@ fun DrawerTabs(
             }
         }
     ) {
-        Scaffold { innerPadding ->
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) }
+        ) { innerPadding ->
             Column(
                 Modifier
                     .fillMaxSize()
