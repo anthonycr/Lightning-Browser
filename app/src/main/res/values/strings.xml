@@ -286,6 +286,7 @@
     <!-- Dialogs -->
     <string name="dialog_open_new_tab">Open in new tab</string>
     <string name="dialog_open_background_tab">Open in background tab</string>
+    <string name="result_open_background_tab">Opened background tab</string>
     <string name="dialog_open_incognito_tab">Open in incognito tab</string>
     <string name="dialog_remove_bookmark">Remove bookmark</string>
     <string name="dialog_edit_bookmark">Edit bookmark</string>

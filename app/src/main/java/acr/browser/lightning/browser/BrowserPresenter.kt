@@ -528,6 +528,8 @@ class BrowserPresenter @Inject constructor(
             updateState(state.value.updateTabViewState())
             if (shouldSelect) {
                 selectTab(model.selectTab(tab.id))
+            } else {
+                showSnackbar(resourceProvider.stringResource(R.string.result_open_background_tab))
             }
         }
     }
