@@ -12,6 +12,7 @@ android {
     compileSdk = 37
 
     defaultConfig {
+        buildToolsVersion = "37.0.0"
         minSdk = 28
         targetSdk = 37
         versionName = "5.1.0"
