@@ -3,12 +3,14 @@ package acr.browser.lightning.browser.notification
 import acr.browser.lightning.IncognitoBrowserActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.utils.ThemeUtils
-import android.app.Activity
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.fragment.app.FragmentActivity
+import com.permissionx.guolindev.PermissionX
 import javax.inject.Inject
 
 
@@ -17,7 +19,7 @@ import javax.inject.Inject
  * warning. When the notification is pressed, the incognito browser will open.
  */
 class IncognitoNotification @Inject constructor(
-    private val activity: Activity,
+    private val activity: FragmentActivity,
     private val notificationManager: NotificationManager
 ) {
 
@@ -43,10 +45,27 @@ class IncognitoNotification @Inject constructor(
      * @param number the number of tabs, must be > 0.
      */
     fun show(number: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (PermissionX.isGranted(activity, Manifest.permission.POST_NOTIFICATIONS)) {
+                showInternal(number)
+            } else {
+                PermissionX.init(activity)
+                    .permissions(Manifest.permission.POST_NOTIFICATIONS)
+                    .request { allGranted, _, _ ->
+                        if (allGranted) {
+                            showInternal(number)
+                        }
+                    }
+            }
+        } else {
+            showInternal(number)
+        }
+    }
+
+    private fun showInternal(number: Int) {
         require(number > 0)
         val incognitoIntent = IncognitoBrowserActivity.intent(activity)
 
-        // TODO: Fix incognito notification
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.FLAG_MUTABLE
         } else {
