@@ -24,7 +24,6 @@ import acr.browser.lightning.browser.ui.UiConfiguration
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
-import acr.browser.lightning.utils.IntentUtils
 import android.app.Activity
 import android.app.Application
 import android.content.Intent
@@ -58,10 +57,6 @@ class BrowserModule {
         @InitialIntent initialIntent: Intent?,
         intentExtractor: IntentExtractor
     ): BrowserContract.Action? = intentExtractor.extractUrlFromIntent(initialIntent)
-
-    // TODO: auto inject intent utils
-    @Provides
-    fun providesIntentUtils(activity: Activity): IntentUtils = IntentUtils(activity)
 
     @Provides
     fun providesUiConfiguration(

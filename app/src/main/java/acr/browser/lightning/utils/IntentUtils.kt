@@ -2,18 +2,34 @@ package acr.browser.lightning.utils
 
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.INTENT_ORIGIN
+import acr.browser.lightning.log.Logger
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.util.Log
+import android.os.Build
 import android.webkit.WebView
+import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import java.net.URISyntaxException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import javax.inject.Inject
 
-class IntentUtils(private val activity: Activity) {
+class IntentUtils @Inject constructor(
+    private val activity: Activity,
+    private val logger: Logger,
+) {
+
     fun startActivityForUrl(tab: WebView?, url: String): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            startActivityForUrlInternalApi30(tab, url)
+        } else {
+            startActivityForUrlInternalApiLegacy(tab, url)
+        }
+    }
+
+    private fun startActivityForUrlInternalApiLegacy(tab: WebView?, url: String): Boolean {
         var intent: Intent = try {
             Intent.parseUri(url, Intent.URI_INTENT_SCHEME).apply {
                 addCategory(Intent.CATEGORY_BROWSABLE)
@@ -21,7 +37,7 @@ class IntentUtils(private val activity: Activity) {
                 setSelector(null)
             }
         } catch (ex: URISyntaxException) {
-            Log.w("Browser", "Bad URI " + url + ": " + ex.message)
+            logger.log(TAG, "Bad URI $url: ${ex.message}")
             return false
         }
 
@@ -52,6 +68,29 @@ class IntentUtils(private val activity: Activity) {
             exception.printStackTrace()
         }
         return false
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun startActivityForUrlInternalApi30(tab: WebView?, url: String): Boolean {
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
+            addCategory(Intent.CATEGORY_BROWSABLE)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER or
+                Intent.FLAG_ACTIVITY_REQUIRE_DEFAULT
+            if (tab != null) {
+                putExtra(INTENT_ORIGIN, tab.hashCode())
+            }
+        }
+
+        return try {
+            val started = activity.startActivityIfNeeded(intent, -1)
+            if (started) {
+                logger.log(TAG, "Started activity for URL: $url")
+            }
+            started
+        } catch (_: ActivityNotFoundException) {
+            false
+        }
     }
 
     /**
@@ -105,6 +144,7 @@ class IntentUtils(private val activity: Activity) {
     }
 
     companion object {
+        private const val TAG = "IntentUtils"
         private val ACCEPTED_URI_SCHEMA: Pattern = Pattern.compile(
             "(?i)((?:http|https|file)://" + "|(?:inline|data|about|javascript):|(?:.*:.*@))(.*)"
         )

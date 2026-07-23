@@ -31,6 +31,7 @@ class BrowserNavigator @Inject constructor(
     private val activityManager: ActivityManager,
     private val appCoroutineScope: AppCoroutineScope,
     private val fileDownloader: FileDownloader,
+    private val intentUtils: IntentUtils,
 ) : BrowserContract.Navigator {
 
     override fun openSettings() {
@@ -38,7 +39,7 @@ class BrowserNavigator @Inject constructor(
     }
 
     override fun sharePage(url: String, title: String?) {
-        IntentUtils(activity).shareUrl(url, title)
+        intentUtils.shareUrl(url, title)
     }
 
     override fun copyPageLink(url: String) {
