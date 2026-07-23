@@ -203,6 +203,7 @@ fun CustomView(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            // TODO: Keep screen on
             AndroidView(
                 factory = { frameLayout },
                 modifier = Modifier
