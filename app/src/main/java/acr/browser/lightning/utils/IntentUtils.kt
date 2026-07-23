@@ -22,6 +22,9 @@ class IntentUtils @Inject constructor(
 ) {
 
     fun startActivityForUrl(tab: WebView?, url: String): Boolean {
+        if (url.isSpecialUrl()) {
+            return false
+        }
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             startActivityForUrlInternalApi30(tab, url)
         } else {
@@ -146,7 +149,7 @@ class IntentUtils @Inject constructor(
     companion object {
         private const val TAG = "IntentUtils"
         private val ACCEPTED_URI_SCHEMA: Pattern = Pattern.compile(
-            "(?i)((?:http|https|file)://" + "|(?:inline|data|about|javascript):|(?:.*:.*@))(.*)"
+            "(?i)((?:http|https|file)://|(?:inline|data|about|javascript):|(?:.*:.*@))(.*)"
         )
     }
 }
