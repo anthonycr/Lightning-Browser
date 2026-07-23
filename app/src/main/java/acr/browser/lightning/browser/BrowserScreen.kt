@@ -348,7 +348,10 @@ fun DrawerTabs(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .animateItem()
+                                .animateItem(
+                                    fadeInSpec = null,
+                                    fadeOutSpec = null
+                                )
                                 .combinedClickable(
                                     onClick = { presenter.onTabClick(index) },
                                     onLongClick = { presenter.onTabLongClick(index) }
@@ -1146,7 +1149,10 @@ fun TopTabDesktopNavigationBar(
                     modifier = Modifier
                         .width(175.dp)
                         .height(36.dp)
-                        .animateItem()
+                        .animateItem(
+                            fadeInSpec = null,
+                            fadeOutSpec = null
+                        )
                         .combinedClickable(
                             onClick = { presenter.onTabClick(index) },
                             onLongClick = { presenter.onTabLongClick(index) }
@@ -1856,7 +1862,10 @@ fun TabsBottomSheet(
                 Column(
                     modifier = Modifier
                         .width(150.dp)
-                        .animateItem()
+                        .animateItem(
+                            fadeInSpec = null,
+                            fadeOutSpec = null
+                        )
                         .background(
                             color = MaterialTheme.colorScheme.surfaceVariant,
                             shape = MaterialTheme.shapes.medium
@@ -1997,7 +2006,10 @@ fun BookmarksBottomSheet(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .animateItem()
+                        .animateItem(
+                            fadeInSpec = null,
+                            fadeOutSpec = null
+                        )
                         .combinedClickable(
                             onClick = { presenter.onBookmarkClick(index) },
                             onLongClick = { presenter.onBookmarkLongClick(index) }
