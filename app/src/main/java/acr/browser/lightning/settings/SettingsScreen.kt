@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.width
@@ -24,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -41,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
@@ -251,14 +255,22 @@ fun SettingsBottomSheetChooser(
 
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
+        dragHandle = {},
         modifier = Modifier.padding(innerPadding),
         sheetState = sheetState
     ) {
-        Text(
-            state.title,
-            modifier = Modifier.padding(start = 16.dp, bottom = 16.dp),
-            style = MaterialTheme.typography.titleMedium
-        )
+        Row(
+            modifier = Modifier
+                .height(64.dp)
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                state.title,
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
         state.values.forEachIndexed { index, value ->
             Row(
                 modifier = Modifier
@@ -304,6 +316,79 @@ fun SettingsBottomSheetChooser(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun SettingsBottomSheetTextSizeChooser(
+    innerPadding: PaddingValues,
+    state: SettingsTextSizeChooserState,
+    onDismiss: () -> Unit,
+    onSelected: (Int) -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState()
+    var selectedTextSize by remember { mutableIntStateOf(state.textSize) }
+    val scope = rememberCoroutineScope()
+
+    ModalBottomSheet(
+        onDismissRequest = { onDismiss() },
+        dragHandle = {},
+        modifier = Modifier.padding(innerPadding),
+        sheetState = sheetState
+    ) {
+        Row(
+            modifier = Modifier
+                .height(64.dp)
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.title_text_size),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontSize = when (selectedTextSize) {
+                        0 -> 30.sp
+                        1 -> 26.sp
+                        2 -> 22.sp
+                        3 -> 18.sp
+                        4 -> 14.sp
+                        5 -> 10.sp
+                        else -> error("Impossible selection")
+                    }
+                ),
+            )
+        }
+        Slider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            value = (5 - selectedTextSize).toFloat(),
+            onValueChange = {
+                selectedTextSize = 5 - it.toInt()
+            },
+            valueRange = 0f..5f,
+            steps = 4
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Button(
+                modifier = Modifier
+                    .padding(end = 16.dp),
+                onClick = {
+                    scope.launch {
+                        delay(500.milliseconds)
+                        sheetState.hide()
+                        onSelected(selectedTextSize)
+                    }
+                }
+            ) {
+                Text(stringResource(R.string.action_ok))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun SettingsBottomSheetInput(
     innerPadding: PaddingValues,
     state: SettingsBottomSheetInputState,
@@ -315,34 +400,48 @@ fun SettingsBottomSheetInput(
 
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
+        dragHandle = {},
         modifier = Modifier.padding(innerPadding),
         sheetState = sheetState
     ) {
-        Text(
-            state.title,
-            modifier = Modifier.padding(start = 16.dp),
-            style = MaterialTheme.typography.titleMedium
-        )
+        Row(
+            modifier = Modifier
+                .height(64.dp)
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = state.title,
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
         val textFieldState = rememberTextFieldState(state.currentValue)
         TextField(
             textFieldState,
             modifier = Modifier
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
             placeholder = { Text(state.hint) }
         )
-        Button(
-            modifier = Modifier
-                .padding(start = 16.dp),
-            onClick = {
-                scope.launch {
-                    delay(500.milliseconds)
-                    sheetState.hide()
-                    onSelected(textFieldState.text)
-                }
-            }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
         ) {
-            Text(stringResource(R.string.action_ok))
+            Button(
+                modifier = Modifier
+                    .padding(end = 16.dp),
+                onClick = {
+                    scope.launch {
+                        delay(500.milliseconds)
+                        sheetState.hide()
+                        onSelected(textFieldState.text)
+                    }
+                }
+            ) {
+                Text(stringResource(R.string.action_ok))
+            }
         }
     }
 }

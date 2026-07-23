@@ -111,7 +111,6 @@ class DisplaySettingsScreen @Inject constructor(
                             selected = AppTheme.entries.indexOf(userPreferencesDataStore.useTheme.get()),
                         )
                     },
-
                     onSelected = {
                         ClickableOnClick.Snackbar {
                             userPreferencesDataStore.useTheme.set(AppTheme.entries[it])
@@ -150,7 +149,28 @@ class DisplaySettingsScreen @Inject constructor(
                     }
                 )
             ),
-            // TODO: Text size
+            ClickableState(
+                title = resourceProvider.stringResource(R.string.title_text_size),
+                summary = {
+                    when (userPreferencesDataStore.textSize.get()) {
+                        0 -> resourceProvider.stringResource(R.string.size_largest)
+                        1 -> resourceProvider.stringResource(R.string.size_large)
+                        2 -> resourceProvider.stringResource(R.string.size_normal)
+                        3 -> resourceProvider.stringResource(R.string.size_normal)
+                        4 -> resourceProvider.stringResource(R.string.size_small)
+                        5 -> resourceProvider.stringResource(R.string.size_smallest)
+                        else -> throw IllegalArgumentException("Unsupported text size")
+                    }
+                },
+                onClick = ClickableOnClick.TextSize(
+                    produceTextSize = { userPreferencesDataStore.textSize.get() },
+                    onSelected = {
+                        ClickableOnClick.Action {
+                            userPreferencesDataStore.textSize.set(it)
+                        }
+                    }
+                )
+            )
         )
     )
 }

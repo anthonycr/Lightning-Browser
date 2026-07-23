@@ -25,6 +25,10 @@ data class SettingsBottomSheetChooserState(
     val selected: Int
 )
 
+data class SettingsTextSizeChooserState(
+    val textSize: Int,
+)
+
 data class SettingsBottomSheetInputState(
     val title: String,
     val hint: String,
@@ -52,6 +56,7 @@ data class SettingsUiState(
         data class Actual(
             val entries: List<SettingsOption>,
             val bottomSheetChooser: SettingsBottomSheetChooserState? = null,
+            val textSizeChooserState: SettingsTextSizeChooserState? = null,
             val bottomSheetInput: SettingsBottomSheetInputState? = null,
             val dialogConfirmation: SettingsDialogConfirmationState? = null,
         ) : Content

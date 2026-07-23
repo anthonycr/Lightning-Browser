@@ -5,6 +5,7 @@ import acr.browser.lightning.settings.SettingsBottomSheetInputState
 import acr.browser.lightning.settings.SettingsClickableState
 import acr.browser.lightning.settings.SettingsDialogConfirmationState
 import acr.browser.lightning.settings.SettingsSnackBarState
+import acr.browser.lightning.settings.SettingsTextSizeChooserState
 import acr.browser.lightning.settings.SettingsToggleState
 import acr.browser.lightning.settings.SettingsUiState
 import android.net.Uri
@@ -68,6 +69,11 @@ sealed interface ClickableOnClick {
         val onCreated: suspend (Uri?) -> ClickableOnClick
     ) : ClickableOnClick
 
+    class TextSize(
+        val produceTextSize: suspend () -> Int,
+        val onSelected: suspend (Int) -> ClickableOnClick,
+    ) : ClickableOnClick
+
     class WebLink(
         val url: String
     ) : ClickableOnClick
@@ -91,6 +97,8 @@ sealed interface SettingsFrameworkUiEvent {
     data class DialogConfirmation(val confirmed: Boolean) : SettingsFrameworkUiEvent
 
     data class FileChosen(val uri: Uri?) : SettingsFrameworkUiEvent
+
+    data class TextSizeChosen(val textSize: Int?) : SettingsFrameworkUiEvent
 
     data object SnackbarDismissed : SettingsFrameworkUiEvent
 }
@@ -126,6 +134,7 @@ class SettingsFrameworkPresenter(
 
     private suspend fun SettingsFrameworkState.asUiState(
         bottomSheetChooser: SettingsBottomSheetChooserState? = null,
+        textSizeChooserState: SettingsTextSizeChooserState? = null,
         bottomSheetInput: SettingsBottomSheetInputState? = null,
         dialogConfirmation: SettingsDialogConfirmationState? = null,
         ephemeral: SettingsSnackBarState? = null,
@@ -151,6 +160,7 @@ class SettingsFrameworkPresenter(
                 }
             },
             bottomSheetChooser = bottomSheetChooser,
+            textSizeChooserState = textSizeChooserState,
             bottomSheetInput = bottomSheetInput,
             dialogConfirmation = dialogConfirmation,
         ),
@@ -199,6 +209,15 @@ class SettingsFrameworkPresenter(
             }
 
             is ClickableOnClick.WebLink -> settingsFrameworkState.asUiState(webLink = this.url)
+
+            is ClickableOnClick.TextSize -> {
+                pendingActionState.emit(this)
+                settingsFrameworkState.asUiState(
+                    textSizeChooserState = SettingsTextSizeChooserState(
+                        textSize = this.produceTextSize(),
+                    )
+                )
+            }
         }
     }
 
@@ -258,6 +277,16 @@ class SettingsFrameworkPresenter(
                         val pendingAction = pendingActionState.value
                         require(pendingAction is ClickableOnClick.Confirmation)
                         pendingAction.onConfirmed(event.confirmed).asUiState()
+                    }
+
+                    is SettingsFrameworkUiEvent.TextSizeChosen -> {
+                        val pendingAction = pendingActionState.value
+                        require(pendingAction is ClickableOnClick.TextSize)
+                        if (event.textSize != null) {
+                            pendingAction.onSelected(event.textSize).asUiState()
+                        } else {
+                            settingsFrameworkState.asUiState()
+                        }
                     }
                 }
                 state.emit(transformedState)

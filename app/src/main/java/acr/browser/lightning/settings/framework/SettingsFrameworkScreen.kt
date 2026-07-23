@@ -2,6 +2,7 @@ package acr.browser.lightning.settings.framework
 
 import acr.browser.lightning.settings.SettingsBottomSheetChooser
 import acr.browser.lightning.settings.SettingsBottomSheetInput
+import acr.browser.lightning.settings.SettingsBottomSheetTextSizeChooser
 import acr.browser.lightning.settings.SettingsClickable
 import acr.browser.lightning.settings.SettingsClickableState
 import acr.browser.lightning.settings.SettingsLoader
@@ -117,6 +118,20 @@ fun SettingsFrameworkScreen(
                             presenter.onEvent(
                                 SettingsFrameworkUiEvent.BottomSheetChoiceResult(it)
                             )
+                        }
+                    )
+                }
+                if (content.textSizeChooserState != null) {
+                    SettingsBottomSheetTextSizeChooser(
+                        innerPadding = innerPadding,
+                        state = content.textSizeChooserState,
+                        onDismiss = {
+                            presenter.onEvent(
+                                SettingsFrameworkUiEvent.TextSizeChosen(null)
+                            )
+                        },
+                        onSelected = {
+                            presenter.onEvent(SettingsFrameworkUiEvent.TextSizeChosen(it))
                         }
                     )
                 }
