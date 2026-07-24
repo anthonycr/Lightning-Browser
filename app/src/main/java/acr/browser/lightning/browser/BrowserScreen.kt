@@ -50,7 +50,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -2129,7 +2128,7 @@ fun BookmarkAddOrEditSheet(
         )
 
         var expanded by remember { mutableStateOf(false) }
-        val selectedFolder = rememberTextFieldState(folder)
+        var selectedFolder by remember { mutableStateOf(folder) }
 
         ExposedDropdownMenuBox(
             modifier = Modifier
@@ -2138,8 +2137,14 @@ fun BookmarkAddOrEditSheet(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }
         ) {
+            var folderState by remember { mutableStateOf(folders) }
+
             TextField(
-                state = selectedFolder,
+                value = selectedFolder,
+                onValueChange = { newValue ->
+                    selectedFolder = newValue
+                    folderState = folders.filter { it.startsWith(selectedFolder) }.take(5)
+                },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                 },
@@ -2148,23 +2153,24 @@ fun BookmarkAddOrEditSheet(
                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable)
             )
 
-            // TODO: Fix suggestions UX (partially works)
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                folders.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option, color = MaterialTheme.colorScheme.onSurface) },
-                        onClick = {
-                            selectedFolder.setTextAndPlaceCursorAtEnd(option)
-                            expanded = false
-                        },
-                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                    )
+            if (folderState.isNotEmpty()) {
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    folderState.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option, color = MaterialTheme.colorScheme.onSurface) },
+                            onClick = {
+                                selectedFolder = option
+                                expanded = false
+                            },
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                        )
+                    }
                 }
             }
         }
@@ -2199,7 +2205,7 @@ fun BookmarkAddOrEditSheet(
                         onConfirmed(
                             titleTextFieldState.text.toString(),
                             urlTextFieldState.text.toString(),
-                            selectedFolder.text.toString()
+                            selectedFolder
                         )
                     }
                 }
