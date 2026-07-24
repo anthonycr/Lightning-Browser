@@ -52,7 +52,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Button
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -298,13 +297,32 @@ fun DrawerTabs(
             presenter.onTabScroll()
         }
     }
+
+    val desiredDrawerState = if (browserViewState.openTabs) {
+        DrawerValue.Open
+    } else {
+        DrawerValue.Closed
+    }
     val drawerState = rememberDrawerState(
-        initialValue = if (browserViewState.openTabs) {
-            DrawerValue.Open
-        } else {
-            DrawerValue.Closed
+        initialValue = desiredDrawerState,
+        confirmStateChange = {
+            if (it == DrawerValue.Closed) {
+                presenter.onTabDrawerMoved(isOpen = false)
+            }
+            true
         }
     )
+    LaunchedEffect(desiredDrawerState) {
+        if (drawerState.currentValue != desiredDrawerState &&
+            drawerState.targetValue != desiredDrawerState
+        ) {
+            if (desiredDrawerState == DrawerValue.Open) {
+                drawerState.open()
+            } else {
+                drawerState.close()
+            }
+        }
+    }
     ModalNavigationDrawer(
         gesturesEnabled = drawerState.isOpen,
         drawerState = drawerState,
@@ -468,7 +486,7 @@ fun DrawerTabs(
                     .padding(innerPadding)
             ) {
                 BookmarksBottomSheet(browserViewState, presenter)
-                TopTabNavigationBar(browserViewState, drawerState, presenter, suggestionsModel)
+                TopTabNavigationBar(browserViewState, presenter, suggestionsModel)
                 BrowserFindInPage(browserViewState, presenter)
                 AndroidView(
                     factory = { frameLayout },
@@ -1078,7 +1096,6 @@ fun BottomTabNavigationBar(
 @Composable
 fun TopTabNavigationBar(
     browserViewState: BrowserComposeState,
-    drawerState: DrawerState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
@@ -1089,18 +1106,8 @@ fun TopTabNavigationBar(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val coroutineScope = rememberCoroutineScope()
             TabCountButton(browserViewState) {
-                if (drawerState.isAnimationRunning) return@TabCountButton
-                // TODO: Figure out how to do this more like bottom sheet modal
-                coroutineScope.launch {
-                    if (drawerState.isOpen) {
-                        drawerState.close()
-                    } else {
-                        drawerState.open()
-                    }
-                    presenter.onTabCountViewClick()
-                }
+                presenter.onTabCountViewClick()
             }
             BrowserSearchBar(browserViewState, presenter, suggestionsModel)
             BrowserOverflowMenu(presenter, browserViewState)
