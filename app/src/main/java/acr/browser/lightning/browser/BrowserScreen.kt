@@ -326,7 +326,7 @@ fun DrawerTabs(
         gesturesEnabled = drawerState.isOpen,
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet(modifier = Modifier.widthIn(max = 300.dp)) {
                 Row(
                     modifier = Modifier
                         .height(56.dp)
