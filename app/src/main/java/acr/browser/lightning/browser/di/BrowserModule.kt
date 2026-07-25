@@ -114,6 +114,7 @@ class BrowserModule {
     @IconFreeze
     @Provides
     fun providesFrozenIcon(activity: Activity): Bitmap =
+        // TODO: Not themed
         activity.drawable(R.drawable.ic_frozen).toBitmap()
 
 }
