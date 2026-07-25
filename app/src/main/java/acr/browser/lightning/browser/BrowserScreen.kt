@@ -331,7 +331,7 @@ fun DrawerTabs(
                     modifier = Modifier
                         .height(56.dp)
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
@@ -424,7 +424,7 @@ fun DrawerTabs(
                 }
                 Row(
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                         .height(56.dp)
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
