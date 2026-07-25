@@ -314,6 +314,7 @@ class BrowserPresenter @Inject constructor(
         tabJobs += browserCoroutineScope.launch {
             tab.downloadRequests().collectLatest {
                 navigator.download(it)
+                showSnackbar(resourceProvider.stringResource(R.string.download_pending))
             }
         }
 
@@ -1547,15 +1548,18 @@ class BrowserPresenter @Inject constructor(
                 showSnackbar(resourceProvider.stringResource(R.string.message_link_copied))
             }
 
-            BrowserContract.ImageLongPressEvent.DOWNLOAD -> navigator.download(
-                PendingDownload(
-                    url = longPress.hitUrl.orEmpty(),
-                    userAgent = null,
-                    contentDisposition = "attachment",
-                    mimeType = null,
-                    contentLength = 0
+            BrowserContract.ImageLongPressEvent.DOWNLOAD -> {
+                navigator.download(
+                    PendingDownload(
+                        url = longPress.hitUrl.orEmpty(),
+                        userAgent = null,
+                        contentDisposition = "attachment",
+                        mimeType = null,
+                        contentLength = 0
+                    )
                 )
-            )
+                showSnackbar(resourceProvider.stringResource(R.string.download_pending))
+            }
         }
         updateState(state.value.copy(dialog = null))
     }
