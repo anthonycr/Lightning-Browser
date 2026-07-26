@@ -2,6 +2,7 @@ package acr.browser.lightning.settings.screens
 
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
+import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
@@ -56,10 +57,12 @@ class AboutSettingsScreen @Inject constructor(
 
 @Composable
 fun AboutSettingsScreen(
+    blackStatusStateProvider: StateProvider<Boolean>,
     aboutSettingsScreen: AboutSettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
+        blackStatusStateProvider,
         viewModel(
             key = aboutSettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(

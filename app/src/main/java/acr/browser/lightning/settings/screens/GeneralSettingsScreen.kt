@@ -1,6 +1,7 @@
 package acr.browser.lightning.settings.screens
 
 import acr.browser.lightning.R
+import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.constant.SCHEME_BLANK
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
@@ -291,10 +292,12 @@ class GeneralSettingsScreen @Inject constructor(
 
 @Composable
 fun GeneralSettingsScreen(
+    blackStatusStateProvider: StateProvider<Boolean>,
     generalSettingsScreen: GeneralSettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
+        blackStatusStateProvider,
         viewModel(
             key = generalSettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(

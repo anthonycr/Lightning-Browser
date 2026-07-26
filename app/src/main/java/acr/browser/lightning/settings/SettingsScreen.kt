@@ -1,6 +1,8 @@
 package acr.browser.lightning.settings
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.StatusBar
+import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
 import androidx.compose.foundation.clickable
@@ -65,11 +67,16 @@ enum class SettingsNavigation {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    blackStatusStateProvider: StateProvider<Boolean>,
     buildInfo: BuildInfo,
     onNavigate: (SettingsNavigation) -> Unit
 ) {
     Scaffold(
         topBar = {
+            StatusBar(
+                paintSurfaceColor = false,
+                blackStatusStateProvider = blackStatusStateProvider,
+            )
             TopAppBar(
                 title = {
                     Text(stringResource(R.string.settings))

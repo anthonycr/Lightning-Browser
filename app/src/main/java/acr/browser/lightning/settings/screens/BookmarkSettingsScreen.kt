@@ -1,6 +1,7 @@
 package acr.browser.lightning.settings.screens
 
 import acr.browser.lightning.R
+import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.resources.ResourceProvider
@@ -107,10 +108,12 @@ class BookmarkSettingsScreen @Inject constructor(
 
 @Composable
 fun BookmarkSettingsScreen(
+    blackStatusStateProvider: StateProvider<Boolean>,
     bookmarkSettingsScreen: BookmarkSettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
+        blackStatusStateProvider,
         viewModel(
             key = bookmarkSettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(

@@ -17,6 +17,9 @@ abstract class ThemableActivity : AppCompatActivity() {
     @Named("theme")
     @Inject lateinit var appThemePreferenceStoreStateProvider: StateProvider<AppTheme>
 
+    @Named("black_status")
+    @Inject lateinit var blackStatusBarPreferenceStoreStateProvider: StateProvider<Boolean>
+
     @Inject lateinit var themeProvider: ThemeProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -44,6 +44,10 @@ import androidx.compose.runtime.setValue
  * @param openBookmarks True if the bookmark drawer should be open, false otherwise.
  * @param openTabs True if the tab drawer should be open, false otherwise.
  * @param showCustomView True if the custom view from the WebView should be shown, false otherwise.
+ * @param scrollToTab The index of the tab that should be focused in the tab view, or -1 if none
+ * need be focused.
+ * @param toolbarVisibility The visibility of the toolbar, either fixed in place, or shown/hidden
+ * when fullscreen mode is activated.
  */
 data class BrowserViewState(
     // search bar
@@ -87,7 +91,19 @@ data class BrowserViewState(
     val showCustomView: Boolean = false,
 
     val scrollToTab: Int = -1,
+
+    val toolbarVisibility: ToolbarVisibility = ToolbarVisibility.FIXED,
 ) {
+
+    /**
+     * The visibility of the toolbar, representing whether the user wants it to show/hide when
+     * scrolling or remain fixed in place.
+     */
+    enum class ToolbarVisibility {
+        FIXED,
+        SHOW,
+        HIDE
+    }
 
     /**
      * Represents an ephemeral message like a snackbar.
@@ -163,6 +179,9 @@ data class BrowserViewState(
     }
 }
 
+/**
+ * Stateful representation of [BrowserViewState] that minimizes recompositions.
+ */
 class BrowserComposeState(
     browserViewState: BrowserViewState
 ) {
@@ -208,6 +227,8 @@ class BrowserComposeState(
 
     var scrollToTab: Int by mutableIntStateOf(-1)
 
+    var toolbarVisibility: BrowserViewState.ToolbarVisibility by mutableStateOf(browserViewState.toolbarVisibility)
+
     fun updateFrom(browserViewState: BrowserViewState) {
         displayUrl = browserViewState.displayUrl
         searchQuery = browserViewState.searchQuery
@@ -234,5 +255,6 @@ class BrowserComposeState(
         openTabs = browserViewState.openTabs
         showCustomView = browserViewState.showCustomView
         scrollToTab = browserViewState.scrollToTab
+        toolbarVisibility = browserViewState.toolbarVisibility
     }
 }

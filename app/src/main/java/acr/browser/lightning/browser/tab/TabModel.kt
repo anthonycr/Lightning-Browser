@@ -250,6 +250,12 @@ interface TabModel {
     fun focusRequests(): Flow<Unit>
 
     /**
+     * Emits the toolbar visibility desired by the tab's scroll position. True if it wants the
+     * toolbar shown, false if it wants it hidden.
+     */
+    fun showHideToolbar(): Flow<Boolean>
+
+    /**
      * True if the tab is in the foreground, false if it is in the background. Used to prevent
      * background tabs from consuming disproportionate amounts of resources when they are unused.
      */

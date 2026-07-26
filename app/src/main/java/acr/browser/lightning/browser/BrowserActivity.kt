@@ -85,6 +85,7 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
 
             BrowserScreen(
                 tabConfigurationProvider,
+                blackStatusBarPreferenceStoreStateProvider,
                 currentState,
                 presenter,
                 browserFrame,
@@ -142,13 +143,6 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         return keyEventAdapter.adaptKeyEvent(event)?.let(presenter::onKeyComboClick)?.let { true }
             ?: super.onKeyUp(keyCode, event)
-    }
-
-    /**
-     * @see BrowserContract.View.showToolbar
-     */
-    override fun showToolbar() {
-        // TODO: Show toolbar
     }
 
     /**

@@ -1,5 +1,7 @@
 package acr.browser.lightning.settings.framework
 
+import acr.browser.lightning.browser.StatusBar
+import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.settings.SettingsBottomSheetChooser
 import acr.browser.lightning.settings.SettingsBottomSheetInput
 import acr.browser.lightning.settings.SettingsBottomSheetTextSizeChooser
@@ -52,6 +54,7 @@ import androidx.core.net.toUri
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsFrameworkScreen(
+    blackStatusStateProvider: StateProvider<Boolean>,
     presenter: SettingsFrameworkPresenter,
     onUp: () -> Unit
 ) {
@@ -96,6 +99,10 @@ fun SettingsFrameworkScreen(
             SnackbarHost(hostState = snackbarHostState)
         },
         topBar = {
+            StatusBar(
+                paintSurfaceColor = false,
+                blackStatusStateProvider = blackStatusStateProvider,
+            )
             TopAppBar(
                 title = {
                     Text(state.title)

@@ -18,11 +18,6 @@ interface BrowserContract {
     interface View {
 
         /**
-         * Show the toolbar/search box if it has been hidden due to scrolling.
-         */
-        fun showToolbar()
-
-        /**
          * Show the file chooser with the provided [intent].
          */
         fun showFileChooser(intent: Intent)

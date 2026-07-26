@@ -313,6 +313,20 @@ class AppModule {
         provideState = { userPreferencesDataStore.tabConfiguration.get() },
         appCoroutineScope = appCoroutineScope,
     )
+
+    @Named("black_status")
+    @Singleton
+    @Provides
+    fun providesBlackStatusBarDeferredStateProvider(
+        userPreferencesDataStore: UserPreferencesDataStore,
+        appCoroutineScope: AppCoroutineScope
+    ): StateProvider<Boolean> = DeferredStateProvider(
+        provideState = {
+            userPreferencesDataStore.useBlackStatusBar.get() ||
+                userPreferencesDataStore.tabConfiguration.get() == TabConfiguration.DESKTOP
+        },
+        appCoroutineScope = appCoroutineScope
+    )
 }
 
 @Qualifier

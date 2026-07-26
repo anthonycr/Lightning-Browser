@@ -2,6 +2,9 @@ package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.image.IconFreeze
+import acr.browser.lightning.browser.view.CustomGestureListener
+import acr.browser.lightning.browser.view.ToggleListener
+import acr.browser.lightning.browser.view.TouchListener
 import acr.browser.lightning.browser.view.setCompositeOnFocusChangeListener
 import acr.browser.lightning.browser.view.setCompositeTouchListener
 import acr.browser.lightning.concurrency.CoroutineDispatchers
@@ -14,12 +17,15 @@ import acr.browser.lightning.preview.PreviewModel
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
 import androidx.compose.ui.graphics.ImageBitmap
@@ -83,6 +89,7 @@ class TabAdapter @AssistedInject constructor(
     private var toggleDesktop: Boolean = false
     private val downloadsShareFlow = MutableSharedFlow<PendingDownload>()
     private val focusSharedFlow = MutableSharedFlow<Unit>()
+    private val showHideFlow = MutableSharedFlow<Boolean>()
 
     private var previewGeneratedTime = System.currentTimeMillis()
 
@@ -124,11 +131,10 @@ class TabAdapter @AssistedInject constructor(
                 }
             }
 
-            setCompositeTouchListener("focus") { view, event ->
+            setCompositeTouchListener("toggle", createToolbarAwareTouchListener(context))
+
+            setCompositeTouchListener("focus") { _, event ->
                 if (event.action == MotionEvent.ACTION_DOWN) {
-                    if (!view.hasFocus()) {
-                        view.requestFocus()
-                    }
                     tabCoroutineScope.launch {
                         focusSharedFlow.emit(Unit)
                     }
@@ -322,6 +328,7 @@ class TabAdapter @AssistedInject constructor(
     override fun closeWindowRequests(): Flow<Unit> = tabWebChromeClient.closeWindowSharedFlow
 
     override fun focusRequests(): Flow<Unit> = focusSharedFlow
+    override fun showHideToolbar(): Flow<Boolean> = showHideFlow
 
     override var isForeground: Boolean = false
         set(value) {
@@ -349,6 +356,33 @@ class TabAdapter @AssistedInject constructor(
 
     override fun freeze(): Bundle = latentInitializer?.bundle
         ?: Bundle(ClassLoader.getSystemClassLoader()).also(webView::saveState)
+
+    private fun createToolbarAwareTouchListener(context: Context): View.OnTouchListener {
+        val gestureListener = CustomGestureListener(
+            ViewConfiguration.get(context).scaledMaximumFlingVelocity.toFloat()
+        )
+
+        val touchListener = TouchListener(GestureDetector(context, gestureListener))
+
+        val toggleListener = object : ToggleListener {
+            override fun hideToolbar() {
+                tabCoroutineScope.launch {
+                    showHideFlow.emit(false)
+                }
+            }
+
+            override fun showToolbar() {
+                tabCoroutineScope.launch {
+                    showHideFlow.emit(true)
+                }
+            }
+        }
+
+        gestureListener.toggleListener = toggleListener
+        touchListener.toggleListener = toggleListener
+
+        return touchListener
+    }
 
     private suspend fun renderViewToBitmap(
         view: View,

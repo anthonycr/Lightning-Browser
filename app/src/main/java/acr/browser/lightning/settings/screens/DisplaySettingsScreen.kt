@@ -3,6 +3,7 @@ package acr.browser.lightning.settings.screens
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.ui.TabConfiguration
+import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.SettingsBottomSheetChooserState
@@ -177,10 +178,12 @@ class DisplaySettingsScreen @Inject constructor(
 
 @Composable
 fun DisplaySettingsScreen(
+    blackStatusStateProvider: StateProvider<Boolean>,
     displaySettingsScreen: DisplaySettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
+        blackStatusStateProvider,
         viewModel(
             key = displaySettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(

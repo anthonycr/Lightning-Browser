@@ -37,6 +37,7 @@ import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
+import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.NumberFormatter
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.search.SearchEngineProvider
@@ -95,6 +96,7 @@ class BrowserPresenter @Inject constructor(
     private val faviconModel: FaviconModel,
     private val resourceProvider: ResourceProvider,
     private val numberFormatter: NumberFormatter,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
 ) {
 
     private val browserCoroutineScope = BrowserCoroutineScope(
@@ -229,7 +231,7 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun selectTab(tabModel: TabModel?, focusTab: Boolean = true) {
+    private suspend fun selectTab(tabModel: TabModel?, focusTab: Boolean = true) {
         if (currentTab == tabModel) {
             updateState(state.value.copy(openTabs = false))
             return
@@ -259,14 +261,16 @@ class BrowserPresenter @Inject constructor(
             }
         }
 
-        view?.showToolbar()
         if (focusTab) {
             updateState(state.value.copy(openTabs = false))
         }
 
         val updatedState = state.value.updateTabViewState()
         updateState(
-            updatedState.copy(scrollToTab = updatedState.tabs.indexOfFirst { it.isSelected })
+            updatedState.copy(
+                scrollToTab = updatedState.tabs.indexOfFirst { it.isSelected },
+                toolbarVisibility = toolbarVisibility(true)
+            )
         )
 
         tabJobs.forEach { it.cancel() }
@@ -325,7 +329,7 @@ class BrowserPresenter @Inject constructor(
                     url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {
                         historyRecord.visit(tab.title, it)
                     }
-                    view?.showToolbar()
+                    updateState(state.value.copy(toolbarVisibility = toolbarVisibility(true)))
                 }
         }
 
@@ -336,6 +340,12 @@ class BrowserPresenter @Inject constructor(
                     shouldSelect = true,
                     tabType = TabModel.Type.POP_UP
                 )
+            }
+        }
+
+        tabJobs += browserCoroutineScope.launch {
+            tab.showHideToolbar().collectLatest {
+                updateState(state.value.copy(toolbarVisibility = toolbarVisibility(it)))
             }
         }
 
@@ -1583,6 +1593,15 @@ class BrowserPresenter @Inject constructor(
     } else {
         numberFormatter.formatNumber(this)
     }
+
+    private suspend fun toolbarVisibility(show: Boolean): BrowserViewState.ToolbarVisibility =
+        if (!userPreferencesDataStore.fullScreenEnabled.get()) {
+            BrowserViewState.ToolbarVisibility.FIXED
+        } else if (show) {
+            BrowserViewState.ToolbarVisibility.SHOW
+        } else {
+            BrowserViewState.ToolbarVisibility.HIDE
+        }
 
     private fun showSnackbar(message: String) {
         updateState(

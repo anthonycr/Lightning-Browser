@@ -6,6 +6,7 @@ import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.source.HostsSourcePreference
 import acr.browser.lightning.adblock.source.HostsSourceType
 import acr.browser.lightning.adblock.source.selectedHostsSource
+import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.SettingsBottomSheetChooserState
@@ -146,10 +147,12 @@ class AdBlockSettingsScreen @Inject constructor(
 
 @Composable
 fun AdBlockSettingsScreen(
+    blackStatusStateProvider: StateProvider<Boolean>,
     adBlockSettingsScreen: AdBlockSettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
+        blackStatusStateProvider,
         viewModel(
             key = adBlockSettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(

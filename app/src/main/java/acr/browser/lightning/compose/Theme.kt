@@ -2,7 +2,6 @@ package acr.browser.lightning.compose
 
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.ThemableActivity
-import android.graphics.Color
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -12,6 +11,8 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 
 private val lightScheme = lightColorScheme(
@@ -118,13 +119,15 @@ fun ThemableActivity.BrowserTheme(
             else -> appTheme.asColorScheme(darkTheme)
         }
 
+    val blackStatus by blackStatusBarPreferenceStoreStateProvider.state.collectAsState()
+
     if (colorScheme == null) return
 
     enableEdgeToEdge(
         statusBarStyle = SystemBarStyle.auto(
-            Color.TRANSPARENT,
-            Color.TRANSPARENT,
-        ) { colorScheme == darkScheme },
+            Color.Transparent.toArgb(),
+            Color.Transparent.toArgb(),
+        ) { colorScheme == darkScheme || blackStatus == true },
         navigationBarStyle = SystemBarStyle.auto(
             colorScheme.scrim.toArgb(),
             colorScheme.scrim.toArgb(),

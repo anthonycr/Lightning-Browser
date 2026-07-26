@@ -19,6 +19,9 @@ import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import android.text.format.DateFormat
 import android.widget.FrameLayout
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,13 +36,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -84,8 +90,10 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -117,6 +125,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -138,6 +148,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun ThemableActivity.BrowserScreen(
     tabConfigurationStateProvider: StateProvider<TabConfiguration>,
+    blackStatusStateProvider: StateProvider<Boolean>,
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     browserFrameLayout: FrameLayout,
@@ -155,11 +166,17 @@ fun ThemableActivity.BrowserScreen(
             }
         }
         if (browserViewState.showCustomView) {
-            CustomView(customFrameLayout, snackbarHostState)
+            CustomView(
+                blackStatusStateProvider,
+                browserViewState,
+                customFrameLayout,
+                snackbarHostState
+            )
         } else {
             val tabConfiguration = tabConfigurationStateProvider.state.collectAsState()
             when (tabConfiguration.value) {
                 TabConfiguration.DESKTOP -> DesktopTabs(
+                    blackStatusStateProvider,
                     browserFrameLayout,
                     browserViewState,
                     presenter,
@@ -168,6 +185,7 @@ fun ThemableActivity.BrowserScreen(
                 )
 
                 TabConfiguration.DRAWER_SIDE -> DrawerTabs(
+                    blackStatusStateProvider,
                     browserFrameLayout,
                     browserViewState,
                     presenter,
@@ -176,6 +194,7 @@ fun ThemableActivity.BrowserScreen(
                 )
 
                 TabConfiguration.DRAWER_BOTTOM -> BottomTabs(
+                    blackStatusStateProvider,
                     browserFrameLayout,
                     browserViewState,
                     presenter,
@@ -191,12 +210,18 @@ fun ThemableActivity.BrowserScreen(
 
 @Composable
 fun CustomView(
+    blackStatusStateProvider: StateProvider<Boolean>,
+    browserViewState: BrowserComposeState,
     frameLayout: FrameLayout,
     snackbarHostState: SnackbarHostState,
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
+        BrowserStatusBar(
+            browserComposeState = browserViewState,
+            blackStatusStateProvider = blackStatusStateProvider,
+        )
         Column(
             Modifier
                 .fillMaxSize()
@@ -216,6 +241,7 @@ fun CustomView(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomTabs(
+    blackStatusStateProvider: StateProvider<Boolean>,
     frameLayout: FrameLayout,
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
@@ -230,6 +256,10 @@ fun BottomTabs(
             )
         }
     ) { innerPadding ->
+        BrowserStatusBar(
+            browserComposeState = browserViewState,
+            blackStatusStateProvider = blackStatusStateProvider,
+        )
         Column(
             Modifier
                 .fillMaxSize()
@@ -253,6 +283,7 @@ fun BottomTabs(
 
 @Composable
 fun DesktopTabs(
+    blackStatusStateProvider: StateProvider<Boolean>,
     frameLayout: FrameLayout,
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
@@ -262,21 +293,63 @@ fun DesktopTabs(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
+        BrowserStatusBar(
+            browserComposeState = browserViewState,
+            blackStatusStateProvider = blackStatusStateProvider,
+        )
         Column(
             Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            val heightDp = remember { 92.dp }
+            val height = with(LocalDensity.current) {
+                remember { heightDp.roundToPx() }
+            }
+
             BookmarksBottomSheet(browserViewState, presenter)
-            TopTabDesktopNavigationBar(browserViewState, presenter, suggestionsModel)
-            BrowserFindInPage(browserViewState, presenter)
-            AndroidView(
-                factory = { frameLayout },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surfaceDim)
-                    .weight(1f, false),
-            )
+            if (browserViewState.toolbarVisibility == BrowserViewState.ToolbarVisibility.FIXED) {
+                TopTabDesktopNavigationBar(
+                    height = heightDp,
+                    offset = remember { mutableIntStateOf(0) },
+                    browserViewState = browserViewState,
+                    presenter = presenter,
+                    suggestionsModel = suggestionsModel
+                )
+                BrowserFindInPage(browserViewState, presenter)
+                AndroidView(
+                    factory = { frameLayout },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surfaceDim)
+                        .weight(1f, false),
+                )
+            } else {
+                val currentOffset = remember { mutableIntStateOf(0) }
+                AnimateMutableOffset(
+                    shouldShow = browserViewState.toolbarVisibility == BrowserViewState.ToolbarVisibility.SHOW,
+                    mutableOffset = currentOffset,
+                    maxOffset = height
+                )
+                Box(modifier = Modifier.weight(1f, false)) {
+                    TabContainer(
+                        frameLayout = frameLayout,
+                        fixedOffset = height,
+                        mutableOffset = currentOffset,
+                    )
+                    Column {
+                        TopTabDesktopNavigationBar(
+                            heightDp,
+                            currentOffset,
+                            browserViewState,
+                            presenter,
+                            suggestionsModel
+                        )
+                        BrowserFindInPage(browserViewState, presenter)
+                    }
+                }
+            }
+
             BrowserDialogs(browserViewState, presenter)
         }
     }
@@ -284,6 +357,7 @@ fun DesktopTabs(
 
 @Composable
 fun DrawerTabs(
+    blackStatusStateProvider: StateProvider<Boolean>,
     frameLayout: FrameLayout,
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
@@ -480,22 +554,147 @@ fun DrawerTabs(
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) }
         ) { innerPadding ->
+            BrowserStatusBar(
+                browserComposeState = browserViewState,
+                blackStatusStateProvider = blackStatusStateProvider,
+            )
             Column(
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
+                val heightDp = remember { 56.dp }
+                val height = with(LocalDensity.current) {
+                    remember { heightDp.roundToPx() }
+                }
+
                 BookmarksBottomSheet(browserViewState, presenter)
-                TopTabNavigationBar(browserViewState, presenter, suggestionsModel)
-                BrowserFindInPage(browserViewState, presenter)
-                AndroidView(
-                    factory = { frameLayout },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceDim)
-                        .weight(1f, false),
-                )
+                if (browserViewState.toolbarVisibility == BrowserViewState.ToolbarVisibility.FIXED) {
+                    TopTabNavigationBar(
+                        height = heightDp,
+                        offset = remember { mutableIntStateOf(0) },
+                        browserViewState = browserViewState,
+                        presenter = presenter,
+                        suggestionsModel = suggestionsModel
+                    )
+                    BrowserFindInPage(browserViewState, presenter)
+                    AndroidView(
+                        factory = { frameLayout },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceDim)
+                            .weight(1f, false),
+                    )
+                } else {
+                    val currentOffset = remember { mutableIntStateOf(0) }
+                    AnimateMutableOffset(
+                        shouldShow = browserViewState.toolbarVisibility == BrowserViewState.ToolbarVisibility.SHOW,
+                        mutableOffset = currentOffset,
+                        maxOffset = height
+                    )
+                    Box(modifier = Modifier.weight(1f, false)) {
+                        TabContainer(
+                            frameLayout = frameLayout,
+                            fixedOffset = height,
+                            mutableOffset = currentOffset,
+                        )
+                        Column {
+                            TopTabNavigationBar(
+                                heightDp,
+                                currentOffset,
+                                browserViewState,
+                                presenter,
+                                suggestionsModel
+                            )
+                            BrowserFindInPage(browserViewState, presenter)
+                        }
+                    }
+                }
                 BrowserDialogs(browserViewState, presenter)
+            }
+        }
+    }
+}
+
+@Composable
+fun BrowserStatusBar(
+    browserComposeState: BrowserComposeState,
+    blackStatusStateProvider: StateProvider<Boolean>,
+) {
+    StatusBar(
+        paintSurfaceColor = browserComposeState.toolbarVisibility != BrowserViewState.ToolbarVisibility.FIXED,
+        blackStatusStateProvider = blackStatusStateProvider,
+    )
+}
+
+@Composable
+fun StatusBar(
+    paintSurfaceColor: Boolean,
+    blackStatusStateProvider: StateProvider<Boolean>,
+) {
+    val blackStatus by blackStatusStateProvider.state.collectAsState()
+    if (paintSurfaceColor || blackStatus == true) {
+        val topInset = with(LocalDensity.current) {
+            val statusBars = WindowInsets.statusBars
+            statusBars.getTop(this).toDp()
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(topInset)
+                .zIndex(1F)
+                .background(
+                    if (blackStatus == true) {
+                        Color.Black
+                    } else {
+                        MaterialTheme.colorScheme.surface
+                    }
+                )
+        )
+    }
+}
+
+@Composable
+fun TabContainer(
+    frameLayout: FrameLayout,
+    fixedOffset: Int,
+    mutableOffset: MutableIntState,
+) {
+    AndroidView(
+        factory = { frameLayout },
+        modifier = Modifier
+            .offset {
+                // Padding animation is janky, so animate offset instead
+                IntOffset(0, fixedOffset + mutableOffset.intValue)
+            }
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceDim),
+    )
+}
+
+@Composable
+fun AnimateMutableOffset(
+    shouldShow: Boolean,
+    mutableOffset: MutableIntState,
+    maxOffset: Int
+) {
+    LaunchedEffect(shouldShow) {
+        if (shouldShow && mutableOffset.intValue != 0) {
+            animate(
+                initialValue = 0f,
+                targetValue = 1f,
+                animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+            ) { value, _ ->
+                mutableOffset.intValue = ((maxOffset * value) + -maxOffset).toInt()
+            }
+        } else if (!shouldShow && mutableOffset.intValue == 0) {
+            animate(
+                initialValue = 0f,
+                targetValue = 1f,
+                animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+            ) { value, _ ->
+                mutableOffset.intValue = (value * -maxOffset).toInt()
             }
         }
     }
@@ -1095,12 +1294,19 @@ fun BottomTabNavigationBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopTabNavigationBar(
+    height: Dp,
+    offset: MutableIntState,
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
 ) {
     Column(
-        modifier = Modifier.height(56.dp)
+        modifier = Modifier
+            .height(height)
+            .offset {
+                IntOffset(0, offset.intValue)
+            }
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -1124,6 +1330,8 @@ fun TopTabNavigationBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopTabDesktopNavigationBar(
+    height: Dp,
+    offset: MutableIntState,
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
@@ -1136,7 +1344,11 @@ fun TopTabDesktopNavigationBar(
         }
     }
     Column(
-        modifier = Modifier.height(92.dp)
+        modifier = Modifier
+            .height(height)
+            .offset {
+                IntOffset(0, offset.intValue)
+            }
     ) {
         LazyRow(
             modifier = Modifier

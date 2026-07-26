@@ -2,6 +2,7 @@ package acr.browser.lightning.settings.screens
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.tab.WebViewFactory
+import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.SettingsDialogConfirmationState
@@ -166,10 +167,12 @@ class PrivacySettingsScreen @Inject constructor(
 
 @Composable
 fun PrivacySettingsScreen(
+    blackStatusStateProvider: StateProvider<Boolean>,
     privacySettingsScreen: PrivacySettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
+        blackStatusStateProvider,
         viewModel(
             key = privacySettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(

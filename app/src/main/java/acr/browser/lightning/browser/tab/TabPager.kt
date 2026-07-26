@@ -17,7 +17,6 @@ import javax.inject.Inject
 @BrowserScope
 class TabPager @Inject constructor(
     @BrowserFrame private val container: FrameLayout,
-//    private val webViewScrollCoordinator: WebViewScrollCoordinator,
     private val webViewLongPressHandler: WebViewLongPressHandler
 ) {
 
@@ -39,7 +38,6 @@ class TabPager @Inject constructor(
             )
         }
 
-//        webViewScrollCoordinator.configure(webView)
         webViewLongPressHandler.configure(webView, onLongClick = {
             longPressListener?.invoke(id, it)
         })
@@ -57,23 +55,6 @@ class TabPager @Inject constructor(
      */
     fun addTab(id: Int, webView: Lazy<WebView>) {
         webViews[id] = webView
-    }
-
-    /**
-     * Show the toolbar/search box if it is currently hidden.
-     */
-    fun showToolbar() {
-//        webViewScrollCoordinator.showToolbar()
-    }
-
-    fun isBottomTabDrawerOpen(): Boolean = false//= webViewScrollCoordinator.isBottomTabDrawerOpen()
-
-    fun openBottomTabDrawer() {
-//        webViewScrollCoordinator.openBottomTabDrawer()
-    }
-
-    fun closeBottomTabDrawer() {
-//        webViewScrollCoordinator.closeBottomTabDrawer()
     }
 
     private fun FrameLayout.removeWebViews(excludeId: Int = -1) {

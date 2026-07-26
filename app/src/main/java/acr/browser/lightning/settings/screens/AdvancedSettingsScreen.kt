@@ -3,6 +3,7 @@ package acr.browser.lightning.settings.screens
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.view.RenderingMode
+import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.constant.TEXT_ENCODINGS
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
@@ -127,10 +128,12 @@ class AdvancedSettingsScreen @Inject constructor(
 
 @Composable
 fun AdvancedSettingsScreen(
+    blackStatusStateProvider: StateProvider<Boolean>,
     advancedSettingsScreen: AdvancedSettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
+        blackStatusStateProvider,
         viewModel(
             key = advancedSettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(
