@@ -333,6 +333,7 @@ fun DesktopTabs(
                 )
                 Box(modifier = Modifier.weight(1f, false)) {
                     TabContainer(
+                        offsetDp = heightDp,
                         frameLayout = frameLayout,
                         fixedOffset = height,
                         mutableOffset = currentOffset,
@@ -594,6 +595,7 @@ fun DrawerTabs(
                     )
                     Box(modifier = Modifier.weight(1f, false)) {
                         TabContainer(
+                            offsetDp = heightDp,
                             frameLayout = frameLayout,
                             fixedOffset = height,
                             mutableOffset = currentOffset,
@@ -658,16 +660,18 @@ fun StatusBar(
 @Composable
 fun TabContainer(
     frameLayout: FrameLayout,
+    offsetDp: Dp,
     fixedOffset: Int,
     mutableOffset: MutableIntState,
 ) {
     AndroidView(
         factory = { frameLayout },
         modifier = Modifier
-            .offset {
-                // Padding animation is janky, so animate offset instead
-                IntOffset(0, fixedOffset + mutableOffset.intValue)
-            }
+            .padding(top = offsetDp * (fixedOffset + mutableOffset.intValue) / fixedOffset.toFloat())
+            // TODO: Offset is smoother, but incorrectly includes window insets
+            // .offset {
+            //     IntOffset(0, fixedOffset + mutableOffset.intValue)
+            // }
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceDim),
     )
@@ -1349,6 +1353,7 @@ fun TopTabDesktopNavigationBar(
             .offset {
                 IntOffset(0, offset.intValue)
             }
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         LazyRow(
             modifier = Modifier
