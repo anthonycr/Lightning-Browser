@@ -164,7 +164,7 @@
             android:exported="false"
             android:label="@string/settings"
             android:parentActivityName="acr.browser.lightning.DefaultBrowserActivity"
-            android:theme="@style/Theme.SettingsTheme">
+            android:theme="@style/Theme.LightTheme">
             <intent-filter>
                 <action android:name="android.intent.action.SETTINGS" />
 
