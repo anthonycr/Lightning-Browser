@@ -148,7 +148,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines")
     implementation("org.jsoup:jsoup:1.22.2")
-    implementation("org.jspecify:jspecify:1.0.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("com.squareup.leakcanary:leakcanary-android-core:$leakcanary")
