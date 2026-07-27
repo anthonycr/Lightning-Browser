@@ -53,7 +53,7 @@ class EnumPreferenceStore<T>(
         defaultValue = defaultValue.value
     )
 
-    override suspend fun get(): T = clazz.enumConstants!!.first {
+    override suspend fun get(): T = clazz.enumConstants!!.firstOrNull {
         it.value == backingPreferenceStore.get()
     } ?: defaultValue
 
