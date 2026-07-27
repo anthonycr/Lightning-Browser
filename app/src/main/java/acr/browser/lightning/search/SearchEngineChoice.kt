@@ -5,7 +5,7 @@ import acr.browser.lightning.preference.IntEnum
 enum class SearchEngineChoice(override val value: Int) : IntEnum {
     CUSTOM(0),
     GOOGLE(1),
-    ASK(2),
+    // ASK(2),
     BING(3),
     YAHOO(4),
     START_PAGE(5),

@@ -2,7 +2,6 @@ package acr.browser.lightning.search
 
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
-import acr.browser.lightning.search.engine.AskSearch
 import acr.browser.lightning.search.engine.BaiduSearch
 import acr.browser.lightning.search.engine.BaseSearchEngine
 import acr.browser.lightning.search.engine.BingSearch
@@ -57,7 +56,6 @@ class SearchEngineProvider @Inject constructor(
         when (userPreferencesDataStore.searchChoice.getUnsafe()) {
             SearchEngineChoice.CUSTOM -> CustomSearch(userPreferencesDataStore.searchUrl.getUnsafe())
             SearchEngineChoice.GOOGLE -> GoogleSearch()
-            SearchEngineChoice.ASK -> AskSearch()
             SearchEngineChoice.BING -> BingSearch()
             SearchEngineChoice.YAHOO -> YahooSearch()
             SearchEngineChoice.START_PAGE -> StartPageSearch()
@@ -75,7 +73,6 @@ class SearchEngineProvider @Inject constructor(
     suspend fun provideAllSearchEngines(): List<BaseSearchEngine> = listOf(
         CustomSearch(userPreferencesDataStore.searchUrl.get()),
         GoogleSearch(),
-        AskSearch(),
         BingSearch(),
         YahooSearch(),
         StartPageSearch(),
