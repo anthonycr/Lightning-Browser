@@ -160,9 +160,9 @@ fun ThemableActivity.BrowserScreen(
         val snackbarHostState = remember { SnackbarHostState() }
         browserViewState.ephemeral?.let {
             LaunchedEffect(it.message) {
-                when (snackbarHostState.showSnackbar(it.message)) {
+                when (snackbarHostState.showSnackbar(it.message, it.actionLabel)) {
                     SnackbarResult.Dismissed -> presenter.onSnackbarDismissed()
-                    SnackbarResult.ActionPerformed -> presenter.onSnackbarDismissed()
+                    SnackbarResult.ActionPerformed -> presenter.onSnackbarActionPerformed()
                 }
             }
         }

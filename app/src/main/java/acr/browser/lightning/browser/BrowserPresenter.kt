@@ -109,6 +109,7 @@ class BrowserPresenter @Inject constructor(
     private var currentBookmarks: List<Bookmark> = emptyList()
     private var isSearchViewFocused = false
     private var pendingAction: BrowserContract.Action.LoadUrl? = null
+    private var pendingSnackbarAction: EphemeralAction? = null
     private var isCustomViewShowing = false
 
     private val tabJobs: MutableList<Job> = mutableListOf()
@@ -546,7 +547,12 @@ class BrowserPresenter @Inject constructor(
             if (shouldSelect) {
                 selectTab(model.selectTab(tab.id))
             } else {
-                showSnackbar(resourceProvider.stringResource(R.string.result_open_background_tab))
+                showSnackbar(
+                    message = resourceProvider.stringResource(R.string.result_open_background_tab),
+                    action = EphemeralAction(resourceProvider.stringResource(R.string.action_open)) {
+                        selectTab(model.selectTab(tab.id))
+                    }
+                )
             }
         }
     }
@@ -1591,6 +1597,18 @@ class BrowserPresenter @Inject constructor(
      */
     fun onSnackbarDismissed() {
         updateState(state.value.copy(ephemeral = null))
+        pendingSnackbarAction = null
+    }
+
+    /**
+     * Call when the user clicks the action on the snackbar if there is any.
+     */
+    fun onSnackbarActionPerformed() {
+        updateState(state.value.copy(ephemeral = null))
+        browserCoroutineScope.launch {
+            pendingSnackbarAction?.action()
+            pendingSnackbarAction = null
+        }
     }
 
     private fun Int.asTabCountText(): String = if (this > 99) {
@@ -1608,9 +1626,15 @@ class BrowserPresenter @Inject constructor(
             BrowserViewState.ToolbarVisibility.HIDE
         }
 
-    private fun showSnackbar(message: String) {
+    private fun showSnackbar(message: String, action: EphemeralAction? = null) {
+        pendingSnackbarAction = action
         updateState(
-            state.value.copy(ephemeral = BrowserViewState.Ephemeral(message = message))
+            state.value.copy(
+                ephemeral = BrowserViewState.Ephemeral(
+                    message = message,
+                    actionLabel = action?.label
+                )
+            )
         )
     }
 
@@ -1620,4 +1644,9 @@ class BrowserPresenter @Inject constructor(
             state.emit(state.value)
         }
     }
+
+    private class EphemeralAction(
+        val label: String,
+        val action: suspend () -> Unit,
+    )
 }

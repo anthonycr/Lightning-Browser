@@ -106,10 +106,11 @@ data class BrowserViewState(
     }
 
     /**
-     * Represents an ephemeral message like a snackbar.
+     * Represents an ephemeral message like a snackbar with an optional action.
      */
     data class Ephemeral(
-        val message: String
+        val message: String,
+        val actionLabel: String? = null,
     )
 
     sealed interface Dialogs {
