@@ -668,6 +668,13 @@ class BrowserPresenter @Inject constructor(
                     selectTab(model.selectTab(it), focusTab = false)
                     if (shouldClose) {
                         navigator.backgroundBrowser()
+                    } else {
+                        showSnackbar(
+                            message = resourceProvider.stringResource(R.string.message_reopen),
+                            action = EphemeralAction(resourceProvider.stringResource(R.string.action_reopen)) {
+                                reopenTab()
+                            }
+                        )
                     }
                 } ?: run {
                     selectTab(tabModel = null)
@@ -769,21 +776,6 @@ class BrowserPresenter @Inject constructor(
      */
     fun onNewTabClick() {
         createNewTabAndSelect(homePageInitializer, shouldSelect = true)
-    }
-
-    /**
-     * Call when the user long clicks on the new tab button, indicating that they want to re-open
-     * the last closed tab.
-     */
-    fun onNewTabLongClick() {
-        // TODO: Reenable
-        browserCoroutineScope.launch {
-            val tab = model.reopenTab()
-            updateState(state.value.updateTabViewState())
-            if (tab != null) {
-                selectTab(model.selectTab(tab.id))
-            }
-        }
     }
 
     /**
@@ -1615,6 +1607,14 @@ class BrowserPresenter @Inject constructor(
         resourceProvider.stringResource(R.string.infinity)
     } else {
         numberFormatter.formatNumber(this)
+    }
+
+    private suspend fun reopenTab() {
+        val tab = model.reopenTab()
+        updateState(state.value.updateTabViewState())
+        if (tab != null) {
+            selectTab(model.selectTab(tab.id))
+        }
     }
 
     private suspend fun toolbarVisibility(show: Boolean): BrowserViewState.ToolbarVisibility =

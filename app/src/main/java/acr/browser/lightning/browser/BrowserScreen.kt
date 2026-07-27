@@ -80,6 +80,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -160,7 +161,11 @@ fun ThemableActivity.BrowserScreen(
         val snackbarHostState = remember { SnackbarHostState() }
         browserViewState.ephemeral?.let {
             LaunchedEffect(it.message) {
-                when (snackbarHostState.showSnackbar(it.message, it.actionLabel)) {
+                when (snackbarHostState.showSnackbar(
+                    message = it.message,
+                    actionLabel = it.actionLabel,
+                    duration = SnackbarDuration.Short,
+                )) {
                     SnackbarResult.Dismissed -> presenter.onSnackbarDismissed()
                     SnackbarResult.ActionPerformed -> presenter.onSnackbarActionPerformed()
                 }
