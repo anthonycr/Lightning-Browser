@@ -400,7 +400,7 @@ fun DrawerTabs(
         }
     }
     ModalNavigationDrawer(
-        gesturesEnabled = drawerState.isOpen,
+        gesturesEnabled = drawerState.isOpen || drawerState.isAnimationRunning,
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(modifier = Modifier.widthIn(max = 300.dp)) {
