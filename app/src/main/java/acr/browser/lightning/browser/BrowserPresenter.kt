@@ -522,7 +522,11 @@ class BrowserPresenter @Inject constructor(
 
     private fun addToHomeScreen() {
         currentTab?.let {
-            val result = navigator.addToHomeScreen(it.url, it.title, it.favicon?.asAndroidBitmap())
+            val result = navigator.addToHomeScreen(
+                url = it.url,
+                title = it.title,
+                favicon = (it.favicon as? TabModel.Favicon.Icon)?.bitmap?.asAndroidBitmap()
+            )
             if (result) {
                 showSnackbar(resourceProvider.stringResource(R.string.message_added_to_homescreen))
             } else {

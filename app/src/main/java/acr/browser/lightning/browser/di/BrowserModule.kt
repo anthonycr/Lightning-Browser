@@ -1,6 +1,5 @@
 package acr.browser.lightning.browser.di
 
-import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
@@ -10,7 +9,6 @@ import acr.browser.lightning.browser.data.DefaultCookieAdministrator
 import acr.browser.lightning.browser.history.DefaultHistoryRecord
 import acr.browser.lightning.browser.history.HistoryRecord
 import acr.browser.lightning.browser.history.NoOpHistoryRecord
-import acr.browser.lightning.browser.image.IconFreeze
 import acr.browser.lightning.browser.notification.DefaultTabCountNotifier
 import acr.browser.lightning.browser.notification.IncognitoTabCountNotifier
 import acr.browser.lightning.browser.notification.TabCountNotifier
@@ -21,15 +19,11 @@ import acr.browser.lightning.browser.tab.bundle.DefaultBundleStore
 import acr.browser.lightning.browser.tab.bundle.IncognitoBundleStore
 import acr.browser.lightning.browser.ui.BookmarkConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
-import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
-import android.app.Activity
 import android.app.Application
 import android.content.Intent
-import android.graphics.Bitmap
 import android.webkit.WebSettings
-import androidx.core.graphics.drawable.toBitmap
 import dagger.Module
 import dagger.Provides
 import javax.inject.Provider
@@ -110,11 +104,4 @@ class BrowserModule {
     } else {
         defaultBundleStore
     }
-
-    @IconFreeze
-    @Provides
-    fun providesFrozenIcon(activity: Activity): Bitmap =
-        // TODO: Not themed
-        activity.drawable(R.drawable.ic_frozen).toBitmap()
-
 }

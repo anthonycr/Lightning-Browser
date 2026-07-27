@@ -1,7 +1,6 @@
 package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.download.PendingDownload
-import acr.browser.lightning.browser.image.IconFreeze
 import acr.browser.lightning.browser.view.CustomGestureListener
 import acr.browser.lightning.browser.view.ToggleListener
 import acr.browser.lightning.browser.view.TouchListener
@@ -28,8 +27,6 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.createBitmap
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -64,7 +61,6 @@ class TabAdapter @AssistedInject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore,
     @DefaultUserAgent private val defaultUserAgent: String,
     @DefaultTabTitle private val defaultTabTitle: String,
-    @IconFreeze private val iconFreeze: Bitmap,
     private val viewIdGenerator: ViewIdGenerator,
     private val previewModel: PreviewModel,
     private val coroutineDispatchers: CoroutineDispatchers,
@@ -255,14 +251,17 @@ class TabAdapter @AssistedInject constructor(
             tabWebViewClient.searchQuerySelection = value
         }
 
-    override val favicon: ImageBitmap?
-        get() = latentInitializer?.let { iconFreeze.asImageBitmap() }
-            ?: tabWebChromeClient.faviconStateFlow.value
+    override val favicon: TabModel.Favicon
+        get() = latentInitializer?.let { TabModel.Favicon.Frozen }
+            ?: tabWebChromeClient.faviconStateFlow.value?.let { TabModel.Favicon.Icon(it) }
+            ?: TabModel.Favicon.None
 
-    override fun faviconChanges(): Flow<ImageBitmap?> {
+    override fun faviconChanges(): Flow<TabModel.Favicon> {
         // Treat it like a SharedFlow for consistency on presenter side and because frozen tabs have
         // their own icon that the chrome client doesn't know about.
-        return tabWebChromeClient.faviconStateFlow.drop(1)
+        return tabWebChromeClient.faviconStateFlow.drop(1).map { icon ->
+            icon?.let { TabModel.Favicon.Icon(it) } ?: TabModel.Favicon.None
+        }
     }
 
     override val themeColor: Int

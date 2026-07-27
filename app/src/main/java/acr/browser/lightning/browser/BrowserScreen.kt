@@ -4,6 +4,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.ThemableActivity
 import acr.browser.lightning.browser.image.LetterImagePainter
 import acr.browser.lightning.browser.menu.MenuSelection
+import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.compose.BrowserTheme
@@ -452,22 +453,33 @@ fun DrawerTabs(
                                 .height(56.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            tab.icon?.let {
-                                Image(
+                            when (tab.icon) {
+                                TabModel.Favicon.Frozen -> Icon(
                                     modifier = Modifier
                                         .size(56.dp)
                                         .padding(horizontal = 16.dp),
-                                    bitmap = it,
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    painter = painterResource(R.drawable.ic_frozen),
                                     contentDescription = "test"
                                 )
-                            } ?: Icon(
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .padding(horizontal = 16.dp),
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                painter = painterResource(R.drawable.ic_webpage),
-                                contentDescription = "test"
-                            )
+
+                                is TabModel.Favicon.Icon -> Image(
+                                    modifier = Modifier
+                                        .size(56.dp)
+                                        .padding(horizontal = 16.dp),
+                                    bitmap = tab.icon.bitmap,
+                                    contentDescription = "test"
+                                )
+
+                                TabModel.Favicon.None -> Icon(
+                                    modifier = Modifier
+                                        .size(56.dp)
+                                        .padding(horizontal = 16.dp),
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    painter = painterResource(R.drawable.ic_webpage),
+                                    contentDescription = "test"
+                                )
+                            }
                             Text(
                                 modifier = Modifier
                                     .padding(horizontal = 16.dp)
@@ -1399,22 +1411,33 @@ fun TopTabDesktopNavigationBar(
                         .padding(horizontal = 15.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    tab.icon?.let {
-                        Image(
+                    when (tab.icon) {
+                        TabModel.Favicon.Frozen -> Icon(
                             modifier = Modifier
                                 .size(28.dp)
                                 .padding(horizontal = 4.dp),
-                            bitmap = it,
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            painter = painterResource(R.drawable.ic_frozen),
                             contentDescription = "test"
                         )
-                    } ?: Icon(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .padding(horizontal = 4.dp),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        painter = painterResource(R.drawable.ic_webpage),
-                        contentDescription = "test"
-                    )
+
+                        is TabModel.Favicon.Icon -> Image(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .padding(horizontal = 4.dp),
+                            bitmap = tab.icon.bitmap,
+                            contentDescription = "test"
+                        )
+
+                        TabModel.Favicon.None -> Icon(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .padding(horizontal = 4.dp),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            painter = painterResource(R.drawable.ic_webpage),
+                            contentDescription = "test"
+                        )
+                    }
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -2107,22 +2130,33 @@ fun TabsBottomSheet(
                             .height(36.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        tab.icon?.let {
-                            Image(
+                        when (tab.icon) {
+                            TabModel.Favicon.Frozen -> Icon(
                                 modifier = Modifier
                                     .size(24.dp)
                                     .padding(horizontal = 4.dp),
-                                bitmap = it,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                painter = painterResource(R.drawable.ic_frozen),
                                 contentDescription = "test"
                             )
-                        } ?: Icon(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .padding(horizontal = 4.dp),
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            painter = painterResource(R.drawable.ic_webpage),
-                            contentDescription = "test"
-                        )
+
+                            is TabModel.Favicon.Icon -> Image(
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .padding(horizontal = 4.dp),
+                                bitmap = tab.icon.bitmap,
+                                contentDescription = "test"
+                            )
+
+                            TabModel.Favicon.None -> Icon(
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .padding(horizontal = 4.dp),
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                painter = painterResource(R.drawable.ic_webpage),
+                                contentDescription = "test"
+                            )
+                        }
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth()

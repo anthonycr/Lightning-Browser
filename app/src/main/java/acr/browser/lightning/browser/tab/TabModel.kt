@@ -121,14 +121,14 @@ interface TabModel {
     var searchQuerySelection: Pair<Int, Int>
 
     /**
-     * The current favicon of the webpage or null if there isn't one.
+     * The current [Favicon] of the webpage.
      */
-    val favicon: ImageBitmap?
+    val favicon: Favicon
 
     /**
      * Emits changes to the [favicon].
      */
-    fun faviconChanges(): Flow<ImageBitmap?>
+    fun faviconChanges(): Flow<Favicon>
 
     /**
      * A preview of the tab's content.
@@ -270,6 +270,17 @@ interface TabModel {
      * Freeze the current state of the tab and return it as a [Bundle].
      */
     fun freeze(): Bundle
+
+    /**
+     * Potential favicon states.
+     */
+    sealed class Favicon {
+        object None : Favicon()
+
+        object Frozen : Favicon()
+
+        data class Icon(val bitmap: ImageBitmap) : Favicon()
+    }
 
     enum class Type {
         NORMAL,
