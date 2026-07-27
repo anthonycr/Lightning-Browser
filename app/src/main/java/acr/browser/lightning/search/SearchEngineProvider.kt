@@ -10,7 +10,6 @@ import acr.browser.lightning.search.engine.DuckLiteSearch
 import acr.browser.lightning.search.engine.DuckSearch
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.search.engine.NaverSearch
-import acr.browser.lightning.search.engine.StartPageMobileSearch
 import acr.browser.lightning.search.engine.StartPageSearch
 import acr.browser.lightning.search.engine.YahooSearch
 import acr.browser.lightning.search.engine.YandexSearch
@@ -59,7 +58,6 @@ class SearchEngineProvider @Inject constructor(
             SearchEngineChoice.BING -> BingSearch()
             SearchEngineChoice.YAHOO -> YahooSearch()
             SearchEngineChoice.START_PAGE -> StartPageSearch()
-            SearchEngineChoice.START_PAGE_MOBILE -> StartPageMobileSearch()
             SearchEngineChoice.DUCK -> DuckSearch()
             SearchEngineChoice.DUCK_LITE -> DuckLiteSearch()
             SearchEngineChoice.BAIDU -> BaiduSearch()
@@ -76,7 +74,6 @@ class SearchEngineProvider @Inject constructor(
         BingSearch(),
         YahooSearch(),
         StartPageSearch(),
-        StartPageMobileSearch(),
         DuckSearch(),
         DuckLiteSearch(),
         BaiduSearch(),

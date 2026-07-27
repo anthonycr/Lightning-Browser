@@ -9,7 +9,7 @@ enum class SearchEngineChoice(override val value: Int) : IntEnum {
     BING(3),
     YAHOO(4),
     START_PAGE(5),
-    START_PAGE_MOBILE(6),
+    // START_PAGE_MOBILE(6),
     DUCK(7),
     DUCK_LITE(8),
     BAIDU(9),
