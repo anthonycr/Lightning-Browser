@@ -770,6 +770,7 @@ class BrowserPresenter @Inject constructor(
      * the last closed tab.
      */
     fun onNewTabLongClick() {
+        // TODO: Reenable
         browserCoroutineScope.launch {
             val tab = model.reopenTab()
             updateState(state.value.updateTabViewState())
