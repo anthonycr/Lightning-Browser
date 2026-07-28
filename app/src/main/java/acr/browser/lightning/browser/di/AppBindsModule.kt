@@ -28,6 +28,8 @@ import acr.browser.lightning.settings.adblock.DefaultHostsFileUpdater
 import acr.browser.lightning.settings.adblock.HostsFileUpdater
 import acr.browser.lightning.ssl.SessionSslWarningPreferences
 import acr.browser.lightning.ssl.SslWarningPreferences
+import acr.browser.lightning.useragent.DefaultUserAgentProvider
+import acr.browser.lightning.useragent.UserAgentProvider
 import dagger.Binds
 import dagger.Module
 
@@ -78,4 +80,7 @@ interface AppBindsModule {
 
     @Binds
     fun bindsFileDownloader(defaultFileDownloader: DefaultFileDownloader): FileDownloader
+
+    @Binds
+    fun bindsUserAgentProvider(defaultUserAgentProvider: DefaultUserAgentProvider): UserAgentProvider
 }

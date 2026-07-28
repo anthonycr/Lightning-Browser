@@ -6,7 +6,7 @@ import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
-import acr.browser.lightning.preference.userAgent
+import acr.browser.lightning.useragent.UserAgentProvider
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
@@ -19,6 +19,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 /**
@@ -29,6 +30,7 @@ class WebViewFactory @Inject constructor(
     private val activity: Activity,
     private val logger: Logger,
     private val userPreferencesDataStore: UserPreferencesDataStore,
+    private val userAgentProvider: UserAgentProvider,
     @IncognitoMode private val incognitoMode: Boolean,
 ) {
 
@@ -133,7 +135,7 @@ class WebViewFactory @Inject constructor(
             settings.setGeolocationEnabled(false)
         }
 
-        settings.userAgentString = userPreferencesDataStore.userAgent(activity.application)
+        settings.userAgentString = runBlocking { userAgentProvider.getUserAgent() }
 
         if (userPreferencesDataStore.javaScriptEnabled.getUnsafe()) {
             settings.javaScriptEnabled = true

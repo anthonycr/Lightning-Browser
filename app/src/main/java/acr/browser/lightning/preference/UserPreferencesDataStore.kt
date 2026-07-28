@@ -21,6 +21,7 @@ import acr.browser.lightning.search.SearchEngineChoice
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.Suggestions
 import acr.browser.lightning.search.engine.GoogleSearch
+import acr.browser.lightning.useragent.UserAgentChoice
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import androidx.datastore.migrations.SharedPreferencesMigration
@@ -286,7 +287,7 @@ class UserPreferencesDataStore @Inject constructor(
     /**
      * The index of the user agent choice that should be used by the browser.
      *
-     * @see userAgent
+     * @see acr.browser.lightning.useragent.UserAgentProvider
      */
     val userAgentChoice: EnumPreferenceStore<UserAgentChoice> = EnumPreferenceStore(
         key = intPreferencesKey(USER_AGENT),

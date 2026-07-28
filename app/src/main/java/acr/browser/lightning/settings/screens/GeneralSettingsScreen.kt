@@ -5,7 +5,6 @@ import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.constant.SCHEME_BLANK
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
-import acr.browser.lightning.preference.UserAgentChoice
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.search.SearchEngineChoice
@@ -21,6 +20,7 @@ import acr.browser.lightning.settings.framework.SettingsFrameworkPresenter
 import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
+import acr.browser.lightning.useragent.UserAgentChoice
 import acr.browser.lightning.utils.FileUtils
 import android.webkit.URLUtil
 import androidx.compose.runtime.Composable

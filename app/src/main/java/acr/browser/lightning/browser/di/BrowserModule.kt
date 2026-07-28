@@ -13,7 +13,6 @@ import acr.browser.lightning.browser.notification.DefaultTabCountNotifier
 import acr.browser.lightning.browser.notification.IncognitoTabCountNotifier
 import acr.browser.lightning.browser.notification.TabCountNotifier
 import acr.browser.lightning.browser.search.IntentExtractor
-import acr.browser.lightning.browser.tab.DefaultUserAgent
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.browser.tab.bundle.DefaultBundleStore
 import acr.browser.lightning.browser.tab.bundle.IncognitoBundleStore
@@ -21,9 +20,7 @@ import acr.browser.lightning.browser.ui.BookmarkConfiguration
 import acr.browser.lightning.browser.ui.UiConfiguration
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
-import android.app.Application
 import android.content.Intent
-import android.webkit.WebSettings
 import dagger.Module
 import dagger.Provides
 import javax.inject.Provider
@@ -63,12 +60,6 @@ class BrowserModule {
             BookmarkConfiguration.RIGHT
         }
     )
-
-    @DefaultUserAgent
-    @Provides
-    fun providesDefaultUserAgent(application: Application): String =
-        WebSettings.getDefaultUserAgent(application)
-
 
     @Provides
     fun providesHistoryRecord(

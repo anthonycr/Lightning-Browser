@@ -10,11 +10,10 @@ import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
 import acr.browser.lightning.ids.ViewIdGenerator
-import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.preference.userAgent
 import acr.browser.lightning.preview.PreviewModel
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.useragent.UserAgentProvider
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -58,8 +57,7 @@ class TabAdapter @AssistedInject constructor(
     @Assisted override var tabType: TabModel.Type,
     @Assisted private val tabCoroutineScope: TabCoroutineScope,
     private val tabWebChromeClientFactory: TabWebChromeClient.Factory,
-    private val userPreferencesDataStore: UserPreferencesDataStore,
-    @DefaultUserAgent private val defaultUserAgent: String,
+    private val userAgentProvider: UserAgentProvider,
     @DefaultTabTitle private val defaultTabTitle: String,
     private val viewIdGenerator: ViewIdGenerator,
     private val previewModel: PreviewModel,
@@ -180,7 +178,7 @@ class TabAdapter @AssistedInject constructor(
         webView.settings.userAgentString = if (!toggleDesktop) {
             DESKTOP_USER_AGENT
         } else {
-            userPreferencesDataStore.userAgent(defaultUserAgent)
+            userAgentProvider.getUserAgent()
         }
 
         toggleDesktop = !toggleDesktop
