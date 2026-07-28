@@ -9,6 +9,7 @@ plugins {
 
 android {
     compileSdk = 37
+    compileSdkMinor = 1
 
     defaultConfig {
         buildToolsVersion = "37.0.0"
