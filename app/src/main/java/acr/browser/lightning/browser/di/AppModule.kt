@@ -40,10 +40,6 @@ import android.content.Context
 import android.content.pm.ShortcutManager
 import android.content.res.AssetManager
 import android.net.ConnectivityManager
-import android.os.Handler
-import android.os.Looper
-import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import androidx.core.content.getSystemService
 import com.anthonycr.mezzanine.mezzanine
 import dagger.Module
@@ -70,10 +66,6 @@ import javax.inject.Singleton
 class AppModule {
 
     @Provides
-    @MainHandler
-    fun provideMainHandler() = Handler(Looper.getMainLooper())
-
-    @Provides
     fun provideContext(application: Application): Context = application.applicationContext
 
     @Provides
@@ -82,10 +74,6 @@ class AppModule {
     @Provides
     fun providesClipboardManager(application: Application) =
         application.getSystemService<ClipboardManager>()!!
-
-    @Provides
-    fun providesInputMethodManager(application: Application) =
-        application.getSystemService<InputMethodManager>()!!
 
     @Provides
     fun providesDownloadManager(application: Application) =
@@ -99,9 +87,6 @@ class AppModule {
     fun providesNotificationManager(application: Application) =
         application.getSystemService<NotificationManager>()!!
 
-    @Provides
-    fun providesWindowManager(application: Application) =
-        application.getSystemService<WindowManager>()!!
 
     @Provides
     fun providesShortcutManager(application: Application) =
@@ -336,10 +321,6 @@ annotation class SuggestionsClient
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
 annotation class HostsClient
-
-@Qualifier
-@Retention(AnnotationRetention.SOURCE)
-annotation class MainHandler
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
