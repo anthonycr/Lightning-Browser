@@ -8,6 +8,7 @@ import acr.browser.lightning.browser.view.setCompositeOnFocusChangeListener
 import acr.browser.lightning.browser.view.setCompositeTouchListener
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.concurrency.TabCoroutineScope
+import acr.browser.lightning.connectivity.ConnectivityProvider
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
 import acr.browser.lightning.ids.ViewIdGenerator
 import acr.browser.lightning.preview.PreviewModel
@@ -35,6 +36,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flowOn
@@ -62,6 +64,7 @@ class TabAdapter @AssistedInject constructor(
     private val viewIdGenerator: ViewIdGenerator,
     private val previewModel: PreviewModel,
     private val coroutineDispatchers: CoroutineDispatchers,
+    private val connectivityProvider: ConnectivityProvider,
 ) : TabModel {
 
     @AssistedFactory
@@ -98,8 +101,8 @@ class TabAdapter @AssistedInject constructor(
 
     private val tabWebChromeClient by lazy { tabWebChromeClientFactory.create(tabCoroutineScope) }
 
-    private val webView: WebView
-        get() = webViewLazy.value.apply {
+    private val webViewLazyWithInitialization: WebView by lazy {
+        webViewLazy.value.apply {
             webViewClient = tabWebViewClient
             webChromeClient = tabWebChromeClient
             setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
@@ -135,7 +138,17 @@ class TabAdapter @AssistedInject constructor(
                 }
                 false
             }
+
+            tabCoroutineScope.launch {
+                connectivityProvider.hasInternetAccess.collectLatest {
+                    setNetworkAvailable(it)
+                }
+            }
         }
+    }
+
+    private val webView: WebView
+        get() = webViewLazyWithInitialization
 
     init {
         if (tabInitializer !is FreezableInitializer) {
