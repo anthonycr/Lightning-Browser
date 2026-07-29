@@ -29,14 +29,6 @@ class DisplaySettingsScreen @Inject constructor(
         title = resourceProvider.stringResource(R.string.settings_display),
         content = listOf(
             ToggleState(
-                title = resourceProvider.stringResource(R.string.swap_bookmarks_and_tabs),
-                isChecked = { userPreferencesDataStore.bookmarksAndTabsSwapped.get() },
-                onToggle = {
-                    userPreferencesDataStore.bookmarksAndTabsSwapped.set(it)
-                    null
-                }
-            ),
-            ToggleState(
                 title = resourceProvider.stringResource(R.string.fullScreenOption),
                 isChecked = { userPreferencesDataStore.hideStatusBarEnabled.get() },
                 onToggle = {

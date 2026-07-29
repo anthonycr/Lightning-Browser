@@ -20,7 +20,6 @@ import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.browser.tab.UrlInitializer
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.browser.ui.UiConfiguration
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.concurrency.BrowserCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
@@ -85,7 +84,6 @@ class BrowserPresenter @Inject constructor(
     private val downloadPageInitializer: DownloadPageInitializer,
     private val searchBoxModel: SearchBoxModel,
     private val searchEngineProvider: SearchEngineProvider,
-    private val uiConfiguration: UiConfiguration,
     private val historyPageFactory: HistoryPageFactory,
     private val allowListModel: AllowListModel,
     private val cookieAdministrator: CookieAdministrator,
@@ -1345,10 +1343,12 @@ class BrowserPresenter @Inject constructor(
      * incognito icon in incognito mode).
      */
     fun onTabCountViewClick() {
-        when (uiConfiguration.tabConfiguration) {
-            TabConfiguration.DRAWER_SIDE -> updateState(state.value.copy(openTabs = true))
-            TabConfiguration.DRAWER_BOTTOM -> updateState(state.value.copy(openTabs = !state.value.openTabs))
-            else -> currentTab?.loadFromInitializer(homePageInitializer)
+        browserCoroutineScope.launch {
+            when (userPreferencesDataStore.tabConfiguration.get()) {
+                TabConfiguration.DRAWER_SIDE -> updateState(state.value.copy(openTabs = true))
+                TabConfiguration.DRAWER_BOTTOM -> updateState(state.value.copy(openTabs = !state.value.openTabs))
+                else -> currentTab?.loadFromInitializer(homePageInitializer)
+            }
         }
     }
 

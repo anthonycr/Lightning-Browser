@@ -81,7 +81,6 @@ class UserPreferencesDataStore @Inject constructor(
                     migrateBoolean(doNotTrackEnabled)
                     migrateBoolean(saveDataEnabled)
                     migrateBoolean(removeIdentifyingHeadersEnabled)
-                    migrateBoolean(bookmarksAndTabsSwapped)
                     migrateBoolean(useBlackStatusBar)
                     migrateEnum(searchSuggestionChoice)
                     migrateEnum(hostsSource)
@@ -427,17 +426,6 @@ class UserPreferencesDataStore @Inject constructor(
      */
     val removeIdentifyingHeadersEnabled: NonNullPreferenceStore<Boolean> = NonNullPreferenceStore(
         key = booleanPreferencesKey(IDENTIFYING_HEADERS),
-        dataStore = dataStore,
-        defaultValue = false
-    )
-
-    /**
-     * True if the bookmarks tab should be on the opposite side of the screen, false otherwise. If
-     * the navigation drawer UI is used, the tab drawer will be displayed on the opposite side as
-     * well.
-     */
-    val bookmarksAndTabsSwapped: NonNullPreferenceStore<Boolean> = NonNullPreferenceStore(
-        key = booleanPreferencesKey(SWAP_BOOKMARKS_AND_TABS),
         dataStore = dataStore,
         defaultValue = false
     )

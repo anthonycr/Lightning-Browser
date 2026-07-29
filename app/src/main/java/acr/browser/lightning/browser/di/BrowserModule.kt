@@ -16,8 +16,6 @@ import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.browser.tab.bundle.DefaultBundleStore
 import acr.browser.lightning.browser.tab.bundle.IncognitoBundleStore
-import acr.browser.lightning.browser.ui.BookmarkConfiguration
-import acr.browser.lightning.browser.ui.UiConfiguration
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.preference.datastore.getUnsafe
 import android.content.Intent
@@ -48,18 +46,6 @@ class BrowserModule {
         @InitialIntent initialIntent: Intent?,
         intentExtractor: IntentExtractor
     ): BrowserContract.Action? = intentExtractor.extractUrlFromIntent(initialIntent)
-
-    @Provides
-    fun providesUiConfiguration(
-        userPreferencesDataStore: UserPreferencesDataStore,
-    ): UiConfiguration = UiConfiguration(
-        tabConfiguration = userPreferencesDataStore.tabConfiguration.getUnsafe(),
-        bookmarkConfiguration = if (userPreferencesDataStore.bookmarksAndTabsSwapped.getUnsafe()) {
-            BookmarkConfiguration.LEFT
-        } else {
-            BookmarkConfiguration.RIGHT
-        }
-    )
 
     @Provides
     fun providesHistoryRecord(
