@@ -9,8 +9,8 @@ import acr.browser.lightning.download.FileDownloader
 import acr.browser.lightning.extensions.copyToClipboard
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.settings.activity.SettingsActivity
+import acr.browser.lightning.shortcuts.ShortcutGenerator
 import acr.browser.lightning.utils.IntentUtils
-import acr.browser.lightning.utils.Utils
 import android.app.ActivityManager
 import android.content.ClipboardManager
 import android.content.Intent
@@ -32,6 +32,7 @@ class BrowserNavigator @Inject constructor(
     private val appCoroutineScope: AppCoroutineScope,
     private val fileDownloader: FileDownloader,
     private val intentUtils: IntentUtils,
+    private val shortcutGenerator: ShortcutGenerator,
 ) : BrowserContract.Navigator {
 
     override fun openSettings() {
@@ -59,7 +60,7 @@ class BrowserNavigator @Inject constructor(
 
     override fun addToHomeScreen(url: String, title: String, favicon: Bitmap?): Boolean {
         logger.log(TAG, "Creating shortcut: $title $url")
-        return Utils.createShortcut(activity, url, title, favicon)
+        return shortcutGenerator.createShortcut(url, title, favicon)
     }
 
     override fun download(pendingDownload: PendingDownload) {

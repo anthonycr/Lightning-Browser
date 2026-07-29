@@ -3,16 +3,8 @@
  */
 package acr.browser.lightning.utils;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
-import android.net.Uri;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.webkit.URLUtil;
@@ -22,12 +14,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableKt;
 
 public final class Utils {
 
@@ -160,38 +149,6 @@ public final class Utils {
             closeable.close();
         } catch (IOException e) {
             Log.e(TAG, "Unable to close closeable", e);
-        }
-    }
-
-    public static boolean createShortcut(@NonNull Activity activity,
-                                         @NonNull String url,
-                                         @NonNull String unsafeTitle,
-                                         @Nullable Bitmap unsafeFavicon) {
-        Intent shortcutIntent = new Intent(Intent.ACTION_VIEW);
-        shortcutIntent.setData(Uri.parse(url));
-
-        final String title = TextUtils.isEmpty(unsafeTitle) ? activity.getString(R.string.untitled) : unsafeTitle;
-        final Drawable webPageDrawable = ContextCompat.getDrawable(activity, R.drawable.ic_webpage);
-        Preconditions.checkNonNull(webPageDrawable);
-        final Bitmap webPageBitmap = DrawableKt.toBitmap(webPageDrawable,
-            webPageDrawable.getIntrinsicWidth(),
-            webPageDrawable.getIntrinsicHeight(), null);
-
-        final Bitmap favicon = unsafeFavicon != null ? unsafeFavicon : webPageBitmap;
-
-        ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
-        if (shortcutManager.isRequestPinShortcutSupported()) {
-            ShortcutInfo pinShortcutInfo =
-                new ShortcutInfo.Builder(activity, "browser-shortcut-" + url.hashCode())
-                    .setIntent(shortcutIntent)
-                    .setIcon(Icon.createWithBitmap(favicon))
-                    .setShortLabel(title)
-                    .build();
-
-            shortcutManager.requestPinShortcut(pinShortcutInfo, null);
-            return true;
-        } else {
-            return false;
         }
     }
 
