@@ -5,6 +5,7 @@ import acr.browser.lightning.browser.di.InitialAction
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.useragent.UserAgentProvider
 import acr.browser.lightning.utils.isFileUrl
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +24,7 @@ class TabsRepository @Inject constructor(
     private val recentTabModel: RecentTabModel,
     private val tabFactory: TabFactory,
     private val userPreferencesDataStore: UserPreferencesDataStore,
+    private val userAgentProvider: UserAgentProvider,
     @InitialAction private val initialAction: BrowserContract.Action?,
     private val permissionInitializerFactory: PermissionInitializer.Factory,
     private val coroutineDispatchers: CoroutineDispatchers,
@@ -71,7 +73,8 @@ class TabsRepository @Inject constructor(
         tabType: TabModel.Type,
         emitUpdate: Boolean = true,
     ): TabModel = withContext(coroutineDispatchers.main) {
-        val webViewLazy = webViewFactory.createWebView()
+        val tabSettings = TabSettings.create(userPreferencesDataStore, userAgentProvider)
+        val webViewLazy = webViewFactory.createWebView(tabSettings)
         val tabModel = tabFactory.constructTab(tabInitializer, webViewLazy, tabType)
         tabPager.addTab(tabModel.id, webViewLazy)
         tabsList = tabsList + tabModel

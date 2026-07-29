@@ -5,8 +5,6 @@ import acr.browser.lightning.browser.view.CompositeTouchListener
 import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.preference.datastore.getUnsafe
-import acr.browser.lightning.useragent.UserAgentProvider
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
@@ -19,7 +17,6 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 /**
@@ -30,7 +27,6 @@ class WebViewFactory @Inject constructor(
     private val activity: Activity,
     private val logger: Logger,
     private val userPreferencesDataStore: UserPreferencesDataStore,
-    private val userAgentProvider: UserAgentProvider,
     @IncognitoMode private val incognitoMode: Boolean,
 ) {
 
@@ -65,7 +61,8 @@ class WebViewFactory @Inject constructor(
     /**
      * Construct a [WebView] based on the user's preferences.
      */
-    fun createWebView(): Lazy<WebView> = lazy {
+    @SuppressLint("SetJavaScriptEnabled")
+    fun createWebView(tabSettings: TabSettings): Lazy<WebView> = lazy {
         WebView(activity).apply {
             tag = CompositeTouchListener().also(::setOnTouchListener)
             isFocusableInTouchMode = true
@@ -79,105 +76,93 @@ class WebViewFactory @Inject constructor(
             overScrollMode = View.OVER_SCROLL_NEVER
             setNetworkAvailable(true)
 
-            settings.apply {
-                if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
-                    WebSettingsCompat.setAlgorithmicDarkeningAllowed(
-                        this,
-                        userPreferencesDataStore.algorithmicDarkeningEnabled.getUnsafe()
-                    )
-                } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-                    // Remove when minSdk >= 33
-                    @Suppress("DEPRECATION")
-                    WebSettingsCompat.setForceDark(this, WebSettingsCompat.FORCE_DARK_ON)
-                }
-                mediaPlaybackRequiresUserGesture = true
-
-                mixedContentMode = if (!incognitoMode) {
-                    WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
-                } else {
-                    WebSettings.MIXED_CONTENT_NEVER_ALLOW
-                }
-
-                domStorageEnabled = true
-                // Remove when minSdk >= 35
+            if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
+                WebSettingsCompat.setAlgorithmicDarkeningAllowed(
+                    settings,
+                    tabSettings.algorithmicDarkeningEnabled
+                )
+            } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                // Remove when minSdk >= 33
                 @Suppress("DEPRECATION")
-                databaseEnabled = true
-                cacheMode = WebSettings.LOAD_DEFAULT
+                WebSettingsCompat.setForceDark(settings, WebSettingsCompat.FORCE_DARK_ON)
+            }
+            settings.mediaPlaybackRequiresUserGesture = true
 
-                setSupportZoom(true)
-                builtInZoomControls = true
-                displayZoomControls = false
-                allowContentAccess = true
-                allowFileAccess = true
+            settings.mixedContentMode = if (!incognitoMode) {
+                WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+            } else {
+                WebSettings.MIXED_CONTENT_NEVER_ALLOW
             }
 
-            updateForPreferences(incognitoMode)
-        }
-    }
+            settings.domStorageEnabled = true
+            // Remove when minSdk >= 35
+            @Suppress("DEPRECATION")
+            settings.databaseEnabled = true
+            settings.cacheMode = WebSettings.LOAD_DEFAULT
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private fun WebView.updateForPreferences(
-        isIncognito: Boolean
-    ) {
+            settings.setSupportZoom(true)
+            settings.builtInZoomControls = true
+            settings.displayZoomControls = false
+            settings.allowContentAccess = true
+            settings.allowFileAccess = true
 
-//        lightningWebClient.updatePreferences()
-//
-        val modifiesHeaders = userPreferencesDataStore.doNotTrackEnabled.getUnsafe()
-            || userPreferencesDataStore.saveDataEnabled.getUnsafe()
-            || userPreferencesDataStore.removeIdentifyingHeadersEnabled.getUnsafe()
+            val modifiesHeaders = tabSettings.doNotTrackEnabled
+                || tabSettings.saveDataEnabled
+                || tabSettings.removeIdentifyingHeadersEnabled
 
-        settings.defaultTextEncodingName = userPreferencesDataStore.textEncoding.getUnsafe()
-        setColorMode(Paint(), userPreferencesDataStore.renderingMode.getUnsafe())
+            settings.defaultTextEncodingName = tabSettings.textEncoding
+            setColorMode(Paint(), tabSettings.renderingMode)
 
-        if (!isIncognito) {
-            settings.setGeolocationEnabled(userPreferencesDataStore.locationEnabled.getUnsafe())
-        } else {
-            settings.setGeolocationEnabled(false)
-        }
-
-        settings.userAgentString = runBlocking { userAgentProvider.getUserAgent() }
-
-        if (userPreferencesDataStore.javaScriptEnabled.getUnsafe()) {
-            settings.javaScriptEnabled = true
-            settings.javaScriptCanOpenWindowsAutomatically = true
-        } else {
-            settings.javaScriptEnabled = false
-            settings.javaScriptCanOpenWindowsAutomatically = false
-        }
-
-        if (userPreferencesDataStore.textReflowEnabled.getUnsafe()) {
-            settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
-            try {
-                settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
-            } catch (e: Exception) {
-                // This shouldn't be necessary, but there are a number
-                // of KitKat devices that crash trying to set this
-                logger.log(TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING")
+            if (!incognitoMode) {
+                settings.setGeolocationEnabled(tabSettings.locationEnabled)
+            } else {
+                settings.setGeolocationEnabled(false)
             }
-        } else {
-            settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
+
+            settings.userAgentString = tabSettings.userAgent
+
+            if (tabSettings.javaScriptEnabled) {
+                settings.javaScriptEnabled = true
+                settings.javaScriptCanOpenWindowsAutomatically = true
+            } else {
+                settings.javaScriptEnabled = false
+                settings.javaScriptCanOpenWindowsAutomatically = false
+            }
+
+            if (tabSettings.textReflowEnabled) {
+                settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
+                try {
+                    settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
+                } catch (e: Exception) {
+                    // This shouldn't be necessary, but there are a number
+                    // of KitKat devices that crash trying to set this
+                    logger.log(TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING")
+                }
+            } else {
+                settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
+            }
+
+            settings.blockNetworkImage = tabSettings.blockImagesEnabled
+            // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
+            settings.setSupportMultipleWindows(tabSettings.popupsEnabled && !modifiesHeaders)
+
+            settings.useWideViewPort = tabSettings.useWideViewPortEnabled
+            settings.loadWithOverviewMode = tabSettings.overviewModeEnabled
+            settings.textZoom = when (tabSettings.textSize) {
+                0 -> 200
+                1 -> 150
+                2 -> 125
+                3 -> 100
+                4 -> 75
+                5 -> 50
+                else -> throw IllegalArgumentException("Unsupported text size")
+            }
+
+            CookieManager.getInstance().setAcceptThirdPartyCookies(
+                this,
+                !tabSettings.blockThirdPartyCookiesEnabled
+            )
         }
-
-        settings.blockNetworkImage = userPreferencesDataStore.blockImagesEnabled.getUnsafe()
-        // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
-        settings.setSupportMultipleWindows(userPreferencesDataStore.popupsEnabled.getUnsafe() && !modifiesHeaders)
-
-        settings.useWideViewPort = userPreferencesDataStore.useWideViewPortEnabled.getUnsafe()
-        settings.loadWithOverviewMode = userPreferencesDataStore.overviewModeEnabled.getUnsafe()
-        settings.textZoom = when (userPreferencesDataStore.textSize.getUnsafe()) {
-            0 -> 200
-            1 -> 150
-            2 -> 125
-            3 -> 100
-            4 -> 75
-            5 -> 50
-            else -> throw IllegalArgumentException("Unsupported text size")
-        }
-
-        CookieManager.getInstance().setAcceptThirdPartyCookies(
-            this,
-            !userPreferencesDataStore.blockThirdPartyCookiesEnabled.getUnsafe()
-        )
     }
 
     private fun WebView.setColorMode(paint: Paint, mode: RenderingMode) {
