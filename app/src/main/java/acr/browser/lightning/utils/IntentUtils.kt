@@ -36,8 +36,8 @@ class IntentUtils @Inject constructor(
         var intent: Intent = try {
             Intent.parseUri(url, Intent.URI_INTENT_SCHEME).apply {
                 addCategory(Intent.CATEGORY_BROWSABLE)
-                setComponent(null)
-                setSelector(null)
+                component = null
+                selector = null
             }
         } catch (ex: URISyntaxException) {
             logger.log(TAG, "Bad URI $url: ${ex.message}")
@@ -130,7 +130,7 @@ class IntentUtils @Inject constructor(
     fun shareUrl(url: String?, title: String?) {
         if (url != null && !url.isSpecialUrl()) {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                setType("text/plain")
+                type = "text/plain"
                 if (title != null) {
                     putExtra(Intent.EXTRA_SUBJECT, title)
                 }
