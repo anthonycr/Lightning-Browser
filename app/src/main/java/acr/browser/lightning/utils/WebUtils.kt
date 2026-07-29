@@ -39,6 +39,7 @@ class WebUtils @Inject constructor(
     }
 
     suspend fun clearCache() = withContext(coroutineDispatchers.main) {
+        // TODO: Switch to io dispatcher and change to activity context
         val webView = WebView(application)
         webView.clearCache(true)
         webView.destroy()
