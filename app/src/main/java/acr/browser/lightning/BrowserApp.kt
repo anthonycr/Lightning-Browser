@@ -62,7 +62,9 @@ class BrowserApp : Application() {
             )
         }
 
-        if (getProcessName() == "$packageName:incognito") {
+        val isIncognito = getProcessName() == "$packageName:incognito"
+
+        if (isIncognito) {
             File(dataDir, "app_webview_incognito").deleteRecursively()
             WebView.setDataDirectorySuffix("incognito")
         }
@@ -84,7 +86,7 @@ class BrowserApp : Application() {
         applicationComponent = DaggerAppComponent.builder()
             .application(this)
             .buildInfo(createBuildInfo())
-            .incognitoMode(getProcessName().endsWith(":incognito"))
+            .incognitoMode(isIncognito)
             .build()
         injector.inject(this)
 
