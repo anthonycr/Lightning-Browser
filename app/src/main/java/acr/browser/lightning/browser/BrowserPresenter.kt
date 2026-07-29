@@ -42,7 +42,6 @@ import acr.browser.lightning.resources.NumberFormatter
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.ssl.SslState
-import acr.browser.lightning.utils.Option
 import acr.browser.lightning.utils.QUERY_PLACE_HOLDER
 import acr.browser.lightning.utils.isBookmarkUrl
 import acr.browser.lightning.utils.isDownloadsUrl
@@ -127,7 +126,7 @@ class BrowserPresenter @Inject constructor(
             sslState = SslState.None,
             progress = 0,
             enableFullMenu = true,
-            themeColor = Option.None,
+            themeColor = null,
             isSearchBarExpanded = false,
             isForwardEnabled = false,
             isBackEnabled = false,
@@ -299,7 +298,7 @@ class BrowserPresenter @Inject constructor(
                     searchQuery = tab.searchQuery,
                     searchQuerySelection = tab.searchQuerySelection,
                     enableFullMenu = !url.isSpecialUrl(),
-                    themeColor = Option.Some(themeColor),
+                    themeColor = themeColor,
                     isRefresh = (progress == 100).takeIf { !isSearchViewFocused }
                         ?: state.value.isRefresh,
                     isForwardEnabled = canGoForward,

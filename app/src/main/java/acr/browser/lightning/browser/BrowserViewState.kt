@@ -8,7 +8,6 @@ import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
-import acr.browser.lightning.utils.Option
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,7 +57,7 @@ data class BrowserViewState(
     val isRefresh: Boolean,
     val progress: Int,
     val enableFullMenu: Boolean,
-    val themeColor: Option<Int>,
+    val themeColor: Int?,
     val isSearchBarExpanded: Boolean,
 
     // Tabs
@@ -194,7 +193,7 @@ class BrowserComposeState(
     var isRefresh: Boolean by mutableStateOf(browserViewState.isRefresh)
     var progress: Int by mutableIntStateOf(browserViewState.progress)
     var enableFullMenu: Boolean by mutableStateOf(browserViewState.enableFullMenu)
-    var themeColor: Option<Int> by mutableStateOf(browserViewState.themeColor)
+    var themeColor: Int? by mutableStateOf(browserViewState.themeColor)
     var isSearchBarExpanded: Boolean by mutableStateOf(browserViewState.isSearchBarExpanded)
 
     // Tabs
