@@ -4,7 +4,6 @@ import acr.browser.lightning.preference.IntEnum
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 
 /**
  * Holds a persistable preference of type [T].
@@ -101,14 +100,4 @@ class NonNullPreferenceStore<T>(
             }
         }
     }
-}
-
-@Deprecated("Use coroutines")
-fun <T> PreferenceStore<T>.getUnsafe(): T = runBlocking {
-    get()
-}
-
-@Deprecated("Use coroutines")
-fun <T> PreferenceStore<T>.setUnsafe(value: T) = runBlocking {
-    set(value)
 }

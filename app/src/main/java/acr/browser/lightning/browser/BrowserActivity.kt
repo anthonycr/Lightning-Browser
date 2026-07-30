@@ -171,7 +171,7 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
 
     // TODO: Animate color change
 //    private fun animateColorChange(color: Int) {
-//        if (!userPreferencesDataStore.colorModeEnabled.getUnsafe() || userPreferencesDataStore.useTheme.getUnsafe() != AppTheme.LIGHT || isIncognito()) {
+//        if (!userPreferencesDataStore.colorModeEnabled.get() || userPreferencesDataStore.useTheme.get() != AppTheme.LIGHT || isIncognito()) {
 //            return
 //        }
 //        val adapter = tabsAdapter as? DesktopTabRecyclerViewAdapter
@@ -180,7 +180,7 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
 //            colorAnimator.animateTo(
 //                color
 //            ) { mainColor, secondaryColor ->
-//                if (userPreferencesDataStore.tabConfiguration.getUnsafe() != TabConfiguration.DESKTOP) {
+//                if (userPreferencesDataStore.tabConfiguration.get() != TabConfiguration.DESKTOP) {
 //                    backgroundDrawable.color = mainColor
 //                    window.setBackgroundDrawable(backgroundDrawable)
 //                } else {
