@@ -5,6 +5,8 @@ import acr.browser.lightning.browser.di.InitialAction
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.search.SearchEngineProvider
+import acr.browser.lightning.search.engine.search
 import acr.browser.lightning.useragent.UserAgentProvider
 import acr.browser.lightning.utils.isFileUrl
 import kotlinx.coroutines.CompletableDeferred
@@ -28,6 +30,7 @@ class TabsRepository @Inject constructor(
     @InitialAction private val initialAction: BrowserContract.Action?,
     private val permissionInitializerFactory: PermissionInitializer.Factory,
     private val coroutineDispatchers: CoroutineDispatchers,
+    private val searchEngineProvider: SearchEngineProvider,
 ) : BrowserContract.Model {
 
     private val isInitialized = CompletableDeferred<Unit>()
@@ -113,7 +116,13 @@ class TabsRepository @Inject constructor(
                 )
             }
 
-            val initialUrl = (initialAction as? BrowserContract.Action.LoadUrl)?.url
+            val initialUrl = when (initialAction) {
+                is BrowserContract.Action.LoadUrl -> initialAction.url
+                is BrowserContract.Action.Search -> searchEngineProvider.provideSearchEngine()
+                    .search(initialAction.query)
+
+                else -> null
+            }
             val newTabInitializer = if (initialUrl != null && initialUrl.isFileUrl()) {
                 permissionInitializerFactory.create(initialUrl)
             } else if (initialUrl != null) {

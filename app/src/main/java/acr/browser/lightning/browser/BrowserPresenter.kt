@@ -40,13 +40,12 @@ import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.NumberFormatter
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.search.SearchEngineProvider
+import acr.browser.lightning.search.engine.search
 import acr.browser.lightning.ssl.SslState
-import acr.browser.lightning.utils.QUERY_PLACE_HOLDER
 import acr.browser.lightning.utils.isBookmarkUrl
 import acr.browser.lightning.utils.isDownloadsUrl
 import acr.browser.lightning.utils.isHistoryUrl
 import acr.browser.lightning.utils.isSpecialUrl
-import acr.browser.lightning.utils.smartUrlFilter
 import androidx.activity.result.ActivityResult
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.net.toUri
@@ -431,6 +430,7 @@ class BrowserPresenter @Inject constructor(
             }
 
             BrowserContract.Action.Panic -> panicClean()
+            is BrowserContract.Action.Search -> onSearch(action.query)
         }
     }
 
@@ -838,8 +838,7 @@ class BrowserPresenter @Inject constructor(
         }
         browserCoroutineScope.launch {
             currentTab?.stopLoading()
-            val searchUrl = searchEngineProvider.provideSearchEngine().queryUrl + QUERY_PLACE_HOLDER
-            val url = smartUrlFilter(query.trim(), true, searchUrl)
+            val url = searchEngineProvider.provideSearchEngine().search(query)
             updateState(
                 state.value.copy(
                     displayUrl = searchBoxModel.getDisplayContent(

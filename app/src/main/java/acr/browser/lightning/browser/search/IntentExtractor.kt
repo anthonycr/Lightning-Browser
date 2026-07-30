@@ -1,9 +1,6 @@
 package acr.browser.lightning.browser.search
 
 import acr.browser.lightning.browser.BrowserContract
-import acr.browser.lightning.search.SearchEngineProvider
-import acr.browser.lightning.utils.QUERY_PLACE_HOLDER
-import acr.browser.lightning.utils.smartUrlFilter
 import android.app.SearchManager
 import android.content.Intent
 import javax.inject.Inject
@@ -11,7 +8,7 @@ import javax.inject.Inject
 /**
  * Extracts data from an [Intent] and into a [BrowserContract.Action].
  */
-class IntentExtractor @Inject constructor(private val searchEngineProvider: SearchEngineProvider) {
+class IntentExtractor @Inject constructor() {
 
     /**
      * Extract the action from the [intent] or return null if no data was extracted.
@@ -19,20 +16,17 @@ class IntentExtractor @Inject constructor(private val searchEngineProvider: Sear
     fun extractUrlFromIntent(intent: Intent?): BrowserContract.Action? {
         return when (intent?.action) {
             INTENT_PANIC_TRIGGER -> BrowserContract.Action.Panic
-            Intent.ACTION_WEB_SEARCH ->
-                extractSearchFromIntent(intent)?.let(BrowserContract.Action::LoadUrl)
+            Intent.ACTION_WEB_SEARCH -> extractSearchFromIntent(intent)
 
             Intent.ACTION_VIEW -> intent.dataString?.let(BrowserContract.Action::LoadUrl)
             else -> null
         }
     }
 
-    private fun extractSearchFromIntent(intent: Intent): String? {
+    private fun extractSearchFromIntent(intent: Intent): BrowserContract.Action? {
         val query = intent.getStringExtra(SearchManager.QUERY)
-        val searchUrl = "${searchEngineProvider.provideSearchEngine().queryUrl}$QUERY_PLACE_HOLDER"
-
         return if (query?.isNotBlank() == true) {
-            smartUrlFilter(query, true, searchUrl)
+            BrowserContract.Action.Search(query)
         } else {
             null
         }

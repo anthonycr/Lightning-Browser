@@ -219,6 +219,12 @@ interface BrowserContract {
      * Supported actions that can be passed to the browser.
      */
     sealed class Action {
+
+        /**
+         * The action representing a user searching for a [query].
+         */
+        data class Search(val query: String) : Action()
+
         /**
          * The action to load the provided [url].
          */

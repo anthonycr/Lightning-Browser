@@ -1,5 +1,7 @@
 package acr.browser.lightning.search.engine
 
+import acr.browser.lightning.utils.QUERY_PLACE_HOLDER
+import acr.browser.lightning.utils.smartUrlFilter
 import androidx.annotation.StringRes
 
 /**
@@ -22,4 +24,14 @@ open class BaseSearchEngine(
 
     operator fun component3() = titleRes
 
+}
+
+/**
+ * Turn a raw [query] from the user that may be either a URL or a search engine query into an
+ * actionable URL.
+ */
+fun BaseSearchEngine.search(query: String): String {
+    val searchUrl = "$queryUrl$QUERY_PLACE_HOLDER"
+
+    return smartUrlFilter(query, true, searchUrl)
 }
