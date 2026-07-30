@@ -1631,10 +1631,12 @@ fun BrowserSearchSuggestions(
                     .wrapContentHeight(),
                 value = state,
                 onValueChange = {
-                    // Maybe TODO: selection switches to end when suggestions are dismissed
-                    state = it
-                    suggestionsModel.updateQuery(it.text)
-                    presenter.onSearchQueryChanged(it.text, it.selection.min, it.selection.max)
+                    // Updating the state mid-animation can cause cursor selection bugs
+                    if (searchBarState.targetValue != SearchBarValue.Collapsed) {
+                        state = it
+                        suggestionsModel.updateQuery(it.text)
+                        presenter.onSearchQueryChanged(it.text, it.selection.min, it.selection.max)
+                    }
                 },
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
                     color = MaterialTheme.colorScheme.onSurface
