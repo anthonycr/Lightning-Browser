@@ -78,7 +78,7 @@ class TabsRepository @Inject constructor(
     ): TabModel = withContext(coroutineDispatchers.main) {
         val tabSettings = TabSettings.create(userPreferencesDataStore, userAgentProvider)
         val webViewLazy = webViewFactory.createWebView(tabSettings)
-        val tabModel = tabFactory.constructTab(tabInitializer, webViewLazy, tabType)
+        val tabModel = tabFactory.constructTab(tabInitializer, webViewLazy, tabType, tabSettings)
         tabPager.addTab(tabModel.id, webViewLazy)
         tabsList = tabsList + tabModel
 

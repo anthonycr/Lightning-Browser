@@ -33,7 +33,8 @@ class TabFactory @Inject constructor(
     suspend fun constructTab(
         tabInitializer: TabInitializer,
         webView: Lazy<WebView>,
-        tabType: TabModel.Type
+        tabType: TabModel.Type,
+        tabSettings: TabSettings,
     ): TabModel = withContext(coroutineDispatchers.main) {
         val faviconHandler = async(coroutineDispatchers.io) {
             InternalStoragePathHandler(
@@ -57,10 +58,11 @@ class TabFactory @Inject constructor(
             webView = webView,
             requestHeaders = headers,
             tabWebViewClient = tabWebViewClientFactory.create(
-                headers,
-                faviconHandler.await(),
-                htmlHandler.await(),
-                tabCoroutineScope,
+                headers = headers,
+                cacheStoragePathHandler = faviconHandler.await(),
+                filesStoragePathHandler = htmlHandler.await(),
+                tabCoroutineScope = tabCoroutineScope,
+                tabSettings = tabSettings,
             ),
             tabType = tabType,
             tabCoroutineScope = tabCoroutineScope
