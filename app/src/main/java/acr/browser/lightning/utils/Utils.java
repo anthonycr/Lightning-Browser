@@ -3,7 +3,6 @@
  */
 package acr.browser.lightning.utils;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -11,7 +10,6 @@ import android.util.Log;
 import java.io.Closeable;
 import java.io.IOException;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public final class Utils {
@@ -19,29 +17,6 @@ public final class Utils {
     private static final String TAG = "Utils";
 
     private Utils() {}
-
-    /**
-     * Creates a new intent that can launch the email
-     * app with a subject, address, body, and cc. It
-     * is used to handle mail:to links.
-     *
-     * @param address the address to send the email to.
-     * @param subject the subject of the email.
-     * @param body    the body of the email.
-     * @param cc      extra addresses to CC.
-     * @return a valid intent.
-     */
-    @NonNull
-    public static Intent newEmailIntent(String address, String subject,
-                                        String body, String cc) {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{address});
-        intent.putExtra(Intent.EXTRA_TEXT, body);
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_CC, cc);
-        intent.setType("message/rfc822");
-        return intent;
-    }
 
     /**
      * Converts Density Pixels (DP) to Pixels (PX).
@@ -108,15 +83,6 @@ public final class Utils {
         } catch (IOException e) {
             Log.e(TAG, "Unable to close closeable", e);
         }
-    }
-
-    @Nullable
-    public static String guessFileExtension(@NonNull String filename) {
-        int lastIndex = filename.lastIndexOf('.') + 1;
-        if (lastIndex > 0 && filename.length() > lastIndex) {
-            return filename.substring(lastIndex);
-        }
-        return null;
     }
 
 }

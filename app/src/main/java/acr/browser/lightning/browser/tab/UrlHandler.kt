@@ -7,7 +7,6 @@ import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.IntentUtils
-import acr.browser.lightning.utils.Utils
 import acr.browser.lightning.utils.isSpecialUrl
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -85,7 +84,7 @@ class UrlHandler @Inject constructor(
     private fun isMailOrIntent(url: String, view: WebView): Boolean {
         if (url.startsWith("mailto:")) {
             val mailTo = MailTo.parse(url)
-            val i = Utils.newEmailIntent(mailTo.to, mailTo.subject, mailTo.body, mailTo.cc)
+            val i = newEmailIntent(mailTo.to, mailTo.subject, mailTo.body, mailTo.cc)
             activity.startActivity(i)
             view.reload()
             return true
@@ -113,7 +112,7 @@ class UrlHandler @Inject constructor(
 
             if (file.exists()) {
                 val newMimeType = MimeTypeMap.getSingleton()
-                    .getMimeTypeFromExtension(Utils.guessFileExtension(file.toString()))
+                    .getMimeTypeFromExtension(guessFileExtension(file.toString()))
 
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -136,6 +135,37 @@ class UrlHandler @Inject constructor(
             return true
         }
         return false
+    }
+
+    /**
+     * Creates a new intent that can launch the email app with a subject, address, body, and cc. It
+     * is used to handle mail:to links.
+     *
+     * @param address The address to send the email to.
+     * @param subject The subject of the email.
+     * @param body The body of the email.
+     * @param cc Extra addresses to CC.
+     * @return A valid intent.
+     */
+    fun newEmailIntent(
+        address: String?,
+        subject: String?,
+        body: String?,
+        cc: String?
+    ): Intent = Intent(Intent.ACTION_SEND).apply {
+        putExtra(Intent.EXTRA_EMAIL, arrayOf(address))
+        putExtra(Intent.EXTRA_TEXT, body)
+        putExtra(Intent.EXTRA_SUBJECT, subject)
+        putExtra(Intent.EXTRA_CC, cc)
+        type = "message/rfc822"
+    }
+
+    fun guessFileExtension(filename: String): String? {
+        val lastIndex = filename.lastIndexOf('.') + 1
+        if (lastIndex > 0 && filename.length > lastIndex) {
+            return filename.substring(lastIndex)
+        }
+        return null
     }
 
     companion object {
