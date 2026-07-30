@@ -7,14 +7,10 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.webkit.URLUtil;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
-import acr.browser.lightning.constant.Constants;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -56,44 +52,6 @@ public final class Utils {
     public static int dpToPx(float dp) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         return (int) (dp * metrics.density + 0.5f);
-    }
-
-    /**
-     * Extracts the domain name from a URL.
-     * NOTE: Should be used for display only.
-     *
-     * @param url the URL to extract the domain from.
-     * @return the domain name, or the URL if the domain
-     * could not be extracted. The domain name may include
-     * HTTPS if the URL is an SSL supported URL.
-     */
-    @NonNull
-    public static String getDisplayDomainName(@Nullable String url) {
-        if (url == null || url.isEmpty()) return "";
-
-        boolean ssl = URLUtil.isHttpsUrl(url);
-        int index = url.indexOf('/', 8);
-        if (index != -1) {
-            url = url.substring(0, index);
-        }
-
-        URI uri;
-        String domain;
-        try {
-            uri = new URI(url);
-            domain = uri.getHost();
-        } catch (URISyntaxException e) {
-            Log.e(TAG, "Unable to parse URI", e);
-            domain = null;
-        }
-
-        if (domain == null || domain.isEmpty()) {
-            return url;
-        }
-        if (ssl)
-            return Constants.HTTPS + domain;
-        else
-            return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
     public static boolean isColorGrayscale(int pixel) {

@@ -1,10 +1,12 @@
 package acr.browser.lightning.browser.search
 
 import acr.browser.lightning.R
+import acr.browser.lightning.constant.HTTPS
 import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.utils.Utils
 import acr.browser.lightning.utils.isSpecialUrl
 import android.app.Application
+import android.webkit.URLUtil
+import androidx.core.net.toUri
 import dagger.Reusable
 import javax.inject.Inject
 
@@ -39,7 +41,7 @@ class SearchBoxModel @Inject constructor(
             url.isSpecialUrl() -> ""
             isLoading -> url
             else -> when (userPreferencesDataStore.urlBoxContentChoice.get()) {
-                SearchBoxDisplayChoice.DOMAIN -> safeDomain(url)
+                SearchBoxDisplayChoice.DOMAIN -> getDisplayDomainName(url)
                 SearchBoxDisplayChoice.URL -> url
                 SearchBoxDisplayChoice.TITLE ->
                     if (title?.isEmpty() == false) {
@@ -50,6 +52,35 @@ class SearchBoxModel @Inject constructor(
             }
         }
 
-    private fun safeDomain(url: String) = Utils.getDisplayDomainName(url)
+    /**
+     * Extracts the domain name from a URL.
+     * NOTE: Should be used for display only.
+     *
+     * @param rawUrl the URL to extract the domain from.
+     * @return the domain name, or the URL if the domain could not be extracted. The domain name
+     * will be prefixed with https:// if the URL is an SSL supported URL.
+     */
+    fun getDisplayDomainName(rawUrl: String?): String {
+        if (rawUrl.isNullOrEmpty()) return ""
 
+        val ssl = URLUtil.isHttpsUrl(rawUrl)
+        val index = rawUrl.indexOf('/', 8)
+        val sanitizedUrl = if (index != -1) {
+            rawUrl.substring(0, index)
+        } else {
+            rawUrl
+        }
+
+        val domain: String? = sanitizedUrl.toUri().host
+
+        return if (domain.isNullOrEmpty()) {
+            sanitizedUrl
+        } else if (ssl) {
+            HTTPS + domain
+        } else if (domain.startsWith("www.")) {
+            domain.substring(4)
+        } else {
+            domain
+        }
+    }
 }
