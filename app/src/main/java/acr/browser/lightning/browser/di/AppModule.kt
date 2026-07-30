@@ -43,6 +43,7 @@ import android.content.Context
 import android.content.pm.ShortcutManager
 import android.content.res.AssetManager
 import android.net.ConnectivityManager
+import android.net.TrafficStats
 import androidx.core.content.getSystemService
 import com.anthonycr.mezzanine.mezzanine
 import dagger.Module
@@ -55,11 +56,16 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import okhttp3.Cache
 import okhttp3.CacheControl
+import okhttp3.Call
+import okhttp3.EventListener
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import okhttp3.Request
 import java.io.File
+import java.net.InetSocketAddress
+import java.net.Proxy
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Provider
@@ -125,16 +131,53 @@ class AppModule {
 
     @Singleton
     @Provides
+    fun providesTrafficStatsEventListener(): EventListener = object : EventListener() {
+        // Credit to https://github.com/jaredsburrows/android-gif-search/blob/19ea35435e0962cd7d419a4ee02b05f5cebdb6e6/app/src/main/java/com/burrowsapps/gif/search/di/NetworkModule.kt#L90
+        override fun connectStart(
+            call: Call,
+            inetSocketAddress: InetSocketAddress,
+            proxy: Proxy
+        ) {
+            TrafficStats.setThreadStatsTag(0xACAB)
+        }
+
+        override fun connectEnd(
+            call: Call,
+            inetSocketAddress: InetSocketAddress,
+            proxy: Proxy,
+            protocol: Protocol?
+        ) {
+            TrafficStats.clearThreadStatsTag()
+        }
+    }
+
+    @Singleton
+    @Provides
+    @NoCacheClient
+    fun providesNoCacheHttpClient(
+        appCoroutineScope: AppCoroutineScope,
+        coroutineDispatchers: CoroutineDispatchers,
+        eventListener: EventListener
+    ): Deferred<OkHttpClient> = appCoroutineScope.async(coroutineDispatchers.io) {
+        OkHttpClient.Builder()
+            .eventListener(eventListener)
+            .build()
+    }
+
+    @Singleton
+    @Provides
     @SuggestionsClient
     fun providesSuggestionsCoroutineHttpClient(
         application: Application,
         appCoroutineScope: AppCoroutineScope,
         coroutineDispatchers: CoroutineDispatchers,
+        eventListener: EventListener,
     ): Deferred<OkHttpClient> = appCoroutineScope.async(coroutineDispatchers.io) {
         val intervalDay = TimeUnit.DAYS.toSeconds(1)
         val suggestionsCache = File(application.cacheDir, "suggestion_responses")
 
         OkHttpClient.Builder()
+            .eventListener(eventListener)
             .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
             .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalDay))
             .build()
@@ -147,11 +190,13 @@ class AppModule {
         application: Application,
         appCoroutineScope: AppCoroutineScope,
         coroutineDispatchers: CoroutineDispatchers,
+        eventListener: EventListener,
     ): Deferred<OkHttpClient> = appCoroutineScope.async(coroutineDispatchers.io) {
         val intervalYear = TimeUnit.DAYS.toSeconds(365)
         val suggestionsCache = File(application.cacheDir, "hosts_cache")
 
         OkHttpClient.Builder()
+            .eventListener(eventListener)
             .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(5)))
             .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalYear))
             .build()
@@ -332,6 +377,10 @@ class AppModule {
         }
     }
 }
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class NoCacheClient
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)

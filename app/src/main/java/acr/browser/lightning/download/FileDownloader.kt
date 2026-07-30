@@ -1,6 +1,7 @@
 package acr.browser.lightning.download
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.di.NoCacheClient
 import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
@@ -17,6 +18,7 @@ import android.webkit.CookieManager
 import android.webkit.MimeTypeMap
 import android.webkit.URLUtil
 import androidx.core.net.toUri
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -32,6 +34,8 @@ class DefaultFileDownloader @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val downloadManager: DownloadManager,
     private val coroutineDispatchers: CoroutineDispatchers,
+    @NoCacheClient
+    private val okHttpClient: Deferred<@JvmSuppressWildcards OkHttpClient>,
 ) : FileDownloader {
     override suspend fun download(pendingDownload: PendingDownload) =
         withContext(coroutineDispatchers.io) {
@@ -98,9 +102,8 @@ class DefaultFileDownloader @Inject constructor(
         if (pendingDownload.mimeType != null && pendingDownload.contentLength != 0L) {
             return@withContext pendingDownload
         }
-        val client = OkHttpClient()
 
-        val response = client.newCall(
+        val response = okHttpClient.await().newCall(
             Request.Builder()
                 .url(pendingDownload.url)
                 .head()
