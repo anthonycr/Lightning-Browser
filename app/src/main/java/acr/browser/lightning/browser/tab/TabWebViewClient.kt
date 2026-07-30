@@ -33,6 +33,7 @@ import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -43,7 +44,7 @@ import kotlin.math.abs
  * A [WebViewClient] that supports the tab adaptation.
  */
 class TabWebViewClient @AssistedInject constructor(
-    private val adBlocker: AdBlocker,
+    private val adBlocker: Deferred<@JvmSuppressWildcards AdBlocker>,
     private val allowListModel: AllowListModel,
     private val urlHandler: UrlHandler,
     @Assisted private val headers: Map<String, String>,
@@ -138,7 +139,7 @@ class TabWebViewClient @AssistedInject constructor(
 
     private fun shouldBlockRequest(pageUrl: String, requestUri: Uri) =
         !allowListModel.isUrlAllowedAds(pageUrl) &&
-            adBlocker.isAd(requestUri)
+            runBlocking { adBlocker.await().isAd(requestUri) }
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)

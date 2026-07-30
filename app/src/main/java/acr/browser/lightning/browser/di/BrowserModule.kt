@@ -1,8 +1,5 @@
 package acr.browser.lightning.browser.di
 
-import acr.browser.lightning.adblock.AdBlocker
-import acr.browser.lightning.adblock.BloomFilterAdBlocker
-import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.BrowserContract
 import acr.browser.lightning.browser.data.CookieAdministrator
 import acr.browser.lightning.browser.data.DefaultCookieAdministrator
@@ -16,29 +13,15 @@ import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.browser.tab.bundle.DefaultBundleStore
 import acr.browser.lightning.browser.tab.bundle.IncognitoBundleStore
-import acr.browser.lightning.preference.UserPreferencesDataStore
-import acr.browser.lightning.preference.datastore.getUnsafe
 import android.content.Intent
 import dagger.Module
 import dagger.Provides
-import javax.inject.Provider
 
 /**
  * Constructs dependencies for the browser scope.
  */
 @Module
 class BrowserModule {
-
-    @Provides
-    fun providesAdBlocker(
-        userPreferencesDataStore: UserPreferencesDataStore,
-        bloomFilterAdBlocker: Provider<BloomFilterAdBlocker>,
-        noOpAdBlocker: NoOpAdBlocker
-    ): AdBlocker = if (userPreferencesDataStore.adBlockEnabled.getUnsafe()) {
-        bloomFilterAdBlocker.get()
-    } else {
-        noOpAdBlocker
-    }
 
     @Provides
     @InitialAction

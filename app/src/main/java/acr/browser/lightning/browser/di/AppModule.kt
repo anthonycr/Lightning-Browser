@@ -2,6 +2,9 @@ package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
+import acr.browser.lightning.adblock.AdBlocker
+import acr.browser.lightning.adblock.BloomFilterAdBlocker
+import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.tab.DefaultTabTitle
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.browser.ui.TabConfiguration
@@ -59,6 +62,7 @@ import okhttp3.Request
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
+import javax.inject.Provider
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -312,6 +316,21 @@ class AppModule {
         },
         appCoroutineScope = appCoroutineScope
     )
+
+    @Singleton
+    @Provides
+    fun providesAdBlocker(
+        appCoroutineScope: AppCoroutineScope,
+        userPreferencesDataStore: UserPreferencesDataStore,
+        bloomFilterAdBlocker: Provider<BloomFilterAdBlocker>,
+        noOpAdBlocker: NoOpAdBlocker
+    ): Deferred<AdBlocker> = appCoroutineScope.async {
+        if (userPreferencesDataStore.adBlockEnabled.get()) {
+            bloomFilterAdBlocker.get()
+        } else {
+            noOpAdBlocker
+        }
+    }
 }
 
 @Qualifier
