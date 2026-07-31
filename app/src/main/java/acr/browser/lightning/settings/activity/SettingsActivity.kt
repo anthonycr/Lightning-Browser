@@ -50,7 +50,11 @@ class SettingsActivity : ThemableActivity() {
     @Inject internal lateinit var privacySettingsScreen: PrivacySettingsScreen
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injector.inject(this)
+        injector.settingsComponentBuilder()
+            .activity(this)
+            .build()
+            .inject(this)
+
         super.onCreate(savedInstanceState)
 
         setContent {

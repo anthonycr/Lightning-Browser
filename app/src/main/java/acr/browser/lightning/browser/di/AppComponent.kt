@@ -2,7 +2,6 @@ package acr.browser.lightning.browser.di
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.device.BuildInfo
-import acr.browser.lightning.settings.activity.SettingsActivity
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
@@ -30,11 +29,11 @@ interface AppComponent {
 
     fun inject(app: BrowserApp)
 
-    fun inject(activity: SettingsActivity)
-
     fun browserComponentBuilder(): BrowserComponent.Builder
+
+    fun settingsComponentBuilder(): SettingsComponent.Builder
 
 }
 
-@Module(subcomponents = [BrowserComponent::class])
+@Module(subcomponents = [BrowserComponent::class, SettingsComponent::class])
 internal class Submodules
