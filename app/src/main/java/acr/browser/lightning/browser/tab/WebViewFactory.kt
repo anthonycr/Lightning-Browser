@@ -1,8 +1,8 @@
 package acr.browser.lightning.browser.tab
 
-import acr.browser.lightning.browser.di.IncognitoMode
 import acr.browser.lightning.browser.view.CompositeTouchListener
 import acr.browser.lightning.browser.view.RenderingMode
+import acr.browser.lightning.di.IncognitoMode
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import android.annotation.SuppressLint

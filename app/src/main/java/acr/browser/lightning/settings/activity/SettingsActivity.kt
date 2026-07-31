@@ -4,9 +4,9 @@
 package acr.browser.lightning.settings.activity
 
 import acr.browser.lightning.ThemableActivity
-import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.compose.BrowserTheme
 import acr.browser.lightning.device.BuildInfo
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.settings.SettingsNavigation
 import acr.browser.lightning.settings.SettingsScreen
 import acr.browser.lightning.settings.screens.AboutSettingsScreen

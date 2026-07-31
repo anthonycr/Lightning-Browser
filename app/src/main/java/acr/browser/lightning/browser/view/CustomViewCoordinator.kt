@@ -1,6 +1,6 @@
 package acr.browser.lightning.browser.view
 
-import acr.browser.lightning.browser.di.CustomFrame
+import acr.browser.lightning.di.CustomFrame
 import android.view.View
 import android.widget.FrameLayout
 import javax.inject.Inject

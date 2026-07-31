@@ -1,10 +1,10 @@
 package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.SuggestionsClient
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.SearchSuggestion
+import acr.browser.lightning.di.SuggestionsClient
 import acr.browser.lightning.extensions.preferredLocale
 import acr.browser.lightning.log.Logger
 import android.app.Application

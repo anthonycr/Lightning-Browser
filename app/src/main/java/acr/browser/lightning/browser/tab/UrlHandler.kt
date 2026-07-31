@@ -2,8 +2,8 @@ package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.IncognitoMode
 import acr.browser.lightning.constant.FILE
+import acr.browser.lightning.di.IncognitoMode
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.IntentUtils

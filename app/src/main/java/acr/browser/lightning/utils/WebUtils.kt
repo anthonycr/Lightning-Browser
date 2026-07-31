@@ -1,10 +1,10 @@
 package acr.browser.lightning.utils
 
-import acr.browser.lightning.browser.di.FaviconCacheDir
-import acr.browser.lightning.browser.di.GeneratedHtmlDir
-import acr.browser.lightning.browser.di.PreviewCacheDir
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.history.HistoryRepository
+import acr.browser.lightning.di.FaviconCacheDir
+import acr.browser.lightning.di.GeneratedHtmlDir
+import acr.browser.lightning.di.PreviewCacheDir
 import android.app.Activity
 import android.app.Application
 import android.webkit.CookieManager

@@ -1,9 +1,9 @@
 package acr.browser.lightning.preview
 
-import acr.browser.lightning.browser.di.BrowserScope
-import acr.browser.lightning.browser.di.PreviewCacheDir
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
+import acr.browser.lightning.di.BrowserScope
+import acr.browser.lightning.di.PreviewCacheDir
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.ids.ViewIdGenerator
 import acr.browser.lightning.log.Logger

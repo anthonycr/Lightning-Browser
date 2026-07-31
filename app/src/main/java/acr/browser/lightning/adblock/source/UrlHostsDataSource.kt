@@ -1,8 +1,8 @@
 package acr.browser.lightning.adblock.source
 
 import acr.browser.lightning.adblock.parser.HostsFileParser
-import acr.browser.lightning.browser.di.HostsClient
 import acr.browser.lightning.concurrency.CoroutineDispatchers
+import acr.browser.lightning.di.HostsClient
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.useragent.UserAgentProvider
 import dagger.assisted.Assisted

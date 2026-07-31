@@ -1,11 +1,11 @@
 package acr.browser.lightning.download
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.NoCacheClient
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
+import acr.browser.lightning.di.NoCacheClient
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.utils.FileUtils

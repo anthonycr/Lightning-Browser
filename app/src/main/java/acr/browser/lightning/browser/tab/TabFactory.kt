@@ -1,9 +1,9 @@
 package acr.browser.lightning.browser.tab
 
-import acr.browser.lightning.browser.di.FaviconCacheDir
-import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.concurrency.TabCoroutineScope
+import acr.browser.lightning.di.FaviconCacheDir
+import acr.browser.lightning.di.GeneratedHtmlDir
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application
 import android.webkit.WebView

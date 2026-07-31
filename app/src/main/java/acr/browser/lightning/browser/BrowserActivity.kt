@@ -1,12 +1,12 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.ThemableActivity
-import acr.browser.lightning.browser.di.injector
 import acr.browser.lightning.browser.keys.KeyEventAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.TabPager
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.compose.StateProvider
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.search.SuggestionsModel
 import android.annotation.SuppressLint
 import android.content.Intent

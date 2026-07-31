@@ -1,12 +1,12 @@
 package acr.browser.lightning.html.history
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.compose.toRgbHexString
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.history.HistoryRepository
+import acr.browser.lightning.di.GeneratedHtmlDir
 import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.ListPageReader
 import acr.browser.lightning.html.jsoup.andBuild

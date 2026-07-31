@@ -1,9 +1,9 @@
 package acr.browser.lightning.browser.tab
 
-import acr.browser.lightning.browser.di.BrowserFrame
-import acr.browser.lightning.browser.di.BrowserScope
 import acr.browser.lightning.browser.view.WebViewLongPressHandler
 import acr.browser.lightning.browser.view.targetUrl.LongPress
+import acr.browser.lightning.di.BrowserFrame
+import acr.browser.lightning.di.BrowserScope
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.FrameLayout

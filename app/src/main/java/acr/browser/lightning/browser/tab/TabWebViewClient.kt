@@ -3,11 +3,11 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
-import acr.browser.lightning.browser.di.FaviconCacheDir
-import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.databinding.DialogAuthRequestBinding
 import acr.browser.lightning.databinding.DialogSslWarningBinding
+import acr.browser.lightning.di.FaviconCacheDir
+import acr.browser.lightning.di.GeneratedHtmlDir
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.js.TextReflow
 import acr.browser.lightning.log.Logger

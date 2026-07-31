@@ -1,6 +1,6 @@
 @file:JvmName("Injector")
 
-package acr.browser.lightning.browser.di
+package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp
 import android.content.Context

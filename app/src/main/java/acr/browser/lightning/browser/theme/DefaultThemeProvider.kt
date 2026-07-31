@@ -1,8 +1,8 @@
 package acr.browser.lightning.browser.theme
 
 import acr.browser.lightning.AppTheme
-import acr.browser.lightning.browser.di.IncognitoMode
 import acr.browser.lightning.compose.asColorScheme
+import acr.browser.lightning.di.IncognitoMode
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import android.app.Application
 import android.content.res.Configuration

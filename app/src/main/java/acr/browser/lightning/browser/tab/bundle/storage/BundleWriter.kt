@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.tab.bundle.storage
 
-import acr.browser.lightning.browser.di.FilesDir
 import acr.browser.lightning.concurrency.CoroutineDispatchers
+import acr.browser.lightning.di.FilesDir
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import acr.browser.lightning.utils.Utils
