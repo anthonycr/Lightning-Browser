@@ -1,6 +1,5 @@
-package acr.browser.lightning.compose
+package acr.browser.lightning.concurrency
 
-import acr.browser.lightning.concurrency.AppCoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

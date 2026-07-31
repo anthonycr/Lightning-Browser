@@ -1,7 +1,7 @@
 package acr.browser.lightning.settings.framework
 
 import acr.browser.lightning.browser.StatusBar
-import acr.browser.lightning.compose.StateProvider
+import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.settings.SettingsBottomSheetChooser
 import acr.browser.lightning.settings.SettingsBottomSheetInput
 import acr.browser.lightning.settings.SettingsBottomSheetTextSizeChooser

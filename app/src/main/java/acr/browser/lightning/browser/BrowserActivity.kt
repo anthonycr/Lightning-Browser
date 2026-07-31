@@ -5,7 +5,7 @@ import acr.browser.lightning.browser.keys.KeyEventAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.TabPager
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.compose.StateProvider
+import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.search.SuggestionsModel
 import android.annotation.SuppressLint

@@ -7,11 +7,11 @@ import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.tab.DefaultTabTitle
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.compose.DeferredStateProvider
-import acr.browser.lightning.compose.StateProvider
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatcherProvider
 import acr.browser.lightning.concurrency.CoroutineDispatchers
+import acr.browser.lightning.concurrency.DeferredStateProvider
+import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
 import acr.browser.lightning.favicon.FaviconCleanup

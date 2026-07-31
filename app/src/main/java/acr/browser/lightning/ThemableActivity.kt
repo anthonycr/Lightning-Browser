@@ -1,6 +1,6 @@
 package acr.browser.lightning
 
-import acr.browser.lightning.compose.StateProvider
+import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.theme.ThemeProvider
 import android.content.res.Configuration
 import android.os.Bundle

@@ -1,7 +1,7 @@
 package acr.browser.lightning.settings.screens
 
 import acr.browser.lightning.R
-import acr.browser.lightning.compose.StateProvider
+import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.preference.DeveloperPreferenceStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.SettingsSnackBarState

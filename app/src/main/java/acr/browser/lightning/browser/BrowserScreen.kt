@@ -8,7 +8,7 @@ import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.compose.BrowserTheme
-import acr.browser.lightning.compose.StateProvider
+import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
