@@ -1,7 +1,7 @@
 package acr.browser.lightning.settings
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.StatusBar
+import acr.browser.lightning.compose.StatusBar
 import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType

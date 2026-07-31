@@ -1,7 +1,6 @@
 package acr.browser.lightning.browser.compose
 
 import acr.browser.lightning.browser.BrowserComposeState
-import acr.browser.lightning.browser.BrowserStatusBar
 import acr.browser.lightning.concurrency.StateProvider
 import android.widget.FrameLayout
 import androidx.compose.foundation.background
