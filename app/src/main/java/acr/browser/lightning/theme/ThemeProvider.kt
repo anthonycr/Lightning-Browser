@@ -1,4 +1,4 @@
-package acr.browser.lightning.browser.theme
+package acr.browser.lightning.theme
 
 import acr.browser.lightning.AppTheme
 import androidx.compose.material3.ColorScheme

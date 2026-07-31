@@ -6,8 +6,6 @@ import acr.browser.lightning.adblock.source.AssetsHostsDataSource
 import acr.browser.lightning.adblock.source.HostsDataSource
 import acr.browser.lightning.adblock.source.HostsDataSourceProvider
 import acr.browser.lightning.adblock.source.PreferencesHostsDataSourceProvider
-import acr.browser.lightning.browser.theme.DefaultThemeProvider
-import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.database.adblock.HostsDatabase
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.database.allowlist.AdBlockAllowListDatabase
@@ -28,6 +26,8 @@ import acr.browser.lightning.settings.adblock.DefaultHostsFileUpdater
 import acr.browser.lightning.settings.adblock.HostsFileUpdater
 import acr.browser.lightning.ssl.SessionSslWarningPreferences
 import acr.browser.lightning.ssl.SslWarningPreferences
+import acr.browser.lightning.theme.DefaultThemeProvider
+import acr.browser.lightning.theme.ThemeProvider
 import acr.browser.lightning.useragent.DefaultUserAgentProvider
 import acr.browser.lightning.useragent.UserAgentProvider
 import dagger.Binds

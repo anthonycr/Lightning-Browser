@@ -6,7 +6,6 @@ import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.tab.DefaultTabTitle
-import acr.browser.lightning.browser.theme.ThemeProvider
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.compose.DeferredStateProvider
 import acr.browser.lightning.compose.StateProvider
@@ -32,6 +31,7 @@ import acr.browser.lightning.log.NoOpLogger
 import acr.browser.lightning.migration.Cleanup
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.search.suggestions.RequestFactory
+import acr.browser.lightning.theme.ThemeProvider
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.ActivityManager
