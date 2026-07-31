@@ -2,7 +2,6 @@ package acr.browser.lightning.browser
 
 import acr.browser.lightning.R
 import acr.browser.lightning.ThemableActivity
-import acr.browser.lightning.browser.image.LetterImagePainter
 import acr.browser.lightning.browser.menu.MenuSelection
 import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.ui.TabConfiguration
@@ -14,6 +13,7 @@ import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.dialog.DialogItem
+import acr.browser.lightning.graphics.LetterImagePainter
 import acr.browser.lightning.preview.TopCropTransformation
 import acr.browser.lightning.search.SuggestionsModel
 import acr.browser.lightning.ssl.SslCertificateInfo

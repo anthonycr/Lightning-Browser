@@ -1,11 +1,11 @@
 package acr.browser.lightning.favicon
 
 import acr.browser.lightning.R
-import acr.browser.lightning.browser.image.LetterImagePainter
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.di.FaviconCacheDir
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.safeUse
+import acr.browser.lightning.graphics.LetterImagePainter
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.Application

@@ -1,4 +1,4 @@
-package acr.browser.lightning.browser.image
+package acr.browser.lightning.graphics
 
 import acr.browser.lightning.R
 import android.graphics.Canvas
