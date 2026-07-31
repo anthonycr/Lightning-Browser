@@ -2,28 +2,37 @@ package acr.browser.lightning.browser
 
 import acr.browser.lightning.R
 import acr.browser.lightning.ThemableActivity
+import acr.browser.lightning.browser.compose.CustomView
+import acr.browser.lightning.browser.compose.DesktopTabShape
+import acr.browser.lightning.browser.compose.TabCountButton
+import acr.browser.lightning.browser.compose.sheets.BookmarkAddOrEditSheet
+import acr.browser.lightning.browser.compose.sheets.BookmarkFolderRenameSheet
+import acr.browser.lightning.browser.compose.sheets.BookmarksBottomSheet
+import acr.browser.lightning.browser.compose.sheets.CloseBrowserSheet
+import acr.browser.lightning.browser.compose.sheets.DownloadOptionsSheet
+import acr.browser.lightning.browser.compose.sheets.LocalFileBlockedSheet
+import acr.browser.lightning.browser.compose.sheets.LongPressBookmarkLinkSheet
+import acr.browser.lightning.browser.compose.sheets.LongPressFolderLinkSheet
+import acr.browser.lightning.browser.compose.sheets.LongPressHistoryLinkSheet
+import acr.browser.lightning.browser.compose.sheets.LongPressImageLinkSheet
+import acr.browser.lightning.browser.compose.sheets.LongPressLinkSheet
+import acr.browser.lightning.browser.compose.sheets.PageToolsSheet
+import acr.browser.lightning.browser.compose.sheets.SslInfoSheet
 import acr.browser.lightning.browser.menu.MenuSelection
 import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.browser.view.targetUrl.LongPress
 import acr.browser.lightning.compose.BrowserTheme
 import acr.browser.lightning.concurrency.StateProvider
-import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
-import acr.browser.lightning.dialog.DialogItem
-import acr.browser.lightning.graphics.LetterImagePainter
 import acr.browser.lightning.preview.TopCropTransformation
 import acr.browser.lightning.search.SuggestionsModel
-import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
-import android.text.format.DateFormat
 import android.widget.FrameLayout
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,21 +66,15 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
@@ -85,7 +88,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -102,50 +104,30 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.zIndex
-import coil3.Canvas
-import coil3.Image
 import coil3.compose.AsyncImage
-import coil3.compose.ImagePainter
 import coil3.request.ImageRequest
 import coil3.request.transformations
 import coil3.transform.RoundedCornersTransformation
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.tan
-import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun ThemableActivity.BrowserScreen(
@@ -210,36 +192,6 @@ fun ThemableActivity.BrowserScreen(
 
                 null -> Unit
             }
-        }
-    }
-}
-
-@Composable
-fun CustomView(
-    blackStatusStateProvider: StateProvider<Boolean>,
-    browserViewState: BrowserComposeState,
-    frameLayout: FrameLayout,
-    snackbarHostState: SnackbarHostState,
-) {
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { innerPadding ->
-        BrowserStatusBar(
-            browserComposeState = browserViewState,
-            blackStatusStateProvider = blackStatusStateProvider,
-        )
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            AndroidView(
-                factory = { frameLayout },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surfaceDim)
-                    .weight(1f, false),
-            )
         }
     }
 }
@@ -819,453 +771,6 @@ fun BrowserDialogs(
 }
 
 @Composable
-fun DownloadOptionsSheet(
-    presenter: BrowserPresenter,
-    onClick: (BrowserContract.DownloadOptionEvent) -> Unit
-) {
-    ListItemSheet(
-        title = stringResource(R.string.action_downloads),
-        items = listOf(
-            DialogItem(title = R.string.dialog_delete_all_downloads) {
-                onClick(BrowserContract.DownloadOptionEvent.DELETE_ALL)
-            },
-            DialogItem(title = R.string.dialog_delete_download) {
-                onClick(BrowserContract.DownloadOptionEvent.DELETE)
-            },
-        ),
-        presenter = presenter
-    )
-}
-
-@Composable
-fun CloseBrowserSheet(
-    presenter: BrowserPresenter,
-    onClick: (BrowserContract.CloseTabEvent) -> Unit
-) {
-    ListItemSheet(
-        title = stringResource(R.string.dialog_title_close_browser),
-        items = listOf(
-            DialogItem(title = R.string.close_tab) {
-                onClick(BrowserContract.CloseTabEvent.CLOSE_CURRENT)
-            },
-            DialogItem(title = R.string.close_other_tabs) {
-                onClick(BrowserContract.CloseTabEvent.CLOSE_OTHERS)
-            },
-            DialogItem(title = R.string.close_all_tabs) {
-                onClick(BrowserContract.CloseTabEvent.CLOSE_ALL)
-            },
-        ),
-        presenter = presenter
-    )
-}
-
-@Composable
-fun LongPressImageLinkSheet(
-    browserViewState: BrowserComposeState,
-    longPress: LongPress,
-    presenter: BrowserPresenter,
-    onClick: (BrowserContract.ImageLongPressEvent) -> Unit
-) {
-    ListItemSheet(
-        title = longPress.targetUrl?.replace(HTTP, "").orEmpty(),
-        items = listOf(
-            DialogItem(title = R.string.dialog_open_new_tab) {
-                onClick(BrowserContract.ImageLongPressEvent.NEW_TAB)
-            },
-            DialogItem(title = R.string.dialog_open_background_tab) {
-                onClick(BrowserContract.ImageLongPressEvent.BACKGROUND_TAB)
-            },
-            DialogItem(
-                title = R.string.dialog_open_incognito_tab,
-                isConditionMet = !browserViewState.isIncognito
-            ) {
-                onClick(BrowserContract.ImageLongPressEvent.INCOGNITO_TAB)
-            },
-            DialogItem(title = R.string.action_share) {
-                onClick(BrowserContract.ImageLongPressEvent.SHARE)
-            },
-            DialogItem(title = R.string.dialog_copy_link) {
-                onClick(BrowserContract.ImageLongPressEvent.COPY_LINK)
-            },
-            DialogItem(title = R.string.dialog_download_image) {
-                onClick(BrowserContract.ImageLongPressEvent.DOWNLOAD)
-            }
-        ),
-        presenter = presenter
-    )
-}
-
-@Composable
-fun LongPressLinkSheet(
-    browserViewState: BrowserComposeState,
-    longPress: LongPress,
-    presenter: BrowserPresenter,
-    onClick: (BrowserContract.LinkLongPressEvent) -> Unit
-) {
-    ListItemSheet(
-        title = longPress.targetUrl?.replace(HTTP, "").orEmpty(),
-        items = listOf(
-            DialogItem(title = R.string.dialog_open_new_tab) {
-                onClick(BrowserContract.LinkLongPressEvent.NEW_TAB)
-            },
-            DialogItem(title = R.string.dialog_open_background_tab) {
-                onClick(BrowserContract.LinkLongPressEvent.BACKGROUND_TAB)
-            },
-            DialogItem(
-                title = R.string.dialog_open_incognito_tab,
-                isConditionMet = !browserViewState.isIncognito
-            ) {
-                onClick(BrowserContract.LinkLongPressEvent.INCOGNITO_TAB)
-            },
-            DialogItem(title = R.string.action_share) {
-                onClick(BrowserContract.LinkLongPressEvent.SHARE)
-            },
-            DialogItem(title = R.string.dialog_copy_link) {
-                onClick(BrowserContract.LinkLongPressEvent.COPY_LINK)
-            }
-        ),
-        presenter = presenter
-    )
-}
-
-@Composable
-fun LongPressFolderLinkSheet(
-    presenter: BrowserPresenter,
-    onClick: (BrowserContract.FolderOptionEvent) -> Unit
-) {
-    ListItemSheet(
-        title = stringResource(R.string.action_folder),
-        items = listOf(
-            DialogItem(title = R.string.dialog_rename_folder) {
-                onClick(BrowserContract.FolderOptionEvent.RENAME)
-            },
-            DialogItem(title = R.string.dialog_remove_folder) {
-                onClick(BrowserContract.FolderOptionEvent.REMOVE)
-            }
-        ),
-        presenter = presenter
-    )
-}
-
-@Composable
-fun LongPressBookmarkLinkSheet(
-    browserViewState: BrowserComposeState,
-    presenter: BrowserPresenter,
-    onClick: (BrowserContract.BookmarkOptionEvent) -> Unit
-) {
-    ListItemSheet(
-        title = stringResource(R.string.action_bookmarks),
-        items = listOf(
-            DialogItem(title = R.string.dialog_open_new_tab) {
-                onClick(BrowserContract.BookmarkOptionEvent.NEW_TAB)
-            },
-            DialogItem(title = R.string.dialog_open_background_tab) {
-                onClick(BrowserContract.BookmarkOptionEvent.BACKGROUND_TAB)
-            },
-            DialogItem(
-                title = R.string.dialog_open_incognito_tab,
-                isConditionMet = !browserViewState.isIncognito
-            ) {
-                onClick(BrowserContract.BookmarkOptionEvent.INCOGNITO_TAB)
-            },
-            DialogItem(title = R.string.action_share) {
-                onClick(BrowserContract.BookmarkOptionEvent.SHARE)
-            },
-            DialogItem(title = R.string.dialog_copy_link) {
-                onClick(BrowserContract.BookmarkOptionEvent.COPY_LINK)
-            },
-            DialogItem(title = R.string.dialog_remove_bookmark) {
-                onClick(BrowserContract.BookmarkOptionEvent.REMOVE)
-            },
-            DialogItem(title = R.string.dialog_edit_bookmark) {
-                onClick(BrowserContract.BookmarkOptionEvent.EDIT)
-            }
-        ),
-        presenter = presenter
-    )
-}
-
-@Composable
-fun LongPressHistoryLinkSheet(
-    browserViewState: BrowserComposeState,
-    presenter: BrowserPresenter,
-    onClick: (BrowserContract.HistoryOptionEvent) -> Unit
-) {
-    ListItemSheet(
-        title = stringResource(R.string.action_history),
-        items = listOf(
-            DialogItem(title = R.string.dialog_open_new_tab) {
-                onClick(BrowserContract.HistoryOptionEvent.NEW_TAB)
-            },
-            DialogItem(title = R.string.dialog_open_background_tab) {
-                onClick(BrowserContract.HistoryOptionEvent.BACKGROUND_TAB)
-            },
-            DialogItem(
-                title = R.string.dialog_open_incognito_tab,
-                isConditionMet = !browserViewState.isIncognito
-            ) {
-                onClick(BrowserContract.HistoryOptionEvent.INCOGNITO_TAB)
-            },
-            DialogItem(title = R.string.action_share) {
-                onClick(BrowserContract.HistoryOptionEvent.SHARE)
-            },
-            DialogItem(title = R.string.dialog_copy_link) {
-                onClick(BrowserContract.HistoryOptionEvent.COPY_LINK)
-            },
-            DialogItem(title = R.string.dialog_remove_from_history) {
-                onClick(BrowserContract.HistoryOptionEvent.REMOVE)
-            }
-        ),
-        presenter = presenter
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ListItemSheet(
-    title: String,
-    items: List<DialogItem>,
-    presenter: BrowserPresenter,
-) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    ModalBottomSheet(
-        sheetState = sheetState,
-        dragHandle = {},
-        onDismissRequest = { presenter.onDialogDismissed() }
-    ) {
-        Row(
-            modifier = Modifier
-                .height(64.dp)
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-        Column {
-            items.forEach { item ->
-                if (item.isConditionMet) {
-                    Row(
-                        modifier = Modifier
-                            .height(56.dp)
-                            .fillMaxWidth()
-                            .clickable(onClick = { item.onClick() }),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        item.icon?.let { icon ->
-                            Icon(
-                                modifier = Modifier.padding(start = 16.dp),
-                                painter = painterResource(icon),
-                                contentDescription = "test",
-                                tint = item.colorTint?.let {
-                                    colorResource(it)
-                                } ?: LocalContentColor.current
-                            )
-                        }
-                        Text(
-                            modifier = Modifier
-                                .padding(16.dp),
-                            text = stringResource(item.title),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PageToolsSheet(
-    areAdsAllowed: Boolean,
-    shouldShowAdBlockOption: Boolean,
-    presenter: BrowserPresenter,
-) {
-    ListItemSheet(
-        title = stringResource(R.string.dialog_tools_title),
-        items = listOf(
-            DialogItem(
-                icon = R.drawable.ic_action_desktop,
-                title = R.string.dialog_toggle_desktop,
-                isConditionMet = true,
-                onClick = { presenter.onToggleDesktopAgent() }
-            ),
-            DialogItem(
-                icon = R.drawable.ic_block,
-                colorTint = if (areAdsAllowed) {
-                    R.color.error_red
-                } else {
-                    null
-                },
-                title = if (areAdsAllowed) {
-                    R.string.dialog_adblock_enable_for_site
-                } else {
-                    R.string.dialog_adblock_disable_for_site
-                },
-                isConditionMet = shouldShowAdBlockOption,
-                onClick = { presenter.onToggleAdBlocking() }
-            )
-        ),
-        presenter = presenter
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LocalFileBlockedSheet(
-    onConfirmed: (Boolean) -> Unit,
-) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
-
-    ModalBottomSheet(
-        onDismissRequest = { onConfirmed(false) },
-        dragHandle = {},
-        sheetState = sheetState
-    ) {
-        Row(
-            modifier = Modifier.height(64.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.title_warning),
-                modifier = Modifier.padding(horizontal = 16.dp),
-                style = MaterialTheme.typography.titleLarge
-            )
-        }
-        Text(
-            text = stringResource(R.string.message_blocked_local),
-            modifier = Modifier.padding(horizontal = 16.dp),
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Button(
-                modifier = Modifier
-                    .padding(end = 16.dp),
-                onClick = {
-                    scope.launch {
-                        delay(500.milliseconds)
-                        sheetState.hide()
-                        onConfirmed(false)
-                    }
-                }
-            ) {
-                Text(stringResource(R.string.action_cancel))
-            }
-            Button(
-                modifier = Modifier
-                    .padding(end = 16.dp),
-                onClick = {
-                    scope.launch {
-                        delay(500.milliseconds)
-                        sheetState.hide()
-                        onConfirmed(true)
-                    }
-                }
-            ) {
-                Text(stringResource(R.string.action_open))
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SslInfoSheet(
-    sslCertificateInfo: SslCertificateInfo,
-    presenter: BrowserPresenter,
-) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    ModalBottomSheet(
-        sheetState = sheetState,
-        dragHandle = {},
-        onDismissRequest = { presenter.onDialogDismissed() }
-    ) {
-        Row(
-            modifier = Modifier
-                .height(64.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(56.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = when (sslCertificateInfo.sslState) {
-                        is SslState.Invalid -> painterResource(R.drawable.ic_unsecured)
-                        SslState.None -> error("This icon shouldn't show")
-                        SslState.Valid -> painterResource(R.drawable.ic_secured)
-                    },
-                    tint = null,
-                    contentDescription = "test"
-                )
-            }
-            Text(
-                text = sslCertificateInfo.issuedToCommonName,
-                style = MaterialTheme.typography.titleLarge
-            )
-        }
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            Text(
-                text = stringResource(R.string.ssl_info_issued_by),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Text(
-                text = sslCertificateInfo.issuedByCommonName,
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.ssl_info_issued_to),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Text(
-                text = sslCertificateInfo.issuedToOrganizationName?.takeIf { it.isNotBlank() }
-                    ?: sslCertificateInfo.issuedToCommonName,
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            val dateFormat = with(LocalContext.current) {
-                remember { DateFormat.getDateFormat(this) }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.ssl_info_issued_on),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Text(
-                text = dateFormat.format(sslCertificateInfo.issueDate),
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.ssl_info_expires_on),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Text(
-                text = dateFormat.format(sslCertificateInfo.expireDate),
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-    }
-}
-
-@Composable
 fun BookmarkIcon(
     isBookmarked: Boolean,
 ) {
@@ -1411,7 +916,7 @@ fun TopTabDesktopNavigationBar(
                             } else {
                                 MaterialTheme.colorScheme.surfaceVariant
                             },
-                            shape = TabBackground
+                            shape = DesktopTabShape
                         )
                         .padding(horizontal = 15.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -1951,73 +1456,6 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
     }
 }
 
-@Composable
-fun TabCountButton(browserViewState: BrowserComposeState, onClick: () -> Unit) {
-    IconButton(onClick = onClick) {
-        val color = MaterialTheme.colorScheme.onSurface
-        val textMeasurer = rememberTextMeasurer()
-        val textStyle = MaterialTheme.typography.bodyMedium.copy(
-            color = color,
-            fontWeight = FontWeight.Bold
-        )
-        Canvas(Modifier.size(24.dp)) {
-            drawRoundRect(
-                color = color,
-                cornerRadius = CornerRadius(6.dp.toPx()),
-                style = Stroke(width = 2.dp.toPx()),
-            )
-            val textLayout = textMeasurer.measure(
-                style = textStyle,
-                text = browserViewState.tabCountText
-            )
-            val textWidth = textLayout.size.width
-            val textHeight = textLayout.size.height
-            drawText(
-                textMeasurer = textMeasurer,
-                text = browserViewState.tabCountText,
-                style = textStyle,
-                topLeft = Offset(
-                    12.dp.toPx() - textWidth / 2,
-                    12.dp.toPx() - textHeight / 2
-                )
-            )
-        }
-    }
-}
-
-class LetterImage(
-    private val letterImagePainter: LetterImagePainter,
-    override val width: Int,
-    override val height: Int,
-) : Image {
-
-    override val size: Long = 0
-    override val shareable: Boolean = false
-
-    override fun draw(canvas: Canvas) {
-        letterImagePainter.drawOn(canvas)
-    }
-
-    companion object {
-        @Composable
-        fun create(
-            density: Density,
-            character: Char,
-            size: Int,
-        ) = LetterImage(
-            letterImagePainter = LetterImagePainter(
-                textSize = with(density) { 14.sp.toPx() },
-                radius = with(density) { 6.dp.toPx() },
-                character = character,
-                size = size,
-                color = colorResource(LetterImagePainter.colorForCharacter(character).resource).toArgb()
-            ),
-            width = size,
-            height = size,
-        )
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabsBottomSheet(
@@ -2226,330 +1664,4 @@ fun Modifier.optionalBorder(apply: Boolean): Modifier {
     return this
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BookmarksBottomSheet(
-    browserViewState: BrowserComposeState,
-    presenter: BrowserPresenter,
-) {
-    if (!browserViewState.openBookmarks) return
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    ModalBottomSheet(
-        sheetState = sheetState,
-        dragHandle = {},
-        onDismissRequest = { presenter.onBookmarkDrawerMoved(false) }
-    ) {
-        Row(
-            modifier = Modifier
-                .height(64.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                modifier = Modifier
-                    .size(56.dp),
-                onClick = { presenter.onBookmarkMenuClick() }) {
-                Icon(
-                    painter = if (browserViewState.isRootFolder) {
-                        painterResource(R.drawable.ic_action_star)
-                    } else {
-                        painterResource(R.drawable.ic_action_back)
-                    },
-                    contentDescription = "test"
-                )
-            }
-            Text(
-                text = stringResource(R.string.action_bookmarks),
-                style = MaterialTheme.typography.titleLarge
-            )
-        }
-        LazyColumn {
-            itemsIndexed(
-                items = browserViewState.bookmarks,
-                contentType = { _, item -> item.icon is BrowserViewState.BookmarkListItem.Icon.Folder },
-            ) { index, bookmark ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .animateItem(
-                            fadeInSpec = null,
-                            fadeOutSpec = null
-                        )
-                        .combinedClickable(
-                            onClick = { presenter.onBookmarkClick(index) },
-                            onLongClick = { presenter.onBookmarkLongClick(index) }
-                        )
-                        .height(56.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    when (val icon = bookmark.icon) {
-                        BrowserViewState.BookmarkListItem.Icon.Folder -> Icon(
-                            modifier = Modifier
-                                .size(56.dp)
-                                .padding(horizontal = 16.dp),
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            painter = painterResource(R.drawable.ic_folder),
-                            contentDescription = "test"
-                        )
-
-                        is BrowserViewState.BookmarkListItem.Icon.Image -> {
-                            val placeholder = ImagePainter(
-                                with(LocalDensity.current) {
-                                    LetterImage.create(
-                                        density = this,
-                                        character = bookmark.title.first(),
-                                        size = 24.dp.toPx().toInt(),
-                                    )
-                                }
-                            )
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(icon.path)
-                                    .build(),
-                                placeholder = placeholder,
-                                fallback = placeholder,
-                                error = placeholder,
-                                contentDescription = "test",
-                                contentScale = ContentScale.Fit,
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .padding(horizontal = 16.dp),
-                            )
-                        }
-                    }
-                    Text(
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .fillMaxWidth()
-                            .weight(1f, false),
-                        style = MaterialTheme.typography.bodyLarge,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        text = bookmark.title
-                    )
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BookmarkAddOrEditSheet(
-    edit: Boolean,
-    title: String,
-    url: String,
-    folder: String,
-    folders: List<String>,
-    presenter: BrowserPresenter,
-    onConfirmed: (title: String, url: String, folder: String) -> Unit,
-) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
-
-    ModalBottomSheet(
-        onDismissRequest = { presenter.onDialogDismissed() },
-        dragHandle = {},
-        sheetState = sheetState
-    ) {
-        Row(
-            modifier = Modifier.height(64.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = if (edit) {
-                    stringResource(R.string.title_edit_bookmark)
-                } else {
-                    stringResource(R.string.action_add_bookmark)
-                },
-                modifier = Modifier.padding(horizontal = 16.dp),
-                style = MaterialTheme.typography.titleLarge
-            )
-        }
-        val titleTextFieldState = rememberTextFieldState(title)
-        TextField(
-            state = titleTextFieldState,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
-            label = { Text(stringResource(R.string.hint_title)) },
-            placeholder = { Text(stringResource(R.string.hint_title)) }
-        )
-
-        val urlTextFieldState = rememberTextFieldState(url)
-        TextField(
-            state = urlTextFieldState,
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 16.dp)
-                .fillMaxWidth(),
-            label = { Text(stringResource(R.string.hint_url)) },
-            placeholder = { Text(stringResource(R.string.hint_url)) }
-        )
-
-        var expanded by remember { mutableStateOf(false) }
-        var selectedFolder by remember { mutableStateOf(folder) }
-
-        ExposedDropdownMenuBox(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
-            var folderState by remember { mutableStateOf(folders) }
-
-            TextField(
-                value = selectedFolder,
-                onValueChange = { newValue ->
-                    selectedFolder = newValue
-                    folderState = folders.filter { it.startsWith(selectedFolder) }.take(5)
-                },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                },
-                label = { Text(stringResource(R.string.folder)) },
-                placeholder = { Text(stringResource(R.string.folder)) },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable)
-            )
-
-            if (folderState.isNotEmpty()) {
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    folderState.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option, color = MaterialTheme.colorScheme.onSurface) },
-                            onClick = {
-                                selectedFolder = option
-                                expanded = false
-                            },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                        )
-                    }
-                }
-            }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            horizontalArrangement = Arrangement.End
-        ) {
-            if (!edit) {
-                Button(
-                    modifier = Modifier
-                        .padding(end = 16.dp),
-                    onClick = {
-                        scope.launch {
-                            delay(500.milliseconds)
-                            sheetState.hide()
-                            presenter.onDialogDismissed()
-                        }
-                    }
-                ) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            }
-            Button(
-                modifier = Modifier
-                    .padding(end = 16.dp),
-                onClick = {
-                    scope.launch {
-                        delay(500.milliseconds)
-                        sheetState.hide()
-                        onConfirmed(
-                            titleTextFieldState.text.toString(),
-                            urlTextFieldState.text.toString(),
-                            selectedFolder
-                        )
-                    }
-                }
-            ) {
-                Text(stringResource(R.string.action_ok))
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BookmarkFolderRenameSheet(
-    oldTitle: String,
-    presenter: BrowserPresenter,
-    onSelected: (CharSequence) -> Unit
-) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
-
-    ModalBottomSheet(
-        onDismissRequest = { presenter.onDialogDismissed() },
-        dragHandle = {},
-        sheetState = sheetState
-    ) {
-        Row(
-            modifier = Modifier.height(64.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.title_rename_folder),
-                modifier = Modifier.padding(start = 16.dp),
-                style = MaterialTheme.typography.titleLarge
-            )
-        }
-        val textFieldState = rememberTextFieldState(oldTitle)
-        TextField(
-            textFieldState,
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                .fillMaxWidth(),
-            placeholder = { Text(stringResource(R.string.hint_title)) }
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Button(
-                modifier = Modifier
-                    .padding(end = 16.dp),
-                onClick = {
-                    scope.launch {
-                        delay(500.milliseconds)
-                        sheetState.hide()
-                        onSelected(textFieldState.text)
-                    }
-                }
-            ) {
-                Text(stringResource(R.string.action_ok))
-            }
-        }
-    }
-}
-
-
-val TabBackground: Shape = object : Shape {
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density
-    ): Outline {
-        val radians = Math.PI / 3
-        val base = (size.height / tan(radians)).toInt()
-
-        return Outline.Generic(
-            Path().apply {
-                reset()
-                moveTo(0f, size.height)
-                lineTo(size.width, size.height)
-                lineTo((size.width - base), 0f)
-                lineTo(base.toFloat(), 0f)
-                close()
-            }
-        )
-    }
-
-}
 
