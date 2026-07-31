@@ -4,7 +4,7 @@ import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
 
 /**
- * A bundle store implementation that no-ops for for incognito mode.
+ * A bundle store implementation that no-ops for incognito mode.
  */
 object IncognitoBundleStore : BundleStore {
     override suspend fun save(tabs: List<TabModel>) = Unit
