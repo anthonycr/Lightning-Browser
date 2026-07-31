@@ -1,5 +1,3 @@
-@file:JvmName("ActivityExtensions")
-
 package acr.browser.lightning.extensions
 
 import android.app.Activity

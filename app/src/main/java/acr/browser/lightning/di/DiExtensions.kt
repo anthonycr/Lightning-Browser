@@ -1,5 +1,3 @@
-@file:JvmName("Injector")
-
 package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp

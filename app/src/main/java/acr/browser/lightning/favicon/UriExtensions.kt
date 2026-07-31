@@ -1,5 +1,3 @@
-@file:JvmName("FaviconUtils")
-
 package acr.browser.lightning.favicon
 
 import android.net.Uri

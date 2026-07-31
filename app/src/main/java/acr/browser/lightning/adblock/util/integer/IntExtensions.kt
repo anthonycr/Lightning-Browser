@@ -1,5 +1,3 @@
-@file:JvmName("IntUtils")
-
 package acr.browser.lightning.adblock.util.integer
 
 /**

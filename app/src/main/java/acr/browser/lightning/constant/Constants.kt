@@ -1,8 +1,6 @@
 /*
  * Copyright 2014 A.C.R. Development
  */
-@file:JvmName("Constants")
-
 package acr.browser.lightning.constant
 
 // Hardcoded user agents
