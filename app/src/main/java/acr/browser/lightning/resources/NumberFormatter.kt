@@ -17,6 +17,9 @@ interface NumberFormatter {
 
 }
 
+/**
+ * The default implementation of [NumberFormatter] That delegates to [NumberFormat].
+ */
 class DefaultNumberFormatter @Inject constructor(
     application: Application
 ) : NumberFormatter {
