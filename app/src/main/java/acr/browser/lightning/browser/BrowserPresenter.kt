@@ -5,7 +5,6 @@ import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.data.CookieAdministrator
 import acr.browser.lightning.browser.di.BrowserScope
 import acr.browser.lightning.browser.di.IncognitoMode
-import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.history.HistoryRecord
 import acr.browser.lightning.browser.keys.KeyCombo
 import acr.browser.lightning.browser.menu.MenuSelection
@@ -33,6 +32,7 @@ import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.database.history.HistoryRepository
+import acr.browser.lightning.download.PendingDownload
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory

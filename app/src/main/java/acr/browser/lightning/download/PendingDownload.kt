@@ -1,4 +1,4 @@
-package acr.browser.lightning.browser.download
+package acr.browser.lightning.download
 
 /**
  * Represents a file that will be downloaded.

@@ -1,6 +1,5 @@
 package acr.browser.lightning.browser.tab
 
-import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.browser.view.CustomGestureListener
 import acr.browser.lightning.browser.view.ToggleListener
 import acr.browser.lightning.browser.view.TouchListener
@@ -10,6 +9,7 @@ import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.connectivity.ConnectivityProvider
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
+import acr.browser.lightning.download.PendingDownload
 import acr.browser.lightning.ids.ViewIdGenerator
 import acr.browser.lightning.preview.PreviewModel
 import acr.browser.lightning.ssl.SslCertificateInfo

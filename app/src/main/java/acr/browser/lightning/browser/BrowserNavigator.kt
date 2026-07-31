@@ -3,9 +3,9 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.IncognitoBrowserActivity
 import acr.browser.lightning.browser.cleanup.ExitCleanup
 import acr.browser.lightning.browser.di.IncognitoMode
-import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.download.FileDownloader
+import acr.browser.lightning.download.PendingDownload
 import acr.browser.lightning.extensions.copyToClipboard
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.settings.activity.SettingsActivity

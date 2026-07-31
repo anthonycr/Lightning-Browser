@@ -2,7 +2,6 @@ package acr.browser.lightning.download
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.di.NoCacheClient
-import acr.browser.lightning.browser.download.PendingDownload
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.downloads.DownloadEntry

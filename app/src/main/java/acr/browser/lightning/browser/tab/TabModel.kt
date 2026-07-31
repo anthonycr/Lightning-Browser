@@ -1,6 +1,6 @@
 package acr.browser.lightning.browser.tab
 
-import acr.browser.lightning.browser.download.PendingDownload
+import acr.browser.lightning.download.PendingDownload
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import android.content.Intent
