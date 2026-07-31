@@ -372,7 +372,7 @@ class TabAdapter @AssistedInject constructor(
             ViewConfiguration.get(context).scaledMaximumFlingVelocity.toFloat()
         )
 
-        val touchListener = TouchListener(GestureDetector(context, gestureListener))
+        val touchListener = TouchListener(context, GestureDetector(context, gestureListener))
 
         val toggleListener = object : ToggleListener {
             override fun hideToolbar() {

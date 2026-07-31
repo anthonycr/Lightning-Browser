@@ -8,10 +8,11 @@ import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.ThreadSafeFileProvider
-import acr.browser.lightning.utils.Utils
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.createBitmap
 import androidx.core.net.toUri
 import kotlinx.coroutines.withContext
@@ -37,15 +38,15 @@ class FaviconModel @Inject constructor(
     /**
      * Create the default favicon for a bookmark with the provided [title].
      */
-    fun createDefaultBitmapForTitle(title: String?): Bitmap {
+    fun createDefaultBitmapForTitle(title: String?): Bitmap = with(Density(application)) {
         val firstTitleCharacter = title?.takeIf(String::isNotBlank)?.let { it[0] } ?: '?'
 
         val image = createBitmap(bookmarkIconSize, bookmarkIconSize)
         val canvas = Canvas(image)
 
         val letterImagePainter = LetterImagePainter(
-            textSize = Utils.dpToPx(14f).toFloat(),
-            radius = Utils.dpToPx(6f).toFloat(),
+            textSize = 14.dp.toPx(),
+            radius = 6.dp.toPx(),
             character = firstTitleCharacter,
             size = bookmarkIconSize,
             color = application.color(LetterImagePainter.colorForCharacter(firstTitleCharacter).resource)

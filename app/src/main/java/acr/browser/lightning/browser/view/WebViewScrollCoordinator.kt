@@ -1,10 +1,13 @@
 package acr.browser.lightning.browser.view
 
-import acr.browser.lightning.utils.Utils
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 
 /**
  * Used to notify when the toolbar should show or hide.
@@ -26,8 +29,13 @@ interface ToggleListener {
  * should show or hide.
  */
 class TouchListener(
+    context: Context,
     private val gestureDetector: GestureDetector
 ) : View.OnTouchListener {
+
+    private val scrollUpThreshold = with(Density(context)) {
+        10.dp.toPx().roundToInt()
+    }
 
     private var location: Float = 0f
     private var y: Float = 0f
@@ -51,9 +59,9 @@ class TouchListener(
             location = y
         } else if (action == MotionEvent.ACTION_UP) {
             val distance = y - location
-            if (distance > SCROLL_UP_THRESHOLD && view.scrollY < SCROLL_UP_THRESHOLD) {
+            if (distance > scrollUpThreshold && view.scrollY < scrollUpThreshold) {
                 toggleListener?.showToolbar()
-            } else if (distance < -SCROLL_UP_THRESHOLD) {
+            } else if (distance < -scrollUpThreshold) {
                 toggleListener?.hideToolbar()
             }
             location = 0f
@@ -93,5 +101,3 @@ class CustomGestureListener(
         return super.onFling(e1, e2, velocityX, velocityY)
     }
 }
-
-private val SCROLL_UP_THRESHOLD = Utils.dpToPx(10f)

@@ -3,8 +3,6 @@
  */
 package acr.browser.lightning.utils;
 
-import android.content.res.Resources;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.io.Closeable;
@@ -17,17 +15,6 @@ public final class Utils {
     private static final String TAG = "Utils";
 
     private Utils() {}
-
-    /**
-     * Converts Density Pixels (DP) to Pixels (PX).
-     *
-     * @param dp the number of density pixels to convert.
-     * @return the number of pixels that the conversion generates.
-     */
-    public static int dpToPx(float dp) {
-        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-        return (int) (dp * metrics.density + 0.5f);
-    }
 
     public static boolean isColorGrayscale(int pixel) {
         int alpha = (pixel & 0xFF000000) >> 24;
