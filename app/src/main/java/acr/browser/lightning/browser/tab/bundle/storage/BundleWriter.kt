@@ -4,7 +4,6 @@ import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.di.FilesDir
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.ThreadSafeFileProvider
-import acr.browser.lightning.utils.Utils
 import android.os.Bundle
 import android.os.Parcel
 import dagger.assisted.Assisted
@@ -39,18 +38,16 @@ class BundleWriter @AssistedInject constructor(
      */
     suspend fun writeToStorage(bundle: Bundle?) = withContext(coroutineDispatchers.io) {
         val outputFile = File(filesDir.file(), bundleFileName)
-        var outputStream: FileOutputStream? = null
         try {
-            outputStream = FileOutputStream(outputFile)
-            val parcel = Parcel.obtain()
-            parcel.writeBundle(bundle)
-            outputStream.write(parcel.marshall())
-            outputStream.flush()
-            parcel.recycle()
+            FileOutputStream(outputFile).use { outputStream ->
+                val parcel = Parcel.obtain()
+                parcel.writeBundle(bundle)
+                outputStream.write(parcel.marshall())
+                outputStream.flush()
+                parcel.recycle()
+            }
         } catch (e: IOException) {
             logger.log(TAG, "Unable to write bundle to storage", e)
-        } finally {
-            Utils.close(outputStream)
         }
     }
 
@@ -73,25 +70,23 @@ class BundleWriter @AssistedInject constructor(
      */
     suspend fun readFromStorage(): Bundle? = withContext(coroutineDispatchers.io) {
         val inputFile = File(filesDir.file(), bundleFileName)
-        var inputStream: FileInputStream? = null
         try {
-            inputStream = FileInputStream(inputFile)
-            val parcel = Parcel.obtain()
-            val data = ByteArray(inputStream.channel.size().toInt())
+            FileInputStream(inputFile).use { inputStream ->
+                val parcel = Parcel.obtain()
+                val data = ByteArray(inputStream.channel.size().toInt())
 
-            inputStream.read(data, 0, data.size)
-            parcel.unmarshall(data, 0, data.size)
-            parcel.setDataPosition(0)
-            val out = parcel.readBundle(ClassLoader.getSystemClassLoader())
-            out!!.putAll(out)
-            parcel.recycle()
-            return@withContext out
+                inputStream.read(data, 0, data.size)
+                parcel.unmarshall(data, 0, data.size)
+                parcel.setDataPosition(0)
+                val out = parcel.readBundle(ClassLoader.getSystemClassLoader())
+                out!!.putAll(out)
+                parcel.recycle()
+                return@withContext out
+            }
         } catch (e: FileNotFoundException) {
             logger.log(TAG, "Unable to read bundle from storage", e)
         } catch (e: IOException) {
             logger.log(TAG, "Unable to read bundle from storage", e)
-        } finally {
-            Utils.close(inputStream)
         }
         return@withContext null
     }

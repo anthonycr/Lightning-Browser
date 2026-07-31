@@ -3,16 +3,7 @@
  */
 package acr.browser.lightning.utils;
 
-import android.util.Log;
-
-import java.io.Closeable;
-import java.io.IOException;
-
-import androidx.annotation.Nullable;
-
 public final class Utils {
-
-    private static final String TAG = "Utils";
 
     private Utils() {}
 
@@ -53,23 +44,6 @@ public final class Utils {
         int b = ((int) (((float) (color1 & 0xff) * amount) + ((float) (color2 & 0xff) * inverseAmount))) & 0xff;
 
         return 0xff << ALPHA_CHANNEL | r << RED_CHANNEL | g << GREEN_CHANNEL | b;
-    }
-
-    /**
-     * Quietly closes a closeable object like an InputStream or OutputStream without
-     * throwing any errors or requiring you do do any checks.
-     *
-     * @param closeable the object to close
-     */
-    public static void close(@Nullable Closeable closeable) {
-        if (closeable == null) {
-            return;
-        }
-        try {
-            closeable.close();
-        } catch (IOException e) {
-            Log.e(TAG, "Unable to close closeable", e);
-        }
     }
 
 }

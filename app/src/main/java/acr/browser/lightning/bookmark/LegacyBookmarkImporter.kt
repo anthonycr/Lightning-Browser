@@ -5,7 +5,6 @@ import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.asFolder
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.extensions.fileInputStream
-import acr.browser.lightning.utils.Utils
 import android.app.Application
 import android.net.Uri
 import kotlinx.coroutines.withContext
@@ -22,8 +21,7 @@ class LegacyBookmarkImporter @Inject constructor(
 
     override suspend fun importBookmarks(uri: Uri): List<Bookmark.Entry>? =
         withContext(coroutineDispatchers.io) {
-            val inputStream = application.fileInputStream(uri) ?: return@withContext null
-            try {
+            application.fileInputStream(uri)?.use { inputStream ->
                 val bookmarks: MutableList<Bookmark.Entry> = mutableListOf()
                 inputStream.bufferedReader().lines().forEach { line ->
                     val jsonObject = JSONObject(line)
@@ -38,8 +36,6 @@ class LegacyBookmarkImporter @Inject constructor(
                 }
 
                 bookmarks
-            } finally {
-                Utils.close(inputStream)
             }
         }
 

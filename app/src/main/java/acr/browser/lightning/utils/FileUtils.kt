@@ -30,15 +30,13 @@ object FileUtils {
             fileName
         )
 
-        var outputStream: FileOutputStream? = null
         try {
-            outputStream = FileOutputStream(outputFile)
-            throwable.printStackTrace(PrintStream(outputStream))
-            outputStream.flush()
+            FileOutputStream(outputFile).use { outputStream ->
+                throwable.printStackTrace(PrintStream(outputStream))
+                outputStream.flush()
+            }
         } catch (e: IOException) {
             Log.e(TAG, "Unable to write bundle to storage")
-        } finally {
-            Utils.close(outputStream)
         }
     }
 
