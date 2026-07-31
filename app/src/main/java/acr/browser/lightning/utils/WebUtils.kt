@@ -5,6 +5,7 @@ import acr.browser.lightning.browser.di.GeneratedHtmlDir
 import acr.browser.lightning.browser.di.PreviewCacheDir
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.database.history.HistoryRepository
+import android.app.Activity
 import android.app.Application
 import android.webkit.CookieManager
 import android.webkit.WebStorage
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 class WebUtils @Inject constructor(
     private val application: Application,
+    private val activity: Activity,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val historyRepository: HistoryRepository,
     @FaviconCacheDir private val faviconCacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
@@ -38,11 +40,12 @@ class WebUtils @Inject constructor(
         generatedHtmlDirThreadSafeFileProvider.file().deleteRecursively()
     }
 
-    suspend fun clearCache() = withContext(coroutineDispatchers.main) {
-        // TODO: Switch to io dispatcher and change to activity context
-        val webView = WebView(application)
-        webView.clearCache(true)
-        webView.destroy()
+    suspend fun clearCache() = withContext(coroutineDispatchers.io) {
+        withContext(coroutineDispatchers.main) {
+            val webView = WebView(activity)
+            webView.clearCache(true)
+            webView.destroy()
+        }
         faviconCacheDirThreadSafeFileProvider.file().deleteRecursively()
         previewCacheDirThreadSafeFileProvider.file().deleteRecursively()
     }
