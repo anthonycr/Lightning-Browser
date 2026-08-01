@@ -133,12 +133,12 @@ interface TabModel {
     /**
      * A preview of the tab's content.
      */
-    val preview: Pair<String?, Long>
+    val preview: Preview
 
     /**
      * Emits changes to the [preview].
      */
-    fun previewChanges(): Flow<Pair<String?, Long>>
+    fun previewChanges(): Flow<Preview>
 
     /**
      * The thematic color of the current webpage.
@@ -274,12 +274,21 @@ interface TabModel {
     /**
      * Potential favicon states.
      */
-    sealed class Favicon {
-        object None : Favicon()
+    sealed interface Favicon {
+        object None : Favicon
 
-        object Frozen : Favicon()
+        object Frozen : Favicon
 
-        data class Icon(val bitmap: ImageBitmap) : Favicon()
+        data class Icon(val bitmap: ImageBitmap) : Favicon
+    }
+
+    /**
+     * Represents the tab preview states.
+     */
+    sealed interface Preview {
+        object None : Preview
+
+        data class Image(val path: String, val time: Long): Preview
     }
 
     enum class Type {

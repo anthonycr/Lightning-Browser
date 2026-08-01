@@ -306,11 +306,15 @@ fun TabsBottomSheet(
                         }
                     }
                     AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(tab.preview.first)
-                            .memoryCacheKey("${tab.preview.second}-${tab.preview.first}")
-                            .transformations(transformations)
-                            .build(),
+                        model = when (tab.preview) {
+                            is TabModel.Preview.Image -> ImageRequest.Builder(LocalContext.current)
+                                .data(tab.preview.path)
+                                .memoryCacheKey("${tab.preview.time}-${tab.preview.path}")
+                                .transformations(transformations)
+                                .build()
+
+                            TabModel.Preview.None -> null
+                        },
                         contentDescription = "test",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

@@ -88,8 +88,6 @@ class TabAdapter @AssistedInject constructor(
     private val focusSharedFlow = MutableSharedFlow<Unit>()
     private val showHideFlow = MutableSharedFlow<Boolean>()
 
-    private var previewGeneratedTime = System.currentTimeMillis()
-
     override val id: Int = if (tabInitializer is FreezableInitializer) {
         latentInitializer = tabInitializer
         val frozenId = tabInitializer.id.takeIf { it != -1 } ?: viewIdGenerator.generateViewId()
@@ -147,6 +145,10 @@ class TabAdapter @AssistedInject constructor(
         }
     }
 
+    private val previewPathDeferred = tabCoroutineScope.async {
+        previewModel.previewForId(id)
+    }
+
     private val webView: WebView
         get() = webViewLazyWithInitialization
 
@@ -154,11 +156,6 @@ class TabAdapter @AssistedInject constructor(
         if (tabInitializer !is FreezableInitializer) {
             loadFromInitializer(tabInitializer)
         }
-    }
-
-    private var previewPath: String? = null
-    private val previewPathDeferred = tabCoroutineScope.async {
-        previewModel.previewForId(id)
     }
 
     override fun loadUrl(url: String) {
@@ -223,11 +220,11 @@ class TabAdapter @AssistedInject constructor(
         findInPageQuery = null
     }
 
-    override val preview: Pair<String?, Long>
-        get() = previewPath to previewGeneratedTime
+    override var preview: TabModel.Preview = TabModel.Preview.None
+        private set
 
     @OptIn(FlowPreview::class)
-    override fun previewChanges(): Flow<Pair<String?, Long>> =
+    override fun previewChanges(): Flow<TabModel.Preview> =
         tabWebViewClient.finishedSharedFlow
             .debounce(100.milliseconds)
             .map { renderViewToBitmap(webView) }
@@ -235,15 +232,18 @@ class TabAdapter @AssistedInject constructor(
             .map { bitmap ->
                 if (bitmap != null) {
                     previewModel.cachePreviewForId(id, bitmap)
-                    previewPathDeferred.await() to System.currentTimeMillis()
+                    TabModel.Preview.Image(previewPathDeferred.await(), System.currentTimeMillis())
                 } else {
-                    null to System.currentTimeMillis()
+                    TabModel.Preview.None
                 }
             }
-            .onStart { emit(previewPathDeferred.await() to System.currentTimeMillis()) }
-            .onEach { (path, time) ->
-                previewPath = path
-                previewGeneratedTime = time
+            .onStart {
+                emit(
+                    TabModel.Preview.Image(previewPathDeferred.await(), System.currentTimeMillis())
+                )
+            }
+            .onEach { preview ->
+                this.preview = preview
             }
             .flowOn(coroutineDispatchers.io)
 
