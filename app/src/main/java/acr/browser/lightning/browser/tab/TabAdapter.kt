@@ -264,14 +264,14 @@ class TabAdapter @AssistedInject constructor(
 
     override val favicon: TabModel.Favicon
         get() = latentInitializer?.let { TabModel.Favicon.Frozen }
-            ?: tabWebChromeClient.faviconStateFlow.value?.let { TabModel.Favicon.Icon(it) }
+            ?: tabWebChromeClient.faviconStateFlow.value
             ?: TabModel.Favicon.None
 
     override fun faviconChanges(): Flow<TabModel.Favicon> {
         // Treat it like a SharedFlow for consistency on presenter side and because frozen tabs have
         // their own icon that the chrome client doesn't know about.
         return tabWebChromeClient.faviconStateFlow.drop(1).map { icon ->
-            icon?.let { TabModel.Favicon.Icon(it) } ?: TabModel.Favicon.None
+            icon ?: TabModel.Favicon.None
         }
     }
 

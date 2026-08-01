@@ -26,7 +26,6 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AlertDialog
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.fragment.app.FragmentActivity
 import androidx.palette.graphics.Palette
@@ -71,7 +70,7 @@ class TabWebChromeClient @AssistedInject constructor(
     /**
      * Emits changes to the page favicon. Always emits the last emitted favicon.
      */
-    val faviconStateFlow: MutableStateFlow<ImageBitmap?> = MutableStateFlow(null)
+    val faviconStateFlow: MutableStateFlow<TabModel.Favicon.Icon?> = MutableStateFlow(null)
 
     /**
      * Emits create window requests.
@@ -161,7 +160,7 @@ class TabWebChromeClient @AssistedInject constructor(
 
     override fun onReceivedIcon(view: WebView, icon: Bitmap) {
         tabCoroutineScope.launch {
-            faviconStateFlow.emit(icon.asImageBitmap())
+            faviconStateFlow.emit(TabModel.Favicon.Icon(icon.asImageBitmap()))
             val url = view.url ?: return@launch
             tabCoroutineScope.launch {
                 faviconModel.cacheFaviconForUrl(icon, url)
