@@ -4,7 +4,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserComposeState
 import acr.browser.lightning.browser.BrowserContract
 import acr.browser.lightning.browser.BrowserPresenter
-import acr.browser.lightning.browser.view.targetUrl.LongPress
+import acr.browser.lightning.browser.view.LongPress
 import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.dialog.DialogItem
 import androidx.compose.runtime.Composable

@@ -17,7 +17,7 @@ import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.browser.tab.UrlInitializer
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.browser.view.targetUrl.LongPress
+import acr.browser.lightning.browser.view.LongPress
 import acr.browser.lightning.concurrency.BrowserCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.concurrency.combine

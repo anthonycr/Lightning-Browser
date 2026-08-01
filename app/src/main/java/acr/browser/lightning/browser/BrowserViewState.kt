@@ -2,7 +2,7 @@ package acr.browser.lightning.browser
 
 import acr.browser.lightning.browser.BrowserViewState.BookmarkListItem
 import acr.browser.lightning.browser.tab.TabViewState
-import acr.browser.lightning.browser.view.targetUrl.LongPress
+import acr.browser.lightning.browser.view.LongPress
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry

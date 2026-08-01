@@ -1,4 +1,4 @@
-package acr.browser.lightning.browser.view.targetUrl
+package acr.browser.lightning.browser.view
 
 /**
  * Represents a long press event by the user on a webpage.
