@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
  *
  * @param displayUrl The current text shown in the search box.
  * @param searchQuery The current text shown in the expanded search box.
+ * @param searchQuerySelection The text selection indices for the [searchQuery].
  * @param sslState The current SSL state shown in the search box.
  * @param isRefresh True if the refresh button shows a refresh icon, false if it shows an X.
  * @param progress The current page loading progress out of 100.
