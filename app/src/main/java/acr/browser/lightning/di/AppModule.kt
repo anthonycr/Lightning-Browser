@@ -45,6 +45,7 @@ import android.content.res.AssetManager
 import android.net.ConnectivityManager
 import android.net.TrafficStats
 import androidx.core.content.getSystemService
+import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
 import com.anthonycr.mezzanine.mezzanine
 import dagger.Module
 import dagger.Provides
@@ -310,6 +311,36 @@ class AppModule {
         File(application.filesDir, "generated-html$suffix").apply {
             mkdirs()
         }
+    }
+
+    @Singleton
+    @FaviconCacheDir
+    @Provides
+    fun providesFaviconStorageHandler(
+        application: Application,
+        @FaviconCacheDir faviconCacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
+        appCoroutineScope: AppCoroutineScope,
+        coroutineDispatchers: CoroutineDispatchers,
+    ): Deferred<InternalStoragePathHandler> = appCoroutineScope.async(coroutineDispatchers.io) {
+        InternalStoragePathHandler(
+            application,
+            faviconCacheDirThreadSafeFileProvider.file()
+        )
+    }
+
+    @Singleton
+    @GeneratedHtmlDir
+    @Provides
+    fun providesHtmlStorageHandler(
+        application: Application,
+        @GeneratedHtmlDir generatedHtmlDirThreadSafeFileProvider: ThreadSafeFileProvider,
+        appCoroutineScope: AppCoroutineScope,
+        coroutineDispatchers: CoroutineDispatchers,
+    ): Deferred<InternalStoragePathHandler> = appCoroutineScope.async(coroutineDispatchers.io) {
+        InternalStoragePathHandler(
+            application,
+            generatedHtmlDirThreadSafeFileProvider.file()
+        )
     }
 
     @Singleton

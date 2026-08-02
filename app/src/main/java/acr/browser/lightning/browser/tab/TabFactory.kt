@@ -4,13 +4,11 @@ import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.di.FaviconCacheDir
 import acr.browser.lightning.di.GeneratedHtmlDir
-import acr.browser.lightning.utils.ThreadSafeFileProvider
-import android.app.Application
 import android.webkit.WebView
 import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -18,12 +16,11 @@ import javax.inject.Inject
  * Constructs a [TabModel].
  */
 class TabFactory @Inject constructor(
-    private val app: Application,
     private val webViewFactory: WebViewFactory,
     private val tabWebViewClientFactory: TabWebViewClient.Factory,
     private val tabAdapterFactory: TabAdapter.Factory,
-    @FaviconCacheDir private val faviconCacheDirThreadSafeFileProvider: ThreadSafeFileProvider,
-    @GeneratedHtmlDir private val generatedHtmlDirThreadSafeFileProvider: ThreadSafeFileProvider,
+    @FaviconCacheDir private val faviconStorageHandler: Deferred<@JvmSuppressWildcards InternalStoragePathHandler>,
+    @GeneratedHtmlDir private val htmlStorageHandler: Deferred<@JvmSuppressWildcards InternalStoragePathHandler>,
     private val coroutineDispatchers: CoroutineDispatchers,
 ) {
 
@@ -36,19 +33,6 @@ class TabFactory @Inject constructor(
         tabType: TabModel.Type,
         tabSettings: TabSettings,
     ): TabModel = withContext(coroutineDispatchers.main) {
-        val faviconHandler = async(coroutineDispatchers.io) {
-            InternalStoragePathHandler(
-                app,
-                faviconCacheDirThreadSafeFileProvider.file()
-            )
-        }
-        val htmlHandler = async(coroutineDispatchers.io) {
-            InternalStoragePathHandler(
-                app,
-                generatedHtmlDirThreadSafeFileProvider.file()
-            )
-        }
-
         val headers = webViewFactory.createRequestHeaders()
         val tabCoroutineScope = TabCoroutineScope(
             CoroutineScope(coroutineDispatchers.main + SupervisorJob())
@@ -59,8 +43,8 @@ class TabFactory @Inject constructor(
             requestHeaders = headers,
             tabWebViewClient = tabWebViewClientFactory.create(
                 headers = headers,
-                cacheStoragePathHandler = faviconHandler.await(),
-                filesStoragePathHandler = htmlHandler.await(),
+                cacheStoragePathHandler = faviconStorageHandler.await(),
+                filesStoragePathHandler = htmlStorageHandler.await(),
                 tabCoroutineScope = tabCoroutineScope,
                 tabSettings = tabSettings,
             ),
