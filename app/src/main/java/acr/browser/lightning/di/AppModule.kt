@@ -244,6 +244,7 @@ class AppModule {
     ): List<@JvmSuppressWildcards Cleanup.Action> =
         listOf(faviconCleanup, bookmarkCleanup, downloadCleanup, historyCleanup, homeCleanup)
 
+    @Singleton
     @FilesDir
     @Provides
     fun providesFilesDir(
@@ -253,6 +254,7 @@ class AppModule {
         application.filesDir
     }
 
+    @Singleton
     @DataDir
     @Provides
     fun providesDataDir(
@@ -262,6 +264,7 @@ class AppModule {
         application.dataDir
     }
 
+    @Singleton
     @FaviconCacheDir
     @Provides
     fun providesFaviconCacheDir(
@@ -279,6 +282,7 @@ class AppModule {
         }
     }
 
+    @Singleton
     @PreviewCacheDir
     @Provides
     fun providesPreviewCacheDir(
@@ -296,6 +300,7 @@ class AppModule {
         }
     }
 
+    @Singleton
     @GeneratedHtmlDir
     @Provides
     fun providesGeneratedHtmlDir(
