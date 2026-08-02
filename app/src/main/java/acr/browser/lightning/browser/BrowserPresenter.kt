@@ -52,6 +52,7 @@ import androidx.core.net.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -142,14 +143,9 @@ class BrowserPresenter @Inject constructor(
         browserCoroutineScope.launch {
             cookieAdministrator.adjustCookieSettings()
 
-            val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
-            currentBookmarks = bookmarks
-            updateState(
-                state.value.copy(
-                    bookmarks = bookmarks.asListItems(),
-                    isRootFolder = true
-                )
-            )
+            val bookmarks = async {
+                bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
+            }
 
             val tabs = model.initializeTabs()
             val lastTab = if (tabs.isEmpty()) {
@@ -157,7 +153,13 @@ class BrowserPresenter @Inject constructor(
             } else {
                 tabs.last()
             }
-            updateState(state.value.updateTabViewState())
+            currentBookmarks = bookmarks.await()
+            updateState(
+                state.value.updateTabViewState().copy(
+                    bookmarks = bookmarks.await().asListItems(),
+                    isRootFolder = true
+                )
+            )
             selectTab(model.selectTab(lastTab.id))
         }
 

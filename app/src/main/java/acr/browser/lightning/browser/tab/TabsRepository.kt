@@ -10,6 +10,8 @@ import acr.browser.lightning.search.engine.search
 import acr.browser.lightning.useragent.UserAgentProvider
 import acr.browser.lightning.utils.isFileUrl
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
@@ -109,11 +111,13 @@ class TabsRepository @Inject constructor(
     override suspend fun initializeTabs(): List<TabModel> =
         withContext(coroutineDispatchers.default) {
             val oldTabs = bundleStore.retrieve().map {
-                createTabUnsafe(
-                    tabInitializer = it,
-                    tabType = TabModel.Type.NORMAL,
-                    emitUpdate = false
-                )
+                async {
+                    createTabUnsafe(
+                        tabInitializer = it,
+                        tabType = TabModel.Type.NORMAL,
+                        emitUpdate = false
+                    )
+                }
             }
 
             val initialUrl = when (initialAction) {
@@ -139,12 +143,12 @@ class TabsRepository @Inject constructor(
                 )
             }
 
-            isInitialized.complete(Unit)
             tabsList = if (newTab != null) {
-                oldTabs + newTab
+                oldTabs.awaitAll() + newTab
             } else {
-                oldTabs
+                oldTabs.awaitAll()
             }
+            isInitialized.complete(Unit)
 
             tabsListStateFlow.emit(tabsList)
 
