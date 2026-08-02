@@ -10,6 +10,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.io.File
 
+/**
+ * Provides deferred thread safe access to a file.
+ */
 class ThreadSafeFileProvider @AssistedInject constructor(
     appCoroutineScope: AppCoroutineScope,
     private val coroutineDispatchers: CoroutineDispatchers,
@@ -21,13 +24,16 @@ class ThreadSafeFileProvider @AssistedInject constructor(
         fun create(fileProducer: () -> File): ThreadSafeFileProvider
     }
 
+    private val file: Deferred<File> = appCoroutineScope.async(coroutineDispatchers.io) {
+        fileProducer()
+    }
+
+    /**
+     * Suspends until the file is available and ensures all directories are created.
+     */
     suspend fun file(): File = withContext(coroutineDispatchers.io) {
         file.await().apply {
             mkdirs()
         }
-    }
-
-    private val file: Deferred<File> = appCoroutineScope.async(coroutineDispatchers.io) {
-        fileProducer()
     }
 }
