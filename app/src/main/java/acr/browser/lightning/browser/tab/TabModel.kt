@@ -288,7 +288,7 @@ interface TabModel {
     sealed interface Preview {
         object None : Preview
 
-        data class Image(val path: String, val time: Long): Preview
+        data class Image(val path: String, val time: Long) : Preview
     }
 
     enum class Type {
