@@ -389,18 +389,18 @@ class BrowserPresenter @Inject constructor(
                     tabModel.faviconChanges()
                         .onStart { emit(tabModel.favicon) },
                     tabModel.previewChanges()
-                ) { title, bitmap, pair ->
-                    Triple(title, bitmap, pair)
+                ) { title, favicon, preview ->
+                    Triple(title, favicon, preview)
                 }.distinctUntilChanged()
                     .flowOn(coroutineDispatchers.main)
-                    .collectLatest { (title, bitmap, _) ->
+                    .collectLatest { (title, favicon, preview) ->
                         updateState(
                             state.value.copy(
                                 tabs = state.value.tabs.updateId(tabModel.id) {
                                     it.copy(
                                         title = title,
-                                        icon = bitmap,
-                                        preview = tabModel.preview
+                                        icon = favicon,
+                                        preview = preview
                                     )
                                 }
                             )
