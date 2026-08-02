@@ -63,6 +63,7 @@ class PreviewModel @Inject constructor(
         logger.log(TAG, "Caching preview for tab: $id")
         FileOutputStream(getPreviewCacheFile(cacheFolder, id)).safeUse {
             preview.compress(Bitmap.CompressFormat.PNG, 100, it)
+            preview.recycle()
             it.flush()
         }
     }
