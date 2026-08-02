@@ -138,14 +138,7 @@ class BrowserPresenter @Inject constructor(
         )
     )
 
-    /**
-     * Call when the view is attached to the presenter.
-     */
-    fun onViewAttached(view: BrowserContract.View) {
-        this.view = view
-        updateState(state.value)
-
-        currentFolder = Bookmark.Folder.Root
+    init {
         browserCoroutineScope.launch {
             cookieAdministrator.adjustCookieSettings()
 
@@ -186,6 +179,13 @@ class BrowserPresenter @Inject constructor(
             tabCountText = model.tabsList.size.asTabCountText(),
             isSearchBarExpanded = false,
         )
+    }
+
+    /**
+     * Call when the view is attached to the presenter.
+     */
+    fun onViewAttached(view: BrowserContract.View) {
+        this.view = view
     }
 
     /**
