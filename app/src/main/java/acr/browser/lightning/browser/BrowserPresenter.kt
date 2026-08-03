@@ -380,11 +380,9 @@ class BrowserPresenter @Inject constructor(
     }
 
     private fun List<TabModel>.subscribeToUpdates() {
-        allTabsJobMap.keys.forEach { id ->
-            if (none { tabModel -> tabModel.id == id }) {
-                allTabsJobMap.remove(id)?.cancel()
-            }
-        }
+        allTabsJobMap.keys
+            .filter { id -> none { tabModel -> tabModel.id == id } }
+            .forEach { id -> allTabsJobMap.remove(id)?.cancel() }
         forEach { tabModel ->
             if (allTabsJobMap[tabModel.id] == null) {
                 allTabsJobMap[tabModel.id] = browserCoroutineScope.launch {
