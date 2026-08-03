@@ -26,7 +26,6 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AlertDialog
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.fragment.app.FragmentActivity
 import androidx.palette.graphics.Palette
@@ -161,13 +160,10 @@ class TabWebChromeClient @AssistedInject constructor(
 
     override fun onReceivedIcon(view: WebView, icon: Bitmap) {
         tabCoroutineScope.launch {
-            val lastBitmap = faviconStateFlow.value
+            // TODO: Recycle bitmap when it changes and potentially downscale or switch to caching
             faviconStateFlow.emit(TabModel.Favicon.Icon(icon.asImageBitmap()))
-            lastBitmap?.bitmap?.asAndroidBitmap()?.recycle()
             val url = view.url ?: return@launch
-            tabCoroutineScope.launch {
-                faviconModel.cacheFaviconForUrl(icon, url)
-            }
+            faviconModel.cacheFaviconForUrl(icon, url)
             generateColorAndPropagate(icon)
         }
     }
