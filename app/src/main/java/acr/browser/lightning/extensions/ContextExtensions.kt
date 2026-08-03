@@ -5,14 +5,12 @@ package acr.browser.lightning.extensions
 import android.annotation.SuppressLint
 import android.content.Context
 import android.database.Cursor
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.annotation.WorkerThread
 import androidx.core.content.ContextCompat
@@ -42,12 +40,6 @@ inline fun Context.color(@ColorRes colorRes: Int): Int = ContextCompat.getColor(
  */
 inline fun Context.toast(@StringRes stringRes: Int) =
     Toast.makeText(this, stringRes, Toast.LENGTH_SHORT).show()
-
-/**
- * Gets a drawable from the context.
- */
-inline fun Context.drawable(@DrawableRes drawableRes: Int): Drawable =
-    ContextCompat.getDrawable(this, drawableRes)!!
 
 /**
  * The preferred locale of the user.
