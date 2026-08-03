@@ -110,7 +110,7 @@ class BrowserPresenter @Inject constructor(
     private var isCustomViewShowing = false
 
     private val tabJobs: MutableList<Job> = mutableListOf()
-    private val allTabsJobs: MutableList<Job> = mutableListOf()
+    private val allTabsJobMap: MutableMap<Int, Job> = mutableMapOf()
 
     /**
      * The current state of the browser UI.
@@ -165,9 +165,7 @@ class BrowserPresenter @Inject constructor(
 
         browserCoroutineScope.launch {
             model.tabsListChanges().collectLatest { list ->
-                allTabsJobs.forEach { it.cancel() }
-                allTabsJobs.clear()
-                list.subscribeToUpdates(allTabsJobs)
+                list.subscribeToUpdates()
 
                 tabCountNotifier.notifyTabCountChange(list.size)
             }
@@ -197,7 +195,7 @@ class BrowserPresenter @Inject constructor(
         view = null
 
         tabJobs.forEach { it.cancel() }
-        allTabsJobs.forEach { it.cancel() }
+        allTabsJobMap.values.forEach { it.cancel() }
         browserCoroutineScope.cancel()
     }
 
@@ -381,31 +379,36 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun List<TabModel>.subscribeToUpdates(allTabsJobs: MutableList<Job>) {
+    private fun List<TabModel>.subscribeToUpdates() {
+        allTabsJobMap.keys.forEach { id ->
+            if (none { tabModel -> tabModel.id == id }) {
+                allTabsJobMap.remove(id)?.cancel()
+            }
+        }
         forEach { tabModel ->
-            allTabsJobs += browserCoroutineScope.launch {
-                combine(
-                    tabModel.titleChanges().onStart { emit(tabModel.title) },
-                    tabModel.faviconChanges()
-                        .onStart { emit(tabModel.favicon) },
-                    tabModel.previewChanges()
-                ) { title, favicon, preview ->
-                    Triple(title, favicon, preview)
-                }.distinctUntilChanged()
-                    .flowOn(coroutineDispatchers.main)
-                    .collectLatest { (title, favicon, preview) ->
-                        updateState(
-                            state.value.copy(
-                                tabs = state.value.tabs.updateId(tabModel.id) {
-                                    it.copy(
-                                        title = title,
-                                        icon = favicon,
-                                        preview = preview
-                                    )
-                                }
+            if (allTabsJobMap[tabModel.id] == null) {
+                allTabsJobMap[tabModel.id] = browserCoroutineScope.launch {
+                    combine(
+                        tabModel.titleChanges().onStart { emit(tabModel.title) },
+                        tabModel.faviconChanges().onStart { emit(tabModel.favicon) },
+                        tabModel.previewChanges()
+                    ) { title, favicon, preview -> Triple(title, favicon, preview) }
+                        .distinctUntilChanged()
+                        .flowOn(coroutineDispatchers.main)
+                        .collectLatest { (title, favicon, preview) ->
+                            updateState(
+                                state.value.copy(
+                                    tabs = state.value.tabs.updateId(tabModel.id) {
+                                        it.copy(
+                                            title = title,
+                                            icon = favicon,
+                                            preview = preview
+                                        )
+                                    }
+                                )
                             )
-                        )
-                    }
+                        }
+                }
             }
         }
     }
