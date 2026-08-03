@@ -1,8 +1,7 @@
 package acr.browser.lightning.resources
 
-import acr.browser.lightning.extensions.preferredLocale
-import android.app.Application
 import java.text.NumberFormat
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -21,10 +20,10 @@ interface NumberFormatter {
  * The default implementation of [NumberFormatter] That delegates to [NumberFormat].
  */
 class DefaultNumberFormatter @Inject constructor(
-    application: Application
+    locale: Locale
 ) : NumberFormatter {
 
-    private val formatter = NumberFormat.getInstance(application.preferredLocale)
+    private val formatter = NumberFormat.getInstance(locale)
 
     override fun formatNumber(number: Int): String = formatter.format(number)
 

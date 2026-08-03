@@ -14,6 +14,7 @@ import acr.browser.lightning.concurrency.DeferredStateProvider
 import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
+import acr.browser.lightning.extensions.preferredLocale
 import acr.browser.lightning.favicon.FaviconCleanup
 import acr.browser.lightning.html.ListPageReader
 import acr.browser.lightning.html.bookmark.BookmarkCleanup
@@ -67,6 +68,7 @@ import okhttp3.Request
 import java.io.File
 import java.net.InetSocketAddress
 import java.net.Proxy
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Provider
@@ -78,6 +80,9 @@ class AppModule {
 
     @Provides
     fun provideContext(application: Application): Context = application.applicationContext
+
+    @Provides
+    fun providesLocale(application: Application): Locale = application.preferredLocale
 
     @Provides
     fun providesAssetManager(application: Application): AssetManager = application.assets

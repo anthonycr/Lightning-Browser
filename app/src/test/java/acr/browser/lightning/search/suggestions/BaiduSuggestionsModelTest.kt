@@ -2,14 +2,8 @@ package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.concurrency.FakeCoroutineDispatchers
 import acr.browser.lightning.log.NoOpLogger
+import acr.browser.lightning.resources.FakeResourceProvider
 import acr.browser.lightning.unimplemented
-import android.app.Application
-import android.content.res.Configuration
-import android.content.res.Resources
-import android.os.LocaleList
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.runTest
 import okhttp3.HttpUrl
@@ -29,30 +23,13 @@ class BaiduSuggestionsModelTest {
         override fun createSuggestionsRequest(httpUrl: HttpUrl, encoding: String) = unimplemented()
     }
 
-    private val mockLocalList = mock<LocaleList> {
-        on { get(any()) } doReturn Locale.US
-    }
-
-    private val mockConfiguration = mock<Configuration> {
-        on { locales } doReturn mockLocalList
-    }.apply {
-        locale = Locale.US
-    }
-
-    private val mockResources = mock<Resources> {
-        on { configuration } doReturn mockConfiguration
-    }
-    private val application = mock<Application> {
-        on { getString(any()) } doReturn "test"
-        on { resources } doReturn mockResources
-    }
-
     @Test
     fun `verify query url`() = runTest {
         val suggestionsModel = BaiduSuggestionsModel(
             httpClient,
             requestFactory,
-            application,
+            Locale.ROOT,
+            FakeResourceProvider(),
             NoOpLogger(),
             FakeCoroutineDispatchers(testScheduler)
         )

@@ -6,15 +6,15 @@ import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.di.SuggestionsClient
 import acr.browser.lightning.extensions.map
-import acr.browser.lightning.extensions.preferredLocale
 import acr.browser.lightning.log.Logger
-import android.app.Application
+import acr.browser.lightning.resources.ResourceProvider
 import kotlinx.coroutines.Deferred
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -23,19 +23,20 @@ import javax.inject.Inject
 class NaverSuggestionsModel @Inject constructor(
     @SuggestionsClient okHttpClient: Deferred<@JvmSuppressWildcards OkHttpClient>,
     requestFactory: RequestFactory,
-    application: Application,
+    locale: Locale,
+    resourceProvider: ResourceProvider,
     logger: Logger,
     coroutineDispatchers: CoroutineDispatchers,
 ) : BaseSuggestionsModel(
     okHttpClient,
     requestFactory,
     UTF8,
-    application.preferredLocale,
+    locale,
     logger,
     coroutineDispatchers
 ) {
 
-    private val searchSubtitle = application.getString(R.string.suggestion)
+    private val searchSubtitle = resourceProvider.stringResource(R.string.suggestion)
 
     // https://ac.search.naver.com/nx/ac?q=$query&q_enc=UTF-8&st=100&frm=nv&r_format=json&r_enc=UTF-8&r_unicode=0&t_koreng=1&ans=2&run=2&rev=4&con=1
     override fun createQueryUrl(query: String, language: String): HttpUrl =

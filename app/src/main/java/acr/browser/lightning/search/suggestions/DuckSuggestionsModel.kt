@@ -6,15 +6,15 @@ import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.di.SuggestionsClient
 import acr.browser.lightning.extensions.map
-import acr.browser.lightning.extensions.preferredLocale
 import acr.browser.lightning.log.Logger
-import android.app.Application
+import acr.browser.lightning.resources.ResourceProvider
 import kotlinx.coroutines.Deferred
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -23,19 +23,20 @@ import javax.inject.Inject
 class DuckSuggestionsModel @Inject constructor(
     @SuggestionsClient okHttpClient: Deferred<@JvmSuppressWildcards OkHttpClient>,
     requestFactory: RequestFactory,
-    application: Application,
+    locale: Locale,
+    resourceProvider: ResourceProvider,
     logger: Logger,
     coroutineDispatchers: CoroutineDispatchers,
 ) : BaseSuggestionsModel(
     okHttpClient,
     requestFactory,
     UTF8,
-    application.preferredLocale,
+    locale,
     logger,
     coroutineDispatchers
 ) {
 
-    private val searchSubtitle = application.getString(R.string.suggestion)
+    private val searchSubtitle = resourceProvider.stringResource(R.string.suggestion)
 
     // https://duckduckgo.com/ac/?q={query}
     override fun createQueryUrl(query: String, language: String): HttpUrl = HttpUrl.Builder()
