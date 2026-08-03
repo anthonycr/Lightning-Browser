@@ -5,6 +5,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis") version "3.18.0"
     id("com.squareup.sort-dependencies") version "0.20.0"
     id("org.jetbrains.kotlin.plugin.compose") version "2.4.10"
+    id("com.anthonycr.plugins.mockingbird") version "3.3.0"
 }
 
 android {
