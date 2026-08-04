@@ -119,10 +119,11 @@ class BrowserApp : Application() {
      * Create the [BuildType] from the [BuildConfig].
      */
     private fun createBuildInfo() = BuildInfo(
-        when {
+        buildType = when {
             BuildConfig.DEBUG -> BuildType.DEBUG
             else -> BuildType.RELEASE
-        }
+        },
+        versionCode = BuildConfig.VERSION_CODE
     )
 
     companion object {
