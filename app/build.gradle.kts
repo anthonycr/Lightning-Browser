@@ -158,14 +158,10 @@ dependencies {
 
     debugRuntimeOnly("com.squareup.leakcanary:leakcanary-android:$leakcanary")
 
-    testImplementation("com.nhaarman:mockito-kotlin:1.6.0") {
-        exclude(group = "org.jetbrains.kotlin")
-    }
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.assertj:assertj-core:3.27.7")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:${kotlin}")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines")
-    testImplementation("org.mockito:mockito-core:5.23.0")
     testImplementation("org.robolectric:annotations:$robolectric")
     testImplementation("org.robolectric:robolectric:$robolectric")
 
