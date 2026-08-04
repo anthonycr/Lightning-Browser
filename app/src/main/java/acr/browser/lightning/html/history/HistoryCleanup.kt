@@ -7,11 +7,14 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
+/**
+ * Cleans up the old storage space for the history pages on versions 102 and under.
+ */
 class HistoryCleanup @Inject constructor(
     private val application: Application,
     private val coroutineDispatchers: CoroutineDispatchers,
 ) : Cleanup.Action {
-    override val versionCode: Int = 101
+    override val fixedInVersionCode: Int = 103
 
     override suspend fun execute() {
         withContext(coroutineDispatchers.io) {
