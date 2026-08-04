@@ -23,6 +23,9 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
 
+/**
+ * Provides search suggestions based on the desired search suggestions choice.
+ */
 class SuggestionsModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val historyRepository: HistoryRepository,
@@ -54,13 +57,30 @@ class SuggestionsModel @Inject constructor(
             it.url.contains(query)
         }).distinct().take(MAX_SUGGESTIONS)
 
+    /**
+     * Update the current query which is emitting via [results].
+     */
     fun updateQuery(query: CharSequence) {
         appCoroutineScope.launch(coroutineDispatchers.io) {
             inputFlow.emit(query)
         }
     }
 
-    fun results() = inputFlow
+    /**
+     * Emits search suggestions as they are loaded. Each emission is not mutually exclusive and may
+     * contain partial results from previous queries based on their importance according to the
+     * ranking algorithm.
+     *
+     * Generally, the algorithm seeks to balance suggestions around
+     * - 2 bookmark entries
+     * - 2 history entries
+     * - 1 search entry
+     *
+     * Entries are prioritized in that order, meaning that if there are no bookmarks to show in the
+     * suggestions, history entries will be added in their place. If there are not enough history
+     * entries, then search entries will be shown instead.
+     */
+    fun results(): Flow<List<WebPage>> = inputFlow
         .map { it.toString().lowercase(Locale.getDefault()).trim() }
         .filter { it.isNotEmpty() }
         .buffer(1, BufferOverflow.DROP_OLDEST)
