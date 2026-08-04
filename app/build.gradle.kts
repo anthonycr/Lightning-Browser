@@ -68,12 +68,14 @@ android {
 
     flavorDimensions.add("capabilities")
 
+    val commonVersionCode = 102
+
     productFlavors {
         create("lightningPlus") {
             dimension = "capabilities"
             buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")")
             applicationId = "acr.browser.lightning"
-            versionCode = 101
+            versionCode = commonVersionCode
         }
 
         if (!isCi) {
@@ -81,7 +83,7 @@ android {
                 dimension = "capabilities"
                 buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")")
                 applicationId = "acr.browser.barebones"
-                versionCode = 102
+                versionCode = commonVersionCode
             }
         }
     }
