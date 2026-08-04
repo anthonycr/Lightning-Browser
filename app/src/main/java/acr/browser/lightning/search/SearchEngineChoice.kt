@@ -2,6 +2,9 @@ package acr.browser.lightning.search
 
 import acr.browser.lightning.preference.IntEnum
 
+/**
+ * The options available for performing searches with the search box.
+ */
 enum class SearchEngineChoice(override val value: Int) : IntEnum {
     CUSTOM(0),
     GOOGLE(1),

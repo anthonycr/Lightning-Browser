@@ -238,7 +238,7 @@ class GeneralSettingsScreen @Inject constructor(
                     },
                     onSelected = { index ->
                         when (index) {
-                            0 -> ClickableOnClick.Input(
+                            SearchEngineChoice.CUSTOM.value -> ClickableOnClick.Input(
                                 produceState = {
                                     SettingsBottomSheetInputState(
                                         title = resourceProvider.stringResource(R.string.search_engine_custom),
