@@ -3,12 +3,19 @@ package acr.browser.lightning.preference.datastore
 import acr.browser.lightning.preference.IntEnum
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 /**
  * Holds a persistable preference of type [T].
  */
 interface PreferenceStore<T> {
+
+    /**
+     * Emits all values as they change.
+     */
+    fun values(): Flow<T>
 
     /**
      * Get the current value of the preference.
@@ -52,6 +59,11 @@ class EnumPreferenceStore<T>(
         defaultValue = defaultValue.value
     )
 
+    override fun values(): Flow<T> = backingPreferenceStore.values()
+        .map { rawValue ->
+            clazz.enumConstants!!.firstOrNull { it.value == rawValue } ?: defaultValue
+        }
+
     override suspend fun get(): T = clazz.enumConstants!!.firstOrNull {
         it.value == backingPreferenceStore.get()
     } ?: defaultValue
@@ -68,6 +80,9 @@ class NullablePreferenceStore<T>(
     val key: Preferences.Key<T>,
     private val dataStore: DataStore<Preferences>
 ) : PreferenceStore<T?> {
+
+    override fun values(): Flow<T?> = dataStore.data.map { it[key] }
+
     override suspend fun get(): T? = dataStore.data.first()[key]
 
     override suspend fun set(newValue: T?) {
@@ -91,6 +106,9 @@ class NonNullPreferenceStore<T>(
     private val dataStore: DataStore<Preferences>,
     val defaultValue: T
 ) : PreferenceStore<T> {
+
+    override fun values(): Flow<T> = dataStore.data.map { it[key] ?: defaultValue }
+
     override suspend fun get(): T = dataStore.data.first()[key] ?: defaultValue
 
     override suspend fun set(newValue: T) {
