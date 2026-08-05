@@ -2,7 +2,6 @@ package acr.browser.lightning.settings.screens
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.tab.WebViewFactory
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.SettingsDialogConfirmationState
@@ -16,6 +15,7 @@ import acr.browser.lightning.settings.framework.ToggleState
 import acr.browser.lightning.utils.WebUtils
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class PrivacySettingsScreen @Inject constructor(
@@ -167,12 +167,12 @@ class PrivacySettingsScreen @Inject constructor(
 
 @Composable
 fun PrivacySettingsScreen(
-    blackStatusStateProvider: StateProvider<Boolean>,
+    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     privacySettingsScreen: PrivacySettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
-        blackStatusStateProvider,
+        useBlackStatusBarStateFlow,
         viewModel(
             key = privacySettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(

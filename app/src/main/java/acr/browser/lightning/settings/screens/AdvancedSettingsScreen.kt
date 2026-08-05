@@ -3,7 +3,6 @@ package acr.browser.lightning.settings.screens
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.view.RenderingMode
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.constant.TEXT_ENCODINGS
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
@@ -16,6 +15,7 @@ import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class AdvancedSettingsScreen @Inject constructor(
@@ -128,12 +128,12 @@ class AdvancedSettingsScreen @Inject constructor(
 
 @Composable
 fun AdvancedSettingsScreen(
-    blackStatusStateProvider: StateProvider<Boolean>,
+    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     advancedSettingsScreen: AdvancedSettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
-        blackStatusStateProvider,
+        useBlackStatusBarStateFlow,
         viewModel(
             key = advancedSettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(

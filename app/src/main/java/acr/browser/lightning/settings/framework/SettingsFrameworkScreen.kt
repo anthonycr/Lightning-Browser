@@ -1,7 +1,6 @@
 package acr.browser.lightning.settings.framework
 
 import acr.browser.lightning.compose.StatusBar
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.settings.SettingsBottomSheetChooser
 import acr.browser.lightning.settings.SettingsBottomSheetInput
 import acr.browser.lightning.settings.SettingsBottomSheetTextSizeChooser
@@ -50,11 +49,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsFrameworkScreen(
-    blackStatusStateProvider: StateProvider<Boolean>,
+    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     presenter: SettingsFrameworkPresenter,
     onUp: () -> Unit
 ) {
@@ -101,7 +101,7 @@ fun SettingsFrameworkScreen(
         topBar = {
             StatusBar(
                 paintSurfaceColor = false,
-                blackStatusStateProvider = blackStatusStateProvider,
+                useBlackStatusBarStateFlow = useBlackStatusBarStateFlow,
             )
             TopAppBar(
                 title = {

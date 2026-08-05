@@ -2,7 +2,6 @@ package acr.browser.lightning.settings
 
 import acr.browser.lightning.R
 import acr.browser.lightning.compose.StatusBar
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
 import androidx.compose.foundation.clickable
@@ -48,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -67,7 +67,7 @@ enum class SettingsNavigation {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    blackStatusStateProvider: StateProvider<Boolean>,
+    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     buildInfo: BuildInfo,
     onNavigate: (SettingsNavigation) -> Unit
 ) {
@@ -75,7 +75,7 @@ fun SettingsScreen(
         topBar = {
             StatusBar(
                 paintSurfaceColor = false,
-                blackStatusStateProvider = blackStatusStateProvider,
+                useBlackStatusBarStateFlow = useBlackStatusBarStateFlow,
             )
             TopAppBar(
                 title = {

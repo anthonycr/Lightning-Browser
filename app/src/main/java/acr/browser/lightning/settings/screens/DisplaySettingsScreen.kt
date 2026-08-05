@@ -3,11 +3,9 @@ package acr.browser.lightning.settings.screens
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.SettingsBottomSheetChooserState
-import acr.browser.lightning.settings.SettingsSnackBarState
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
 import acr.browser.lightning.settings.framework.SettingsFrameworkPresenter
@@ -17,6 +15,7 @@ import acr.browser.lightning.settings.framework.ToggleState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.webkit.WebViewFeature
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class DisplaySettingsScreen @Inject constructor(
@@ -105,11 +104,8 @@ class DisplaySettingsScreen @Inject constructor(
                         )
                     },
                     onSelected = {
-                        ClickableOnClick.Snackbar {
+                        ClickableOnClick.Action {
                             userPreferencesDataStore.useTheme.set(AppTheme.entries[it])
-                            SettingsSnackBarState(
-                                message = resourceProvider.stringResource(R.string.app_restart)
-                            )
                         }
                     }
                 )
@@ -133,11 +129,8 @@ class DisplaySettingsScreen @Inject constructor(
                         )
                     },
                     onSelected = {
-                        ClickableOnClick.Snackbar {
+                        ClickableOnClick.Action {
                             userPreferencesDataStore.tabConfiguration.set(TabConfiguration.entries[it])
-                            SettingsSnackBarState(
-                                message = resourceProvider.stringResource(R.string.app_restart)
-                            )
                         }
                     }
                 )
@@ -170,12 +163,12 @@ class DisplaySettingsScreen @Inject constructor(
 
 @Composable
 fun DisplaySettingsScreen(
-    blackStatusStateProvider: StateProvider<Boolean>,
+    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     displaySettingsScreen: DisplaySettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
-        blackStatusStateProvider,
+        useBlackStatusBarStateFlow,
         viewModel(
             key = displaySettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(

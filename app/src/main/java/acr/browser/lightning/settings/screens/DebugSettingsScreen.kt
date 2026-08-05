@@ -1,7 +1,6 @@
 package acr.browser.lightning.settings.screens
 
 import acr.browser.lightning.R
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.preference.DeveloperPreferenceStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.SettingsSnackBarState
@@ -11,6 +10,7 @@ import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class DebugSettingsScreen @Inject constructor(
@@ -38,12 +38,12 @@ class DebugSettingsScreen @Inject constructor(
 
 @Composable
 fun DebugSettingsScreen(
-    blackStatusStateProvider: StateProvider<Boolean>,
+    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     debugSettingsScreen: DebugSettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
-        blackStatusStateProvider,
+        useBlackStatusBarStateFlow,
         viewModel(
             key = debugSettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(

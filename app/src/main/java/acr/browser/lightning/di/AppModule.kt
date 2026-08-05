@@ -10,8 +10,6 @@ import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatcherProvider
 import acr.browser.lightning.concurrency.CoroutineDispatchers
-import acr.browser.lightning.concurrency.DeferredStateProvider
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
 import acr.browser.lightning.extensions.preferredLocale
@@ -56,6 +54,10 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import okhttp3.Cache
 import okhttp3.CacheControl
 import okhttp3.Call
@@ -370,38 +372,31 @@ class AppModule {
     @Named("theme")
     @Singleton
     @Provides
-    fun providesThemeDeferredStateProvider(
+    fun providesAppThemeStateFlow(
         themeProvider: ThemeProvider,
         appCoroutineScope: AppCoroutineScope,
-    ): StateProvider<AppTheme> = DeferredStateProvider(
-        provideState = { themeProvider.appTheme() },
-        appCoroutineScope = appCoroutineScope
-    )
+    ): StateFlow<AppTheme?> = themeProvider.appThemeValues()
+        .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
 
     @Named("tab")
     @Singleton
     @Provides
-    fun providesTabConfigurationDeferredStateProvider(
+    fun providesTabConfigurationStateFlow(
         userPreferencesDataStore: UserPreferencesDataStore,
         appCoroutineScope: AppCoroutineScope,
-    ): StateProvider<TabConfiguration> = DeferredStateProvider(
-        provideState = { userPreferencesDataStore.tabConfiguration.get() },
-        appCoroutineScope = appCoroutineScope,
-    )
+    ): StateFlow<TabConfiguration?> = userPreferencesDataStore.tabConfiguration.values()
+        .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
 
     @Named("black_status")
     @Singleton
     @Provides
-    fun providesBlackStatusBarDeferredStateProvider(
+    fun providesBlackStatusBarStateFlow(
         userPreferencesDataStore: UserPreferencesDataStore,
         appCoroutineScope: AppCoroutineScope
-    ): StateProvider<Boolean> = DeferredStateProvider(
-        provideState = {
-            userPreferencesDataStore.useBlackStatusBar.get() ||
-                userPreferencesDataStore.tabConfiguration.get() == TabConfiguration.DESKTOP
-        },
-        appCoroutineScope = appCoroutineScope
-    )
+    ): StateFlow<Boolean?> = userPreferencesDataStore.useBlackStatusBar.values()
+        .combine(userPreferencesDataStore.tabConfiguration.values()) { a, b ->
+            a || b == TabConfiguration.DESKTOP
+        }.stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
 
     @Singleton
     @Provides

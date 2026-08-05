@@ -5,7 +5,6 @@ import acr.browser.lightning.browser.BrowserComposeState
 import acr.browser.lightning.browser.BrowserPresenter
 import acr.browser.lightning.browser.compose.sheets.BookmarksBottomSheet
 import acr.browser.lightning.browser.tab.TabModel
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.preview.TopCropTransformation
 import acr.browser.lightning.search.SuggestionsModel
 import android.widget.FrameLayout
@@ -58,11 +57,12 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.transformations
 import coil3.transform.RoundedCornersTransformation
+import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomTabs(
-    blackStatusStateProvider: StateProvider<Boolean>,
+    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     frameLayout: FrameLayout,
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
@@ -79,7 +79,7 @@ fun BottomTabs(
     ) { innerPadding ->
         BrowserStatusBar(
             browserComposeState = browserViewState,
-            blackStatusStateProvider = blackStatusStateProvider,
+            useBlackStatusBarStateFlow = useBlackStatusBarStateFlow,
         )
         Column(
             Modifier

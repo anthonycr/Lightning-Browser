@@ -42,6 +42,7 @@ import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.search
 import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.theme.ThemeProvider
 import acr.browser.lightning.utils.isBookmarkUrl
 import acr.browser.lightning.utils.isDownloadsUrl
 import acr.browser.lightning.utils.isHistoryUrl
@@ -57,6 +58,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -94,6 +96,7 @@ class BrowserPresenter @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val numberFormatter: NumberFormatter,
     private val userPreferencesDataStore: UserPreferencesDataStore,
+    private val themeProvider: ThemeProvider,
 ) {
 
     private val browserCoroutineScope = BrowserCoroutineScope(
@@ -161,6 +164,15 @@ class BrowserPresenter @Inject constructor(
                 )
             )
             selectTab(model.selectTab(lastTab.id))
+        }
+
+        browserCoroutineScope.launch {
+            // Only react to changes, pages are initially loaded with the current theme.
+            themeProvider.appThemeValues().drop(1).collectLatest {
+                if (currentTab?.url?.isSpecialUrl() == true) {
+                    reload()
+                }
+            }
         }
 
         browserCoroutineScope.launch {

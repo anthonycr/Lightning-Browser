@@ -1,7 +1,6 @@
 package acr.browser.lightning.browser.compose
 
 import acr.browser.lightning.browser.BrowserComposeState
-import acr.browser.lightning.concurrency.StateProvider
 import android.widget.FrameLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -14,10 +13,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun CustomView(
-    blackStatusStateProvider: StateProvider<Boolean>,
+    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     browserViewState: BrowserComposeState,
     frameLayout: FrameLayout,
     snackbarHostState: SnackbarHostState,
@@ -27,7 +27,7 @@ fun CustomView(
     ) { innerPadding ->
         BrowserStatusBar(
             browserComposeState = browserViewState,
-            blackStatusStateProvider = blackStatusStateProvider,
+            useBlackStatusBarStateFlow = useBlackStatusBarStateFlow,
         )
         Column(
             Modifier

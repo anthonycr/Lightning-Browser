@@ -1,7 +1,6 @@
 package acr.browser.lightning.settings.screens
 
 import acr.browser.lightning.R
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.constant.SCHEME_BLANK
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
@@ -25,6 +24,7 @@ import acr.browser.lightning.utils.FileUtils
 import android.webkit.URLUtil
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class GeneralSettingsScreen @Inject constructor(
@@ -292,12 +292,12 @@ class GeneralSettingsScreen @Inject constructor(
 
 @Composable
 fun GeneralSettingsScreen(
-    blackStatusStateProvider: StateProvider<Boolean>,
+    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     generalSettingsScreen: GeneralSettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
-        blackStatusStateProvider,
+        useBlackStatusBarStateFlow,
         viewModel(
             key = generalSettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(

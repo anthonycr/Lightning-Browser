@@ -7,6 +7,8 @@ import acr.browser.lightning.preference.UserPreferencesDataStore
 import android.app.Application
 import android.content.res.Configuration
 import androidx.compose.material3.ColorScheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 /**
@@ -17,6 +19,12 @@ class DefaultThemeProvider @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val application: Application,
 ) : ThemeProvider {
+
+    override fun appThemeValues(): Flow<AppTheme> = if (isIncognitoMode) {
+        flowOf(AppTheme.DARK)
+    } else {
+        userPreferencesDataStore.useTheme.values()
+    }
 
     override suspend fun appTheme(): AppTheme = if (isIncognitoMode) {
         AppTheme.DARK

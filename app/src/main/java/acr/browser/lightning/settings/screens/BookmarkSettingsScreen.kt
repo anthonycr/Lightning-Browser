@@ -1,7 +1,6 @@
 package acr.browser.lightning.settings.screens
 
 import acr.browser.lightning.R
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.resources.ResourceProvider
@@ -14,6 +13,7 @@ import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class BookmarkSettingsScreen @Inject constructor(
@@ -108,12 +108,12 @@ class BookmarkSettingsScreen @Inject constructor(
 
 @Composable
 fun BookmarkSettingsScreen(
-    blackStatusStateProvider: StateProvider<Boolean>,
+    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     bookmarkSettingsScreen: BookmarkSettingsScreen,
     onUp: () -> Unit
 ) {
     SettingsFrameworkScreen(
-        blackStatusStateProvider,
+        useBlackStatusBarStateFlow,
         viewModel(
             key = bookmarkSettingsScreen.key,
             factory = SettingsFrameworkPresenter.Factory(

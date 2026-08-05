@@ -6,7 +6,6 @@ import acr.browser.lightning.browser.BrowserPresenter
 import acr.browser.lightning.browser.BrowserViewState
 import acr.browser.lightning.browser.compose.sheets.BookmarksBottomSheet
 import acr.browser.lightning.browser.tab.TabModel
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.search.SuggestionsModel
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
@@ -52,10 +51,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun DesktopTabs(
-    blackStatusStateProvider: StateProvider<Boolean>,
+    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     frameLayout: FrameLayout,
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
@@ -67,7 +67,7 @@ fun DesktopTabs(
     ) { innerPadding ->
         BrowserStatusBar(
             browserComposeState = browserViewState,
-            blackStatusStateProvider = blackStatusStateProvider,
+            useBlackStatusBarStateFlow = useBlackStatusBarStateFlow,
         )
         Column(
             Modifier

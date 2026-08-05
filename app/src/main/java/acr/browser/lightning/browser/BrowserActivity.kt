@@ -5,7 +5,6 @@ import acr.browser.lightning.browser.keys.KeyEventAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.TabPager
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.search.SuggestionsModel
 import android.annotation.SuppressLint
@@ -53,7 +52,7 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
 
     @Named("tab")
     @Inject
-    internal lateinit var tabConfigurationProvider: StateProvider<TabConfiguration>
+    internal lateinit var tabConfigurationProvider: StateFlow<@JvmSuppressWildcards TabConfiguration?>
 
     @Inject
     internal lateinit var suggestionsModel: SuggestionsModel
@@ -85,7 +84,7 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
 
             BrowserScreen(
                 tabConfigurationProvider,
-                blackStatusBarPreferenceStoreStateProvider,
+                useBlackStatusBarStateFlow,
                 currentState,
                 presenter,
                 browserFrame,

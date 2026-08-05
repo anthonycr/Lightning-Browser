@@ -79,48 +79,48 @@ class SettingsActivity : ThemableActivity() {
                 }) { state ->
                     when (state) {
                         SettingsNavigation.ROOT -> SettingsScreen(
-                            blackStatusBarPreferenceStoreStateProvider,
+                            useBlackStatusBarStateFlow,
                             buildInfo
                         ) {
                             navigationState = it
                         }
 
                         SettingsNavigation.ADBLOCK -> AdBlockSettingsScreen(
-                            blackStatusBarPreferenceStoreStateProvider,
+                            useBlackStatusBarStateFlow,
                             adBlockSettingsScreen
                         ) { navigationState = SettingsNavigation.ROOT }
 
                         SettingsNavigation.GENERAL -> GeneralSettingsScreen(
-                            blackStatusBarPreferenceStoreStateProvider,
+                            useBlackStatusBarStateFlow,
                             generalSettingsScreen
                         ) { navigationState = SettingsNavigation.ROOT }
 
                         SettingsNavigation.BOOKMARK -> BookmarkSettingsScreen(
-                            blackStatusBarPreferenceStoreStateProvider,
+                            useBlackStatusBarStateFlow,
                             bookmarkSettingsScreen
                         ) { navigationState = SettingsNavigation.ROOT }
 
                         SettingsNavigation.DISPLAY -> DisplaySettingsScreen(
-                            blackStatusBarPreferenceStoreStateProvider,
+                            useBlackStatusBarStateFlow,
                             displaySettingsScreen
                         ) { navigationState = SettingsNavigation.ROOT }
 
                         SettingsNavigation.PRIVACY -> PrivacySettingsScreen(
-                            blackStatusBarPreferenceStoreStateProvider,
+                            useBlackStatusBarStateFlow,
                             privacySettingsScreen
                         ) {
                             navigationState = SettingsNavigation.ROOT
                         }
 
                         SettingsNavigation.ADVANCED -> AdvancedSettingsScreen(
-                            blackStatusBarPreferenceStoreStateProvider,
+                            useBlackStatusBarStateFlow,
                             advancedSettingsScreen
                         ) {
                             navigationState = SettingsNavigation.ROOT
                         }
 
                         SettingsNavigation.ABOUT -> AboutSettingsScreen(
-                            blackStatusBarPreferenceStoreStateProvider,
+                            useBlackStatusBarStateFlow,
                             aboutSettingsScreen
                         ) {
                             navigationState = SettingsNavigation.ROOT
@@ -139,7 +139,7 @@ class SettingsActivity : ThemableActivity() {
                         }
 
                         SettingsNavigation.DEBUG -> DebugSettingsScreen(
-                            blackStatusBarPreferenceStoreStateProvider,
+                            useBlackStatusBarStateFlow,
                             debugSettingsScreen
                         ) {
                             navigationState = SettingsNavigation.ROOT

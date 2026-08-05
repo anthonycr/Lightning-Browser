@@ -152,12 +152,12 @@ fun ThemableActivity.BrowserTheme(
 //            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 //        }
     val colorScheme =
-        when (val appTheme = appThemePreferenceStoreStateProvider.state.collectAsState().value) {
+        when (val appTheme = appThemeStateFlow.collectAsState().value) {
             null -> null
             else -> appTheme.asColorScheme(darkTheme)
         }
 
-    val blackStatus by blackStatusBarPreferenceStoreStateProvider.state.collectAsState()
+    val blackStatus by useBlackStatusBarStateFlow.collectAsState()
 
     if (colorScheme == null) return
 

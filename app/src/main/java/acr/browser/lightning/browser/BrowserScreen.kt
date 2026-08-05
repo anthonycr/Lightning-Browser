@@ -7,7 +7,6 @@ import acr.browser.lightning.browser.compose.DesktopTabs
 import acr.browser.lightning.browser.compose.DrawerTabs
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.compose.BrowserTheme
-import acr.browser.lightning.concurrency.StateProvider
 import acr.browser.lightning.search.SuggestionsModel
 import android.widget.FrameLayout
 import androidx.compose.material3.SnackbarDuration
@@ -17,11 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun ThemableActivity.BrowserScreen(
-    tabConfigurationStateProvider: StateProvider<TabConfiguration>,
-    blackStatusStateProvider: StateProvider<Boolean>,
+    tabConfigurationStateProvider: StateFlow<TabConfiguration?>,
+    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     browserFrameLayout: FrameLayout,
@@ -44,16 +44,16 @@ fun ThemableActivity.BrowserScreen(
         }
         if (browserViewState.showCustomView) {
             CustomView(
-                blackStatusStateProvider,
+                useBlackStatusBarStateFlow,
                 browserViewState,
                 customFrameLayout,
                 snackbarHostState
             )
         } else {
-            val tabConfiguration = tabConfigurationStateProvider.state.collectAsState()
+            val tabConfiguration = tabConfigurationStateProvider.collectAsState()
             when (tabConfiguration.value) {
                 TabConfiguration.DESKTOP -> DesktopTabs(
-                    blackStatusStateProvider,
+                    useBlackStatusBarStateFlow,
                     browserFrameLayout,
                     browserViewState,
                     presenter,
@@ -62,7 +62,7 @@ fun ThemableActivity.BrowserScreen(
                 )
 
                 TabConfiguration.DRAWER_SIDE -> DrawerTabs(
-                    blackStatusStateProvider,
+                    useBlackStatusBarStateFlow,
                     browserFrameLayout,
                     browserViewState,
                     presenter,
@@ -71,7 +71,7 @@ fun ThemableActivity.BrowserScreen(
                 )
 
                 TabConfiguration.DRAWER_BOTTOM -> BottomTabs(
-                    blackStatusStateProvider,
+                    useBlackStatusBarStateFlow,
                     browserFrameLayout,
                     browserViewState,
                     presenter,
