@@ -109,6 +109,7 @@ dependencies {
     val leakcanary = "2.14"
     val lifecycle = "2.11.0"
 
+
     implementation(platform("androidx.compose:compose-bom:2026.06.01"))
     implementation("androidx.activity:activity:1.13.0")
     implementation("androidx.activity:activity-compose:1.13.0")
@@ -160,6 +161,7 @@ dependencies {
 
     debugRuntimeOnly("com.squareup.leakcanary:leakcanary-android:$leakcanary")
 
+    testImplementation("app.cash.turbine:turbine:1.2.1")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.assertj:assertj-core:3.27.7")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:${kotlin}")

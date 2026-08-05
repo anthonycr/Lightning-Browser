@@ -4,6 +4,7 @@ import acr.browser.lightning.preference.IntEnum
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
@@ -63,6 +64,7 @@ class EnumPreferenceStore<T>(
         .map { rawValue ->
             clazz.enumConstants!!.firstOrNull { it.value == rawValue } ?: defaultValue
         }
+        .distinctUntilChanged()
 
     override suspend fun get(): T = clazz.enumConstants!!.firstOrNull {
         it.value == backingPreferenceStore.get()
@@ -82,6 +84,7 @@ class NullablePreferenceStore<T>(
 ) : PreferenceStore<T?> {
 
     override fun values(): Flow<T?> = dataStore.data.map { it[key] }
+        .distinctUntilChanged()
 
     override suspend fun get(): T? = dataStore.data.first()[key]
 
@@ -108,6 +111,7 @@ class NonNullPreferenceStore<T>(
 ) : PreferenceStore<T> {
 
     override fun values(): Flow<T> = dataStore.data.map { it[key] ?: defaultValue }
+        .distinctUntilChanged()
 
     override suspend fun get(): T = dataStore.data.first()[key] ?: defaultValue
 
