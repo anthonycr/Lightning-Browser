@@ -37,9 +37,8 @@ fun TabCountButton(browserViewState: BrowserComposeState, onClick: () -> Unit) {
             val textWidth = textLayout.size.width
             val textHeight = textLayout.size.height
             drawText(
-                textMeasurer = textMeasurer,
-                text = browserViewState.tabCountText,
-                style = textStyle,
+                textLayoutResult = textLayout,
+                color = color,
                 topLeft = Offset(
                     12.dp.toPx() - textWidth / 2,
                     12.dp.toPx() - textHeight / 2
