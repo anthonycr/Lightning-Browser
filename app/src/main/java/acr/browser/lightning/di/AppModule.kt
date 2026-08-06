@@ -69,11 +69,12 @@ import java.io.File
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Provider
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 
 @Module
 class AppModule {
@@ -115,7 +116,7 @@ class AppModule {
     @Singleton
     @Provides
     fun providesSuggestionsCacheControl(): CacheControl =
-        CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build()
+        CacheControl.Builder().maxStale(1.days).build()
 
     @Singleton
     @Provides
@@ -129,9 +130,12 @@ class AppModule {
             }
         }
 
-    private fun createInterceptorWithMaxCacheAge(maxCacheAgeSeconds: Long) = Interceptor { chain ->
+    private fun createInterceptorWithMaxCacheAge(maxCacheAge: Duration) = Interceptor { chain ->
         chain.proceed(chain.request()).newBuilder()
-            .header("cache-control", "max-age=$maxCacheAgeSeconds, max-stale=$maxCacheAgeSeconds")
+            .header(
+                name = "cache-control",
+                value = "max-age=${maxCacheAge.inWholeSeconds}, max-stale=${maxCacheAge.inWholeSeconds}"
+            )
             .build()
     }
 
@@ -179,13 +183,12 @@ class AppModule {
         coroutineDispatchers: CoroutineDispatchers,
         eventListener: EventListener,
     ): Deferred<OkHttpClient> = appCoroutineScope.async(coroutineDispatchers.io) {
-        val intervalDay = TimeUnit.DAYS.toSeconds(1)
         val suggestionsCache = File(application.cacheDir, "suggestion_responses")
 
         OkHttpClient.Builder()
             .eventListener(eventListener)
             .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
-            .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalDay))
+            .addNetworkInterceptor(createInterceptorWithMaxCacheAge(1.days))
             .build()
     }
 
@@ -198,13 +201,12 @@ class AppModule {
         coroutineDispatchers: CoroutineDispatchers,
         eventListener: EventListener,
     ): Deferred<OkHttpClient> = appCoroutineScope.async(coroutineDispatchers.io) {
-        val intervalYear = TimeUnit.DAYS.toSeconds(365)
         val suggestionsCache = File(application.cacheDir, "hosts_cache")
 
         OkHttpClient.Builder()
             .eventListener(eventListener)
             .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(5)))
-            .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalYear))
+            .addNetworkInterceptor(createInterceptorWithMaxCacheAge(365.days))
             .build()
     }
 
