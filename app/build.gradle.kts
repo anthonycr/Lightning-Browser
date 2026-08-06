@@ -1,3 +1,5 @@
+import app.cash.licensee.SpdxId
+
 plugins {
     id("com.android.application")
     id("com.google.devtools.ksp") version "2.3.11"
@@ -6,6 +8,7 @@ plugins {
     id("com.squareup.sort-dependencies") version "0.20.0"
     id("org.jetbrains.kotlin.plugin.compose") version "2.4.10"
     id("com.anthonycr.plugins.mockingbird") version "3.3.0"
+    id("app.cash.licensee") version "1.14.1"
 }
 
 android {
@@ -182,6 +185,15 @@ mezzanine {
         "src/main/js/TextReflow.js",
         "src/main/js/ThemeColor.js"
     )
+}
+
+licensee {
+    bundleAndroidAsset = true
+    androidAssetReportPath = "licensee/artifacts.json"
+
+    allow(SpdxId.Apache_20)
+    allow(SpdxId.BSD_3_Clause)
+    allowUrl("https://jsoup.org/license")
 }
 
 kotlin {
