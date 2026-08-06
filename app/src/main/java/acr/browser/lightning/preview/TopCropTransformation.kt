@@ -13,6 +13,10 @@ import coil3.transform.Transformation
 import coil3.util.IntPair
 import kotlin.math.roundToInt
 
+/**
+ * Transforms a [Bitmap] such that it is scaled down to fit horizontally within the target size and
+ * then the bottom is cropped off so that the top fully fits into the destination.
+ */
 object TopCropTransformation : Transformation() {
     override val cacheKey: String = "TopCropTransformation"
 
