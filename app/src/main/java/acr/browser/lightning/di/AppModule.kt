@@ -1,11 +1,9 @@
 package acr.browser.lightning.di
 
 import acr.browser.lightning.AppTheme
-import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
-import acr.browser.lightning.browser.tab.DefaultTabTitle
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatcherProvider
@@ -235,11 +233,6 @@ class AppModule {
 
     @Provides
     fun providesInvertPage(): InvertPage = mezzanine()
-
-    @DefaultTabTitle
-    @Provides
-    fun providesDefaultTabTitle(application: Application): String =
-        application.getString(R.string.untitled)
 
     @Provides
     fun providesCleanupList(
