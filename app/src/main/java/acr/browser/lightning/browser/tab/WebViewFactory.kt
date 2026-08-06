@@ -2,6 +2,7 @@ package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.tab.settings.RenderingMode
 import acr.browser.lightning.browser.tab.settings.TabSettings
+import acr.browser.lightning.browser.tab.settings.TextSize
 import acr.browser.lightning.browser.view.CompositeTouchListener
 import acr.browser.lightning.di.IncognitoMode
 import acr.browser.lightning.log.Logger
@@ -150,13 +151,12 @@ class WebViewFactory @Inject constructor(
             settings.useWideViewPort = tabSettings.useWideViewPortEnabled
             settings.loadWithOverviewMode = tabSettings.overviewModeEnabled
             settings.textZoom = when (tabSettings.textSize) {
-                0 -> 200
-                1 -> 150
-                2 -> 125
-                3 -> 100
-                4 -> 75
-                5 -> 50
-                else -> throw IllegalArgumentException("Unsupported text size")
+                TextSize.XX_LARGE -> 200
+                TextSize.X_LARGE -> 150
+                TextSize.LARGE -> 125
+                TextSize.MEDIUM -> 100
+                TextSize.SMALL -> 75
+                TextSize.X_SMALL -> 50
             }
 
             CookieManager.getInstance().setAcceptThirdPartyCookies(

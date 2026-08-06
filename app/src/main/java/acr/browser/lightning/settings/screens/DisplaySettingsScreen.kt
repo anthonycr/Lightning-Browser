@@ -2,6 +2,7 @@ package acr.browser.lightning.settings.screens
 
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.tab.settings.TextSize
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
@@ -140,20 +141,19 @@ class DisplaySettingsScreen @Inject constructor(
                 title = resourceProvider.stringResource(R.string.title_text_size),
                 summary = {
                     when (userPreferencesDataStore.textSize.get()) {
-                        0 -> resourceProvider.stringResource(R.string.size_largest)
-                        1 -> resourceProvider.stringResource(R.string.size_large)
-                        2 -> resourceProvider.stringResource(R.string.size_normal)
-                        3 -> resourceProvider.stringResource(R.string.size_normal)
-                        4 -> resourceProvider.stringResource(R.string.size_small)
-                        5 -> resourceProvider.stringResource(R.string.size_smallest)
-                        else -> throw IllegalArgumentException("Unsupported text size")
+                        TextSize.XX_LARGE -> resourceProvider.stringResource(R.string.size_largest)
+                        TextSize.X_LARGE -> resourceProvider.stringResource(R.string.size_large)
+                        TextSize.LARGE -> resourceProvider.stringResource(R.string.size_normal)
+                        TextSize.MEDIUM -> resourceProvider.stringResource(R.string.size_normal)
+                        TextSize.SMALL -> resourceProvider.stringResource(R.string.size_small)
+                        TextSize.X_SMALL -> resourceProvider.stringResource(R.string.size_smallest)
                     }
                 },
                 onClick = ClickableOnClick.TextSize(
-                    produceTextSize = { userPreferencesDataStore.textSize.get() },
+                    produceTextSize = { userPreferencesDataStore.textSize.get().value },
                     onSelected = {
                         ClickableOnClick.Action {
-                            userPreferencesDataStore.textSize.set(it)
+                            userPreferencesDataStore.textSize.set(TextSize.entries[it])
                         }
                     }
                 )

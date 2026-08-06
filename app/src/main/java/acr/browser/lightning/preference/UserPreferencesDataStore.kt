@@ -5,6 +5,7 @@ import acr.browser.lightning.adblock.source.HostsSourcePreference
 import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.browser.tab.settings.RenderingMode
+import acr.browser.lightning.browser.tab.settings.TextSize
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
@@ -14,7 +15,6 @@ import acr.browser.lightning.preference.datastore.NonNullPreferenceStore
 import acr.browser.lightning.preference.datastore.NullablePreferenceStore
 import acr.browser.lightning.preference.datastore.migrateBoolean
 import acr.browser.lightning.preference.datastore.migrateEnum
-import acr.browser.lightning.preference.datastore.migrateInt
 import acr.browser.lightning.preference.datastore.migrateNullableString
 import acr.browser.lightning.preference.datastore.migrateString
 import acr.browser.lightning.search.SearchEngineChoice
@@ -64,7 +64,7 @@ class UserPreferencesDataStore @Inject constructor(
                     migrateEnum(searchChoice)
                     migrateString(searchUrl)
                     migrateBoolean(textReflowEnabled)
-                    migrateInt(textSize)
+                    migrateEnum(textSize)
                     migrateBoolean(useWideViewPortEnabled)
                     migrateEnum(userAgentChoice)
                     migrateString(userAgentString)
@@ -266,12 +266,12 @@ class UserPreferencesDataStore @Inject constructor(
     )
 
     /**
-     * The index of the text size that should be used in the browser.
+     * The text size that should be used in the browser.
      */
-    val textSize: NonNullPreferenceStore<Int> = NonNullPreferenceStore(
+    val textSize: EnumPreferenceStore<TextSize> = EnumPreferenceStore(
         key = intPreferencesKey(TEXT_SIZE),
         dataStore = dataStore,
-        defaultValue = 3
+        defaultValue = TextSize.MEDIUM
     )
 
     /**

@@ -38,7 +38,7 @@ data class TabSettings(
     val popupsEnabled: Boolean,
     val useWideViewPortEnabled: Boolean,
     val overviewModeEnabled: Boolean,
-    val textSize: Int,
+    val textSize: TextSize,
     val blockThirdPartyCookiesEnabled: Boolean,
 ) {
     companion object {
