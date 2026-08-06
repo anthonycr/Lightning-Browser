@@ -57,7 +57,7 @@ class DefaultBloomFilter<T>(
 
         val bitSize = bitSet.size()
         var combinedHash = lowerHalf
-        for (i in 0 until numberOfHashes) {
+        repeat(numberOfHashes) {
             bitSet.set((combinedHash and Int.MAX_VALUE) % bitSize)
             combinedHash += upperHalf
         }
@@ -75,7 +75,7 @@ class DefaultBloomFilter<T>(
 
         val bitSize = bitSet.size()
         var combinedHash = lowerHalf
-        for (i in 0 until numberOfHashes) {
+        repeat(numberOfHashes) {
             if (!bitSet.get((combinedHash and Int.MAX_VALUE) % bitSize)) {
                 return false
             }
