@@ -11,16 +11,28 @@ import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
+/**
+ * Updates the current hosts file that will be loaded by the ad blocker.
+ */
 interface HostsFileUpdater {
 
+    /**
+     * Reads all text from the provided [uri] into a [File] that is returned. If a failure occurs
+     * while reading from the [Uri], null is returned.
+     */
     suspend fun readTextFromUri(uri: Uri): File?
-
 }
 
+/**
+ * The default implementation that reads from the file and outputs the contents to
+ * `local_hosts.txt` in the external files directory. This file is transparently readable by the
+ * [acr.browser.lightning.adblock.source.FileHostsDataSource].
+ */
 class DefaultHostsFileUpdater @Inject constructor(
     private val application: Application,
     private val coroutineDispatchers: CoroutineDispatchers,
 ) : HostsFileUpdater {
+
     override suspend fun readTextFromUri(uri: Uri): File? = withContext(coroutineDispatchers.io) {
         val externalFilesDir = application.getExternalFilesDir("")
             ?: return@withContext null
