@@ -1,6 +1,5 @@
 package acr.browser.lightning.adblock.source
 
-import acr.browser.lightning.preference.IntEnum
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -59,8 +58,3 @@ suspend fun UserPreferencesDataStore.selectedHostsSource(): HostsSourceType {
     }
 }
 
-enum class HostsSourcePreference(override val value: Int) : IntEnum {
-    DEFAULT(0),
-    LOCAL(1),
-    REMOTE(2)
-}
