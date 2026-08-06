@@ -19,6 +19,9 @@ import java.io.IOException
 import java.io.OutputStreamWriter
 import javax.inject.Inject
 
+/**
+ * Legacy bookmark import/export handler.
+ */
 class BookmarkExporter @Inject constructor(
     private val application: Application,
     private val bookmarkRepository: BookmarkRepository,
