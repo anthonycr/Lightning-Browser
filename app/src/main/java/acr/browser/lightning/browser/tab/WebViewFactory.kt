@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.tab
 
+import acr.browser.lightning.browser.tab.settings.TabSettings
 import acr.browser.lightning.browser.view.CompositeTouchListener
 import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.di.IncognitoMode

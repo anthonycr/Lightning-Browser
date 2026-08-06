@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.tab
 
+import acr.browser.lightning.browser.tab.settings.TabSettings
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.di.FaviconCacheDir

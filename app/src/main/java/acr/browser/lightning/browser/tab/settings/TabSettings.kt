@@ -1,4 +1,4 @@
-package acr.browser.lightning.browser.tab
+package acr.browser.lightning.browser.tab.settings
 
 import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.preference.UserPreferencesDataStore

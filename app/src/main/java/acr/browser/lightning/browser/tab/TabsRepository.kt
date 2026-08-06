@@ -2,6 +2,7 @@ package acr.browser.lightning.browser.tab
 
 import acr.browser.lightning.browser.BrowserContract
 import acr.browser.lightning.browser.tab.bundle.BundleStore
+import acr.browser.lightning.browser.tab.settings.TabSettings
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.di.InitialAction
 import acr.browser.lightning.preference.UserPreferencesDataStore
