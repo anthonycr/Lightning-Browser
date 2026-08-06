@@ -3,6 +3,9 @@ package acr.browser.lightning.concurrency
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
+/**
+ * Type-safe analogue of [kotlinx.coroutines.flow.combine].
+ */
 @Suppress("UNCHECKED_CAST")
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> combine(
     flow: Flow<T1>,
@@ -29,7 +32,9 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> combine(
     )
 }
 
-
+/**
+ * Type-safe analogue of [kotlinx.coroutines.flow.combine].
+ */
 @Suppress("UNCHECKED_CAST")
 fun <T1, T2, T3, R> combine(
     flow: Flow<T1>,
