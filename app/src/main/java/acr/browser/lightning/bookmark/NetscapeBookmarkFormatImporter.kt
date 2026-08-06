@@ -79,13 +79,13 @@ class NetscapeBookmarkFormatImporter @Inject constructor(
             "$parentFolder/${currentFolder}"
         }
 
-    companion object {
-        const val ITEM_TAG = "DT"
-        const val LIST_TAG = "DL"
-        const val BOOKMARK_TAG = "A"
-        const val FOLDER_TAG = "H3"
-        const val HREF = "HREF"
-        const val ROOT_FOLDER_NAME = ""
+    private companion object {
+        private const val ITEM_TAG = "DT"
+        private const val LIST_TAG = "DL"
+        private const val BOOKMARK_TAG = "A"
+        private const val FOLDER_TAG = "H3"
+        private const val HREF = "HREF"
+        private const val ROOT_FOLDER_NAME = ""
     }
 
 }
