@@ -1,4 +1,4 @@
-package acr.browser.lightning.browser.view
+package acr.browser.lightning.browser.tab.settings
 
 import acr.browser.lightning.preference.IntEnum
 

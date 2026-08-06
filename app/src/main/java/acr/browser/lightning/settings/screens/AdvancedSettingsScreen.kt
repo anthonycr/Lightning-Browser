@@ -2,7 +2,7 @@ package acr.browser.lightning.settings.screens
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
-import acr.browser.lightning.browser.view.RenderingMode
+import acr.browser.lightning.browser.tab.settings.RenderingMode
 import acr.browser.lightning.constant.TEXT_ENCODINGS
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider

@@ -4,8 +4,8 @@ import acr.browser.lightning.AppTheme
 import acr.browser.lightning.adblock.source.HostsSourcePreference
 import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.search.SearchBoxModel
+import acr.browser.lightning.browser.tab.settings.RenderingMode
 import acr.browser.lightning.browser.ui.TabConfiguration
-import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.device.ScreenSize
