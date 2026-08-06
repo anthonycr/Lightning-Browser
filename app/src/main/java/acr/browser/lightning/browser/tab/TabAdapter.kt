@@ -275,6 +275,7 @@ class TabAdapter @AssistedInject constructor(
     override val themeColor: Int
         get() = tabWebChromeClient.colorChangeStateFlow.value
 
+    // TODO: Do something with theme color or drop it
     override fun themeColorChanges(): Flow<Int> {
         // Treat it like a SharedFlow for consistency on presenter side
         return tabWebChromeClient.colorChangeStateFlow.drop(1)

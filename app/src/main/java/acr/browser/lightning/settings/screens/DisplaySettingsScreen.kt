@@ -27,6 +27,7 @@ class DisplaySettingsScreen @Inject constructor(
     fun createSettingsFrameworkState(): SettingsFrameworkState = SettingsFrameworkState(
         title = resourceProvider.stringResource(R.string.settings_display),
         content = listOf(
+            // TODO: Delete hide status bar option?
             ToggleState(
                 title = resourceProvider.stringResource(R.string.fullScreenOption),
                 isChecked = { userPreferencesDataStore.hideStatusBarEnabled.get() },
