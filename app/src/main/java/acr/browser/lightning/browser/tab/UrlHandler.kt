@@ -69,7 +69,6 @@ class UrlHandler @Inject constructor(
             && !URLUtil.isDataUrl(url)
             && !URLUtil.isJavaScriptUrl(url)
         ) {
-            webView.stopLoading()
             return true
         }
         return when {
