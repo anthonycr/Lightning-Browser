@@ -25,24 +25,26 @@ import kotlin.coroutines.resume
 
 /**
  * An initializer that is run on a [WebView] after it is created.
+ *
+ * @param T The underlying type of tab this initializer supports.
  */
-interface TabInitializer {
+interface TabInitializer<in T> {
 
     /**
      * Initialize the [WebView] instance held by the tab. If a url is loaded, the
      * provided [headers] should be used to load the url.
      */
-    suspend fun initialize(webView: WebView, headers: Map<String, String>)
+    suspend fun initialize(tab: T, headers: Map<String, String>)
 
 }
 
 /**
  * An initializer that loads a [url].
  */
-class UrlInitializer(private val url: String) : TabInitializer {
+class UrlInitializer(private val url: String) : TabInitializer<WebView> {
 
-    override suspend fun initialize(webView: WebView, headers: Map<String, String>) {
-        webView.loadUrl(url, headers)
+    override suspend fun initialize(tab: WebView, headers: Map<String, String>) {
+        tab.loadUrl(url, headers)
     }
 
 }
@@ -55,16 +57,16 @@ class HomePageInitializer @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val startPageInitializer: StartPageInitializer,
     private val bookmarkPageInitializer: BookmarkPageInitializer
-) : TabInitializer {
+) : TabInitializer<WebView> {
 
-    override suspend fun initialize(webView: WebView, headers: Map<String, String>) {
+    override suspend fun initialize(tab: WebView, headers: Map<String, String>) {
         val homepage = userPreferencesDataStore.homepage.get()
 
         when (homepage) {
             SCHEME_HOMEPAGE -> startPageInitializer
             SCHEME_BOOKMARKS -> bookmarkPageInitializer
             else -> UrlInitializer(homepage)
-        }.initialize(webView, headers)
+        }.initialize(tab, headers)
     }
 
 }
@@ -106,14 +108,14 @@ class HistoryPageInitializer @Inject constructor(
  */
 abstract class HtmlPageFactoryInitializer(
     private val htmlPageFactory: HtmlPageFactory
-) : TabInitializer {
+) : TabInitializer<WebView> {
 
     override suspend fun initialize(
-        webView: WebView,
+        tab: WebView,
         headers: Map<String, String>
     ) {
         val page = htmlPageFactory.buildPage()
-        webView.loadUrl(page, headers)
+        tab.loadUrl(page, headers)
     }
 
 }
@@ -122,11 +124,11 @@ abstract class HtmlPageFactoryInitializer(
  * An initializer that sets the [WebView] as the target of the [resultMessage]. Used for
  * `target="_blank"` links.
  */
-class ResultMessageInitializer(private val resultMessage: Message) : TabInitializer {
+class ResultMessageInitializer(private val resultMessage: Message) : TabInitializer<WebView> {
 
-    override suspend fun initialize(webView: WebView, headers: Map<String, String>) {
+    override suspend fun initialize(tab: WebView, headers: Map<String, String>) {
         resultMessage.apply {
-            (obj as WebView.WebViewTransport).webView = webView
+            (obj as WebView.WebViewTransport).webView = tab
         }.sendToTarget()
     }
 
@@ -135,10 +137,10 @@ class ResultMessageInitializer(private val resultMessage: Message) : TabInitiali
 /**
  * An initializer that restores the [WebView] state using the [bundle].
  */
-class BundleInitializer(private val bundle: Bundle) : TabInitializer {
+class BundleInitializer(private val bundle: Bundle) : TabInitializer<WebView> {
 
-    override suspend fun initialize(webView: WebView, headers: Map<String, String>) {
-        webView.restoreState(bundle)
+    override suspend fun initialize(tab: WebView, headers: Map<String, String>) {
+        tab.restoreState(bundle)
     }
 
 }
@@ -149,16 +151,16 @@ class BundleInitializer(private val bundle: Bundle) : TabInitializer {
  */
 class FreezableInitializer(
     val bundle: Bundle,
-    val delegate: TabInitializer,
+    val delegate: TabInitializer<WebView>,
     val initialTitle: String,
     val id: Int,
-) : TabInitializer {
+) : TabInitializer<WebView> {
 
     override suspend fun initialize(
-        webView: WebView,
+        tab: WebView,
         headers: Map<String, String>
     ) {
-        delegate.initialize(webView, headers)
+        delegate.initialize(tab, headers)
     }
 
 }
@@ -166,9 +168,9 @@ class FreezableInitializer(
 /**
  * An initializer that does not load anything into the [WebView].
  */
-class NoOpInitializer : TabInitializer {
+class NoOpInitializer : TabInitializer<Any> {
 
-    override suspend fun initialize(webView: WebView, headers: Map<String, String>) = Unit
+    override suspend fun initialize(tab: Any, headers: Map<String, String>) = Unit
 
 }
 
@@ -181,13 +183,13 @@ class PermissionInitializer @AssistedInject constructor(
     @Assisted private val url: String,
     private val activity: Activity,
     private val homePageInitializer: HomePageInitializer
-) : TabInitializer {
+) : TabInitializer<WebView> {
 
-    override suspend fun initialize(webView: WebView, headers: Map<String, String>) {
+    override suspend fun initialize(tab: WebView, headers: Map<String, String>) {
         val dialogChoice = showDialog()
         when (dialogChoice) {
-            DialogChoice.DISMISS -> homePageInitializer.initialize(webView, headers)
-            DialogChoice.OPEN -> UrlInitializer(url).initialize(webView, headers)
+            DialogChoice.DISMISS -> homePageInitializer.initialize(tab, headers)
+            DialogChoice.OPEN -> UrlInitializer(url).initialize(tab, headers)
         }
     }
 

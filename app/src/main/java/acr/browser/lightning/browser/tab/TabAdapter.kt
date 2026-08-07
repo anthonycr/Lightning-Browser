@@ -54,7 +54,7 @@ import kotlin.time.Duration.Companion.milliseconds
  */
 @SuppressLint("ClickableViewAccessibility")
 class TabAdapter @AssistedInject constructor(
-    @Assisted private val tabInitializer: TabInitializer,
+    @Assisted private val tabInitializer: TabInitializer<WebView>,
     @Assisted private val webViewLazy: Lazy<WebView>,
     @Assisted private val requestHeaders: Map<String, String>,
     @Assisted private val tabWebViewClient: TabWebViewClient,
@@ -67,13 +67,13 @@ class TabAdapter @AssistedInject constructor(
     private val previewModel: PreviewModel,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val connectivityProvider: ConnectivityProvider,
-) : TabModel {
+) : TabModel<WebView> {
 
     @AssistedFactory
     interface Factory {
 
         fun create(
-            tabInitializer: TabInitializer,
+            tabInitializer: TabInitializer<WebView>,
             webView: Lazy<WebView>,
             requestHeaders: Map<String, String>,
             tabWebViewClient: TabWebViewClient,
@@ -164,7 +164,7 @@ class TabAdapter @AssistedInject constructor(
         webView.loadUrl(url, requestHeaders)
     }
 
-    override fun loadFromInitializer(tabInitializer: TabInitializer) {
+    override fun loadFromInitializer(tabInitializer: TabInitializer<WebView>) {
         tabCoroutineScope.launch {
             tabInitializer.initialize(webView, requestHeaders)
         }
@@ -332,7 +332,7 @@ class TabAdapter @AssistedInject constructor(
         tabWebChromeClient.hideCustomView()
     }
 
-    override fun createWindowRequests(): Flow<TabInitializer> =
+    override fun createWindowRequests(): Flow<TabInitializer<WebView>> =
         tabWebChromeClient.createWindowSharedFlow
 
     override fun closeWindowRequests(): Flow<Unit> = tabWebChromeClient.closeWindowSharedFlow

@@ -47,6 +47,7 @@ import acr.browser.lightning.utils.isBookmarkUrl
 import acr.browser.lightning.utils.isDownloadsUrl
 import acr.browser.lightning.utils.isHistoryUrl
 import acr.browser.lightning.utils.isSpecialUrl
+import android.webkit.WebView
 import androidx.activity.result.ActivityResult
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.net.toUri
@@ -74,7 +75,7 @@ import kotlin.system.exitProcess
  */
 @BrowserScope
 class BrowserPresenter @Inject constructor(
-    private val model: BrowserContract.Model,
+    private val model: BrowserContract.Model<WebView>,
     private val navigator: BrowserContract.Navigator,
     private val bookmarkRepository: BookmarkRepository,
     private val downloadsRepository: DownloadsRepository,
@@ -104,7 +105,7 @@ class BrowserPresenter @Inject constructor(
     )
 
     private var view: BrowserContract.View? = null
-    private var currentTab: TabModel? = null
+    private var currentTab: TabModel<WebView>? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
     private var currentBookmarks: List<Bookmark> = emptyList()
     private var isSearchViewFocused = false
@@ -221,7 +222,7 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun TabModel.asViewState(selected: Boolean): TabViewState = TabViewState(
+    private fun <T> TabModel<T>.asViewState(selected: Boolean): TabViewState = TabViewState(
         id = id,
         icon = favicon,
         title = title,
@@ -240,7 +241,7 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private suspend fun selectTab(tabModel: TabModel?, focusTab: Boolean = true) {
+    private suspend fun selectTab(tabModel: TabModel<WebView>?, focusTab: Boolean = true) {
         if (currentTab == tabModel) {
             updateState(state.value.copy(openTabs = false))
             return
@@ -391,7 +392,7 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun List<TabModel>.subscribeToUpdates() {
+    private fun List<TabModel<WebView>>.subscribeToUpdates() {
         allTabsJobMap.keys
             .filter { id -> none { tabModel -> tabModel.id == id } }
             .forEach { id -> allTabsJobMap.remove(id)?.cancel() }
@@ -549,7 +550,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     private fun createNewTabAndSelect(
-        tabInitializer: TabInitializer,
+        tabInitializer: TabInitializer<WebView>,
         shouldSelect: Boolean,
         tabType: TabModel.Type = TabModel.Type.NORMAL
     ) {
