@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.tab.bundle
 
-import acr.browser.lightning.browser.tab.TabInitializer
-import acr.browser.lightning.browser.tab.TabModel
+import acr.browser.lightning.tab.TabModel
+import acr.browser.lightning.tab.initializer.TabInitializer
 
 /**
  * Used to save tab data for future restoration when the browser goes into hibernation.

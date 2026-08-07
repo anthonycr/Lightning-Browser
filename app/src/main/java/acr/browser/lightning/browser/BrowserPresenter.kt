@@ -12,8 +12,6 @@ import acr.browser.lightning.browser.tab.DownloadPageInitializer
 import acr.browser.lightning.browser.tab.HistoryPageInitializer
 import acr.browser.lightning.browser.tab.HomePageInitializer
 import acr.browser.lightning.browser.tab.NoOpInitializer
-import acr.browser.lightning.browser.tab.TabInitializer
-import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.tab.TabViewState
 import acr.browser.lightning.browser.tab.UrlInitializer
 import acr.browser.lightning.browser.ui.TabConfiguration
@@ -32,7 +30,6 @@ import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.di.BrowserScope
 import acr.browser.lightning.di.IncognitoMode
-import acr.browser.lightning.download.PendingDownload
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
@@ -41,7 +38,10 @@ import acr.browser.lightning.resources.NumberFormatter
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.search
-import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.tab.TabModel
+import acr.browser.lightning.tab.download.PendingDownload
+import acr.browser.lightning.tab.initializer.TabInitializer
+import acr.browser.lightning.tab.ssl.SslState
 import acr.browser.lightning.theme.ThemeProvider
 import acr.browser.lightning.utils.isBookmarkUrl
 import acr.browser.lightning.utils.isDownloadsUrl

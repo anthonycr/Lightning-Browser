@@ -12,8 +12,8 @@ import acr.browser.lightning.di.GeneratedHtmlDir
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.js.TextReflow
 import acr.browser.lightning.log.Logger
-import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.ssl.SslWarningPreferences
+import acr.browser.lightning.tab.ssl.SslState
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import acr.browser.lightning.utils.isSpecialUrl
 import android.annotation.SuppressLint

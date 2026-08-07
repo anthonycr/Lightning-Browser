@@ -26,3 +26,4 @@ dependencyResolutionManagement {
 }
 
 include("app")
+include(":tab")

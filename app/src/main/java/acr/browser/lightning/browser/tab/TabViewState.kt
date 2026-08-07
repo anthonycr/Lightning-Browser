@@ -1,5 +1,7 @@
 package acr.browser.lightning.browser.tab
 
+import acr.browser.lightning.tab.TabModel
+
 /**
  * The view state for a tab.
  *

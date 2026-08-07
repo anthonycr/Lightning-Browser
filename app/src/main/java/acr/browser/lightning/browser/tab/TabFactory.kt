@@ -5,6 +5,8 @@ import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.di.FaviconCacheDir
 import acr.browser.lightning.di.GeneratedHtmlDir
+import acr.browser.lightning.tab.TabModel
+import acr.browser.lightning.tab.initializer.TabInitializer
 import android.webkit.WebView
 import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
 import kotlinx.coroutines.CoroutineScope
@@ -14,7 +16,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
- * Constructs a [TabModel].
+ * Constructs a [acr.browser.lightning.tab.TabModel].
  */
 class TabFactory @Inject constructor(
     private val webViewFactory: WebViewFactory,

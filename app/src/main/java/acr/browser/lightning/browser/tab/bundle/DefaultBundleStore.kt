@@ -7,9 +7,9 @@ import acr.browser.lightning.browser.tab.DownloadPageInitializer
 import acr.browser.lightning.browser.tab.FreezableInitializer
 import acr.browser.lightning.browser.tab.HistoryPageInitializer
 import acr.browser.lightning.browser.tab.HomePageInitializer
-import acr.browser.lightning.browser.tab.TabInitializer
-import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.tab.bundle.storage.BundleWriter
+import acr.browser.lightning.tab.TabModel
+import acr.browser.lightning.tab.initializer.TabInitializer
 import acr.browser.lightning.utils.isBookmarkUrl
 import acr.browser.lightning.utils.isDownloadsUrl
 import acr.browser.lightning.utils.isHistoryUrl

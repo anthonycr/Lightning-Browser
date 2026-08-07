@@ -10,12 +10,14 @@ import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.connectivity.ConnectivityProvider
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
-import acr.browser.lightning.download.PendingDownload
 import acr.browser.lightning.ids.ViewIdGenerator
 import acr.browser.lightning.preview.PreviewModel
 import acr.browser.lightning.resources.ResourceProvider
-import acr.browser.lightning.ssl.SslCertificateInfo
-import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.tab.TabModel
+import acr.browser.lightning.tab.download.PendingDownload
+import acr.browser.lightning.tab.initializer.TabInitializer
+import acr.browser.lightning.tab.ssl.SslCertificateInfo
+import acr.browser.lightning.tab.ssl.SslState
 import acr.browser.lightning.useragent.UserAgentProvider
 import android.annotation.SuppressLint
 import android.content.Context
@@ -50,7 +52,7 @@ import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
- * Creates the adaptation between a [WebView] and the [TabModel] interface used by the browser.
+ * Creates the adaptation between a [WebView] and the [acr.browser.lightning.tab.TabModel] interface used by the browser.
  */
 @SuppressLint("ClickableViewAccessibility")
 class TabAdapter @AssistedInject constructor(

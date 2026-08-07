@@ -8,6 +8,8 @@ import acr.browser.lightning.di.InitialAction
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.search
+import acr.browser.lightning.tab.TabModel
+import acr.browser.lightning.tab.initializer.TabInitializer
 import acr.browser.lightning.useragent.UserAgentProvider
 import acr.browser.lightning.utils.isFileUrl
 import android.webkit.WebView

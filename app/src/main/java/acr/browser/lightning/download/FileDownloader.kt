@@ -8,6 +8,7 @@ import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.di.NoCacheClient
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.resources.ResourceProvider
+import acr.browser.lightning.tab.download.PendingDownload
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import android.app.DownloadManager

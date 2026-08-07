@@ -2,8 +2,8 @@ package acr.browser.lightning.browser.compose.sheets
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserPresenter
-import acr.browser.lightning.ssl.SslCertificateInfo
-import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.tab.ssl.SslCertificateInfo
+import acr.browser.lightning.tab.ssl.SslState
 import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

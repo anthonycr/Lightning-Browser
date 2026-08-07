@@ -5,8 +5,8 @@ import acr.browser.lightning.browser.BrowserComposeState
 import acr.browser.lightning.browser.BrowserPresenter
 import acr.browser.lightning.browser.BrowserViewState
 import acr.browser.lightning.browser.compose.sheets.BookmarksBottomSheet
-import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.search.SuggestionsModel
+import acr.browser.lightning.tab.TabModel
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

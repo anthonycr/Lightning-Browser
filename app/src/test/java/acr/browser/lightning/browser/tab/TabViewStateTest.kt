@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.tab
 
+import acr.browser.lightning.tab.TabModel
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
 import androidx.compose.ui.graphics.colorspace.ColorSpace

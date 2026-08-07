@@ -7,7 +7,7 @@ import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.search.SuggestionsModel
-import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.tab.ssl.SslState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

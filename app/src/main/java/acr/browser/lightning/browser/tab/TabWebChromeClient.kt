@@ -11,6 +11,8 @@ import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferencesDataStore
+import acr.browser.lightning.tab.TabModel
+import acr.browser.lightning.tab.initializer.TabInitializer
 import acr.browser.lightning.utils.Utils
 import android.Manifest
 import android.content.Intent

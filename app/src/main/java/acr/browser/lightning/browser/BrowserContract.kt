@@ -1,8 +1,8 @@
 package acr.browser.lightning.browser
 
-import acr.browser.lightning.browser.tab.TabInitializer
-import acr.browser.lightning.browser.tab.TabModel
-import acr.browser.lightning.download.PendingDownload
+import acr.browser.lightning.tab.TabModel
+import acr.browser.lightning.tab.download.PendingDownload
+import acr.browser.lightning.tab.initializer.TabInitializer
 import android.content.Intent
 import android.graphics.Bitmap
 import kotlinx.coroutines.flow.Flow

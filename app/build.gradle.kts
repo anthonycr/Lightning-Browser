@@ -99,6 +99,10 @@ android {
         abortOnError = true
     }
     namespace = "acr.browser.lightning"
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
 }
 
 dependencies {
@@ -114,6 +118,7 @@ dependencies {
 
 
     implementation(platform("androidx.compose:compose-bom:2026.06.01"))
+    implementation(project(":tab"))
     implementation("androidx.activity:activity:1.13.0")
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.annotation:annotation:1.10.0")

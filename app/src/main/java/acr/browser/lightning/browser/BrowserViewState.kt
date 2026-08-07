@@ -6,8 +6,8 @@ import acr.browser.lightning.browser.view.LongPress
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
-import acr.browser.lightning.ssl.SslCertificateInfo
-import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.tab.ssl.SslCertificateInfo
+import acr.browser.lightning.tab.ssl.SslState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf

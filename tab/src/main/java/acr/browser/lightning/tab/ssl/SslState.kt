@@ -1,4 +1,4 @@
-package acr.browser.lightning.ssl
+package acr.browser.lightning.tab.ssl
 
 import android.net.http.SslError
 
