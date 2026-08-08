@@ -75,7 +75,7 @@ class TabWebChromeClient @AssistedInject constructor(
     /**
      * Emits create window requests.
      */
-    val createWindowSharedFlow: MutableSharedFlow<TabInitializer<WebView>> = MutableSharedFlow()
+    val createWindowSharedFlow: MutableSharedFlow<TabInitializer> = MutableSharedFlow()
 
     /**
      * Emits close window requests.

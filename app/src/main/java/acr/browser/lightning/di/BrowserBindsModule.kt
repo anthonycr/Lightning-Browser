@@ -6,7 +6,6 @@ import acr.browser.lightning.browser.cleanup.DelegatingExitCleanup
 import acr.browser.lightning.browser.cleanup.ExitCleanup
 import acr.browser.lightning.browser.tab.TabsRepository
 import android.app.Activity
-import android.webkit.WebView
 import androidx.fragment.app.FragmentActivity
 import dagger.Binds
 import dagger.Module
@@ -21,7 +20,7 @@ interface BrowserBindsModule {
     fun bindsActivity(fragmentActivity: FragmentActivity): Activity
 
     @Binds
-    fun bindsBrowserModel(tabsRepository: TabsRepository): BrowserContract.Model<WebView>
+    fun bindsBrowserModel(tabsRepository: TabsRepository): BrowserContract.Model
 
     @Binds
     fun bindsBrowserNavigator(browserNavigator: BrowserNavigator): BrowserContract.Navigator

@@ -17,7 +17,6 @@ import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.isStartPageUrl
 import android.app.Application
 import android.os.Bundle
-import android.webkit.WebView
 import javax.inject.Inject
 
 /**
@@ -30,11 +29,11 @@ class DefaultBundleStore @Inject constructor(
     private val downloadPageInitializer: DownloadPageInitializer,
     private val historyPageInitializer: HistoryPageInitializer,
     bundleWriterFactory: BundleWriter.Factory,
-) : BundleStore<WebView> {
+) : BundleStore {
 
     private val bundleWriter = bundleWriterFactory.create(BUNDLE_STORAGE)
 
-    override suspend fun save(tabs: List<TabModel<WebView>>) {
+    override suspend fun save(tabs: List<TabModel>) {
         val outState = Bundle(ClassLoader.getSystemClassLoader())
 
         tabs.withIndex().forEach { (index, tab) ->
@@ -52,7 +51,7 @@ class DefaultBundleStore @Inject constructor(
         bundleWriter.writeToStorage(outState)
     }
 
-    override suspend fun retrieve(): List<TabInitializer<WebView>> =
+    override suspend fun retrieve(): List<TabInitializer> =
         bundleWriter.readFromStorage()?.let { bundle ->
             bundle.keySet()
                 .filter { it.startsWith(BUNDLE_KEY) }

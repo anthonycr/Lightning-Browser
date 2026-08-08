@@ -12,10 +12,8 @@ import kotlinx.coroutines.flow.Flow
 
 /**
  * The representation of a browser tab.
- *
- * @param T The underlying type of tab this is.
  */
-interface TabModel<T> {
+interface TabModel {
 
     /**
      * The tab identifier.
@@ -37,7 +35,7 @@ interface TabModel<T> {
     /**
      * Load a URL using the provided [tabInitializer].
      */
-    fun loadFromInitializer(tabInitializer: TabInitializer<T>)
+    fun loadFromInitializer(tabInitializer: TabInitializer)
 
     /**
      * Go back in the navigation tree.
@@ -239,7 +237,7 @@ interface TabModel<T> {
      * Emits requests by the browser to automatically open a new tab and load the URL provided by
      * the [TabInitializer].
      */
-    fun createWindowRequests(): Flow<TabInitializer<T>>
+    fun createWindowRequests(): Flow<TabInitializer>
 
     /**
      * Emits requests by the browser to automatically close the current tab.

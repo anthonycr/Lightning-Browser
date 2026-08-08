@@ -10,7 +10,6 @@ import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.search
 import acr.browser.lightning.useragent.UserAgentProvider
 import acr.browser.lightning.utils.isFileUrl
-import android.webkit.WebView
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -26,7 +25,7 @@ import javax.inject.Inject
 class TabsRepository @Inject constructor(
     private val webViewFactory: WebViewFactory,
     private val tabPager: TabPager,
-    private val bundleStore: BundleStore<WebView>,
+    private val bundleStore: BundleStore,
     private val recentTabModel: RecentTabModel,
     private val tabFactory: TabFactory,
     private val userPreferencesDataStore: UserPreferencesDataStore,
@@ -35,12 +34,12 @@ class TabsRepository @Inject constructor(
     private val permissionInitializerFactory: PermissionInitializer.Factory,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val searchEngineProvider: SearchEngineProvider,
-) : BrowserContract.Model<WebView> {
+) : BrowserContract.Model {
 
     private val isInitialized = CompletableDeferred<Unit>()
-    private val tabsListStateFlow = MutableStateFlow<List<TabModel<WebView>>>(emptyList())
+    private val tabsListStateFlow = MutableStateFlow<List<TabModel>>(emptyList())
 
-    override var selectedTab: TabModel<WebView>? = null
+    override var selectedTab: TabModel? = null
 
     override suspend fun deleteTab(id: Int): Unit = withContext(coroutineDispatchers.main) {
         if (selectedTab?.id == id) {
@@ -58,16 +57,16 @@ class TabsRepository @Inject constructor(
         isInitialized.await()
         tabPager.clearTab()
 
-        tabsList.forEach(TabModel<WebView>::destroy)
+        tabsList.forEach(TabModel::destroy)
         tabsList = emptyList()
 
         tabsListStateFlow.emit(tabsList)
     }
 
     override suspend fun createTab(
-        tabInitializer: TabInitializer<WebView>,
+        tabInitializer: TabInitializer,
         tabType: TabModel.Type
-    ): TabModel<WebView> = withContext(coroutineDispatchers.main) {
+    ): TabModel = withContext(coroutineDispatchers.main) {
         isInitialized.await()
         createTabUnsafe(tabInitializer, tabType)
     }
@@ -76,10 +75,10 @@ class TabsRepository @Inject constructor(
      * Creates a tab without waiting for the browser to be initialized.
      */
     private suspend fun createTabUnsafe(
-        tabInitializer: TabInitializer<WebView>,
+        tabInitializer: TabInitializer,
         tabType: TabModel.Type,
         emitUpdate: Boolean = true,
-    ): TabModel<WebView> = withContext(coroutineDispatchers.main) {
+    ): TabModel = withContext(coroutineDispatchers.main) {
         val tabSettings = TabSettings.create(userPreferencesDataStore, userAgentProvider)
         val webViewLazy = webViewFactory.createWebView(tabSettings)
         val tabModel = tabFactory.constructTab(tabInitializer, webViewLazy, tabType, tabSettings)
@@ -93,11 +92,11 @@ class TabsRepository @Inject constructor(
         tabModel
     }
 
-    override suspend fun reopenTab(): TabModel<WebView>? = withContext(coroutineDispatchers.main) {
+    override suspend fun reopenTab(): TabModel? = withContext(coroutineDispatchers.main) {
         recentTabModel.lastClosed()?.let { createTab(BundleInitializer(it)) }
     }
 
-    override fun selectTab(id: Int): TabModel<WebView> {
+    override fun selectTab(id: Int): TabModel {
         val selected = tabsList.forId(id)
         selectedTab = selected
         tabPager.selectTab(id)
@@ -105,12 +104,12 @@ class TabsRepository @Inject constructor(
         return selected
     }
 
-    override var tabsList = emptyList<TabModel<WebView>>()
+    override var tabsList = emptyList<TabModel>()
         private set
 
-    override fun tabsListChanges(): Flow<List<TabModel<WebView>>> = tabsListStateFlow
+    override fun tabsListChanges(): Flow<List<TabModel>> = tabsListStateFlow
 
-    override suspend fun initializeTabs(): List<TabModel<WebView>> =
+    override suspend fun initializeTabs(): List<TabModel> =
         withContext(coroutineDispatchers.default) {
             val oldTabs = bundleStore.retrieve().map {
                 async {
@@ -171,5 +170,5 @@ class TabsRepository @Inject constructor(
         bundleStore.deleteAll()
     }
 
-    private fun List<TabModel<WebView>>.forId(id: Int): TabModel<WebView> = requireNotNull(find { it.id == id })
+    private fun List<TabModel>.forId(id: Int): TabModel = requireNotNull(find { it.id == id })
 }

@@ -29,11 +29,11 @@ class TabFactory @Inject constructor(
      * Constructs a tab from the [webView] with the provided [tabInitializer].
      */
     suspend fun constructTab(
-        tabInitializer: TabInitializer<WebView>,
+        tabInitializer: TabInitializer,
         webView: Lazy<WebView>,
         tabType: TabModel.Type,
         tabSettings: TabSettings,
-    ): TabModel<WebView> = withContext(coroutineDispatchers.main) {
+    ): TabModel = withContext(coroutineDispatchers.main) {
         val headers = webViewFactory.createRequestHeaders()
         val tabCoroutineScope = TabCoroutineScope(
             CoroutineScope(coroutineDispatchers.main + SupervisorJob())

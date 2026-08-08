@@ -25,10 +25,8 @@ interface BrowserContract {
 
     /**
      * The model used to manage tabs in the browser.
-     *
-     * @param T The underlying type of tab this model manages.
      */
-    interface Model<T> {
+    interface Model {
 
         /**
          * Delete the tab with the provided [id].
@@ -44,30 +42,30 @@ interface BrowserContract {
          * Create a tab that will be initialized with the [tabInitializer].
          */
         suspend fun createTab(
-            tabInitializer: TabInitializer<T>,
+            tabInitializer: TabInitializer,
             tabType: TabModel.Type = TabModel.Type.NORMAL
-        ): TabModel<T>
+        ): TabModel
 
         /**
          * Reopen the most recently closed tab if there is a closed tab to re-open.
          */
-        suspend fun reopenTab(): TabModel<T>?
+        suspend fun reopenTab(): TabModel?
 
         /**
          * The current selected tab, if there is one.
          */
-        val selectedTab: TabModel<T>?
+        val selectedTab: TabModel?
 
         /**
          * Select the tab with the provide [id] as the currently viewed tab.
          */
-        fun selectTab(id: Int): TabModel<T>
+        fun selectTab(id: Int): TabModel
 
         /**
          * Initialize all tabs that were previously frozen when the browser was last open, and
          * initialize any tabs that should be opened from the initial browser action.
          */
-        suspend fun initializeTabs(): List<TabModel<T>>
+        suspend fun initializeTabs(): List<TabModel>
 
         /**
          * Mark all tabs as being permanent tabs so that they won't be deleted during navigation
@@ -88,12 +86,12 @@ interface BrowserContract {
         /**
          * The current open tabs.
          */
-        val tabsList: List<TabModel<T>>
+        val tabsList: List<TabModel>
 
         /**
          * Changes to the current open tabs.
          */
-        fun tabsListChanges(): Flow<List<TabModel<T>>>
+        fun tabsListChanges(): Flow<List<TabModel>>
 
     }
 

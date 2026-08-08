@@ -14,7 +14,6 @@ import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.browser.tab.bundle.DefaultBundleStore
 import acr.browser.lightning.browser.tab.bundle.IncognitoBundleStore
 import android.content.Intent
-import android.webkit.WebView
 import dagger.Module
 import dagger.Provides
 
@@ -60,7 +59,7 @@ class BrowserModule {
     fun providesBundleStore(
         @IncognitoMode incognitoMode: Boolean,
         defaultBundleStore: DefaultBundleStore
-    ): BundleStore<WebView> = if (incognitoMode) {
+    ): BundleStore = if (incognitoMode) {
         IncognitoBundleStore
     } else {
         defaultBundleStore

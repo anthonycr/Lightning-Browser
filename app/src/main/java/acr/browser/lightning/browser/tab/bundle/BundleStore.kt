@@ -5,20 +5,18 @@ import acr.browser.lightning.browser.tab.TabModel
 
 /**
  * Used to save tab data for future restoration when the browser goes into hibernation.
- *
- * @param T The type of tab this store supports saving and retrieving.
  */
-interface BundleStore<T> {
+interface BundleStore {
 
     /**
      * Save the tab data for the list of [tabs].
      */
-    suspend fun save(tabs: List<TabModel<T>>)
+    suspend fun save(tabs: List<TabModel>)
 
     /**
      * Synchronously previously stored tab data.
      */
-    suspend fun retrieve(): List<TabInitializer<T>>
+    suspend fun retrieve(): List<TabInitializer>
 
     /**
      * Synchronously delete all stored tabs.
