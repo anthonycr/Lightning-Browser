@@ -12,6 +12,8 @@ import androidx.activity.result.ActivityResult
 
 sealed interface BrowserUiEvent {
 
+    data object TabMenuClick : BrowserUiEvent
+
     data class NewAction(val action: BrowserContract.Action) : BrowserUiEvent
 
     data class ConfirmOpenLocalFile(val allow: Boolean) : BrowserUiEvent

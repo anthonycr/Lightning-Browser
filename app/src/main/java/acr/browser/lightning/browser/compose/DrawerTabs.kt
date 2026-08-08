@@ -116,7 +116,7 @@ fun DrawerTabs(
                         modifier = Modifier
                             .size(56.dp)
                             .padding(horizontal = 16.dp),
-                        onClick = { presenter.onTabMenuClick() }
+                        onClick = { presenter.onEvent(BrowserUiEvent.TabMenuClick) }
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_action_tabs),
