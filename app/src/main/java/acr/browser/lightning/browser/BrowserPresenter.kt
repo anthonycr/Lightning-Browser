@@ -368,24 +368,22 @@ class BrowserPresenter @Inject constructor(
         currentTab?.isForeground = true
 
         val tab = tabModel ?: return run {
-            browserCoroutineScope.launch {
-                updateState(
-                    state.value.copy(
-                        displayUrl = searchBoxModel.getDisplayContent(
-                            url = "",
-                            title = null,
-                            isLoading = false
-                        ),
-                        enableFullMenu = false,
-                        isForwardEnabled = false,
-                        isBackEnabled = false,
-                        sslState = SslState.None,
-                        progress = 100,
-                        findInPage = null,
-                        tabs = state.value.tabs.map { it.copy(isSelected = false) }
-                    )
+            updateState(
+                state.value.copy(
+                    displayUrl = searchBoxModel.getDisplayContent(
+                        url = "",
+                        title = null,
+                        isLoading = false
+                    ),
+                    enableFullMenu = false,
+                    isForwardEnabled = false,
+                    isBackEnabled = false,
+                    sslState = SslState.None,
+                    progress = 100,
+                    findInPage = null,
+                    tabs = state.value.tabs.map { it.copy(isSelected = false) }
                 )
-            }
+            )
         }
 
         if (focusTab) {
