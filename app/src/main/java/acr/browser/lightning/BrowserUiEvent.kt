@@ -10,6 +10,9 @@ import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.downloads.DownloadEntry
 import androidx.activity.result.ActivityResult
 
+/**
+ * Events triggered by the browser's UI.
+ */
 sealed interface BrowserUiEvent {
 
     /**
