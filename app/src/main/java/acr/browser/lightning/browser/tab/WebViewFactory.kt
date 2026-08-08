@@ -159,6 +159,8 @@ class WebViewFactory @Inject constructor(
                 TextSize.X_SMALL -> 50
             }
 
+            CookieManager.getInstance().setAcceptCookie(tabSettings.cookiesEnabled)
+
             CookieManager.getInstance().setAcceptThirdPartyCookies(
                 this,
                 !tabSettings.blockThirdPartyCookiesEnabled

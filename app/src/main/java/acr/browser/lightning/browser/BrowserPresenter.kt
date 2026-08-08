@@ -3,7 +3,6 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.allowlist.AllowListModel
-import acr.browser.lightning.browser.data.CookieAdministrator
 import acr.browser.lightning.browser.history.HistoryRecord
 import acr.browser.lightning.browser.keys.KeyCombo
 import acr.browser.lightning.browser.menu.MenuSelection
@@ -89,7 +88,6 @@ class BrowserPresenter @Inject constructor(
     private val searchEngineProvider: SearchEngineProvider,
     private val historyPageFactory: HistoryPageFactory,
     private val allowListModel: AllowListModel,
-    private val cookieAdministrator: CookieAdministrator,
     private val tabCountNotifier: TabCountNotifier,
     @IncognitoMode private val incognitoMode: Boolean,
     private val coroutineDispatchers: CoroutineDispatchers,
@@ -145,8 +143,6 @@ class BrowserPresenter @Inject constructor(
 
     init {
         browserCoroutineScope.launch {
-            cookieAdministrator.adjustCookieSettings()
-
             val bookmarks = async {
                 bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
             }

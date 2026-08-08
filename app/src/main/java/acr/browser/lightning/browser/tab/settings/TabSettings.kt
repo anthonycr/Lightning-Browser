@@ -39,6 +39,7 @@ data class TabSettings(
     val useWideViewPortEnabled: Boolean,
     val overviewModeEnabled: Boolean,
     val textSize: TextSize,
+    val cookiesEnabled: Boolean,
     val blockThirdPartyCookiesEnabled: Boolean,
 ) {
     companion object {
@@ -64,6 +65,7 @@ data class TabSettings(
             useWideViewPortEnabled = userPreferencesDataStore.useWideViewPortEnabled.get(),
             overviewModeEnabled = userPreferencesDataStore.overviewModeEnabled.get(),
             textSize = userPreferencesDataStore.textSize.get(),
+            cookiesEnabled = userPreferencesDataStore.cookiesEnabled.get(),
             blockThirdPartyCookiesEnabled = userPreferencesDataStore.blockThirdPartyCookiesEnabled.get(),
         )
     }

@@ -1,8 +1,6 @@
 package acr.browser.lightning.di
 
 import acr.browser.lightning.browser.BrowserContract
-import acr.browser.lightning.browser.data.CookieAdministrator
-import acr.browser.lightning.browser.data.DefaultCookieAdministrator
 import acr.browser.lightning.browser.history.DefaultHistoryRecord
 import acr.browser.lightning.browser.history.HistoryRecord
 import acr.browser.lightning.browser.history.NoOpHistoryRecord
@@ -39,11 +37,6 @@ class BrowserModule {
     } else {
         defaultHistoryRecord
     }
-
-    @Provides
-    fun providesCookieAdministrator(
-        defaultCookieAdministrator: DefaultCookieAdministrator,
-    ): CookieAdministrator = defaultCookieAdministrator
 
     @Provides
     fun providesTabCountNotifier(
