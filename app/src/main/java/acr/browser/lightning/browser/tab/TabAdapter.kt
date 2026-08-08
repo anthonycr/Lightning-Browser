@@ -23,6 +23,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
+import android.os.Message
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -166,7 +167,7 @@ class TabAdapter @AssistedInject constructor(
 
     override fun loadFromInitializer(tabInitializer: TabInitializer) {
         tabCoroutineScope.launch {
-            tabInitializer.initialize(webView, requestHeaders)
+            tabInitializer.initialize(this@TabAdapter)
         }
     }
 
@@ -332,6 +333,12 @@ class TabAdapter @AssistedInject constructor(
         tabWebChromeClient.hideCustomView()
     }
 
+    override fun handleMessage(message: Message) {
+        message.apply {
+            (obj as WebView.WebViewTransport).webView = webView
+        }.sendToTarget()
+    }
+
     override fun createWindowRequests(): Flow<TabInitializer> =
         tabWebChromeClient.createWindowSharedFlow
 
@@ -362,6 +369,10 @@ class TabAdapter @AssistedInject constructor(
         webView.removeAllViews()
         webView.destroy()
         tabCoroutineScope.cancel()
+    }
+
+    override fun restore(bundle: Bundle) {
+        webView.restoreState(bundle)
     }
 
     override fun freeze(): Bundle = latentInitializer?.bundle

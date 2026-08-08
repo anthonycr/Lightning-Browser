@@ -5,6 +5,7 @@ import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import android.content.Intent
 import android.os.Bundle
+import android.os.Message
 import androidx.activity.result.ActivityResult
 import androidx.annotation.ColorInt
 import androidx.compose.ui.graphics.ImageBitmap
@@ -234,6 +235,11 @@ interface TabModel {
     fun hideCustomView()
 
     /**
+     * Handle a message produced by another tab emitting to [createWindowRequests].
+     */
+    fun handleMessage(message: Message)
+
+    /**
      * Emits requests by the browser to automatically open a new tab and load the URL provided by
      * the [TabInitializer].
      */
@@ -265,6 +271,11 @@ interface TabModel {
      * Teardown the current tab and release held resources.
      */
     fun destroy()
+
+    /**
+     * Restore the tab state from a bundle created by [freeze].
+     */
+    fun restore(bundle: Bundle)
 
     /**
      * Freeze the current state of the tab and return it as a [Bundle].
