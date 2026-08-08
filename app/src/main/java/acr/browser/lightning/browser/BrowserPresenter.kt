@@ -185,15 +185,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun BrowserViewState.updateTabViewState(): BrowserViewState {
-        val selectedId = model.selectedTab?.id
-        return copy(
-            tabs = model.tabsList.map { it.asViewState(it.id == selectedId) },
-            tabCountText = model.tabsList.size.asTabCountText(),
-            isSearchBarExpanded = false,
-        )
-    }
-
     /**
      * Call when the view is attached to the presenter.
      */
@@ -220,6 +211,132 @@ class BrowserPresenter @Inject constructor(
         browserCoroutineScope.launch {
             model.freeze()
         }
+    }
+
+    /**
+     * Call when a [browserUiEvent] is triggered by the user in the UI.
+     */
+    fun onEvent(browserUiEvent: BrowserUiEvent) {
+        browserCoroutineScope.launch {
+            when (browserUiEvent) {
+                BrowserUiEvent.SnackbarActionPerformed -> onSnackbarActionPerformed()
+                BrowserUiEvent.SnackbarDismissed -> onSnackbarDismissed()
+                is BrowserUiEvent.FileChooserResult -> onFileChooserResult(browserUiEvent.activityResult)
+                is BrowserUiEvent.ImageLongPress -> onImageLongPressEvent(
+                    browserUiEvent.longPress,
+                    browserUiEvent.imageLongPressEvent
+                )
+
+                is BrowserUiEvent.LinkLongPress -> onLinkLongPressEvent(
+                    browserUiEvent.longPress,
+                    browserUiEvent.linkLongPressEvent
+                )
+
+                is BrowserUiEvent.CloseBrowser -> onCloseBrowserEvent(
+                    browserUiEvent.id,
+                    browserUiEvent.closeTabEvent
+                )
+
+                is BrowserUiEvent.PageLongPress -> onPageLongPress(
+                    browserUiEvent.id,
+                    browserUiEvent.longPress
+                )
+
+                BrowserUiEvent.BookmarkMenuClick -> onBookmarkMenuClick()
+                BrowserUiEvent.TabCountClick -> onTabCountViewClick()
+                is BrowserUiEvent.HistoryOptionClick -> onHistoryOptionClick(
+                    browserUiEvent.historyEntry,
+                    browserUiEvent.option
+                )
+
+                is BrowserUiEvent.DownloadOptionClick -> onDownloadOptionClick(
+                    browserUiEvent.downloadEntry,
+                    browserUiEvent.optionClick
+                )
+
+                is BrowserUiEvent.FolderOptionClick -> onFolderOptionClick(
+                    browserUiEvent.folder,
+                    browserUiEvent.optionClick
+                )
+
+                is BrowserUiEvent.BookmarkOptionClick -> onBookmarkOptionClick(
+                    browserUiEvent.bookmark,
+                    browserUiEvent.optionClick
+                )
+
+                is BrowserUiEvent.BookmarkFolderRenameConfirmed -> onBookmarkFolderRenameConfirmed(
+                    browserUiEvent.oldTitle,
+                    browserUiEvent.newTitle
+                )
+
+                is BrowserUiEvent.BookmarkEditConfirmed -> onBookmarkEditConfirmed(
+                    browserUiEvent.title,
+                    browserUiEvent.url,
+                    browserUiEvent.folder
+                )
+
+                is BrowserUiEvent.BookmarkConfirmed -> onBookmarkConfirmed(
+                    browserUiEvent.title,
+                    browserUiEvent.url,
+                    browserUiEvent.folder
+                )
+
+                BrowserUiEvent.StarClick -> onStarClick()
+                BrowserUiEvent.ToggleAdBlockingClick -> onToggleAdBlocking()
+                BrowserUiEvent.ToggleDesktopAgentClick -> onToggleDesktopAgent()
+                BrowserUiEvent.ToolsClick -> onToolsClick()
+                is BrowserUiEvent.BookmarkLongClick -> onBookmarkLongClick(browserUiEvent.index)
+                is BrowserUiEvent.BookmarkClick -> onBookmarkClick(browserUiEvent.index)
+                BrowserUiEvent.SslIconClick -> onSslIconClick()
+                BrowserUiEvent.DialogDismissed -> onDialogDismissed()
+                is BrowserUiEvent.SearchSuggestionInsertClick -> onSearchSuggestionInsertClicked(
+                    browserUiEvent.webPage
+                )
+
+                is BrowserUiEvent.SearchSuggestionClick -> onSearchSuggestionClicked(browserUiEvent.webPage)
+                BrowserUiEvent.FindInPageDismissed -> onFindDismiss()
+                BrowserUiEvent.FindInPagePrevious -> onFindPrevious()
+                BrowserUiEvent.FindInPageNext -> onFindNext()
+                is BrowserUiEvent.FindInPage -> onFindInPage(browserUiEvent.query)
+                is BrowserUiEvent.SearchBarExpandedOrCollapsed -> onSearchBarExpandedOrCollapsed(
+                    browserUiEvent.expanded
+                )
+
+                is BrowserUiEvent.SearchConfirmed -> onSearch(browserUiEvent.query)
+                is BrowserUiEvent.SearchQueryChanged -> onSearchQueryChanged(
+                    browserUiEvent.query,
+                    browserUiEvent.selectionStart,
+                    browserUiEvent.selectionEnd
+                )
+
+                BrowserUiEvent.RefreshOrStopClick -> onRefreshOrStopClick()
+                BrowserUiEvent.NewTabClick -> onNewTabClick()
+                BrowserUiEvent.HomeClick -> onHomeClick()
+                BrowserUiEvent.ForwardClick -> onForwardClick()
+                BrowserUiEvent.BackClick -> onBackClick()
+                BrowserUiEvent.NavigateBack -> onNavigateBack()
+                is BrowserUiEvent.BookmarkDrawerMoved -> onBookmarkDrawerMoved(browserUiEvent.isOpen)
+                is BrowserUiEvent.TabDrawerMoved -> onTabDrawerMoved(browserUiEvent.isOpen)
+                BrowserUiEvent.TabScroll -> onTabScroll()
+                is BrowserUiEvent.TabClose -> onTabClose(browserUiEvent.index)
+                is BrowserUiEvent.TabLongClick -> onTabLongClick(browserUiEvent.index)
+                is BrowserUiEvent.TabClick -> onTabClick(browserUiEvent.index)
+                is BrowserUiEvent.KeyComboClick -> onKeyComboClick(browserUiEvent.keyCombo)
+                is BrowserUiEvent.MenuClick -> onMenuClick(browserUiEvent.menuSelection)
+                is BrowserUiEvent.ConfirmOpenLocalFile -> onConfirmOpenLocalFile(browserUiEvent.allow)
+                is BrowserUiEvent.NewAction -> onNewAction(browserUiEvent.action)
+                BrowserUiEvent.TabMenuClick -> onTabMenuClick()
+            }
+        }
+    }
+
+    private fun BrowserViewState.updateTabViewState(): BrowserViewState {
+        val selectedId = model.selectedTab?.id
+        return copy(
+            tabs = model.tabsList.map { it.asViewState(it.id == selectedId) },
+            tabCountText = model.tabsList.size.asTabCountText(),
+            isSearchBarExpanded = false,
+        )
     }
 
     private fun TabModel.asViewState(selected: Boolean): TabViewState = TabViewState(
@@ -424,9 +541,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when a new action is triggered, such as the user opening a new URL in the browser.
-     */
     private suspend fun onNewAction(action: BrowserContract.Action) {
         when (action) {
             is BrowserContract.Action.LoadUrl -> if (action.url.isSpecialUrl()) {
@@ -450,11 +564,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user confirms that they do or do not want to allow a local file to be opened
-     * in the browser. This is a security gate to prevent malicious local files from being opened
-     * in the browser without the user's knowledge.
-     */
     private suspend fun onConfirmOpenLocalFile(allow: Boolean) {
         updateState(state.value.copy(dialog = null))
         if (allow) {
@@ -485,9 +594,6 @@ class BrowserPresenter @Inject constructor(
         exitProcess(1)
     }
 
-    /**
-     * Call when the user selects an option from the menu.
-     */
     private suspend fun onMenuClick(menuSelection: MenuSelection) {
         when (menuSelection) {
             MenuSelection.NEW_TAB -> onNewTabClick()
@@ -571,9 +677,6 @@ class BrowserPresenter @Inject constructor(
 
     private fun List<TabViewState>.indexOfCurrentTab(): Int = tabIndexForId(currentTab?.id)
 
-    /**
-     * Call when the user selects a combination of keys to perform a shortcut.
-     */
     private suspend fun onKeyComboClick(keyCombo: KeyCombo) {
         when (keyCombo) {
             KeyCombo.CTRL_F -> {
@@ -621,16 +724,10 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user selects a tab to switch to at the provided [index].
-     */
     private suspend fun onTabClick(index: Int) {
         selectTab(model.selectTab(state.value.tabs[index].id))
     }
 
-    /**
-     * Call when the user long presses on a tab at the provided [index].
-     */
     private suspend fun onTabLongClick(index: Int) {
         updateState(
             state.value.copy(
@@ -652,9 +749,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user clicks on the close button for the tab at the provided [index]
-     */
     private suspend fun onTabClose(index: Int) {
         if (index == -1) {
             // If the user clicks on close multiple times, the index may be -1 if the view is in the
@@ -689,35 +783,18 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the scroll position changes for the tab list.
-     */
     private suspend fun onTabScroll() {
         updateState(state.value.copy(scrollToTab = -1))
     }
 
-    /**
-     * Call when the tab drawer is opened or closed.
-     *
-     * @param isOpen True if the drawer is now open, false if it is now closed.
-     */
     private suspend fun onTabDrawerMoved(isOpen: Boolean) {
         updateState(state.value.copy(openTabs = isOpen))
     }
 
-    /**
-     * Call when the bookmark drawer is opened or closed.
-     *
-     * @param isOpen True if the drawer is now open, false if it is now closed.
-     */
     private suspend fun onBookmarkDrawerMoved(isOpen: Boolean) {
         updateState(state.value.copy(openBookmarks = isOpen))
     }
 
-    /**
-     * Called when the user clicks on the device back button or swipes to go back. Differentiated
-     * from [onBackClick] which is called when the user presses the browser's back button.
-     */
     private suspend fun onNavigateBack() {
         when {
             isCustomViewShowing -> {
@@ -751,42 +828,26 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Called when the user presses the browser's back button.
-     */
     private fun onBackClick() {
         if (currentTab?.canGoBack() == true) {
             currentTab?.goBack()
         }
     }
 
-    /**
-     * Called when the user presses the browser's forward button.
-     */
     private fun onForwardClick() {
         if (currentTab?.canGoForward() == true) {
             currentTab?.goForward()
         }
     }
 
-    /**
-     * Call when the user clicks on the home button.
-     */
     private fun onHomeClick() {
         currentTab?.loadFromInitializer(homePageInitializer)
     }
 
-    /**
-     * Call when the user clicks on the open new tab button.
-     */
     private suspend fun onNewTabClick() {
         createNewTabAndSelect(homePageInitializer, shouldSelect = true)
     }
 
-    /**
-     * Call when the user clicks on the refresh (or stop/delete) button that is located in the
-     * search bar.
-     */
     private suspend fun onRefreshOrStopClick() {
         if (isSearchViewFocused) {
             updateState(state.value.copy(displayUrl = ""))
@@ -821,9 +882,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the search [query] is updated by the user so that we can remember it.
-     */
     private suspend fun onSearchQueryChanged(
         query: String,
         selectionStart: Int,
@@ -839,10 +897,6 @@ class BrowserPresenter @Inject constructor(
         )
     }
 
-    /**
-     * Call when the user submits a search [query] to the search bar. At this point the user has
-     * provided intent to search and is no longer trying to manipulate the query.
-     */
     private suspend fun onSearch(query: String) {
         if (query.isEmpty()) {
             return
@@ -861,46 +915,28 @@ class BrowserPresenter @Inject constructor(
         currentTab?.loadUrl(url)
     }
 
-    /**
-     * Call when the search bar is expanded or collapsed by the user.
-     */
     private suspend fun onSearchBarExpandedOrCollapsed(expanded: Boolean) {
         updateState(state.value.copy(isSearchBarExpanded = expanded))
     }
 
-    /**
-     * Call when the user enters a [query] to look for in the current web page.
-     */
     private suspend fun onFindInPage(query: String) {
         currentTab?.find(query)
         updateState(state.value.copy(findInPage = query))
     }
 
-    /**
-     * Call when the user selects to move to the next highlighted word in the web page.
-     */
     private fun onFindNext() {
         currentTab?.findNext()
     }
 
-    /**
-     * Call when the user selects to move to the previous highlighted word in the web page.
-     */
     private fun onFindPrevious() {
         currentTab?.findPrevious()
     }
 
-    /**
-     * Call when the user chooses to dismiss the find in page UI component.
-     */
     private suspend fun onFindDismiss() {
         currentTab?.clearFindMatches()
         updateState(state.value.copy(findInPage = null))
     }
 
-    /**
-     * Call when the user selects a search suggestion that was suggested by the search box.
-     */
     private suspend fun onSearchSuggestionClicked(webPage: WebPage) {
         val url = when (webPage) {
             is HistoryEntry,
@@ -913,9 +949,6 @@ class BrowserPresenter @Inject constructor(
         onSearch(url)
     }
 
-    /**
-     * Call when the user clicks the insert button on a search suggestion.
-     */
     private suspend fun onSearchSuggestionInsertClicked(webPage: WebPage) {
         val url = when (webPage) {
             is HistoryEntry,
@@ -928,25 +961,16 @@ class BrowserPresenter @Inject constructor(
         onSearchQueryChanged(url, url.length, url.length)
     }
 
-    /**
-     * Call when a dialog is dismissed.
-     */
     private suspend fun onDialogDismissed() {
         updateState(state.value.copy(dialog = null))
     }
 
-    /**
-     * Call when the user clicks on the SSL icon in the search box.
-     */
     private suspend fun onSslIconClick() {
         currentTab?.sslCertificateInfo?.let {
             updateState(state.value.copy(dialog = BrowserViewState.Dialogs.SslInfo(it)))
         }
     }
 
-    /**
-     * Call when the user clicks on a bookmark from the bookmark list at the provided [index].
-     */
     private suspend fun onBookmarkClick(index: Int) {
         when (val bookmark = currentBookmarks[index]) {
             is Bookmark.Entry -> {
@@ -996,9 +1020,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user long presses on a bookmark in the bookmark list at the provided [index].
-     */
     private suspend fun onBookmarkLongClick(index: Int) {
         when (val item = currentBookmarks[index]) {
             is Bookmark.Entry -> updateState(
@@ -1013,9 +1034,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user clicks on the page tools button.
-     */
     private suspend fun onToolsClick() {
         val currentUrl = currentTab?.url ?: return
         updateState(
@@ -1028,18 +1046,12 @@ class BrowserPresenter @Inject constructor(
         )
     }
 
-    /**
-     * Call when the user chooses to toggle the desktop user agent on/off.
-     */
     private suspend fun onToggleDesktopAgent() {
         updateState(state.value.copy(dialog = null))
         currentTab?.toggleDesktopAgent()
         currentTab?.reload()
     }
 
-    /**
-     * Call when the user chooses to toggle ad blocking on/off for the current web page.
-     */
     private suspend fun onToggleAdBlocking() {
         updateState(state.value.copy(dialog = null))
         val currentUrl = currentTab?.url ?: return
@@ -1051,10 +1063,6 @@ class BrowserPresenter @Inject constructor(
         currentTab?.reload()
     }
 
-    /**
-     * Call when the user clicks on the star icon to add a bookmark for the current page or remove
-     * the existing one.
-     */
     private suspend fun onStarClick() {
         val url = currentTab?.url ?: return
         val title = currentTab?.title.orEmpty()
@@ -1111,13 +1119,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user confirms the details for adding a bookmark.
-     *
-     * @param title The title of the bookmark.
-     * @param url The URL of the bookmark.
-     * @param folder The name of the folder the bookmark is in.
-     */
     private suspend fun onBookmarkConfirmed(title: String, url: String, folder: String) {
         updateState(state.value.copy(dialog = null))
         bookmarkRepository.addBookmarkIfNotExists(
@@ -1138,13 +1139,6 @@ class BrowserPresenter @Inject constructor(
         )
     }
 
-    /**
-     * Call when the user confirms the details when editing a bookmark.
-     *
-     * @param title The title of the bookmark.
-     * @param url The URL of the bookmark.
-     * @param folder The name of the folder the bookmark is in.
-     */
     private suspend fun onBookmarkEditConfirmed(title: String, url: String, folder: String) {
         val oldUrl = (state.value.dialog as? BrowserViewState.Dialogs.EditBookmark)?.url ?: return
         updateState(state.value.copy(dialog = null))
@@ -1176,12 +1170,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user confirms a name change to an existing folder.
-     *
-     * @param oldTitle The previous title of the folder.
-     * @param newTitle The new title of the folder.
-     */
     private suspend fun onBookmarkFolderRenameConfirmed(oldTitle: String, newTitle: String) {
         updateState(state.value.copy(dialog = null))
         bookmarkRepository.renameFolder(oldTitle, newTitle)
@@ -1193,9 +1181,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user clicks on a menu [option] for the provided [bookmark].
-     */
     private suspend fun onBookmarkOptionClick(
         bookmark: Bookmark.Entry,
         option: BrowserContract.BookmarkOptionEvent
@@ -1243,9 +1228,6 @@ class BrowserPresenter @Inject constructor(
         updateState(state.value.copy(dialog = null))
     }
 
-    /**
-     * Call when the user clicks on a menu [option] for the provided [folder].
-     */
     private suspend fun onFolderOptionClick(
         folder: Bookmark.Folder,
         option: BrowserContract.FolderOptionEvent
@@ -1269,9 +1251,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user clicks on a menu [option] for the provided [download] entry.
-     */
     private suspend fun onDownloadOptionClick(
         download: DownloadEntry,
         option: BrowserContract.DownloadOptionEvent
@@ -1294,9 +1273,6 @@ class BrowserPresenter @Inject constructor(
         updateState(state.value.copy(dialog = null))
     }
 
-    /**
-     * Call when the user clicks on a menu [option] for the provided [historyEntry].
-     */
     private suspend fun onHistoryOptionClick(
         historyEntry: HistoryEntry,
         option: BrowserContract.HistoryOptionEvent
@@ -1329,10 +1305,6 @@ class BrowserPresenter @Inject constructor(
         updateState(state.value.copy(dialog = null))
     }
 
-    /**
-     * Call when the user clicks on the tab count button (or home button in desktop mode, or
-     * incognito icon in incognito mode).
-     */
     private suspend fun onTabCountViewClick() {
         when (userPreferencesDataStore.tabConfiguration.get()) {
             TabConfiguration.DRAWER_SIDE -> updateState(state.value.copy(openTabs = true))
@@ -1341,9 +1313,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user clicks on the tab menu located in the tab drawer.
-     */
     private suspend fun onTabMenuClick() {
         currentTab?.let {
             updateState(
@@ -1352,10 +1321,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user clicks on the bookmark menu (star or back arrow) located in the bookmark
-     * drawer.
-     */
     private suspend fun onBookmarkMenuClick() {
         if (currentFolder != Bookmark.Folder.Root) {
             currentFolder = Bookmark.Folder.Root
@@ -1370,9 +1335,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user long presses anywhere on the web page with the provided tab [id].
-     */
     private suspend fun onPageLongPress(id: Int, longPress: LongPress) {
         val pageUrl = model.tabsList.find { it.id == id }?.url
         if (pageUrl?.isSpecialUrl() == true) {
@@ -1440,10 +1402,6 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    /**
-     * Call when the user selects an option from the close browser menu that can be invoked by long
-     * pressing on individual tabs.
-     */
     private suspend fun onCloseBrowserEvent(id: Int, closeTabEvent: BrowserContract.CloseTabEvent) {
         when (closeTabEvent) {
             BrowserContract.CloseTabEvent.CLOSE_CURRENT ->
@@ -1469,10 +1427,6 @@ class BrowserPresenter @Inject constructor(
         updateState(state.value.copy(dialog = null))
     }
 
-    /**
-     * Call when the user long presses on a link within the web page and selects what they want to
-     * do with that link.
-     */
     private suspend fun onLinkLongPressEvent(
         longPress: LongPress,
         linkLongPressEvent: BrowserContract.LinkLongPressEvent
@@ -1506,10 +1460,6 @@ class BrowserPresenter @Inject constructor(
         updateState(state.value.copy(dialog = null))
     }
 
-    /**
-     * Call when the user long presses on an image within the web page and selects what they want to
-     * do with that image.
-     */
     private suspend fun onImageLongPressEvent(
         longPress: LongPress,
         imageLongPressEvent: BrowserContract.ImageLongPressEvent
@@ -1556,145 +1506,19 @@ class BrowserPresenter @Inject constructor(
         updateState(state.value.copy(dialog = null))
     }
 
-    /**
-     * Call when the user has selected a file from the file chooser to upload.
-     */
     private fun onFileChooserResult(activityResult: ActivityResult) {
         currentTab?.handleFileChooserResult(activityResult)
     }
 
-    /**
-     * Call when a snackbar has been dismissed.
-     */
     private suspend fun onSnackbarDismissed() {
         updateState(state.value.copy(ephemeral = null))
         pendingSnackbarAction = null
     }
 
-    /**
-     * Call when the user clicks the action on the snackbar if there is any.
-     */
     private suspend fun onSnackbarActionPerformed() {
         updateState(state.value.copy(ephemeral = null))
         pendingSnackbarAction?.action()
         pendingSnackbarAction = null
-    }
-
-    /**
-     * Call when a [browserUiEvent] is triggered by the user in the UI.
-     */
-    fun onEvent(browserUiEvent: BrowserUiEvent) {
-        browserCoroutineScope.launch {
-            when (browserUiEvent) {
-                BrowserUiEvent.SnackbarActionPerformed -> onSnackbarActionPerformed()
-                BrowserUiEvent.SnackbarDismissed -> onSnackbarDismissed()
-                is BrowserUiEvent.FileChooserResult -> onFileChooserResult(browserUiEvent.activityResult)
-                is BrowserUiEvent.ImageLongPress -> onImageLongPressEvent(
-                    browserUiEvent.longPress,
-                    browserUiEvent.imageLongPressEvent
-                )
-
-                is BrowserUiEvent.LinkLongPress -> onLinkLongPressEvent(
-                    browserUiEvent.longPress,
-                    browserUiEvent.linkLongPressEvent
-                )
-
-                is BrowserUiEvent.CloseBrowser -> onCloseBrowserEvent(
-                    browserUiEvent.id,
-                    browserUiEvent.closeTabEvent
-                )
-
-                is BrowserUiEvent.PageLongPress -> onPageLongPress(
-                    browserUiEvent.id,
-                    browserUiEvent.longPress
-                )
-
-                BrowserUiEvent.BookmarkMenuClick -> onBookmarkMenuClick()
-                BrowserUiEvent.TabCountClick -> onTabCountViewClick()
-                is BrowserUiEvent.HistoryOptionClick -> onHistoryOptionClick(
-                    browserUiEvent.historyEntry,
-                    browserUiEvent.option
-                )
-
-                is BrowserUiEvent.DownloadOptionClick -> onDownloadOptionClick(
-                    browserUiEvent.downloadEntry,
-                    browserUiEvent.optionClick
-                )
-
-                is BrowserUiEvent.FolderOptionClick -> onFolderOptionClick(
-                    browserUiEvent.folder,
-                    browserUiEvent.optionClick
-                )
-
-                is BrowserUiEvent.BookmarkOptionClick -> onBookmarkOptionClick(
-                    browserUiEvent.bookmark,
-                    browserUiEvent.optionClick
-                )
-
-                is BrowserUiEvent.BookmarkFolderRenameConfirmed -> onBookmarkFolderRenameConfirmed(
-                    browserUiEvent.oldTitle,
-                    browserUiEvent.newTitle
-                )
-
-                is BrowserUiEvent.BookmarkEditConfirmed -> onBookmarkEditConfirmed(
-                    browserUiEvent.title,
-                    browserUiEvent.url,
-                    browserUiEvent.folder
-                )
-
-                is BrowserUiEvent.BookmarkConfirmed -> onBookmarkConfirmed(
-                    browserUiEvent.title,
-                    browserUiEvent.url,
-                    browserUiEvent.folder
-                )
-
-                BrowserUiEvent.StarClick -> onStarClick()
-                BrowserUiEvent.ToggleAdBlockingClick -> onToggleAdBlocking()
-                BrowserUiEvent.ToggleDesktopAgentClick -> onToggleDesktopAgent()
-                BrowserUiEvent.ToolsClick -> onToolsClick()
-                is BrowserUiEvent.BookmarkLongClick -> onBookmarkLongClick(browserUiEvent.index)
-                is BrowserUiEvent.BookmarkClick -> onBookmarkClick(browserUiEvent.index)
-                BrowserUiEvent.SslIconClick -> onSslIconClick()
-                BrowserUiEvent.DialogDismissed -> onDialogDismissed()
-                is BrowserUiEvent.SearchSuggestionInsertClick -> onSearchSuggestionInsertClicked(
-                    browserUiEvent.webPage
-                )
-
-                is BrowserUiEvent.SearchSuggestionClick -> onSearchSuggestionClicked(browserUiEvent.webPage)
-                BrowserUiEvent.FindInPageDismissed -> onFindDismiss()
-                BrowserUiEvent.FindInPagePrevious -> onFindPrevious()
-                BrowserUiEvent.FindInPageNext -> onFindNext()
-                is BrowserUiEvent.FindInPage -> onFindInPage(browserUiEvent.query)
-                is BrowserUiEvent.SearchBarExpandedOrCollapsed -> onSearchBarExpandedOrCollapsed(
-                    browserUiEvent.expanded
-                )
-
-                is BrowserUiEvent.SearchConfirmed -> onSearch(browserUiEvent.query)
-                is BrowserUiEvent.SearchQueryChanged -> onSearchQueryChanged(
-                    browserUiEvent.query,
-                    browserUiEvent.selectionStart,
-                    browserUiEvent.selectionEnd
-                )
-
-                BrowserUiEvent.RefreshOrStopClick -> onRefreshOrStopClick()
-                BrowserUiEvent.NewTabClick -> onNewTabClick()
-                BrowserUiEvent.HomeClick -> onHomeClick()
-                BrowserUiEvent.ForwardClick -> onForwardClick()
-                BrowserUiEvent.BackClick -> onBackClick()
-                BrowserUiEvent.NavigateBack -> onNavigateBack()
-                is BrowserUiEvent.BookmarkDrawerMoved -> onBookmarkDrawerMoved(browserUiEvent.isOpen)
-                is BrowserUiEvent.TabDrawerMoved -> onTabDrawerMoved(browserUiEvent.isOpen)
-                BrowserUiEvent.TabScroll -> onTabScroll()
-                is BrowserUiEvent.TabClose -> onTabClose(browserUiEvent.index)
-                is BrowserUiEvent.TabLongClick -> onTabLongClick(browserUiEvent.index)
-                is BrowserUiEvent.TabClick -> onTabClick(browserUiEvent.index)
-                is BrowserUiEvent.KeyComboClick -> onKeyComboClick(browserUiEvent.keyCombo)
-                is BrowserUiEvent.MenuClick -> onMenuClick(browserUiEvent.menuSelection)
-                is BrowserUiEvent.ConfirmOpenLocalFile -> onConfirmOpenLocalFile(browserUiEvent.allow)
-                is BrowserUiEvent.NewAction -> onNewAction(browserUiEvent.action)
-                BrowserUiEvent.TabMenuClick -> onTabMenuClick()
-            }
-        }
     }
 
     private fun Int.asTabCountText(): String = if (this > 99) {
