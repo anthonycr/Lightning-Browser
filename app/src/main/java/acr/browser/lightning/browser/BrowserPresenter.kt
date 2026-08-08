@@ -62,6 +62,7 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -154,12 +155,12 @@ class BrowserPresenter @Inject constructor(
                 tabs.last()
             }
             currentBookmarks = bookmarks.await()
-            updateState(
-                state.value.updateTabViewState().copy(
+            state.updateSelf {
+                updateTabViewState().copy(
                     bookmarks = bookmarks.await().asListItems(),
                     isRootFolder = true
                 )
-            )
+            }
             selectTab(model.selectTab(lastTab.id))
         }
 
@@ -356,7 +357,7 @@ class BrowserPresenter @Inject constructor(
 
     private suspend fun selectTab(tabModel: TabModel?, focusTab: Boolean = true) {
         if (currentTab == tabModel) {
-            updateState(state.value.copy(openTabs = false))
+            state.updateSelf { copy(openTabs = false) }
             return
         }
         currentTab?.isForeground = false
@@ -364,8 +365,8 @@ class BrowserPresenter @Inject constructor(
         currentTab?.isForeground = true
 
         val tab = tabModel ?: return run {
-            updateState(
-                state.value.copy(
+            state.updateSelf {
+                copy(
                     displayUrl = searchBoxModel.getDisplayContent(
                         url = "",
                         title = null,
@@ -377,22 +378,22 @@ class BrowserPresenter @Inject constructor(
                     sslState = SslState.None,
                     progress = 100,
                     findInPage = null,
-                    tabs = state.value.tabs.map { it.copy(isSelected = false) }
+                    tabs = tabs.map { it.copy(isSelected = false) }
                 )
-            )
+            }
         }
 
         if (focusTab) {
-            updateState(state.value.copy(openTabs = false))
+            state.updateSelf { copy(openTabs = false) }
         }
 
-        val updatedState = state.value.updateTabViewState()
-        updateState(
+        state.updateSelf {
+            val updatedState = updateTabViewState()
             updatedState.copy(
                 scrollToTab = updatedState.tabs.indexOfFirst { it.isSelected },
                 toolbarVisibility = toolbarVisibility(true)
             )
-        )
+        }
 
         tabJobs.forEach { it.cancel() }
         tabJobs.clear()
@@ -431,7 +432,7 @@ class BrowserPresenter @Inject constructor(
                     findInPage = tab.findQuery
                 )
             }.flowOn(coroutineDispatchers.main).collectLatest {
-                updateState(it)
+                state.updateSelf { it }
             }
         }
 
@@ -450,7 +451,7 @@ class BrowserPresenter @Inject constructor(
                     url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {
                         historyRecord.visit(tab.title, it)
                     }
-                    updateState(state.value.copy(toolbarVisibility = toolbarVisibility(true)))
+                    state.updateSelf { copy(toolbarVisibility = toolbarVisibility(true)) }
                 }
         }
 
@@ -466,7 +467,7 @@ class BrowserPresenter @Inject constructor(
 
         tabJobs += browserCoroutineScope.launch {
             tab.showHideToolbar().collectLatest {
-                updateState(state.value.copy(toolbarVisibility = toolbarVisibility(it)))
+                state.updateSelf { copy(toolbarVisibility = toolbarVisibility(it)) }
             }
         }
 
@@ -484,21 +485,21 @@ class BrowserPresenter @Inject constructor(
 
         tabJobs += browserCoroutineScope.launch {
             tab.showCustomViewRequests().collectLatest {
-                updateState(state.value.copy(showCustomView = true))
+                state.updateSelf { copy(showCustomView = true) }
                 isCustomViewShowing = true
             }
         }
 
         tabJobs += browserCoroutineScope.launch {
             tab.hideCustomViewRequests().collectLatest {
-                updateState(state.value.copy(showCustomView = false))
+                state.updateSelf { copy(showCustomView = false) }
                 isCustomViewShowing = false
             }
         }
 
         tabJobs += browserCoroutineScope.launch {
             tab.focusRequests().collectLatest {
-                updateState(state.value.copy(openTabs = false))
+                state.updateSelf { copy(openTabs = false) }
             }
         }
     }
@@ -518,9 +519,9 @@ class BrowserPresenter @Inject constructor(
                         .distinctUntilChanged()
                         .flowOn(coroutineDispatchers.main)
                         .collectLatest { (title, favicon, preview) ->
-                            updateState(
-                                state.value.copy(
-                                    tabs = state.value.tabs.updateId(tabModel.id) {
+                            state.updateSelf {
+                                copy(
+                                    tabs = tabs.updateId(tabModel.id) {
                                         it.copy(
                                             title = title,
                                             icon = favicon,
@@ -528,7 +529,7 @@ class BrowserPresenter @Inject constructor(
                                         )
                                     }
                                 )
-                            )
+                            }
                         }
                 }
             }
@@ -538,12 +539,12 @@ class BrowserPresenter @Inject constructor(
     private suspend fun onNewAction(action: BrowserContract.Action) {
         when (action) {
             is BrowserContract.Action.LoadUrl -> if (action.url.isSpecialUrl()) {
-                updateState(
-                    state.value.copy(
+                state.updateSelf {
+                    copy(
                         dialog = BrowserViewState.Dialogs.LocalFileBlocked,
                         isSearchBarExpanded = false,
                     )
-                )
+                }
                 pendingAction = action
             } else {
                 createNewTabAndSelect(
@@ -559,7 +560,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     private suspend fun onConfirmOpenLocalFile(allow: Boolean) {
-        updateState(state.value.copy(dialog = null))
+        onDialogDismissed()
         if (allow) {
             pendingAction?.let {
                 createNewTabAndSelect(
@@ -579,7 +580,7 @@ class BrowserPresenter @Inject constructor(
         historyPageFactory.deleteHistoryPage()
 
         model.deleteAllTabs()
-        updateState(state.value.updateTabViewState())
+        state.updateSelf { updateTabViewState() }
         navigator.closeBrowser()
 
         // System exit needed in the case of receiving
@@ -610,7 +611,7 @@ class BrowserPresenter @Inject constructor(
 
             MenuSelection.FIND -> {
                 currentTab?.find("")
-                updateState(state.value.copy(findInPage = ""))
+                state.updateSelf { copy(findInPage = "") }
             }
 
             MenuSelection.COPY_LINK -> {
@@ -622,7 +623,7 @@ class BrowserPresenter @Inject constructor(
             MenuSelection.ADD_TO_HOME -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let { addToHomeScreen() }
 
-            MenuSelection.BOOKMARKS -> updateState(state.value.copy(openBookmarks = true))
+            MenuSelection.BOOKMARKS -> state.updateSelf { copy(openBookmarks = true) }
             MenuSelection.ADD_BOOKMARK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let { showAddBookmarkDialog() }
 
@@ -632,7 +633,7 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private suspend fun addToHomeScreen() {
+    private fun addToHomeScreen() {
         currentTab?.let {
             val result = navigator.addToHomeScreen(
                 url = it.url,
@@ -653,7 +654,7 @@ class BrowserPresenter @Inject constructor(
         tabType: TabModel.Type = TabModel.Type.NORMAL
     ) {
         val tab = model.createTab(tabInitializer, tabType = tabType)
-        updateState(state.value.updateTabViewState())
+        state.updateSelf { updateTabViewState() }
         if (shouldSelect) {
             selectTab(model.selectTab(tab.id))
         } else {
@@ -675,18 +676,17 @@ class BrowserPresenter @Inject constructor(
         when (keyCombo) {
             KeyCombo.CTRL_F -> {
                 currentTab?.find("")
-                updateState(state.value.copy(findInPage = ""))
+                state.updateSelf { copy(findInPage = "") }
             }
 
             KeyCombo.CTRL_T -> onNewTabClick()
             KeyCombo.CTRL_W -> onTabClose(state.value.tabs.indexOfCurrentTab())
-            KeyCombo.CTRL_Q -> updateState(
-                state.value.copy(
-                    dialog = BrowserViewState.Dialogs.CloseBrowser(state.value.tabs.indexOfCurrentTab())
-                )
-            )
+            KeyCombo.CTRL_Q -> state.updateSelf {
+                copy(dialog = BrowserViewState.Dialogs.CloseBrowser(tabs.indexOfCurrentTab()))
+            }
 
             KeyCombo.CTRL_R -> onRefreshOrStopClick()
+
             KeyCombo.CTRL_TAB -> {
                 val currentIndex = state.value.tabs.indexOfCurrentTab()
                 val nextIndex =
@@ -722,12 +722,8 @@ class BrowserPresenter @Inject constructor(
         selectTab(model.selectTab(state.value.tabs[index].id))
     }
 
-    private suspend fun onTabLongClick(index: Int) {
-        updateState(
-            state.value.copy(
-                dialog = BrowserViewState.Dialogs.CloseBrowser(state.value.tabs[index].id)
-            )
-        )
+    private fun onTabLongClick(index: Int) {
+        state.updateSelf { copy(dialog = BrowserViewState.Dialogs.CloseBrowser(tabs[index].id)) }
     }
 
     private fun <T> List<T>.nextSelected(removedIndex: Int): T? {
@@ -755,7 +751,7 @@ class BrowserPresenter @Inject constructor(
         val needToSelectNextTab = state.value.tabs[index].id == currentTabId
 
         model.deleteTab(state.value.tabs[index].id)
-        updateState(state.value.updateTabViewState())
+        state.updateSelf { updateTabViewState() }
         if (needToSelectNextTab) {
             nextTab?.id?.let {
                 val shouldClose = currentTab?.tabType == TabModel.Type.EPHEMERAL
@@ -777,38 +773,36 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private suspend fun onTabScroll() {
-        updateState(state.value.copy(scrollToTab = -1))
+    private fun onTabScroll() {
+        state.updateSelf { copy(scrollToTab = -1) }
     }
 
-    private suspend fun onTabDrawerMoved(isOpen: Boolean) {
-        updateState(state.value.copy(openTabs = isOpen))
+    private fun onTabDrawerMoved(isOpen: Boolean) {
+        state.updateSelf { copy(openTabs = isOpen) }
     }
 
-    private suspend fun onBookmarkDrawerMoved(isOpen: Boolean) {
-        updateState(state.value.copy(openBookmarks = isOpen))
+    private fun onBookmarkDrawerMoved(isOpen: Boolean) {
+        state.updateSelf { copy(openBookmarks = isOpen) }
     }
 
     private suspend fun onNavigateBack() {
         when {
             isCustomViewShowing -> {
-                updateState(state.value.copy(showCustomView = false))
+                state.updateSelf { copy(showCustomView = false) }
                 currentTab?.hideCustomView()
             }
 
-            state.value.openTabs -> updateState(state.value.copy(openTabs = false))
+            state.value.openTabs -> state.updateSelf { copy(openTabs = false) }
             state.value.openBookmarks -> if (currentFolder != Bookmark.Folder.Root) {
                 onBookmarkMenuClick()
             } else {
-                updateState(state.value.copy(openBookmarks = false))
+                state.updateSelf { copy(openBookmarks = false) }
             }
 
             currentTab?.canGoBack() == true -> currentTab?.goBack()
             currentTab?.canGoBack() == false -> if (incognitoMode) {
                 currentTab?.id?.let {
-                    updateState(
-                        state.value.copy(dialog = BrowserViewState.Dialogs.CloseBrowser(it))
-                    )
+                    state.updateSelf { copy(dialog = BrowserViewState.Dialogs.CloseBrowser(it)) }
                 }
             } else if (currentTab?.tabType in listOf(
                     TabModel.Type.EPHEMERAL,
@@ -844,7 +838,7 @@ class BrowserPresenter @Inject constructor(
 
     private suspend fun onRefreshOrStopClick() {
         if (isSearchViewFocused) {
-            updateState(state.value.copy(displayUrl = ""))
+            state.updateSelf { copy(displayUrl = "") }
             return
         }
         if (currentTab?.loadingProgress != 100) {
@@ -876,19 +870,19 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private suspend fun onSearchQueryChanged(
+    private fun onSearchQueryChanged(
         query: String,
         selectionStart: Int,
         selectionEnd: Int
     ) {
         currentTab?.searchQuery = query
         currentTab?.searchQuerySelection = Pair(selectionStart, selectionEnd)
-        updateState(
-            state.value.copy(
+        state.updateSelf {
+            copy(
                 searchQuery = query,
                 searchQuerySelection = Pair(selectionStart, selectionEnd)
             )
-        )
+        }
     }
 
     private suspend fun onSearch(query: String) {
@@ -897,25 +891,25 @@ class BrowserPresenter @Inject constructor(
         }
         currentTab?.stopLoading()
         val url = searchEngineProvider.provideSearchEngine().search(query)
-        updateState(
-            state.value.copy(
+        state.updateSelf {
+            copy(
                 displayUrl = searchBoxModel.getDisplayContent(
                     url = url,
                     title = currentTab?.title,
                     isLoading = (currentTab?.loadingProgress ?: 0) < 100
                 )
             )
-        )
+        }
         currentTab?.loadUrl(url)
     }
 
-    private suspend fun onSearchBarExpandedOrCollapsed(expanded: Boolean) {
-        updateState(state.value.copy(isSearchBarExpanded = expanded))
+    private fun onSearchBarExpandedOrCollapsed(expanded: Boolean) {
+        state.updateSelf { copy(isSearchBarExpanded = expanded) }
     }
 
-    private suspend fun onFindInPage(query: String) {
+    private fun onFindInPage(query: String) {
         currentTab?.find(query)
-        updateState(state.value.copy(findInPage = query))
+        state.updateSelf { copy(findInPage = query) }
     }
 
     private fun onFindNext() {
@@ -926,9 +920,9 @@ class BrowserPresenter @Inject constructor(
         currentTab?.findPrevious()
     }
 
-    private suspend fun onFindDismiss() {
+    private fun onFindDismiss() {
         currentTab?.clearFindMatches()
-        updateState(state.value.copy(findInPage = null))
+        state.updateSelf { copy(findInPage = null) }
     }
 
     private suspend fun onSearchSuggestionClicked(webPage: WebPage) {
@@ -943,7 +937,7 @@ class BrowserPresenter @Inject constructor(
         onSearch(url)
     }
 
-    private suspend fun onSearchSuggestionInsertClicked(webPage: WebPage) {
+    private fun onSearchSuggestionInsertClicked(webPage: WebPage) {
         val url = when (webPage) {
             is HistoryEntry,
             is Bookmark.Entry -> webPage.url
@@ -955,13 +949,13 @@ class BrowserPresenter @Inject constructor(
         onSearchQueryChanged(url, url.length, url.length)
     }
 
-    private suspend fun onDialogDismissed() {
-        updateState(state.value.copy(dialog = null))
+    private fun onDialogDismissed() {
+        state.updateSelf { copy(dialog = null) }
     }
 
-    private suspend fun onSslIconClick() {
+    private fun onSslIconClick() {
         currentTab?.sslCertificateInfo?.let {
-            updateState(state.value.copy(dialog = BrowserViewState.Dialogs.SslInfo(it)))
+            state.updateSelf { copy(dialog = BrowserViewState.Dialogs.SslInfo(it)) }
         }
     }
 
@@ -969,7 +963,7 @@ class BrowserPresenter @Inject constructor(
         when (val bookmark = currentBookmarks[index]) {
             is Bookmark.Entry -> {
                 currentTab?.loadUrl(bookmark.url)
-                updateState(state.value.copy(openBookmarks = false))
+                state.updateSelf { copy(openBookmarks = false) }
             }
 
             Bookmark.Folder.Root -> error("Cannot click on root folder")
@@ -977,12 +971,7 @@ class BrowserPresenter @Inject constructor(
                 currentFolder = bookmark
                 val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = bookmark)
                 currentBookmarks = bookmarks
-                updateState(
-                    state.value.copy(
-                        bookmarks = bookmarks.asListItems(),
-                        isRootFolder = false
-                    )
-                )
+                state.updateSelf { copy(bookmarks = bookmarks.asListItems(), isRootFolder = false) }
             }
         }
     }
@@ -1014,40 +1003,40 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private suspend fun onBookmarkLongClick(index: Int) {
+    private fun onBookmarkLongClick(index: Int) {
         when (val item = currentBookmarks[index]) {
-            is Bookmark.Entry -> updateState(
-                state.value.copy(dialog = BrowserViewState.Dialogs.BookmarkOptions(item))
-            )
+            is Bookmark.Entry -> state.updateSelf {
+                copy(dialog = BrowserViewState.Dialogs.BookmarkOptions(item))
+            }
 
-            is Bookmark.Folder.Entry -> updateState(
-                state.value.copy(dialog = BrowserViewState.Dialogs.FolderOptions(item))
-            )
+            is Bookmark.Folder.Entry -> state.updateSelf {
+                copy(dialog = BrowserViewState.Dialogs.FolderOptions(item))
+            }
 
             Bookmark.Folder.Root -> Unit // Root is not clickable
         }
     }
 
-    private suspend fun onToolsClick() {
+    private fun onToolsClick() {
         val currentUrl = currentTab?.url ?: return
-        updateState(
-            state.value.copy(
+        state.updateSelf {
+            copy(
                 dialog = BrowserViewState.Dialogs.PageTools(
                     areAdsAllowed = allowListModel.isUrlAllowedAds(currentUrl),
                     shouldShowAdBlockOption = !currentUrl.isSpecialUrl()
                 )
             )
-        )
+        }
     }
 
     private suspend fun onToggleDesktopAgent() {
-        updateState(state.value.copy(dialog = null))
+        onDialogDismissed()
         currentTab?.toggleDesktopAgent()
         currentTab?.reload()
     }
 
-    private suspend fun onToggleAdBlocking() {
-        updateState(state.value.copy(dialog = null))
+    private fun onToggleAdBlocking() {
+        onDialogDismissed()
         val currentUrl = currentTab?.url ?: return
         if (allowListModel.isUrlAllowedAds(currentUrl)) {
             allowListModel.removeUrlFromAllowList(currentUrl)
@@ -1075,12 +1064,12 @@ class BrowserPresenter @Inject constructor(
             )
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
             currentBookmarks = bookmarks
-            updateState(
-                state.value.copy(
+            state.updateSelf {
+                copy(
                     bookmarks = bookmarks.asListItems(),
                     isBookmarked = bookmarkRepository.isBookmark(url)
                 )
-            )
+            }
         } else {
             showAddBookmarkDialog()
         }
@@ -1089,9 +1078,9 @@ class BrowserPresenter @Inject constructor(
     private suspend fun showAddBookmarkDialog() {
         val folders = bookmarkRepository.getFolderNames()
         val existing = bookmarkRepository.findBookmarkForUrl(currentTab?.url.orEmpty())
-        if (existing != null) {
-            updateState(
-                state.value.copy(
+        state.updateSelf {
+            if (existing != null) {
+                copy(
                     dialog = BrowserViewState.Dialogs.EditBookmark(
                         title = existing.title,
                         url = existing.url,
@@ -1099,22 +1088,20 @@ class BrowserPresenter @Inject constructor(
                         folders = folders
                     )
                 )
-            )
-        } else {
-            updateState(
-                state.value.copy(
+            } else {
+                copy(
                     dialog = BrowserViewState.Dialogs.AddBookmark(
                         title = currentTab?.title.orEmpty(),
                         url = currentTab?.url.orEmpty(),
                         folders = folders
                     )
                 )
-            )
+            }
         }
     }
 
     private suspend fun onBookmarkConfirmed(title: String, url: String, folder: String) {
-        updateState(state.value.copy(dialog = null))
+        onDialogDismissed()
         bookmarkRepository.addBookmarkIfNotExists(
             Bookmark.Entry(
                 url = url,
@@ -1125,17 +1112,17 @@ class BrowserPresenter @Inject constructor(
         )
         val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
         currentBookmarks = bookmarks
-        updateState(
-            state.value.copy(
+        state.updateSelf {
+            copy(
                 bookmarks = bookmarks.asListItems(),
                 isBookmarked = bookmarkRepository.isBookmark(url)
             )
-        )
+        }
     }
 
     private suspend fun onBookmarkEditConfirmed(title: String, url: String, folder: String) {
         val oldUrl = (state.value.dialog as? BrowserViewState.Dialogs.EditBookmark)?.url ?: return
-        updateState(state.value.copy(dialog = null))
+        onDialogDismissed()
         bookmarkRepository.editBookmark(
             oldBookmark = Bookmark.Entry(
                 url = oldUrl,
@@ -1153,23 +1140,18 @@ class BrowserPresenter @Inject constructor(
         val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
         currentBookmarks = bookmarks
         val isBookmarked = currentTab?.url?.let { bookmarkRepository.isBookmark(it) } ?: false
-        updateState(
-            state.value.copy(
-                bookmarks = bookmarks.asListItems(),
-                isBookmarked = isBookmarked
-            )
-        )
+        state.updateSelf { copy(bookmarks = bookmarks.asListItems(), isBookmarked = isBookmarked) }
         if (currentTab?.url?.isBookmarkUrl() == true) {
             reload()
         }
     }
 
     private suspend fun onBookmarkFolderRenameConfirmed(oldTitle: String, newTitle: String) {
-        updateState(state.value.copy(dialog = null))
+        onDialogDismissed()
         bookmarkRepository.renameFolder(oldTitle, newTitle)
         val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
         currentBookmarks = bookmarks
-        updateState(state.value.copy(bookmarks = bookmarks.asListItems()))
+        state.updateSelf { copy(bookmarks = bookmarks.asListItems()) }
         if (currentTab?.url?.isBookmarkUrl() == true) {
             reload()
         }
@@ -1199,7 +1181,7 @@ class BrowserPresenter @Inject constructor(
                 bookmarkRepository.deleteBookmark(bookmark)
                 val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
                 currentBookmarks = bookmarks
-                updateState(state.value.copy(bookmarks = bookmarks.asListItems()))
+                state.updateSelf { copy(bookmarks = bookmarks.asListItems()) }
                 if (currentTab?.url?.isBookmarkUrl() == true) {
                     reload()
                 }
@@ -1207,8 +1189,8 @@ class BrowserPresenter @Inject constructor(
 
             BrowserContract.BookmarkOptionEvent.EDIT -> {
                 val folders = bookmarkRepository.getFolderNames()
-                updateState(
-                    state.value.copy(
+                state.updateSelf {
+                    copy(
                         dialog = BrowserViewState.Dialogs.EditBookmark(
                             title = bookmark.title,
                             url = bookmark.url,
@@ -1216,27 +1198,27 @@ class BrowserPresenter @Inject constructor(
                             folders = folders
                         )
                     )
-                )
+                }
             }
         }
-        updateState(state.value.copy(dialog = null))
+        onDialogDismissed()
     }
 
     private suspend fun onFolderOptionClick(
         folder: Bookmark.Folder,
         option: BrowserContract.FolderOptionEvent
     ) {
-        updateState(state.value.copy(dialog = null))
+        onDialogDismissed()
         when (option) {
-            BrowserContract.FolderOptionEvent.RENAME -> updateState(
-                state.value.copy(dialog = BrowserViewState.Dialogs.EditFolder(title = folder.title))
-            )
+            BrowserContract.FolderOptionEvent.RENAME -> state.updateSelf {
+                copy(dialog = BrowserViewState.Dialogs.EditFolder(title = folder.title))
+            }
 
             BrowserContract.FolderOptionEvent.REMOVE -> {
                 bookmarkRepository.deleteFolder(folder.title)
                 val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
                 currentBookmarks = bookmarks
-                updateState(state.value.copy(bookmarks = bookmarks.asListItems()))
+                state.updateSelf { copy(bookmarks = bookmarks.asListItems()) }
                 if (currentTab?.url?.isBookmarkUrl() == true) {
                     reload()
                     currentTab?.goBack()
@@ -1264,7 +1246,7 @@ class BrowserPresenter @Inject constructor(
                 }
             }
         }
-        updateState(state.value.copy(dialog = null))
+        onDialogDismissed()
     }
 
     private suspend fun onHistoryOptionClick(
@@ -1296,22 +1278,22 @@ class BrowserPresenter @Inject constructor(
                 }
             }
         }
-        updateState(state.value.copy(dialog = null))
+        onDialogDismissed()
     }
 
     private suspend fun onTabCountViewClick() {
         when (userPreferencesDataStore.tabConfiguration.get()) {
-            TabConfiguration.DRAWER_SIDE -> updateState(state.value.copy(openTabs = true))
-            TabConfiguration.DRAWER_BOTTOM -> updateState(state.value.copy(openTabs = !state.value.openTabs))
+            TabConfiguration.DRAWER_SIDE -> state.updateSelf { copy(openTabs = true) }
+
+            TabConfiguration.DRAWER_BOTTOM -> state.updateSelf { copy(openTabs = !openTabs) }
+
             else -> currentTab?.loadFromInitializer(homePageInitializer)
         }
     }
 
-    private suspend fun onTabMenuClick() {
+    private fun onTabMenuClick() {
         currentTab?.let {
-            updateState(
-                state.value.copy(dialog = BrowserViewState.Dialogs.CloseBrowser(it.id))
-            )
+            state.updateSelf { copy(dialog = BrowserViewState.Dialogs.CloseBrowser(it.id)) }
         }
     }
 
@@ -1320,12 +1302,7 @@ class BrowserPresenter @Inject constructor(
             currentFolder = Bookmark.Folder.Root
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
             currentBookmarks = bookmarks
-            updateState(
-                state.value.copy(
-                    bookmarks = bookmarks.asListItems(),
-                    isRootFolder = true
-                )
-            )
+            state.updateSelf { copy(bookmarks = bookmarks.asListItems(), isRootFolder = true) }
         }
     }
 
@@ -1342,54 +1319,44 @@ class BrowserPresenter @Inject constructor(
                         0,
                         filename.length - BookmarkPageFactory.FILENAME.length - 1
                     )
-                    updateState(
-                        state.value.copy(
-                            dialog = BrowserViewState.Dialogs.FolderOptions(folderTitle.asFolder())
-                        )
-                    )
+                    state.updateSelf {
+                        copy(dialog = BrowserViewState.Dialogs.FolderOptions(folderTitle.asFolder()))
+                    }
                 } else {
                     val bookmark = bookmarkRepository.findBookmarkForUrl(url)
                     if (bookmark != null) {
-                        updateState(
-                            state.value.copy(
-                                dialog = BrowserViewState.Dialogs.BookmarkOptions(bookmark)
-                            )
-                        )
+                        state.updateSelf {
+                            copy(dialog = BrowserViewState.Dialogs.BookmarkOptions(bookmark))
+                        }
                     }
                 }
             } else if (pageUrl.isDownloadsUrl()) {
                 val download = downloadsRepository.findDownloadForUrl(url)
                 if (download != null) {
-                    updateState(
-                        state.value.copy(
-                            dialog = BrowserViewState.Dialogs.DownloadOptions(download)
-                        )
-                    )
+                    state.updateSelf {
+                        copy(dialog = BrowserViewState.Dialogs.DownloadOptions(download))
+                    }
                 }
             } else if (pageUrl.isHistoryUrl()) {
                 val entries = historyRepository.findHistoryEntriesContaining(url)
-                updateState(
-                    state.value.copy(
+                state.updateSelf {
+                    copy(
                         dialog = BrowserViewState.Dialogs.HistoryOptions(
                             entries.firstOrNull()
                                 ?: HistoryEntry(url = url, title = "")
                         )
                     )
-                )
+                }
             }
         } else {
             when (longPress.hitCategory) {
-                LongPress.Category.IMAGE -> updateState(
-                    state.value.copy(
-                        dialog = BrowserViewState.Dialogs.ImageLongPress(longPress)
-                    )
-                )
+                LongPress.Category.IMAGE -> state.updateSelf {
+                    copy(dialog = BrowserViewState.Dialogs.ImageLongPress(longPress))
+                }
 
-                LongPress.Category.LINK -> updateState(
-                    state.value.copy(
-                        dialog = BrowserViewState.Dialogs.LinkLongPress(longPress)
-                    )
-                )
+                LongPress.Category.LINK -> state.updateSelf {
+                    copy(dialog = BrowserViewState.Dialogs.LinkLongPress(longPress))
+                }
 
                 LongPress.Category.UNKNOWN -> Unit // Do nothing
             }
@@ -1405,7 +1372,7 @@ class BrowserPresenter @Inject constructor(
                 val currentTabId = currentTab?.id
                 model.tabsList.filter { it.id != id }.forEach {
                     model.deleteTab(it.id)
-                    updateState(state.value.updateTabViewState())
+                    state.updateSelf { updateTabViewState() }
                     if (currentTabId != id) {
                         selectTab(model.selectTab(id))
                     }
@@ -1414,11 +1381,11 @@ class BrowserPresenter @Inject constructor(
 
             BrowserContract.CloseTabEvent.CLOSE_ALL -> {
                 model.deleteAllTabs()
-                updateState(state.value.updateTabViewState())
+                state.updateSelf { updateTabViewState() }
                 navigator.closeBrowser()
             }
         }
-        updateState(state.value.copy(dialog = null))
+        onDialogDismissed()
     }
 
     private suspend fun onLinkLongPressEvent(
@@ -1451,7 +1418,7 @@ class BrowserPresenter @Inject constructor(
                 showSnackbar(resourceProvider.stringResource(R.string.message_link_copied))
             }
         }
-        updateState(state.value.copy(dialog = null))
+        onDialogDismissed()
     }
 
     private suspend fun onImageLongPressEvent(
@@ -1497,20 +1464,20 @@ class BrowserPresenter @Inject constructor(
                 showSnackbar(resourceProvider.stringResource(R.string.download_pending))
             }
         }
-        updateState(state.value.copy(dialog = null))
+        onDialogDismissed()
     }
 
     private fun onFileChooserResult(activityResult: ActivityResult) {
         currentTab?.handleFileChooserResult(activityResult)
     }
 
-    private suspend fun onSnackbarDismissed() {
-        updateState(state.value.copy(ephemeral = null))
+    private fun onSnackbarDismissed() {
+        hideSnackbar()
         pendingSnackbarAction = null
     }
 
     private suspend fun onSnackbarActionPerformed() {
-        updateState(state.value.copy(ephemeral = null))
+        hideSnackbar()
         pendingSnackbarAction?.action()
         pendingSnackbarAction = null
     }
@@ -1523,7 +1490,7 @@ class BrowserPresenter @Inject constructor(
 
     private suspend fun reopenTab() {
         val tab = model.reopenTab()
-        updateState(state.value.updateTabViewState())
+        state.updateSelf { updateTabViewState() }
         if (tab != null) {
             selectTab(model.selectTab(tab.id))
         }
@@ -1538,21 +1505,24 @@ class BrowserPresenter @Inject constructor(
             BrowserViewState.ToolbarVisibility.HIDE
         }
 
-    private suspend fun showSnackbar(message: String, action: EphemeralAction? = null) {
+    private fun hideSnackbar() {
+        state.updateSelf { copy(ephemeral = null) }
+    }
+
+    private fun showSnackbar(message: String, action: EphemeralAction? = null) {
         pendingSnackbarAction = action
-        updateState(
-            state.value.copy(
+        state.updateSelf {
+            copy(
                 ephemeral = BrowserViewState.Ephemeral(
                     message = message,
                     actionLabel = action?.label
                 )
             )
-        )
+        }
     }
 
-    private suspend fun updateState(newState: BrowserViewState) {
-        state.value = newState
-        state.emit(state.value)
+    private inline fun <T> MutableStateFlow<T>.updateSelf(function: T.() -> T) {
+        update { it.function() }
     }
 
     private class EphemeralAction(
