@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.compose
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserComposeState
 import acr.browser.lightning.browser.BrowserPresenter
@@ -45,7 +46,7 @@ fun BrowserFindInPage(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { presenter.onFindDismiss() }) {
+            IconButton(onClick = { presenter.onEvent(BrowserUiEvent.FindInPageDismissed) }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_action_delete),
                     contentDescription = "test"
@@ -66,7 +67,7 @@ fun BrowserFindInPage(
                 value = text,
                 onValueChange = {
                     text = it
-                    presenter.onFindInPage(it)
+                    presenter.onEvent(BrowserUiEvent.FindInPage(it))
                 },
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -86,13 +87,13 @@ fun BrowserFindInPage(
                     }
                 }
             )
-            IconButton(onClick = { presenter.onFindPrevious() }) {
+            IconButton(onClick = { presenter.onEvent(BrowserUiEvent.FindInPagePrevious) }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_action_collapse),
                     contentDescription = "test"
                 )
             }
-            IconButton(onClick = { presenter.onFindNext() }) {
+            IconButton(onClick = { presenter.onEvent(BrowserUiEvent.FindInPageNext) }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_action_expand),
                     contentDescription = "test"

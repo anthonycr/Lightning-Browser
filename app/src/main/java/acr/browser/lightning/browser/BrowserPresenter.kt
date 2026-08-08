@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.browser.data.CookieAdministrator
@@ -1608,11 +1609,124 @@ class BrowserPresenter @Inject constructor(
     /**
      * Call when the user clicks the action on the snackbar if there is any.
      */
-    fun onSnackbarActionPerformed() {
+    private fun onSnackbarActionPerformed() {
         updateState(state.value.copy(ephemeral = null))
         browserCoroutineScope.launch {
             pendingSnackbarAction?.action()
             pendingSnackbarAction = null
+        }
+    }
+
+    fun onEvent(browserUiEvent: BrowserUiEvent) {
+        browserCoroutineScope.launch {
+            when (browserUiEvent) {
+                BrowserUiEvent.SnackbarActionPerformed -> onSnackbarActionPerformed()
+                BrowserUiEvent.SnackbarDismissed -> onSnackbarDismissed()
+                is BrowserUiEvent.FileChooserResult -> onFileChooserResult(browserUiEvent.activityResult)
+                is BrowserUiEvent.ImageLongPress -> onImageLongPressEvent(
+                    browserUiEvent.longPress,
+                    browserUiEvent.imageLongPressEvent
+                )
+
+                is BrowserUiEvent.LinkLongPress -> onLinkLongPressEvent(
+                    browserUiEvent.longPress,
+                    browserUiEvent.linkLongPressEvent
+                )
+
+                is BrowserUiEvent.CloseBrowser -> onCloseBrowserEvent(
+                    browserUiEvent.id,
+                    browserUiEvent.closeTabEvent
+                )
+
+                is BrowserUiEvent.PageLongPress -> onPageLongPress(
+                    browserUiEvent.id,
+                    browserUiEvent.longPress
+                )
+
+                BrowserUiEvent.BookmarkMenuClick -> onBookmarkMenuClick()
+                BrowserUiEvent.TabCountClick -> onTabCountViewClick()
+                is BrowserUiEvent.HistoryOptionClick -> onHistoryOptionClick(
+                    browserUiEvent.historyEntry,
+                    browserUiEvent.option
+                )
+
+                is BrowserUiEvent.DownloadOptionClick -> onDownloadOptionClick(
+                    browserUiEvent.downloadEntry,
+                    browserUiEvent.optionClick
+                )
+
+                is BrowserUiEvent.FolderOptionClick -> onFolderOptionClick(
+                    browserUiEvent.folder,
+                    browserUiEvent.optionClick
+                )
+
+                is BrowserUiEvent.BookmarkOptionClick -> onBookmarkOptionClick(
+                    browserUiEvent.bookmark,
+                    browserUiEvent.optionClick
+                )
+
+                is BrowserUiEvent.BookmarkFolderRenameConfirmed -> onBookmarkFolderRenameConfirmed(
+                    browserUiEvent.oldTitle,
+                    browserUiEvent.newTitle
+                )
+
+                is BrowserUiEvent.BookmarkEditConfirmed -> onBookmarkEditConfirmed(
+                    browserUiEvent.title,
+                    browserUiEvent.url,
+                    browserUiEvent.folder
+                )
+
+                is BrowserUiEvent.BookmarkConfirmed -> onBookmarkConfirmed(
+                    browserUiEvent.title,
+                    browserUiEvent.url,
+                    browserUiEvent.folder
+                )
+
+                BrowserUiEvent.StarClick -> onStarClick()
+                BrowserUiEvent.ToggleAdBlockingClick -> onToggleAdBlocking()
+                BrowserUiEvent.ToggleDesktopAgentClick -> onToggleDesktopAgent()
+                BrowserUiEvent.ToolsClick -> onToolsClick()
+                is BrowserUiEvent.BookmarkLongClick -> onBookmarkLongClick(browserUiEvent.index)
+                is BrowserUiEvent.BookmarkClick -> onBookmarkClick(browserUiEvent.index)
+                BrowserUiEvent.SslIconClick -> onSslIconClick()
+                BrowserUiEvent.DialogDismissed -> onDialogDismissed()
+                is BrowserUiEvent.SearchSuggestionInsertClick -> onSearchSuggestionInsertClicked(
+                    browserUiEvent.webPage
+                )
+
+                is BrowserUiEvent.SearchSuggestionClick -> onSearchSuggestionClicked(browserUiEvent.webPage)
+                BrowserUiEvent.FindInPageDismissed -> onFindDismiss()
+                BrowserUiEvent.FindInPagePrevious -> onFindPrevious()
+                BrowserUiEvent.FindInPageNext -> onFindNext()
+                is BrowserUiEvent.FindInPage -> onFindInPage(browserUiEvent.query)
+                is BrowserUiEvent.SearchBarExpandedOrCollapsed -> onSearchBarExpandedOrCollapsed(
+                    browserUiEvent.expanded
+                )
+
+                is BrowserUiEvent.SearchConfirmed -> onSearch(browserUiEvent.query)
+                is BrowserUiEvent.SearchQueryChanged -> onSearchQueryChanged(
+                    browserUiEvent.query,
+                    browserUiEvent.selectionStart,
+                    browserUiEvent.selectionEnd
+                )
+
+                BrowserUiEvent.RefreshOrStopClick -> onRefreshOrStopClick()
+                BrowserUiEvent.NewTabClick -> onNewTabClick()
+                BrowserUiEvent.HomeClick -> onHomeClick()
+                BrowserUiEvent.ForwardClick -> onForwardClick()
+                BrowserUiEvent.BackClick -> onBackClick()
+                BrowserUiEvent.NavigateBack -> onNavigateBack()
+                is BrowserUiEvent.BookmarkDrawerMoved -> onBookmarkDrawerMoved(browserUiEvent.isOpen)
+                is BrowserUiEvent.TabDrawerMoved -> onTabDrawerMoved(browserUiEvent.isOpen)
+                BrowserUiEvent.TabScroll -> onTabScroll()
+                is BrowserUiEvent.TabClose -> onTabClose(browserUiEvent.index)
+                is BrowserUiEvent.TabLongClick -> onTabLongClick(browserUiEvent.index)
+                is BrowserUiEvent.TabClick -> onTabClick(browserUiEvent.index)
+                is BrowserUiEvent.KeyComboClick -> onKeyComboClick(browserUiEvent.keyCombo)
+                is BrowserUiEvent.MenuClick -> onMenuClick(browserUiEvent.menuSelection)
+                is BrowserUiEvent.ConfirmOpenLocalFile -> onConfirmOpenLocalFile(browserUiEvent.allow)
+                is BrowserUiEvent.NewAction -> onNewAction(browserUiEvent.action)
+            }
         }
     }
 

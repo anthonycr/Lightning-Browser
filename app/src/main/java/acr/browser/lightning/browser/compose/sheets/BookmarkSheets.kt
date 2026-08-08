@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.compose.sheets
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserComposeState
 import acr.browser.lightning.browser.BrowserPresenter
@@ -61,7 +62,7 @@ fun BookmarksBottomSheet(
     ModalBottomSheet(
         sheetState = sheetState,
         dragHandle = {},
-        onDismissRequest = { presenter.onBookmarkDrawerMoved(false) }
+        onDismissRequest = { presenter.onEvent(BrowserUiEvent.BookmarkDrawerMoved(isOpen = false)) }
     ) {
         Row(
             modifier = Modifier
@@ -72,7 +73,7 @@ fun BookmarksBottomSheet(
             IconButton(
                 modifier = Modifier
                     .size(56.dp),
-                onClick = { presenter.onBookmarkMenuClick() }) {
+                onClick = { presenter.onEvent(BrowserUiEvent.BookmarkMenuClick) }) {
                 Icon(
                     painter = if (browserViewState.isRootFolder) {
                         painterResource(R.drawable.ic_action_star)
@@ -100,8 +101,8 @@ fun BookmarksBottomSheet(
                             fadeOutSpec = null
                         )
                         .combinedClickable(
-                            onClick = { presenter.onBookmarkClick(index) },
-                            onLongClick = { presenter.onBookmarkLongClick(index) }
+                            onClick = { presenter.onEvent(BrowserUiEvent.BookmarkClick(index)) },
+                            onLongClick = { presenter.onEvent(BrowserUiEvent.BookmarkLongClick(index)) }
                         )
                         .height(56.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -172,7 +173,7 @@ fun BookmarkAddOrEditSheet(
     val scope = rememberCoroutineScope()
 
     ModalBottomSheet(
-        onDismissRequest = { presenter.onDialogDismissed() },
+        onDismissRequest = { presenter.onEvent(BrowserUiEvent.DialogDismissed) },
         dragHandle = {},
         sheetState = sheetState
     ) {
@@ -271,7 +272,7 @@ fun BookmarkAddOrEditSheet(
                         scope.launch {
                             delay(500.milliseconds)
                             sheetState.hide()
-                            presenter.onDialogDismissed()
+                            presenter.onEvent(BrowserUiEvent.DialogDismissed)
                         }
                     }
                 ) {
@@ -310,7 +311,7 @@ fun BookmarkFolderRenameSheet(
     val scope = rememberCoroutineScope()
 
     ModalBottomSheet(
-        onDismissRequest = { presenter.onDialogDismissed() },
+        onDismissRequest = { presenter.onEvent(BrowserUiEvent.DialogDismissed) },
         dragHandle = {},
         sheetState = sheetState
     ) {

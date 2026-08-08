@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.compose
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserComposeState
 import acr.browser.lightning.browser.BrowserPresenter
@@ -66,12 +67,12 @@ fun BrowserSearchSuggestions(
             !browserViewState.isSearchBarExpanded
         ) {
             searchBarState.animateToCollapsed()
-            presenter.onSearchBarExpandedOrCollapsed(false)
+            presenter.onEvent(BrowserUiEvent.SearchBarExpandedOrCollapsed(expanded = false))
         } else if (searchBarState.currentValue == SearchBarValue.Collapsed &&
             browserViewState.isSearchBarExpanded
         ) {
             searchBarState.animateToExpanded()
-            presenter.onSearchBarExpandedOrCollapsed(true)
+            presenter.onEvent(BrowserUiEvent.SearchBarExpandedOrCollapsed(expanded = true))
         }
     }
     ExpandedFullScreenSearchBar(
@@ -111,7 +112,13 @@ fun BrowserSearchSuggestions(
                     if (searchBarState.targetValue != SearchBarValue.Collapsed) {
                         state = it
                         suggestionsModel.updateQuery(it.text)
-                        presenter.onSearchQueryChanged(it.text, it.selection.min, it.selection.max)
+                        presenter.onEvent(
+                            BrowserUiEvent.SearchQueryChanged(
+                                query = it.text,
+                                selectionStart = it.selection.min,
+                                selectionEnd = it.selection.max
+                            )
+                        )
                     }
                 },
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
@@ -122,9 +129,9 @@ fun BrowserSearchSuggestions(
                 keyboardActions = KeyboardActions(onSearch = {
                     coroutineScope.launch {
                         searchBarState.animateToCollapsed()
-                        presenter.onSearchBarExpandedOrCollapsed(false)
+                        presenter.onEvent(BrowserUiEvent.SearchBarExpandedOrCollapsed(expanded = false))
                     }
-                    presenter.onSearch(state.text)
+                    presenter.onEvent(BrowserUiEvent.SearchConfirmed(state.text))
                 }),
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
                 decorationBox = {
@@ -147,10 +154,10 @@ fun BrowserSearchSuggestions(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        presenter.onSearchSuggestionClicked(it)
+                        presenter.onEvent(BrowserUiEvent.SearchSuggestionClick(it))
                         coroutineScope.launch {
                             searchBarState.animateToCollapsed()
-                            presenter.onSearchBarExpandedOrCollapsed(false)
+                            presenter.onEvent(BrowserUiEvent.SearchBarExpandedOrCollapsed(expanded = false))
                         }
                     }
             ) {
@@ -187,7 +194,7 @@ fun BrowserSearchSuggestions(
                         )
                     }
                     IconButton(onClick = {
-                        presenter.onSearchSuggestionInsertClicked(it)
+                        presenter.onEvent(BrowserUiEvent.SearchSuggestionInsertClick(it))
                     }) {
                         Icon(
                             modifier = Modifier.size(24.dp),
@@ -237,7 +244,7 @@ fun BrowserSearchBarInputField(
             .clickable {
                 coroutineScope.launch {
                     searchBarState.animateToExpanded()
-                    presenter.onSearchBarExpandedOrCollapsed(true)
+                    presenter.onEvent(BrowserUiEvent.SearchBarExpandedOrCollapsed(expanded = true))
                 }
             },
         verticalAlignment = Alignment.CenterVertically
@@ -245,7 +252,7 @@ fun BrowserSearchBarInputField(
         when (browserViewState.sslState) {
             is SslState.Invalid -> IconButton(
                 modifier = Modifier.size(36.dp),
-                onClick = { presenter.onSslIconClick() }
+                onClick = { presenter.onEvent(BrowserUiEvent.SslIconClick) }
             ) {
                 Icon(
                     modifier = Modifier
@@ -263,7 +270,7 @@ fun BrowserSearchBarInputField(
 
             SslState.Valid -> IconButton(
                 modifier = Modifier.size(36.dp),
-                onClick = { presenter.onSslIconClick() }
+                onClick = { presenter.onEvent(BrowserUiEvent.SslIconClick) }
             ) {
                 Icon(
                     modifier = Modifier.padding(6.dp),
@@ -298,7 +305,7 @@ fun BrowserSearchBarInputField(
                 style = MaterialTheme.typography.bodyLarge
             )
         }
-        IconButton(onClick = { presenter.onRefreshOrStopClick() }) {
+        IconButton(onClick = { presenter.onEvent(BrowserUiEvent.RefreshOrStopClick) }) {
             Icon(
                 modifier = Modifier.size(24.dp),
                 painter = when (browserViewState.isRefresh) {

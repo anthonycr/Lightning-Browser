@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.compose
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserComposeState
 import acr.browser.lightning.browser.BrowserPresenter
@@ -141,7 +142,7 @@ fun TopTabDesktopNavigationBar(
     if (browserViewState.scrollToTab != -1) {
         LaunchedEffect(browserViewState.scrollToTab) {
             lazyListState.scrollToItem(browserViewState.scrollToTab)
-            presenter.onTabScroll()
+            presenter.onEvent(BrowserUiEvent.TabScroll)
         }
     }
     Column(
@@ -175,8 +176,8 @@ fun TopTabDesktopNavigationBar(
                             fadeOutSpec = null
                         )
                         .combinedClickable(
-                            onClick = { presenter.onTabClick(index) },
-                            onLongClick = { presenter.onTabLongClick(index) }
+                            onClick = { presenter.onEvent(BrowserUiEvent.TabClick(index)) },
+                            onLongClick = { presenter.onEvent(BrowserUiEvent.TabLongClick(index)) }
                         )
                         .zIndex(
                             if (tab.isSelected) {
@@ -235,7 +236,7 @@ fun TopTabDesktopNavigationBar(
                     IconButton(
                         modifier = Modifier
                             .size(30.dp),
-                        onClick = { presenter.onTabClose(index) }
+                        onClick = { presenter.onEvent(BrowserUiEvent.TabClose(index)) }
                     ) {
                         Icon(
                             modifier = Modifier.size(20.dp),
@@ -250,7 +251,7 @@ fun TopTabDesktopNavigationBar(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { presenter.onHomeClick() }) {
+            IconButton(onClick = { presenter.onEvent(BrowserUiEvent.HomeClick) }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_action_home),
                     contentDescription = "test"

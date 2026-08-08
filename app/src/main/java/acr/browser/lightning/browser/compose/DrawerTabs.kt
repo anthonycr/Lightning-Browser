@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.compose
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserComposeState
 import acr.browser.lightning.browser.BrowserPresenter
@@ -70,7 +71,7 @@ fun DrawerTabs(
     if (browserViewState.scrollToTab != -1) {
         LaunchedEffect(browserViewState.scrollToTab) {
             lazyListState.scrollToItem(browserViewState.scrollToTab)
-            presenter.onTabScroll()
+            presenter.onEvent(BrowserUiEvent.TabScroll)
         }
     }
 
@@ -83,7 +84,7 @@ fun DrawerTabs(
         initialValue = desiredDrawerState,
         confirmStateChange = {
             if (it == DrawerValue.Closed) {
-                presenter.onTabDrawerMoved(isOpen = false)
+                presenter.onEvent(BrowserUiEvent.TabDrawerMoved(isOpen = false))
             }
             true
         }
@@ -147,8 +148,12 @@ fun DrawerTabs(
                                     fadeOutSpec = null
                                 )
                                 .combinedClickable(
-                                    onClick = { presenter.onTabClick(index) },
-                                    onLongClick = { presenter.onTabLongClick(index) }
+                                    onClick = { presenter.onEvent(BrowserUiEvent.TabClick(index)) },
+                                    onLongClick = {
+                                        presenter.onEvent(
+                                            BrowserUiEvent.TabLongClick(index)
+                                        )
+                                    }
                                 )
                                 .height(56.dp),
                             verticalAlignment = Alignment.CenterVertically
@@ -199,7 +204,7 @@ fun DrawerTabs(
                                 modifier = Modifier
                                     .size(48.dp)
                                     .padding(4.dp),
-                                onClick = { presenter.onTabClose(index) }
+                                onClick = { presenter.onEvent(BrowserUiEvent.TabClose(index)) }
                             ) {
                                 Icon(
                                     modifier = Modifier.size(20.dp),
@@ -220,7 +225,7 @@ fun DrawerTabs(
                 ) {
                     IconButton(
                         enabled = browserViewState.isBackEnabled,
-                        onClick = { presenter.onBackClick() }
+                        onClick = { presenter.onEvent(BrowserUiEvent.BackClick) }
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_action_back),
@@ -229,20 +234,20 @@ fun DrawerTabs(
                     }
                     IconButton(
                         enabled = browserViewState.isForwardEnabled,
-                        onClick = { presenter.onForwardClick() }
+                        onClick = { presenter.onEvent(BrowserUiEvent.ForwardClick) }
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_action_forward),
                             contentDescription = ""
                         )
                     }
-                    IconButton(onClick = { presenter.onHomeClick() }) {
+                    IconButton(onClick = { presenter.onEvent(BrowserUiEvent.HomeClick) }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_action_home),
                             contentDescription = ""
                         )
                     }
-                    IconButton(onClick = { presenter.onToolsClick() }) {
+                    IconButton(onClick = { presenter.onEvent(BrowserUiEvent.ToolsClick) }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_page_tools),
                             contentDescription = ""
@@ -250,11 +255,11 @@ fun DrawerTabs(
                     }
                     IconButton(
                         enabled = browserViewState.isBookmarkEnabled,
-                        onClick = { presenter.onStarClick() }
+                        onClick = { presenter.onEvent(BrowserUiEvent.StarClick) }
                     ) {
                         BookmarkIcon(browserViewState.isBookmarked)
                     }
-                    IconButton(onClick = { presenter.onNewTabClick() }) {
+                    IconButton(onClick = { presenter.onEvent(BrowserUiEvent.NewTabClick) }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_action_plus),
                             contentDescription = ""
@@ -352,7 +357,7 @@ fun TopTabNavigationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             TabCountButton(browserViewState) {
-                presenter.onTabCountViewClick()
+                presenter.onEvent(BrowserUiEvent.TabCountClick)
             }
             BrowserSearchBar(browserViewState, presenter, suggestionsModel)
             BrowserOverflowMenu(presenter, browserViewState)

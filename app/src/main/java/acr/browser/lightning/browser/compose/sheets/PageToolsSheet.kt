@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.compose.sheets
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserPresenter
 import acr.browser.lightning.dialog.DialogItem
@@ -21,7 +22,7 @@ fun PageToolsSheet(
                 icon = R.drawable.ic_action_desktop,
                 title = R.string.dialog_toggle_desktop,
                 isConditionMet = true,
-                onClick = { presenter.onToggleDesktopAgent() }
+                onClick = { presenter.onEvent(BrowserUiEvent.ToggleDesktopAgentClick) }
             ),
             DialogItem(
                 icon = R.drawable.ic_block,
@@ -36,7 +37,7 @@ fun PageToolsSheet(
                     R.string.dialog_adblock_disable_for_site
                 },
                 isConditionMet = shouldShowAdBlockOption,
-                onClick = { presenter.onToggleAdBlocking() }
+                onClick = { presenter.onEvent(BrowserUiEvent.ToggleAdBlockingClick) }
             )
         ),
         presenter = presenter

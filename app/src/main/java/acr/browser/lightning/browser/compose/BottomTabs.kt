@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.compose
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserComposeState
 import acr.browser.lightning.browser.BrowserPresenter
@@ -124,7 +125,7 @@ fun BottomTabNavigationBar(
         ) {
             BrowserSearchBar(browserViewState, presenter, suggestionsModel)
             TabCountButton(browserViewState) {
-                presenter.onTabCountViewClick()
+                presenter.onEvent(BrowserUiEvent.TabCountClick)
             }
             BrowserOverflowMenu(presenter, browserViewState)
         }
@@ -141,7 +142,7 @@ fun TabsBottomSheet(
     if (browserViewState.scrollToTab != -1) {
         LaunchedEffect(browserViewState.scrollToTab) {
             lazyListState.scrollToItem(browserViewState.scrollToTab)
-            presenter.onTabScroll()
+            presenter.onEvent(BrowserUiEvent.TabScroll)
         }
     }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -163,7 +164,7 @@ fun TabsBottomSheet(
     ModalBottomSheet(
         dragHandle = {},
         sheetState = sheetState,
-        onDismissRequest = { presenter.onTabDrawerMoved(false) }
+        onDismissRequest = { presenter.onEvent(BrowserUiEvent.TabDrawerMoved(isOpen = false)) }
     ) {
         Row(
             modifier = Modifier
@@ -174,7 +175,7 @@ fun TabsBottomSheet(
         ) {
             IconButton(
                 enabled = browserViewState.isBackEnabled,
-                onClick = { presenter.onBackClick() }
+                onClick = { presenter.onEvent(BrowserUiEvent.BackClick) }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_action_back),
@@ -183,20 +184,20 @@ fun TabsBottomSheet(
             }
             IconButton(
                 enabled = browserViewState.isForwardEnabled,
-                onClick = { presenter.onForwardClick() }
+                onClick = { presenter.onEvent(BrowserUiEvent.ForwardClick) }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_action_forward),
                     contentDescription = ""
                 )
             }
-            IconButton(onClick = { presenter.onHomeClick() }) {
+            IconButton(onClick = { presenter.onEvent(BrowserUiEvent.HomeClick) }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_action_home),
                     contentDescription = ""
                 )
             }
-            IconButton(onClick = { presenter.onToolsClick() }) {
+            IconButton(onClick = { presenter.onEvent(BrowserUiEvent.ToolsClick) }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_page_tools),
                     contentDescription = ""
@@ -204,11 +205,11 @@ fun TabsBottomSheet(
             }
             IconButton(
                 enabled = browserViewState.isBookmarkEnabled,
-                onClick = { presenter.onStarClick() }
+                onClick = { presenter.onEvent(BrowserUiEvent.StarClick) }
             ) {
                 BookmarkIcon(browserViewState.isBookmarked)
             }
-            IconButton(onClick = { presenter.onNewTabClick() }) {
+            IconButton(onClick = { presenter.onEvent(BrowserUiEvent.NewTabClick) }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_action_plus),
                     contentDescription = ""
@@ -238,8 +239,8 @@ fun TabsBottomSheet(
                             shape = MaterialTheme.shapes.medium
                         )
                         .combinedClickable(
-                            onClick = { presenter.onTabClick(index) },
-                            onLongClick = { presenter.onTabLongClick(index) }
+                            onClick = { presenter.onEvent(BrowserUiEvent.TabClick(index)) },
+                            onLongClick = { presenter.onEvent(BrowserUiEvent.TabLongClick(index)) }
                         )
                         .optionalBorder(tab.isSelected)
                         .padding(start = 4.dp, end = 4.dp, bottom = 4.dp)
@@ -289,7 +290,7 @@ fun TabsBottomSheet(
                         IconButton(
                             modifier = Modifier
                                 .size(30.dp),
-                            onClick = { presenter.onTabClose(index) }) {
+                            onClick = { presenter.onEvent(BrowserUiEvent.TabClose(index)) }) {
                             Icon(
                                 modifier = Modifier.size(20.dp),
                                 painter = painterResource(R.drawable.ic_action_delete),

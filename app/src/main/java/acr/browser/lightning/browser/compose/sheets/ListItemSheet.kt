@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.compose.sheets
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.browser.BrowserPresenter
 import acr.browser.lightning.dialog.DialogItem
 import androidx.compose.foundation.clickable
@@ -35,7 +36,7 @@ fun ListItemSheet(
     ModalBottomSheet(
         sheetState = sheetState,
         dragHandle = {},
-        onDismissRequest = { presenter.onDialogDismissed() }
+        onDismissRequest = { presenter.onEvent(BrowserUiEvent.DialogDismissed) }
     ) {
         Row(
             modifier = Modifier

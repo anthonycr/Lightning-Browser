@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.ThemableActivity
 import acr.browser.lightning.browser.compose.BottomTabs
 import acr.browser.lightning.browser.compose.CustomView
@@ -37,8 +38,8 @@ fun ThemableActivity.BrowserScreen(
                     actionLabel = it.actionLabel,
                     duration = SnackbarDuration.Short,
                 )) {
-                    SnackbarResult.Dismissed -> presenter.onSnackbarDismissed()
-                    SnackbarResult.ActionPerformed -> presenter.onSnackbarActionPerformed()
+                    SnackbarResult.Dismissed -> presenter.onEvent(BrowserUiEvent.SnackbarDismissed)
+                    SnackbarResult.ActionPerformed -> presenter.onEvent(BrowserUiEvent.SnackbarActionPerformed)
                 }
             }
         }

@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.compose.sheets
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserPresenter
 import acr.browser.lightning.ssl.SslCertificateInfo
@@ -38,7 +39,7 @@ fun SslInfoSheet(
     ModalBottomSheet(
         sheetState = sheetState,
         dragHandle = {},
-        onDismissRequest = { presenter.onDialogDismissed() }
+        onDismissRequest = { presenter.onEvent(BrowserUiEvent.DialogDismissed) }
     ) {
         Row(
             modifier = Modifier

@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.compose
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.BrowserComposeState
 import acr.browser.lightning.browser.BrowserPresenter
@@ -48,7 +49,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_new_tab)) },
                 onClick = {
-                    presenter.onMenuClick(MenuSelection.NEW_TAB)
+                    presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.NEW_TAB))
                     dropDownExpanded = false
                 }
             )
@@ -56,7 +57,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_incognito)) },
                     onClick = {
-                        presenter.onMenuClick(MenuSelection.NEW_INCOGNITO_TAB)
+                        presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.NEW_INCOGNITO_TAB))
                         dropDownExpanded = false
                     }
                 )
@@ -65,7 +66,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_share)) },
                     onClick = {
-                        presenter.onMenuClick(MenuSelection.SHARE)
+                        presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.SHARE))
                         dropDownExpanded = false
                     }
                 )
@@ -74,14 +75,14 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_history)) },
                     onClick = {
-                        presenter.onMenuClick(MenuSelection.HISTORY)
+                        presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.HISTORY))
                         dropDownExpanded = false
                     }
                 )
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_downloads)) },
                     onClick = {
-                        presenter.onMenuClick(MenuSelection.DOWNLOADS)
+                        presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.DOWNLOADS))
                         dropDownExpanded = false
                     }
                 )
@@ -89,7 +90,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_find)) },
                 onClick = {
-                    presenter.onMenuClick(MenuSelection.FIND)
+                    presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.FIND))
                     dropDownExpanded = false
                 }
             )
@@ -97,7 +98,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_copy)) },
                     onClick = {
-                        presenter.onMenuClick(MenuSelection.COPY_LINK)
+                        presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.COPY_LINK))
                         dropDownExpanded = false
                     }
                 )
@@ -105,7 +106,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.action_add_to_homescreen)) },
                         onClick = {
-                            presenter.onMenuClick(MenuSelection.ADD_TO_HOME)
+                            presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.ADD_TO_HOME))
                             dropDownExpanded = false
                         }
                     )
@@ -114,7 +115,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_bookmarks)) },
                 onClick = {
-                    presenter.onMenuClick(MenuSelection.BOOKMARKS)
+                    presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.BOOKMARKS))
                     dropDownExpanded = false
                 }
             )
@@ -122,7 +123,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_add_bookmark)) },
                     onClick = {
-                        presenter.onMenuClick(MenuSelection.ADD_BOOKMARK)
+                        presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.ADD_BOOKMARK))
                         dropDownExpanded = false
                     }
                 )
@@ -131,7 +132,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.settings)) },
                     onClick = {
-                        presenter.onMenuClick(MenuSelection.SETTINGS)
+                        presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.SETTINGS))
                         dropDownExpanded = false
                     }
                 )

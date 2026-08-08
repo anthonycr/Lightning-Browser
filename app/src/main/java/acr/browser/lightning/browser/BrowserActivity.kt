@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.ThemableActivity
 import acr.browser.lightning.browser.keys.KeyEventAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
@@ -36,7 +37,7 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
     @Suppress("ConvertLambdaToReference")
     private val launcher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { presenter.onFileChooserResult(it) }
+    ) { presenter.onEvent(BrowserUiEvent.FileChooserResult(it)) }
 
     @Inject
     internal lateinit var keyEventAdapter: KeyEventAdapter
@@ -102,10 +103,12 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
 
         presenter.onViewAttached(this)
 
-        tabPager.longPressListener = presenter::onPageLongPress
+        tabPager.longPressListener = { id, longPress ->
+            presenter.onEvent(BrowserUiEvent.PageLongPress(id, longPress))
+        }
 
         onBackPressedDispatcher.addCallback {
-            presenter.onNavigateBack()
+            presenter.onEvent(BrowserUiEvent.NavigateBack)
         }
     }
 
@@ -125,7 +128,9 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
     }
 
     override fun onNewIntent(intent: Intent) {
-        intentExtractor.extractUrlFromIntent(intent)?.let(presenter::onNewAction)
+        intentExtractor.extractUrlFromIntent(intent)?.let {
+            presenter.onEvent(BrowserUiEvent.NewAction(it))
+        }
         super.onNewIntent(intent)
     }
 
@@ -140,8 +145,10 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        return keyEventAdapter.adaptKeyEvent(event)?.let(presenter::onKeyComboClick)?.let { true }
-            ?: super.onKeyUp(keyCode, event)
+        return keyEventAdapter.adaptKeyEvent(event)?.let {
+            presenter.onEvent(BrowserUiEvent.KeyComboClick(it))
+            true
+        } ?: super.onKeyUp(keyCode, event)
     }
 
     /**

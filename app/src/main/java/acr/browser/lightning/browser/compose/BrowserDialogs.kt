@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.compose
 
+import acr.browser.lightning.BrowserUiEvent
 import acr.browser.lightning.browser.BrowserComposeState
 import acr.browser.lightning.browser.BrowserPresenter
 import acr.browser.lightning.browser.BrowserViewState
@@ -31,24 +32,36 @@ fun BrowserDialogs(
             folders = dialog.folders,
             presenter = browserPresenter,
             onConfirmed = { title, url, folder ->
-                browserPresenter.onBookmarkConfirmed(title, url, folder)
+                browserPresenter.onEvent(BrowserUiEvent.BookmarkConfirmed(title, url, folder))
             }
         )
 
         is BrowserViewState.Dialogs.BookmarkOptions -> LongPressBookmarkLinkSheet(
             browserViewState = browserViewState,
             presenter = browserPresenter,
-            onClick = { browserPresenter.onBookmarkOptionClick(dialog.bookmarkOptionsDialog, it) }
+            onClick = {
+                browserPresenter.onEvent(
+                    BrowserUiEvent.BookmarkOptionClick(dialog.bookmarkOptionsDialog, it)
+                )
+            }
         )
 
         is BrowserViewState.Dialogs.CloseBrowser -> CloseBrowserSheet(
             presenter = browserPresenter,
-            onClick = { browserPresenter.onCloseBrowserEvent(dialog.selectedTab, it) }
+            onClick = {
+                browserPresenter.onEvent(
+                    BrowserUiEvent.CloseBrowser(dialog.selectedTab, it)
+                )
+            }
         )
 
         is BrowserViewState.Dialogs.DownloadOptions -> DownloadOptionsSheet(
             presenter = browserPresenter,
-            onClick = { browserPresenter.onDownloadOptionClick(dialog.downloadOptionsDialog, it) }
+            onClick = {
+                browserPresenter.onEvent(
+                    BrowserUiEvent.DownloadOptionClick(dialog.downloadOptionsDialog, it)
+                )
+            }
         )
 
         is BrowserViewState.Dialogs.EditBookmark -> BookmarkAddOrEditSheet(
@@ -59,7 +72,7 @@ fun BrowserDialogs(
             folders = dialog.folders,
             presenter = browserPresenter,
             onConfirmed = { title, url, folder ->
-                browserPresenter.onBookmarkEditConfirmed(title, url, folder)
+                browserPresenter.onEvent(BrowserUiEvent.BookmarkEditConfirmed(title, url, folder))
             }
         )
 
@@ -67,40 +80,55 @@ fun BrowserDialogs(
             oldTitle = dialog.title,
             presenter = browserPresenter,
             onSelected = {
-                browserPresenter.onBookmarkFolderRenameConfirmed(
-                    dialog.title,
-                    it.toString()
+                browserPresenter.onEvent(
+                    BrowserUiEvent.BookmarkFolderRenameConfirmed(dialog.title, it.toString())
                 )
             }
         )
 
         is BrowserViewState.Dialogs.FolderOptions -> LongPressFolderLinkSheet(
             presenter = browserPresenter,
-            onClick = { browserPresenter.onFolderOptionClick(dialog.folderOptionsDialog, it) }
+            onClick = {
+                browserPresenter.onEvent(
+                    BrowserUiEvent.FolderOptionClick(dialog.folderOptionsDialog, it)
+                )
+            }
         )
 
         is BrowserViewState.Dialogs.HistoryOptions -> LongPressHistoryLinkSheet(
             browserViewState = browserViewState,
             presenter = browserPresenter,
-            onClick = { browserPresenter.onHistoryOptionClick(dialog.historyOptionsDialog, it) }
+            onClick = {
+                browserPresenter.onEvent(
+                    BrowserUiEvent.HistoryOptionClick(dialog.historyOptionsDialog, it)
+                )
+            }
         )
 
         is BrowserViewState.Dialogs.ImageLongPress -> LongPressImageLinkSheet(
             browserViewState = browserViewState,
             longPress = dialog.imageLongPressDialog,
             presenter = browserPresenter,
-            onClick = { browserPresenter.onImageLongPressEvent(dialog.imageLongPressDialog, it) }
+            onClick = {
+                browserPresenter.onEvent(
+                    BrowserUiEvent.ImageLongPress(dialog.imageLongPressDialog, it)
+                )
+            }
         )
 
         is BrowserViewState.Dialogs.LinkLongPress -> LongPressLinkSheet(
             browserViewState = browserViewState,
             longPress = dialog.linkLongPressDialog,
             presenter = browserPresenter,
-            onClick = { browserPresenter.onLinkLongPressEvent(dialog.linkLongPressDialog, it) }
+            onClick = {
+                browserPresenter.onEvent(
+                    BrowserUiEvent.LinkLongPress(dialog.linkLongPressDialog, it)
+                )
+            }
         )
 
         BrowserViewState.Dialogs.LocalFileBlocked -> LocalFileBlockedSheet {
-            browserPresenter.onConfirmOpenLocalFile(it)
+            browserPresenter.onEvent(BrowserUiEvent.ConfirmOpenLocalFile(it))
         }
 
         is BrowserViewState.Dialogs.PageTools -> PageToolsSheet(
