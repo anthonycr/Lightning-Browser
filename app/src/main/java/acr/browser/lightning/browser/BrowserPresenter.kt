@@ -59,6 +59,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
@@ -396,20 +397,19 @@ class BrowserPresenter @Inject constructor(
         tabJobs.forEach { it.cancel() }
         tabJobs.clear()
 
-        tabJobs += browserCoroutineScope.launch {
-            combine(
-                tab.sslChanges().onStart { emit(tab.sslState) },
-                tab.titleChanges().onStart { emit(tab.title) },
-                tab.urlChanges().onStart { emit(tab.url) },
-                tab.loadingProgress().onStart { emit(tab.loadingProgress) },
-                tab.canGoBackChanges().onStart { emit(tab.canGoBack()) },
-                tab.canGoForwardChanges().onStart { emit(tab.canGoForward()) },
-                tab.urlChanges().onStart { emit(tab.url) }
-                    .map { bookmarkRepository.isBookmark(it) },
-                tab.urlChanges().onStart { emit(tab.url) }.map(String::isSpecialUrl),
-                tab.themeColorChanges().onStart { emit(tab.themeColor) }
-            ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl, themeColor ->
-                state.value.copy(
+        tabJobs += combine(
+            tab.sslChanges().onStart { emit(tab.sslState) },
+            tab.titleChanges().onStart { emit(tab.title) },
+            tab.urlChanges().onStart { emit(tab.url) },
+            tab.loadingProgress().onStart { emit(tab.loadingProgress) },
+            tab.canGoBackChanges().onStart { emit(tab.canGoBack()) },
+            tab.canGoForwardChanges().onStart { emit(tab.canGoForward()) },
+            tab.urlChanges().onStart { emit(tab.url) }.map { bookmarkRepository.isBookmark(it) },
+            tab.urlChanges().onStart { emit(tab.url) }.map(String::isSpecialUrl),
+            tab.themeColorChanges().onStart { emit(tab.themeColor) }
+        ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl, themeColor ->
+            state.updateSelf {
+                copy(
                     displayUrl = searchBoxModel.getDisplayContent(
                         url = url,
                         title = title,
@@ -428,10 +428,8 @@ class BrowserPresenter @Inject constructor(
                     isBookmarkEnabled = !isSpecialUrl,
                     findInPage = tab.findQuery
                 )
-            }.collectLatest {
-                state.updateSelf { it }
             }
-        }
+        }.launchIn(browserCoroutineScope)
 
         tabJobs += browserCoroutineScope.launch {
             tab.downloadRequests().collectLatest {
