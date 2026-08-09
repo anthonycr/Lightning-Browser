@@ -106,7 +106,6 @@ class BrowserPresenter @Inject constructor(
     private var currentTab: TabModel? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
     private var currentBookmarks: List<Bookmark> = emptyList()
-    private var isSearchViewFocused = false
     private var pendingAction: BrowserContract.Action.LoadUrl? = null
     private var pendingSnackbarAction: EphemeralAction? = null
     private var isCustomViewShowing = false
@@ -415,16 +414,15 @@ class BrowserPresenter @Inject constructor(
                         url = url,
                         title = title,
                         isLoading = progress < 100
-                    ).takeIf { !isSearchViewFocused } ?: state.value.displayUrl,
+                    ),
                     searchQuery = tab.searchQuery,
                     searchQuerySelection = tab.searchQuerySelection,
-                    enableFullMenu = !url.isSpecialUrl(),
+                    enableFullMenu = !isSpecialUrl,
                     themeColor = themeColor,
-                    isRefresh = (progress == 100).takeIf { !isSearchViewFocused }
-                        ?: state.value.isRefresh,
+                    isRefresh = progress == 100,
                     isForwardEnabled = canGoForward,
                     isBackEnabled = canGoBack,
-                    sslState = sslState.takeIf { !isSearchViewFocused } ?: state.value.sslState,
+                    sslState = sslState,
                     progress = progress,
                     isBookmarked = isBookmark,
                     isBookmarkEnabled = !isSpecialUrl,
@@ -434,7 +432,6 @@ class BrowserPresenter @Inject constructor(
                 state.updateSelf { it }
             }
         }
-
 
         tabJobs += browserCoroutineScope.launch {
             tab.downloadRequests().collectLatest {
@@ -835,10 +832,6 @@ class BrowserPresenter @Inject constructor(
     }
 
     private suspend fun onRefreshOrStopClick() {
-        if (isSearchViewFocused) {
-            state.updateSelf { copy(displayUrl = "") }
-            return
-        }
         if (currentTab?.loadingProgress != 100) {
             currentTab?.stopLoading()
         } else {
