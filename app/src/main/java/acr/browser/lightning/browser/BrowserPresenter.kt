@@ -59,7 +59,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
@@ -91,7 +90,7 @@ class BrowserPresenter @Inject constructor(
     private val allowListModel: AllowListModel,
     private val tabCountNotifier: TabCountNotifier,
     @IncognitoMode private val incognitoMode: Boolean,
-    private val coroutineDispatchers: CoroutineDispatchers,
+    coroutineDispatchers: CoroutineDispatchers,
     private val faviconModel: FaviconModel,
     private val resourceProvider: ResourceProvider,
     private val numberFormatter: NumberFormatter,
@@ -431,7 +430,7 @@ class BrowserPresenter @Inject constructor(
                     isBookmarkEnabled = !isSpecialUrl,
                     findInPage = tab.findQuery
                 )
-            }.flowOn(coroutineDispatchers.main).collectLatest {
+            }.collectLatest {
                 state.updateSelf { it }
             }
         }
@@ -517,7 +516,6 @@ class BrowserPresenter @Inject constructor(
                         tabModel.previewChanges()
                     ) { title, favicon, preview -> Triple(title, favicon, preview) }
                         .distinctUntilChanged()
-                        .flowOn(coroutineDispatchers.main)
                         .collectLatest { (title, favicon, preview) ->
                             state.updateSelf {
                                 copy(
