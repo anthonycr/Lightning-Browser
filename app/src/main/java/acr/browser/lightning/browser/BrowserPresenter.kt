@@ -62,7 +62,6 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -626,7 +625,7 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun addToHomeScreen() {
+    private suspend fun addToHomeScreen() {
         currentTab?.let {
             val result = navigator.addToHomeScreen(
                 url = it.url,
@@ -715,7 +714,7 @@ class BrowserPresenter @Inject constructor(
         selectTab(model.selectTab(state.value.tabs[index].id))
     }
 
-    private fun onTabLongClick(index: Int) {
+    private suspend fun onTabLongClick(index: Int) {
         state.updateSelf { copy(dialog = BrowserViewState.Dialogs.CloseBrowser(tabs[index].id)) }
     }
 
@@ -766,15 +765,15 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun onTabScroll() {
+    private suspend fun onTabScroll() {
         state.updateSelf { copy(scrollToTab = -1) }
     }
 
-    private fun onTabDrawerMoved(isOpen: Boolean) {
+    private suspend fun onTabDrawerMoved(isOpen: Boolean) {
         state.updateSelf { copy(openTabs = isOpen) }
     }
 
-    private fun onBookmarkDrawerMoved(isOpen: Boolean) {
+    private suspend fun onBookmarkDrawerMoved(isOpen: Boolean) {
         state.updateSelf { copy(openBookmarks = isOpen) }
     }
 
@@ -859,7 +858,7 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun onSearchQueryChanged(
+    private suspend fun onSearchQueryChanged(
         query: String,
         selectionStart: Int,
         selectionEnd: Int
@@ -892,11 +891,11 @@ class BrowserPresenter @Inject constructor(
         currentTab?.loadUrl(url)
     }
 
-    private fun onSearchBarExpandedOrCollapsed(expanded: Boolean) {
+    private suspend fun onSearchBarExpandedOrCollapsed(expanded: Boolean) {
         state.updateSelf { copy(isSearchBarExpanded = expanded) }
     }
 
-    private fun onFindInPage(query: String) {
+    private suspend fun onFindInPage(query: String) {
         currentTab?.find(query)
         state.updateSelf { copy(findInPage = query) }
     }
@@ -909,7 +908,7 @@ class BrowserPresenter @Inject constructor(
         currentTab?.findPrevious()
     }
 
-    private fun onFindDismiss() {
+    private suspend fun onFindDismiss() {
         currentTab?.clearFindMatches()
         state.updateSelf { copy(findInPage = null) }
     }
@@ -926,7 +925,7 @@ class BrowserPresenter @Inject constructor(
         onSearch(url)
     }
 
-    private fun onSearchSuggestionInsertClicked(webPage: WebPage) {
+    private suspend fun onSearchSuggestionInsertClicked(webPage: WebPage) {
         val url = when (webPage) {
             is HistoryEntry,
             is Bookmark.Entry -> webPage.url
@@ -938,11 +937,11 @@ class BrowserPresenter @Inject constructor(
         onSearchQueryChanged(url, url.length, url.length)
     }
 
-    private fun onDialogDismissed() {
+    private suspend fun onDialogDismissed() {
         state.updateSelf { copy(dialog = null) }
     }
 
-    private fun onSslIconClick() {
+    private suspend fun onSslIconClick() {
         currentTab?.sslCertificateInfo?.let {
             state.updateSelf { copy(dialog = BrowserViewState.Dialogs.SslInfo(it)) }
         }
@@ -992,7 +991,7 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun onBookmarkLongClick(index: Int) {
+    private suspend fun onBookmarkLongClick(index: Int) {
         when (val item = currentBookmarks[index]) {
             is Bookmark.Entry -> state.updateSelf {
                 copy(dialog = BrowserViewState.Dialogs.BookmarkOptions(item))
@@ -1006,7 +1005,7 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun onToolsClick() {
+    private suspend fun onToolsClick() {
         val currentUrl = currentTab?.url ?: return
         state.updateSelf {
             copy(
@@ -1024,7 +1023,7 @@ class BrowserPresenter @Inject constructor(
         currentTab?.reload()
     }
 
-    private fun onToggleAdBlocking() {
+    private suspend fun onToggleAdBlocking() {
         onDialogDismissed()
         val currentUrl = currentTab?.url ?: return
         if (allowListModel.isUrlAllowedAds(currentUrl)) {
@@ -1280,7 +1279,7 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private fun onTabMenuClick() {
+    private suspend fun onTabMenuClick() {
         currentTab?.let {
             state.updateSelf { copy(dialog = BrowserViewState.Dialogs.CloseBrowser(it.id)) }
         }
@@ -1460,7 +1459,7 @@ class BrowserPresenter @Inject constructor(
         currentTab?.handleFileChooserResult(activityResult)
     }
 
-    private fun onSnackbarDismissed() {
+    private suspend fun onSnackbarDismissed() {
         hideSnackbar()
         pendingSnackbarAction = null
     }
@@ -1494,11 +1493,11 @@ class BrowserPresenter @Inject constructor(
             BrowserViewState.ToolbarVisibility.HIDE
         }
 
-    private fun hideSnackbar() {
+    private suspend fun hideSnackbar() {
         state.updateSelf { copy(ephemeral = null) }
     }
 
-    private fun showSnackbar(message: String, action: EphemeralAction? = null) {
+    private suspend fun showSnackbar(message: String, action: EphemeralAction? = null) {
         pendingSnackbarAction = action
         state.updateSelf {
             copy(
@@ -1510,8 +1509,8 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private inline fun <T> MutableStateFlow<T>.updateSelf(function: T.() -> T) {
-        update { it.function() }
+    private suspend fun <T> MutableStateFlow<T>.updateSelf(function: suspend T.() -> T) {
+        emit(value.function())
     }
 
     private class EphemeralAction(
