@@ -39,12 +39,14 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -155,9 +157,62 @@ class TabAdapter @AssistedInject constructor(
     private val webView: WebView
         get() = webViewLazyWithInitialization
 
+    private val titleStateFlow = MutableStateFlow(
+        latentInitializer?.initialTitle ?: resourceProvider.stringResource(R.string.untitled)
+    )
+
+    private val faviconStateFlow = MutableStateFlow(
+        latentInitializer?.let { TabModel.Favicon.Frozen } ?: TabModel.Favicon.None
+    )
+
+    private val previewStateFlow = MutableStateFlow<TabModel.Preview>(TabModel.Preview.None)
+
     init {
         if (tabInitializer !is FreezableInitializer) {
             loadFromInitializer(tabInitializer)
+        }
+        tabCoroutineScope.launch {
+            merge(
+                tabWebViewClient.startedSharedFlow
+                    .map { resourceProvider.stringResource(R.string.untitled) },
+                tabWebViewClient.finishedSharedFlow
+                    .map { webView.title ?: resourceProvider.stringResource(R.string.untitled) },
+                tabWebChromeClient.titleShareFlow
+            ).collectLatest { titleStateFlow.emit(it) }
+        }
+        tabCoroutineScope.launch {
+            merge(
+                tabWebViewClient.startedSharedFlow.map { TabModel.Favicon.None },
+                tabWebChromeClient.faviconStateFlow
+            ).collectLatest { faviconStateFlow.emit(it) }
+        }
+        tabCoroutineScope.launch {
+            @OptIn(FlowPreview::class)
+            tabWebViewClient.finishedSharedFlow
+                .debounce(100.milliseconds)
+                .map { renderViewToBitmap(webView) }
+                .flowOn(coroutineDispatchers.main)
+                .map { bitmap ->
+                    if (bitmap != null) {
+                        previewModel.cachePreviewForId(id, bitmap)
+                        TabModel.Preview.Image(
+                            previewPathDeferred.await(),
+                            System.currentTimeMillis()
+                        )
+                    } else {
+                        TabModel.Preview.None
+                    }
+                }
+                .onStart {
+                    emit(
+                        TabModel.Preview.Image(
+                            previewPathDeferred.await(),
+                            System.currentTimeMillis()
+                        )
+                    )
+                }
+                .flowOn(coroutineDispatchers.io)
+                .collectLatest { previewStateFlow.emit(it) }
         }
     }
 
@@ -223,32 +278,10 @@ class TabAdapter @AssistedInject constructor(
         findInPageQuery = null
     }
 
-    override var preview: TabModel.Preview = TabModel.Preview.None
-        private set
+    override val preview: TabModel.Preview
+        get() = previewStateFlow.value
 
-    @OptIn(FlowPreview::class)
-    override fun previewChanges(): Flow<TabModel.Preview> =
-        tabWebViewClient.finishedSharedFlow
-            .debounce(100.milliseconds)
-            .map { renderViewToBitmap(webView) }
-            .flowOn(coroutineDispatchers.main)
-            .map { bitmap ->
-                if (bitmap != null) {
-                    previewModel.cachePreviewForId(id, bitmap)
-                    TabModel.Preview.Image(previewPathDeferred.await(), System.currentTimeMillis())
-                } else {
-                    TabModel.Preview.None
-                }
-            }
-            .onStart {
-                emit(
-                    TabModel.Preview.Image(previewPathDeferred.await(), System.currentTimeMillis())
-                )
-            }
-            .onEach { preview ->
-                this.preview = preview
-            }
-            .flowOn(coroutineDispatchers.io)
+    override fun previewChanges(): StateFlow<TabModel.Preview> = previewStateFlow
 
     override val findQuery: String?
         get() = findInPageQuery
@@ -266,14 +299,9 @@ class TabAdapter @AssistedInject constructor(
         }
 
     override val favicon: TabModel.Favicon
-        get() = latentInitializer?.let { TabModel.Favicon.Frozen }
-            ?: tabWebChromeClient.faviconStateFlow.value
-            ?: TabModel.Favicon.None
+        get() = faviconStateFlow.value
 
-    override fun faviconChanges(): Flow<TabModel.Favicon> =
-        tabWebChromeClient.faviconStateFlow.map { icon ->
-            icon ?: TabModel.Favicon.None
-        }
+    override fun faviconChanges(): StateFlow<TabModel.Favicon> = faviconStateFlow
 
     override val themeColor: Int
         get() = tabWebChromeClient.colorChangeStateFlow.value
@@ -290,10 +318,9 @@ class TabAdapter @AssistedInject constructor(
     override fun urlChanges(): Flow<String> = tabWebViewClient.urlSharedFlow
 
     override val title: String
-        get() = latentInitializer?.initialTitle ?: webView.title?.takeIf(String::isNotBlank)
-        ?: resourceProvider.stringResource(R.string.untitled)
+        get() = titleStateFlow.value
 
-    override fun titleChanges(): Flow<String> = tabWebChromeClient.titleShareFlow
+    override fun titleChanges(): StateFlow<String> = titleStateFlow
 
     override val sslCertificateInfo: SslCertificateInfo?
         get() = webView.certificate?.let {
@@ -310,7 +337,7 @@ class TabAdapter @AssistedInject constructor(
     override val sslState: SslState
         get() = tabWebViewClient.sslStateFlow.value
 
-    override fun sslChanges(): Flow<SslState> = tabWebViewClient.sslStateFlow
+    override fun sslChanges(): StateFlow<SslState> = tabWebViewClient.sslStateFlow
 
     override val loadingProgress: Int
         get() = webView.progress

@@ -70,7 +70,7 @@ class TabWebChromeClient @AssistedInject constructor(
     /**
      * Emits changes to the page favicon. Always emits the last emitted favicon.
      */
-    val faviconStateFlow: MutableStateFlow<TabModel.Favicon.Icon?> = MutableStateFlow(null)
+    val faviconStateFlow: MutableSharedFlow<TabModel.Favicon.Icon> = MutableSharedFlow()
 
     /**
      * Emits create window requests.
@@ -153,7 +153,6 @@ class TabWebChromeClient @AssistedInject constructor(
     override fun onReceivedTitle(view: WebView, title: String) {
         tabCoroutineScope.launch {
             titleShareFlow.emit(title)
-            faviconStateFlow.emit(null)
             generateColorAndPropagate(null)
         }
     }

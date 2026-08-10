@@ -153,9 +153,10 @@ class BrowserPresenter @Inject constructor(
                 tabs.last()
             }
             currentBookmarks = bookmarks.await()
+            val bookmarkListItems = currentBookmarks.asListItems()
             state.updateSelf {
                 updateTabViewState().copy(
-                    bookmarks = bookmarks.await().asListItems(),
+                    bookmarks = bookmarkListItems,
                     isRootFolder = true
                 )
             }
@@ -363,13 +364,14 @@ class BrowserPresenter @Inject constructor(
         currentTab?.isForeground = true
 
         val tab = tabModel ?: return run {
+            val displayContent = searchBoxModel.getDisplayContent(
+                url = "",
+                title = null,
+                isLoading = false
+            )
             state.updateSelf {
                 copy(
-                    displayUrl = searchBoxModel.getDisplayContent(
-                        url = "",
-                        title = null,
-                        isLoading = false
-                    ),
+                    displayUrl = displayContent,
                     enableFullMenu = false,
                     isForwardEnabled = false,
                     isBackEnabled = false,
@@ -385,11 +387,12 @@ class BrowserPresenter @Inject constructor(
             state.updateSelf { copy(openTabs = false) }
         }
 
+        val updatedToolbarVisibility = toolbarVisibility(true)
         state.updateSelf {
             val updatedState = updateTabViewState()
             updatedState.copy(
                 scrollToTab = updatedState.tabs.indexOfFirst { it.isSelected },
-                toolbarVisibility = toolbarVisibility(true)
+                toolbarVisibility = updatedToolbarVisibility
             )
         }
 
@@ -397,8 +400,8 @@ class BrowserPresenter @Inject constructor(
         tabJobs.clear()
 
         tabJobs += combine(
-            tab.sslChanges().onStart { emit(tab.sslState) },
-            tab.titleChanges().onStart { emit(tab.title) },
+            tab.sslChanges(),
+            tab.titleChanges(),
             tab.urlChanges().onStart { emit(tab.url) },
             tab.loadingProgress().onStart { emit(tab.loadingProgress) },
             tab.canGoBackChanges().onStart { emit(tab.canGoBack()) },
@@ -407,13 +410,14 @@ class BrowserPresenter @Inject constructor(
             tab.urlChanges().onStart { emit(tab.url) }.map(String::isSpecialUrl),
             tab.themeColorChanges().onStart { emit(tab.themeColor) }
         ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl, themeColor ->
+            val displayContent = searchBoxModel.getDisplayContent(
+                url = url,
+                title = title,
+                isLoading = progress < 100
+            )
             state.updateSelf {
                 copy(
-                    displayUrl = searchBoxModel.getDisplayContent(
-                        url = url,
-                        title = title,
-                        isLoading = progress < 100
-                    ),
+                    displayUrl = displayContent,
                     searchQuery = tab.searchQuery,
                     searchQuerySelection = tab.searchQuerySelection,
                     enableFullMenu = !isSpecialUrl,
@@ -444,7 +448,8 @@ class BrowserPresenter @Inject constructor(
                     url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {
                         historyRecord.visit(tab.title, it)
                     }
-                    state.updateSelf { copy(toolbarVisibility = toolbarVisibility(true)) }
+                    val updatedToolbarVisibility = toolbarVisibility(true)
+                    state.updateSelf { copy(toolbarVisibility = updatedToolbarVisibility) }
                 }
         }
 
@@ -460,7 +465,8 @@ class BrowserPresenter @Inject constructor(
 
         tabJobs += browserCoroutineScope.launch {
             tab.showHideToolbar().collectLatest {
-                state.updateSelf { copy(toolbarVisibility = toolbarVisibility(it)) }
+                val updatedToolbarVisibility = toolbarVisibility(it)
+                state.updateSelf { copy(toolbarVisibility = updatedToolbarVisibility) }
             }
         }
 
@@ -505,8 +511,8 @@ class BrowserPresenter @Inject constructor(
             if (allTabsJobMap[tabModel.id] == null) {
                 allTabsJobMap[tabModel.id] = browserCoroutineScope.launch {
                     combine(
-                        tabModel.titleChanges().onStart { emit(tabModel.title) },
-                        tabModel.faviconChanges().onStart { emit(tabModel.favicon) },
+                        tabModel.titleChanges(),
+                        tabModel.faviconChanges(),
                         tabModel.previewChanges()
                     ) { title, favicon, preview -> Triple(title, favicon, preview) }
                         .distinctUntilChanged()
@@ -879,14 +885,13 @@ class BrowserPresenter @Inject constructor(
         }
         currentTab?.stopLoading()
         val url = searchEngineProvider.provideSearchEngine().search(query)
+        val displayContent = searchBoxModel.getDisplayContent(
+            url = url,
+            title = currentTab?.title,
+            isLoading = (currentTab?.loadingProgress ?: 0) < 100
+        )
         state.updateSelf {
-            copy(
-                displayUrl = searchBoxModel.getDisplayContent(
-                    url = url,
-                    title = currentTab?.title,
-                    isLoading = (currentTab?.loadingProgress ?: 0) < 100
-                )
-            )
+            copy(displayUrl = displayContent)
         }
         currentTab?.loadUrl(url)
     }
@@ -959,7 +964,10 @@ class BrowserPresenter @Inject constructor(
                 currentFolder = bookmark
                 val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = bookmark)
                 currentBookmarks = bookmarks
-                state.updateSelf { copy(bookmarks = bookmarks.asListItems(), isRootFolder = false) }
+                val bookmarkListItems = bookmarks.asListItems()
+                state.updateSelf {
+                    copy(bookmarks = bookmarkListItems, isRootFolder = false)
+                }
             }
         }
     }
@@ -1052,10 +1060,12 @@ class BrowserPresenter @Inject constructor(
             )
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
             currentBookmarks = bookmarks
+            val bookmarkListItems = bookmarks.asListItems()
+            val isBookmark = bookmarkRepository.isBookmark(url)
             state.updateSelf {
                 copy(
-                    bookmarks = bookmarks.asListItems(),
-                    isBookmarked = bookmarkRepository.isBookmark(url)
+                    bookmarks = bookmarkListItems,
+                    isBookmarked = isBookmark
                 )
             }
         } else {
@@ -1100,11 +1110,10 @@ class BrowserPresenter @Inject constructor(
         )
         val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
         currentBookmarks = bookmarks
+        val bookmarkListItems = bookmarks.asListItems()
+        val isBookmark = bookmarkRepository.isBookmark(url)
         state.updateSelf {
-            copy(
-                bookmarks = bookmarks.asListItems(),
-                isBookmarked = bookmarkRepository.isBookmark(url)
-            )
+            copy(bookmarks = bookmarkListItems, isBookmarked = isBookmark)
         }
     }
 
@@ -1128,7 +1137,10 @@ class BrowserPresenter @Inject constructor(
         val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
         currentBookmarks = bookmarks
         val isBookmarked = currentTab?.url?.let { bookmarkRepository.isBookmark(it) } ?: false
-        state.updateSelf { copy(bookmarks = bookmarks.asListItems(), isBookmarked = isBookmarked) }
+        val bookmarkListItems = bookmarks.asListItems()
+        state.updateSelf {
+            copy(bookmarks = bookmarkListItems, isBookmarked = isBookmarked)
+        }
         if (currentTab?.url?.isBookmarkUrl() == true) {
             reload()
         }
@@ -1139,7 +1151,8 @@ class BrowserPresenter @Inject constructor(
         bookmarkRepository.renameFolder(oldTitle, newTitle)
         val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
         currentBookmarks = bookmarks
-        state.updateSelf { copy(bookmarks = bookmarks.asListItems()) }
+        val bookmarkListItems = bookmarks.asListItems()
+        state.updateSelf { copy(bookmarks = bookmarkListItems) }
         if (currentTab?.url?.isBookmarkUrl() == true) {
             reload()
         }
@@ -1169,7 +1182,8 @@ class BrowserPresenter @Inject constructor(
                 bookmarkRepository.deleteBookmark(bookmark)
                 val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
                 currentBookmarks = bookmarks
-                state.updateSelf { copy(bookmarks = bookmarks.asListItems()) }
+                val bookmarkListItems = bookmarks.asListItems()
+                state.updateSelf { copy(bookmarks = bookmarkListItems) }
                 if (currentTab?.url?.isBookmarkUrl() == true) {
                     reload()
                 }
@@ -1206,7 +1220,8 @@ class BrowserPresenter @Inject constructor(
                 bookmarkRepository.deleteFolder(folder.title)
                 val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = currentFolder)
                 currentBookmarks = bookmarks
-                state.updateSelf { copy(bookmarks = bookmarks.asListItems()) }
+                val bookmarkListItems = bookmarks.asListItems()
+                state.updateSelf { copy(bookmarks = bookmarkListItems) }
                 if (currentTab?.url?.isBookmarkUrl() == true) {
                     reload()
                     currentTab?.goBack()
@@ -1290,7 +1305,8 @@ class BrowserPresenter @Inject constructor(
             currentFolder = Bookmark.Folder.Root
             val bookmarks = bookmarkRepository.bookmarksAndFolders(folder = Bookmark.Folder.Root)
             currentBookmarks = bookmarks
-            state.updateSelf { copy(bookmarks = bookmarks.asListItems(), isRootFolder = true) }
+            val bookmarkListItems = bookmarks.asListItems()
+            state.updateSelf { copy(bookmarks = bookmarkListItems, isRootFolder = true) }
         }
     }
 
@@ -1509,7 +1525,7 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    private suspend fun <T> MutableStateFlow<T>.updateSelf(function: suspend T.() -> T) {
+    private suspend fun <T> MutableStateFlow<T>.updateSelf(function: T.() -> T) {
         emit(value.function())
     }
 

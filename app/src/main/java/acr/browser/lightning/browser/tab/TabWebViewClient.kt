@@ -112,6 +112,11 @@ class TabWebViewClient @AssistedInject constructor(
     val goForwardSharedFlow: MutableSharedFlow<Boolean> = MutableSharedFlow()
 
     /**
+     * Emit when the tab has started loading a new page
+     */
+    val startedSharedFlow = MutableSharedFlow<Unit>()
+
+    /**
      * Emit when the tab has finished rendering its content.
      */
     val finishedSharedFlow = MutableSharedFlow<Unit>()
@@ -147,6 +152,7 @@ class TabWebViewClient @AssistedInject constructor(
         searchQuerySelection = Pair(0, searchQuery.length)
         currentUrl = url
         tabCoroutineScope.launch {
+            startedSharedFlow.emit(Unit)
             urlSharedFlow.emit(url)
             if (urlWithSslError != url) {
                 urlWithSslError = null

@@ -10,6 +10,7 @@ import androidx.activity.result.ActivityResult
 import androidx.annotation.ColorInt
 import androidx.compose.ui.graphics.ImageBitmap
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * The representation of a browser tab.
@@ -127,9 +128,9 @@ interface TabModel {
     val favicon: Favicon
 
     /**
-     * Emits changes to the [favicon].
+     * The states of the [favicon].
      */
-    fun faviconChanges(): Flow<Favicon>
+    fun faviconChanges(): StateFlow<Favicon>
 
     /**
      * A preview of the tab's content.
@@ -137,9 +138,9 @@ interface TabModel {
     val preview: Preview
 
     /**
-     * Emits changes to the [preview].
+     * The states of the [preview].
      */
-    fun previewChanges(): Flow<Preview>
+    fun previewChanges(): StateFlow<Preview>
 
     /**
      * The thematic color of the current webpage.
@@ -168,9 +169,9 @@ interface TabModel {
     val title: String
 
     /**
-     * Emits changes to the [title].
+     * The states of the [title].
      */
-    fun titleChanges(): Flow<String>
+    fun titleChanges(): StateFlow<String>
 
     /**
      * The current SSL certificate information about the webpage.
@@ -183,9 +184,9 @@ interface TabModel {
     val sslState: SslState
 
     /**
-     * Emits changes to [sslState].
+     * The states of the [sslState].
      */
-    fun sslChanges(): Flow<SslState>
+    fun sslChanges(): StateFlow<SslState>
 
     /**
      * The loading progress for the current webpage on a scale of 0-100. If the page is completely
