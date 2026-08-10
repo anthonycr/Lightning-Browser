@@ -36,6 +36,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayInputStream
@@ -96,9 +97,9 @@ class TabWebViewClient @AssistedInject constructor(
     val urlSharedFlow: MutableSharedFlow<String> = MutableSharedFlow()
 
     /**
-     * Emits changes to the current SSL state.
+     * The current SSL state of the page.
      */
-    val sslStateSharedFlow: MutableSharedFlow<SslState> = MutableSharedFlow()
+    val sslStateFlow: MutableStateFlow<SslState> = MutableStateFlow(SslState.None)
 
     /**
      * Emits changes to the can go back state of the browser.
@@ -114,12 +115,6 @@ class TabWebViewClient @AssistedInject constructor(
      * Emit when the tab has finished rendering its content.
      */
     val finishedSharedFlow = MutableSharedFlow<Unit>()
-
-    /**
-     * The current SSL state of the page.
-     */
-    var sslState: SslState = SslState.None
-        private set
 
     /**
      * The latest search query entered by the user, or the latest loaded URL, whichever event
@@ -155,13 +150,13 @@ class TabWebViewClient @AssistedInject constructor(
             urlSharedFlow.emit(url)
             if (urlWithSslError != url) {
                 urlWithSslError = null
-                sslState = if (URLUtil.isHttpsUrl(url)) {
+                val sslState = if (URLUtil.isHttpsUrl(url)) {
                     SslState.Valid
                 } else {
                     SslState.None
                 }
+                sslStateFlow.emit(sslState)
             }
-            sslStateSharedFlow.emit(sslState)
         }
     }
 
@@ -249,8 +244,8 @@ class TabWebViewClient @AssistedInject constructor(
         urlWithSslError = webView.url
 
         tabCoroutineScope.launch {
-            sslState = SslState.Invalid(error)
-            sslStateSharedFlow.emit(sslState)
+            val sslState = SslState.Invalid(error)
+            sslStateFlow.emit(sslState)
         }
 
         when (sslWarningPreferences.recallBehaviorForDomain(webView.url)) {

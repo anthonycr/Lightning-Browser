@@ -308,9 +308,9 @@ class TabAdapter @AssistedInject constructor(
         }
 
     override val sslState: SslState
-        get() = tabWebViewClient.sslState
+        get() = tabWebViewClient.sslStateFlow.value
 
-    override fun sslChanges(): Flow<SslState> = tabWebViewClient.sslStateSharedFlow
+    override fun sslChanges(): Flow<SslState> = tabWebViewClient.sslStateFlow
 
     override val loadingProgress: Int
         get() = webView.progress
