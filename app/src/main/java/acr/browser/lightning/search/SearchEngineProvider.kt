@@ -8,6 +8,7 @@ import acr.browser.lightning.search.engine.CustomSearch
 import acr.browser.lightning.search.engine.DuckLiteSearch
 import acr.browser.lightning.search.engine.DuckSearch
 import acr.browser.lightning.search.engine.GoogleSearch
+import acr.browser.lightning.search.engine.KagiSearch
 import acr.browser.lightning.search.engine.NaverSearch
 import acr.browser.lightning.search.engine.StartPageSearch
 import acr.browser.lightning.search.engine.YahooSearch
@@ -15,6 +16,7 @@ import acr.browser.lightning.search.engine.YandexSearch
 import acr.browser.lightning.search.suggestions.BaiduSuggestionsModel
 import acr.browser.lightning.search.suggestions.DuckSuggestionsModel
 import acr.browser.lightning.search.suggestions.GoogleSuggestionsModel
+import acr.browser.lightning.search.suggestions.KagiSuggestionsModel
 import acr.browser.lightning.search.suggestions.NaverSuggestionsModel
 import acr.browser.lightning.search.suggestions.NoOpSuggestionsRepository
 import acr.browser.lightning.search.suggestions.SuggestionsRepository
@@ -33,6 +35,7 @@ class SearchEngineProvider @Inject constructor(
     private val duckSuggestionsModel: Provider<DuckSuggestionsModel>,
     private val baiduSuggestionsModel: Provider<BaiduSuggestionsModel>,
     private val naverSuggestionsModel: Provider<NaverSuggestionsModel>,
+    private val kagiSuggestionsModel: Provider<KagiSuggestionsModel>,
 ) {
 
     /**
@@ -45,6 +48,7 @@ class SearchEngineProvider @Inject constructor(
             Suggestions.DUCK -> duckSuggestionsModel.get()
             Suggestions.BAIDU -> baiduSuggestionsModel.get()
             Suggestions.NAVER -> naverSuggestionsModel.get()
+            Suggestions.KAGI -> kagiSuggestionsModel.get()
         }
 
     /**
@@ -62,6 +66,7 @@ class SearchEngineProvider @Inject constructor(
             SearchEngineChoice.BAIDU -> BaiduSearch()
             SearchEngineChoice.YANDEX -> YandexSearch()
             SearchEngineChoice.NAVER -> NaverSearch()
+            SearchEngineChoice.KAGI -> KagiSearch()
         }
 
     /**
@@ -77,7 +82,8 @@ class SearchEngineProvider @Inject constructor(
         DuckLiteSearch(),
         BaiduSearch(),
         YandexSearch(),
-        NaverSearch()
+        NaverSearch(),
+        KagiSearch()
     )
 
 }

@@ -10,5 +10,6 @@ enum class Suggestions(override val value: Int) : IntEnum {
     GOOGLE(1),
     DUCK(2),
     BAIDU(3),
-    NAVER(4);
+    NAVER(4),
+    KAGI(5),
 }

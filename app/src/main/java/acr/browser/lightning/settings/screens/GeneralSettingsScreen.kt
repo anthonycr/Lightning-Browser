@@ -318,6 +318,7 @@ private fun Suggestions.searchSuggestionChoiceToTitle(resourceProvider: Resource
         Suggestions.DUCK -> resourceProvider.stringResource(R.string.powered_by_duck)
         Suggestions.BAIDU -> resourceProvider.stringResource(R.string.powered_by_baidu)
         Suggestions.NAVER -> resourceProvider.stringResource(R.string.powered_by_naver)
+        Suggestions.KAGI -> resourceProvider.stringResource(R.string.powered_by_kagi)
     }
 
 private fun BaseSearchEngine.getSearchEngineSummary(resourceProvider: ResourceProvider): String {

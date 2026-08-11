@@ -22,4 +22,5 @@ enum class SearchEngineChoice(override val value: Int) : IntEnum {
     BAIDU(9),
     YANDEX(10),
     NAVER(11),
+    KAGI(12),
 }

@@ -47,7 +47,7 @@ abstract class BaseSuggestionsModel internal constructor(
     @Throws(Exception::class)
     protected abstract fun parseResults(responseBody: ResponseBody): List<SearchSuggestion>
 
-    override suspend fun resultsForSearch(
+    final override suspend fun resultsForSearch(
         rawQuery: String
     ): List<SearchSuggestion> = withContext(coroutineDispatchers.network) {
         val okHttpClient = okHttpClientDeferred.await()
