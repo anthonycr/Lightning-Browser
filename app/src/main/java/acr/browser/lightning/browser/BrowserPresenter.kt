@@ -20,7 +20,7 @@ import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.view.LongPress
 import acr.browser.lightning.concurrency.BrowserCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
-import acr.browser.lightning.concurrency.combine
+import acr.browser.lightning.concurrency.combineMultiple
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
@@ -57,6 +57,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
@@ -112,6 +113,8 @@ class BrowserPresenter @Inject constructor(
 
     private val tabJobs: MutableList<Job> = mutableListOf()
     private val allTabsJobMap: MutableMap<Int, Job> = mutableMapOf()
+
+    private val untitled = resourceProvider.stringResource(R.string.untitled)
 
     /**
      * The current state of the browser UI.
@@ -338,7 +341,7 @@ class BrowserPresenter @Inject constructor(
     private fun TabModel.asViewState(selected: Boolean): TabViewState = TabViewState(
         id = id,
         icon = favicon,
-        title = title,
+        title = title.orUntitled(),
         isSelected = selected,
         preview = preview
     )
@@ -399,7 +402,7 @@ class BrowserPresenter @Inject constructor(
         tabJobs.forEach { it.cancel() }
         tabJobs.clear()
 
-        tabJobs += combine(
+        tabJobs += combineMultiple(
             tab.sslChanges(),
             tab.titleChanges(),
             tab.urlChanges().onStart { emit(tab.url) },
@@ -442,11 +445,16 @@ class BrowserPresenter @Inject constructor(
         }
 
         tabJobs += browserCoroutineScope.launch {
-            tab.urlChanges()
+            combine(
+                tab.titleChanges(),
+                tab.urlChanges()
+            ) { title, url -> title to url }
                 .distinctUntilChanged()
-                .collectLatest { url ->
+                .collectLatest { (title, url) ->
                     url.takeIf { !it.isSpecialUrl() && it.isNotBlank() }?.let {
-                        historyRecord.visit(tab.title, it)
+                        if (title != null) {
+                            historyRecord.visit(title, it)
+                        }
                     }
                     val updatedToolbarVisibility = toolbarVisibility(true)
                     state.updateSelf { copy(toolbarVisibility = updatedToolbarVisibility) }
@@ -510,7 +518,7 @@ class BrowserPresenter @Inject constructor(
         forEach { tabModel ->
             if (allTabsJobMap[tabModel.id] == null) {
                 allTabsJobMap[tabModel.id] = browserCoroutineScope.launch {
-                    combine(
+                    combineMultiple(
                         tabModel.titleChanges(),
                         tabModel.faviconChanges(),
                         tabModel.previewChanges()
@@ -521,7 +529,7 @@ class BrowserPresenter @Inject constructor(
                                 copy(
                                     tabs = tabs.updateId(tabModel.id) {
                                         it.copy(
-                                            title = title,
+                                            title = title.orUntitled(),
                                             icon = favicon,
                                             preview = preview
                                         )
@@ -635,7 +643,7 @@ class BrowserPresenter @Inject constructor(
         currentTab?.let {
             val result = navigator.addToHomeScreen(
                 url = it.url,
-                title = it.title,
+                title = it.title.orUntitled(),
                 favicon = (it.favicon as? TabModel.Favicon.Icon)?.bitmap?.asAndroidBitmap()
             )
             if (result) {
@@ -1524,6 +1532,8 @@ class BrowserPresenter @Inject constructor(
             )
         }
     }
+
+    private fun String?.orUntitled(): String = this ?: untitled
 
     private suspend fun <T> MutableStateFlow<T>.updateSelf(function: T.() -> T) {
         emit(value.function())

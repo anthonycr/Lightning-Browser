@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.combine
  * Type-safe analogue of [kotlinx.coroutines.flow.combine].
  */
 @Suppress("UNCHECKED_CAST")
-fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> combine(
+fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> combineMultiple(
     flow: Flow<T1>,
     flow2: Flow<T2>,
     flow3: Flow<T3>,
@@ -36,7 +36,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> combine(
  * Type-safe analogue of [kotlinx.coroutines.flow.combine].
  */
 @Suppress("UNCHECKED_CAST")
-fun <T1, T2, T3, R> combine(
+fun <T1, T2, T3, R> combineMultiple(
     flow: Flow<T1>,
     flow2: Flow<T2>,
     flow3: Flow<T3>,

@@ -1,6 +1,5 @@
 package acr.browser.lightning.browser.tab
 
-import acr.browser.lightning.R
 import acr.browser.lightning.browser.view.CustomGestureListener
 import acr.browser.lightning.browser.view.ToggleListener
 import acr.browser.lightning.browser.view.TouchListener
@@ -13,7 +12,6 @@ import acr.browser.lightning.constant.DESKTOP_USER_AGENT
 import acr.browser.lightning.download.PendingDownload
 import acr.browser.lightning.ids.ViewIdGenerator
 import acr.browser.lightning.preview.PreviewModel
-import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.useragent.UserAgentProvider
@@ -65,7 +63,6 @@ class TabAdapter @AssistedInject constructor(
     @Assisted private val tabCoroutineScope: TabCoroutineScope,
     private val tabWebChromeClientFactory: TabWebChromeClient.Factory,
     private val userAgentProvider: UserAgentProvider,
-    private val resourceProvider: ResourceProvider,
     private val viewIdGenerator: ViewIdGenerator,
     private val previewModel: PreviewModel,
     private val coroutineDispatchers: CoroutineDispatchers,
@@ -158,7 +155,7 @@ class TabAdapter @AssistedInject constructor(
         get() = webViewLazyWithInitialization
 
     private val titleStateFlow = MutableStateFlow(
-        latentInitializer?.initialTitle ?: resourceProvider.stringResource(R.string.untitled)
+        latentInitializer?.initialTitle
     )
 
     private val faviconStateFlow = MutableStateFlow(
@@ -173,10 +170,8 @@ class TabAdapter @AssistedInject constructor(
         }
         tabCoroutineScope.launch {
             merge(
-                tabWebViewClient.startedSharedFlow
-                    .map { resourceProvider.stringResource(R.string.untitled) },
-                tabWebViewClient.finishedSharedFlow
-                    .map { webView.title ?: resourceProvider.stringResource(R.string.untitled) },
+                tabWebViewClient.startedSharedFlow.map { null },
+                tabWebViewClient.finishedSharedFlow.map { webView.title },
                 tabWebChromeClient.titleShareFlow
             ).collectLatest { titleStateFlow.emit(it) }
         }
@@ -317,10 +312,10 @@ class TabAdapter @AssistedInject constructor(
 
     override fun urlChanges(): Flow<String> = tabWebViewClient.urlSharedFlow
 
-    override val title: String
+    override val title: String?
         get() = titleStateFlow.value
 
-    override fun titleChanges(): StateFlow<String> = titleStateFlow
+    override fun titleChanges(): StateFlow<String?> = titleStateFlow
 
     override val sslCertificateInfo: SslCertificateInfo?
         get() = webView.certificate?.let {

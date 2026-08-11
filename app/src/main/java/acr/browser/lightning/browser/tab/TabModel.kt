@@ -166,12 +166,12 @@ interface TabModel {
     /**
      * The title of the current webpage.
      */
-    val title: String
+    val title: String?
 
     /**
      * The states of the [title].
      */
-    fun titleChanges(): StateFlow<String>
+    fun titleChanges(): StateFlow<String?>
 
     /**
      * The current SSL certificate information about the webpage.
