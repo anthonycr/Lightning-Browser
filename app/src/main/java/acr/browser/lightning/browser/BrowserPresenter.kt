@@ -556,12 +556,27 @@ class BrowserPresenter @Inject constructor(
                 createNewTabAndSelect(
                     tabInitializer = UrlInitializer(action.url),
                     shouldSelect = true,
-                    tabType = TabModel.Type.EPHEMERAL
+                    tabType = if (action.internalOrigin) {
+                        TabModel.Type.NORMAL
+                    } else {
+                        TabModel.Type.EPHEMERAL
+                    }
                 )
             }
 
             BrowserContract.Action.Panic -> panicClean()
-            is BrowserContract.Action.Search -> onSearch(action.query)
+            is BrowserContract.Action.Search -> {
+                createNewTabAndSelect(
+                    tabInitializer = NoOpInitializer(),
+                    shouldSelect = true,
+                    tabType = if (action.internalOrigin) {
+                        TabModel.Type.NORMAL
+                    } else {
+                        TabModel.Type.EPHEMERAL
+                    }
+                )
+                onSearch(action.query)
+            }
         }
     }
 

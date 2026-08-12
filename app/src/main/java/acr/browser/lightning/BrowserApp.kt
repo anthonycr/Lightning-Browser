@@ -119,6 +119,7 @@ class BrowserApp : Application() {
      * Create the [BuildType] from the [BuildConfig].
      */
     private fun createBuildInfo() = BuildInfo(
+        packageName = BuildConfig.APPLICATION_ID,
         buildType = when {
             BuildConfig.DEBUG -> BuildType.DEBUG
             else -> BuildType.RELEASE
