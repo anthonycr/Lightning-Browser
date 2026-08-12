@@ -27,8 +27,14 @@ import android.webkit.WebView
 import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
+import androidx.core.graphics.scale
 import androidx.fragment.app.FragmentActivity
 import androidx.palette.graphics.Palette
+import coil3.decode.DecodeUtils
+import coil3.size.Scale
+import coil3.size.Size
 import com.permissionx.guolindev.PermissionX
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -36,6 +42,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 /**
  * A [WebChromeClient] that supports the tab adaptation.
@@ -54,6 +61,7 @@ class TabWebChromeClient @AssistedInject constructor(
         fun create(tabCoroutineScope: TabCoroutineScope): TabWebChromeClient
     }
 
+    private val faviconMaxSize = with(Density(activity)) { 24.dp.roundToPx() }
     private val defaultColor = activity.color(R.color.primary_color)
     private val geoLocationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -159,11 +167,29 @@ class TabWebChromeClient @AssistedInject constructor(
 
     override fun onReceivedIcon(view: WebView, icon: Bitmap) {
         tabCoroutineScope.launch {
-            // TODO: Recycle bitmap when it changes and potentially downscale or switch to caching
-            faviconSharedFlow.emit(TabModel.Favicon.Icon(icon.asImageBitmap()))
+            val scaledBitmap = if (icon.width > faviconMaxSize || icon.height > faviconMaxSize) {
+                val multiplier = DecodeUtils.computeSizeMultiplier(
+                    srcWidth = icon.width,
+                    srcHeight = icon.height,
+                    dstWidth = faviconMaxSize,
+                    dstHeight = faviconMaxSize,
+                    scale = Scale.FIT,
+                    maxSize = Size.ORIGINAL
+                )
+                val width = (multiplier * icon.width).roundToInt()
+                val height = (multiplier * icon.height).roundToInt()
+                try {
+                    icon.scale(width, height)
+                } finally {
+                    icon.recycle()
+                }
+            } else {
+                icon
+            }
+            faviconSharedFlow.emit(TabModel.Favicon.Icon(scaledBitmap.asImageBitmap()))
             val url = view.url ?: return@launch
-            faviconModel.cacheFaviconForUrl(icon, url)
-            generateColorAndPropagate(icon)
+            faviconModel.cacheFaviconForUrl(scaledBitmap, url)
+            generateColorAndPropagate(scaledBitmap)
         }
     }
 
