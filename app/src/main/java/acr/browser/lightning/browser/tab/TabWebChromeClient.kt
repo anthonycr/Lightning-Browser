@@ -68,9 +68,9 @@ class TabWebChromeClient @AssistedInject constructor(
     val titleShareFlow: MutableSharedFlow<String> = MutableSharedFlow()
 
     /**
-     * Emits changes to the page favicon. Always emits the last emitted favicon.
+     * Emits changes to the page favicon.
      */
-    val faviconStateFlow: MutableSharedFlow<TabModel.Favicon.Icon> = MutableSharedFlow()
+    val faviconSharedFlow: MutableSharedFlow<TabModel.Favicon.Icon> = MutableSharedFlow()
 
     /**
      * Emits create window requests.
@@ -160,7 +160,7 @@ class TabWebChromeClient @AssistedInject constructor(
     override fun onReceivedIcon(view: WebView, icon: Bitmap) {
         tabCoroutineScope.launch {
             // TODO: Recycle bitmap when it changes and potentially downscale or switch to caching
-            faviconStateFlow.emit(TabModel.Favicon.Icon(icon.asImageBitmap()))
+            faviconSharedFlow.emit(TabModel.Favicon.Icon(icon.asImageBitmap()))
             val url = view.url ?: return@launch
             faviconModel.cacheFaviconForUrl(icon, url)
             generateColorAndPropagate(icon)

@@ -178,7 +178,7 @@ class TabAdapter @AssistedInject constructor(
         tabCoroutineScope.launch {
             merge(
                 tabWebViewClient.startedSharedFlow.map { TabModel.Favicon.None },
-                tabWebChromeClient.faviconStateFlow
+                tabWebChromeClient.faviconSharedFlow
             ).collectLatest { faviconStateFlow.emit(it) }
         }
         tabCoroutineScope.launch {
