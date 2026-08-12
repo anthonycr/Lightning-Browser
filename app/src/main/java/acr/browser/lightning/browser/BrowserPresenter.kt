@@ -1483,7 +1483,7 @@ class BrowserPresenter @Inject constructor(
                     PendingDownload(
                         url = longPress.hitUrl.orEmpty(),
                         userAgent = null,
-                        contentDisposition = "attachment",
+                        contentDisposition = null,
                         mimeType = null,
                         contentLength = 0
                     )

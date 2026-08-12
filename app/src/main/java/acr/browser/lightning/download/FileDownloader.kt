@@ -102,6 +102,7 @@ class DefaultFileDownloader @Inject constructor(
             return@withContext pendingDownload
         }
 
+        // TODO: handle downloading data: URLs
         val response = okHttpClient.await().newCall(
             Request.Builder()
                 .url(pendingDownload.url)
@@ -116,7 +117,9 @@ class DefaultFileDownloader @Inject constructor(
         pendingDownload.copy(
             mimeType = response.header("content-type") ?: pendingDownload.mimeType,
             contentLength = response.header("content-length")?.toLong()
-                ?: pendingDownload.contentLength
+                ?: pendingDownload.contentLength,
+            contentDisposition = response.header("content-disposition")
+                ?: pendingDownload.contentDisposition ?: "attachment"
         )
     }
 
