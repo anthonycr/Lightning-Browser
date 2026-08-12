@@ -18,6 +18,7 @@
     <string name="fullscreen">Full-screen mode</string>
     <string name="java">Enable JavaScript</string>
     <string name="download">Download location</string>
+    <string name="download_subfolder">Subfolder</string>
     <string name="settings_advanced">Advanced Settings</string>
     <string name="apache">Apache License 2.0</string>
     <string name="version">Application version</string>

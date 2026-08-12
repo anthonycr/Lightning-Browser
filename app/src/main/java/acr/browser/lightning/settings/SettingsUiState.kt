@@ -31,6 +31,7 @@ data class SettingsTextSizeChooserState(
 
 data class SettingsBottomSheetInputState(
     val title: String,
+    val subtitle: String? = null,
     val hint: String,
     val currentValue: String = ""
 )

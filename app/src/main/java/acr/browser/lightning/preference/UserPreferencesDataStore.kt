@@ -22,7 +22,6 @@ import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.Suggestions
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.useragent.UserAgentChoice
-import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import androidx.datastore.migrations.SharedPreferencesMigration
 import androidx.datastore.migrations.SharedPreferencesView
@@ -145,7 +144,7 @@ class UserPreferencesDataStore @Inject constructor(
     val downloadDirectory: NonNullPreferenceStore<String> = NonNullPreferenceStore(
         key = stringPreferencesKey(DOWNLOAD_DIRECTORY),
         dataStore = dataStore,
-        defaultValue = FileUtils.DEFAULT_DOWNLOAD_PATH
+        defaultValue = ""
     )
 
     /**

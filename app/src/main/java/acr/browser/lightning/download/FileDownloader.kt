@@ -7,6 +7,7 @@ import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.di.NoCacheClient
 import acr.browser.lightning.log.Logger
+import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
@@ -35,6 +36,7 @@ class DefaultFileDownloader @Inject constructor(
     private val coroutineDispatchers: CoroutineDispatchers,
     @NoCacheClient
     private val okHttpClient: Deferred<@JvmSuppressWildcards OkHttpClient>,
+    private val userPreferencesDataStore: UserPreferencesDataStore,
 ) : FileDownloader {
     override suspend fun download(pendingDownload: PendingDownload) =
         withContext(coroutineDispatchers.io) {
@@ -59,6 +61,12 @@ class DefaultFileDownloader @Inject constructor(
                 guessMimeType
             )
 
+            val fileSubPath =
+                when (val downloadDirectory = userPreferencesDataStore.downloadDirectory.get()) {
+                    "" -> guessFileName
+                    else -> "$downloadDirectory/$guessFileName"
+                }
+
             val request = DownloadManager.Request(normalizedPendingDownload.url.toUri())
                 .setAllowedOverMetered(true)
                 .setAllowedOverRoaming(true)
@@ -72,7 +80,7 @@ class DefaultFileDownloader @Inject constructor(
                 .addRequestHeader("User-Agent", normalizedPendingDownload.userAgent)
                 .setDestinationInExternalPublicDir(
                     Environment.DIRECTORY_DOWNLOADS,
-                    guessFileName
+                    fileSubPath
                 )
 
             val contentSize = if (normalizedPendingDownload.contentLength > 0) {
@@ -86,7 +94,7 @@ class DefaultFileDownloader @Inject constructor(
             downloadsRepository.addDownloadIfNotExists(
                 DownloadEntry(
                     url = normalizedPendingDownload.url,
-                    location = "$FILE${FileUtils.DEFAULT_DOWNLOAD_PATH}/$guessFileName",
+                    location = "$FILE${FileUtils.DEFAULT_DOWNLOAD_PATH}/$fileSubPath",
                     title = guessFileName,
                     contentSize = contentSize,
                 )

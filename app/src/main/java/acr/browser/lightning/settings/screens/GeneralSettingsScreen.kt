@@ -111,12 +111,10 @@ class GeneralSettingsScreen @Inject constructor(
                 )
             ),
             ClickableState(
-                enabled = {
-                    // TODO: Fix download location to only allow external downloads directory
-                    false
-                },
                 title = resourceProvider.stringResource(R.string.download),
-                summary = { userPreferencesDataStore.downloadDirectory.get() },
+                summary = {
+                    "${FileUtils.DEFAULT_DOWNLOAD_PATH}/${userPreferencesDataStore.downloadDirectory.get()}"
+                },
                 onClick = ClickableOnClick.ItemSelector(
                     produceState = {
                         SettingsBottomSheetChooserState(
@@ -125,8 +123,8 @@ class GeneralSettingsScreen @Inject constructor(
                                 resourceProvider.stringResource(R.string.folder_default),
                                 resourceProvider.stringResource(R.string.folder_custom)
                             ),
-                            selected = if (userPreferencesDataStore.downloadDirectory.get() ==
-                                FileUtils.DEFAULT_DOWNLOAD_PATH
+                            selected = if (userPreferencesDataStore.downloadDirectory.get()
+                                    .isEmpty()
                             ) {
                                 0
                             } else {
@@ -137,20 +135,21 @@ class GeneralSettingsScreen @Inject constructor(
                     onSelected = { index ->
                         when (index) {
                             0 -> ClickableOnClick.Action {
-                                userPreferencesDataStore.downloadDirectory.set(FileUtils.DEFAULT_DOWNLOAD_PATH)
+                                userPreferencesDataStore.downloadDirectory.set("")
                             }
 
                             else -> ClickableOnClick.Input(
                                 produceState = {
                                     SettingsBottomSheetInputState(
                                         title = resourceProvider.stringResource(R.string.download),
-                                        hint = "",
+                                        subtitle = "${FileUtils.DEFAULT_DOWNLOAD_PATH}/",
+                                        hint = resourceProvider.stringResource(R.string.download_subfolder),
                                         currentValue = userPreferencesDataStore.downloadDirectory.get()
                                     )
                                 },
                                 onValueUpdated = {
                                     ClickableOnClick.Action {
-                                        userPreferencesDataStore.downloadDirectory.set(it)
+                                        userPreferencesDataStore.downloadDirectory.set(it.trim())
                                     }
                                 }
                             )

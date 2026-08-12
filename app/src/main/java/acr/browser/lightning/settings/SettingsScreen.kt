@@ -423,6 +423,20 @@ fun SettingsBottomSheetInput(
                 style = MaterialTheme.typography.titleLarge
             )
         }
+        state.subtitle?.let { subtitle ->
+            Row(
+                modifier = Modifier
+                    .height(48.dp)
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.titleSmall
+                )
+            }
+        }
         val textFieldState = rememberTextFieldState(state.currentValue)
         TextField(
             textFieldState,
