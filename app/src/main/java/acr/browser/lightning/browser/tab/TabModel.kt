@@ -303,6 +303,20 @@ interface TabModel {
         data class Image(val path: String, val time: Long) : Preview
     }
 
+    /**
+     * The type of tab controls how the browser responds when the tab is closed or the browser
+     * navigates back.
+     * - [NORMAL]: The browser behaves normally. When the tab is closed, nothing else happens. When
+     * the user goes back via the OS back gesture/button and there is no history item to go back to,
+     * the app will enter the background.
+     * - [EPHEMERAL]: When the tab is closed, the app will enter the background. This is because
+     * ephemeral tabs are considered started from an external source. When the user goes back via
+     * the OS back gesture/button and there is no history item to go back to, the browser will close
+     * the tab.
+     * - [POP_UP]: When the tab is closed, nothing else will happen. Pop-up tabs are considered to
+     * have been started from an internal source. When the user goes back via the OS back
+     * gesture/button and there is no history item to go back to, the browser will close the tab.
+     */
     enum class Type {
         NORMAL,
         EPHEMERAL,
