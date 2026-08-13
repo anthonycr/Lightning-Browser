@@ -222,21 +222,13 @@ interface BrowserContract {
 
         /**
          * The action representing a user searching for a [query].
-         *
-         * @param query The query to search.
-         * @param internalOrigin True if this action originated from the browser, false if from
-         * another app.
          */
-        data class Search(val query: String, val internalOrigin: Boolean) : Action()
+        data class Search(val query: String) : Action()
 
         /**
          * The action to load the provided [url].
-         *
-         * @param url The URL to load.
-         * @param internalOrigin True if this action originated from the browser, false if from
-         * another app.
          */
-        data class LoadUrl(val url: String, val internalOrigin: Boolean) : Action()
+        data class LoadUrl(val url: String) : Action()
 
         /**
          * The action to emergency clean the entire browser contents and stored data.
