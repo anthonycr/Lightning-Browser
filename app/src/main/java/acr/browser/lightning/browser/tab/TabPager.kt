@@ -44,9 +44,25 @@ class TabPager @Inject constructor(
     }
 
     /**
-     * Clear the container of the [WebView] currently shown.
+     * Remove the current webview from the pool.
      */
-    fun clearTab() {
+    fun removeTab(id: Int) {
+        webViews.remove(id)
+    }
+
+    /**
+     * Clear the container of the [WebView] currently shown and remove the current webview.
+     */
+    fun clearTab(id: Int) {
+        webViews.remove(id)
+        container.removeWebViews()
+    }
+
+    /**
+     * Clear the container of the [WebView] currently shown and remove all webviews.
+     */
+    fun clearAllTabs() {
+        webViews.clear()
         container.removeWebViews()
     }
 
