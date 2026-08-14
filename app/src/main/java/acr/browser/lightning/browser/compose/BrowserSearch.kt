@@ -110,7 +110,6 @@ fun BrowserSearchSuggestions(
                 onValueChange = {
                     // Updating the state mid-animation can cause cursor selection bugs
                     if (searchBarState.targetValue != SearchBarValue.Collapsed) {
-                        state = it
                         suggestionsModel.updateQuery(it.text)
                         presenter.onEvent(
                             BrowserUiEvent.SearchQueryChanged(
