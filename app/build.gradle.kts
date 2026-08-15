@@ -136,7 +136,7 @@ dependencies {
     implementation("androidx.datastore:datastore-core:$datastore")
     implementation("androidx.datastore:datastore-preferences:$datastore")
     implementation("androidx.datastore:datastore-preferences-core:$datastore")
-    implementation("androidx.fragment:fragment:1.8.9")
+    implementation("androidx.fragment:fragment:1.9.0")
     implementation("androidx.lifecycle:lifecycle-common:$lifecycle")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle")
     implementation("androidx.palette:palette:1.0.0")
