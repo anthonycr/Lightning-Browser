@@ -1,9 +1,6 @@
 package acr.browser.lightning.compose
 
 import acr.browser.lightning.AppTheme
-import acr.browser.lightning.ThemableActivity
-import androidx.activity.SystemBarStyle
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
@@ -11,9 +8,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import kotlinx.coroutines.flow.StateFlow
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -129,19 +124,27 @@ private val highContrastDarkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
-fun AppTheme.asColorScheme(darkTheme: Boolean): ColorScheme = when (this) {
+fun AppTheme.asColorScheme(systemDarkTheme: Boolean): ColorScheme = when (this) {
     AppTheme.LIGHT -> lightScheme
     AppTheme.DARK -> darkScheme
     AppTheme.BLACK -> highContrastDarkScheme
-    AppTheme.SYSTEM -> if (darkTheme) {
+    AppTheme.SYSTEM -> if (systemDarkTheme) {
         darkScheme
     } else {
         lightScheme
     }
 }
 
+fun AppTheme.isDark(systemDarkTheme: Boolean): Boolean = when(this) {
+    AppTheme.LIGHT -> false
+    AppTheme.DARK -> true
+    AppTheme.BLACK -> true
+    AppTheme.SYSTEM -> systemDarkTheme
+}
+
 @Composable
-fun ThemableActivity.BrowserTheme(
+fun BrowserTheme(
+    appThemeStateFlow: StateFlow<AppTheme?>,
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -151,26 +154,12 @@ fun ThemableActivity.BrowserTheme(
 //            val context = LocalContext.current
 //            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 //        }
-    val colorScheme =
-        when (val appTheme = appThemeStateFlow.collectAsState().value) {
-            null -> null
-            else -> appTheme.asColorScheme(darkTheme)
-        }
-
-    val blackStatus by useBlackStatusBarStateFlow.collectAsState()
+    val colorScheme = when (val appTheme = appThemeStateFlow.collectAsState().value) {
+        null -> null
+        else -> appTheme.asColorScheme(darkTheme)
+    }
 
     if (colorScheme == null) return
-
-    enableEdgeToEdge(
-        statusBarStyle = SystemBarStyle.auto(
-            Color.Transparent.toArgb(),
-            Color.Transparent.toArgb(),
-        ) { colorScheme == darkScheme || colorScheme == highContrastDarkScheme || blackStatus == true },
-        navigationBarStyle = SystemBarStyle.auto(
-            colorScheme.scrim.toArgb(),
-            colorScheme.scrim.toArgb(),
-        ) { colorScheme == darkScheme || colorScheme == highContrastDarkScheme },
-    )
 
     MaterialTheme(
         colorScheme = colorScheme,

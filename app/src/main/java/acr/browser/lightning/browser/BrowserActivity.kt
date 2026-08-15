@@ -6,6 +6,7 @@ import acr.browser.lightning.browser.keys.KeyEventAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.TabPager
 import acr.browser.lightning.browser.ui.TabConfiguration
+import acr.browser.lightning.compose.BrowserTheme
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.search.SuggestionsModel
 import android.annotation.SuppressLint
@@ -83,21 +84,23 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
                 updateFrom = { updateFrom(it) }
             )
 
-            BrowserScreen(
-                tabConfigurationProvider,
-                useBlackStatusBarStateFlow,
-                currentState,
-                presenter,
-                browserFrame,
-                customFrame,
-                suggestionsModel
-            )
-            if (currentState.showCustomView) {
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
-                setFullscreen(enabled = true, immersive = true)
-            } else {
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-                setFullscreen(enabled = false, immersive = false)
+            BrowserTheme(appThemeStateFlow) {
+                BrowserScreen(
+                    tabConfigurationProvider,
+                    useBlackStatusBarStateFlow,
+                    currentState,
+                    presenter,
+                    browserFrame,
+                    customFrame,
+                    suggestionsModel
+                )
+                if (currentState.showCustomView) {
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+                    setFullscreen(enabled = true, immersive = true)
+                } else {
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    setFullscreen(enabled = false, immersive = false)
+                }
             }
         }
 

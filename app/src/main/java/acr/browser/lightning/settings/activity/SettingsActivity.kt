@@ -58,18 +58,28 @@ class SettingsActivity : ThemableActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            BrowserTheme {
+            BrowserTheme(appThemeStateFlow) {
                 var navigationState by remember { mutableStateOf(SettingsNavigation.ROOT) }
                 AnimatedContent(navigationState, transitionSpec = {
                     if (targetState == SettingsNavigation.ROOT) {
-                        (fadeIn(animationSpec = tween(220, delayMillis = 90)) + slideInHorizontally(
+                        (fadeIn(
+                            animationSpec = tween(
+                                220,
+                                delayMillis = 90
+                            )
+                        ) + slideInHorizontally(
                             animationSpec = tween(220, delayMillis = 90),
                             initialOffsetX = { -it / 2 }))
                             .togetherWith(
                                 (fadeOut(animationSpec = tween(220, delayMillis = 90)))
                             )
                     } else {
-                        (fadeIn(animationSpec = tween(220, delayMillis = 90)) + slideInHorizontally(
+                        (fadeIn(
+                            animationSpec = tween(
+                                220,
+                                delayMillis = 90
+                            )
+                        ) + slideInHorizontally(
                             animationSpec = tween(220, delayMillis = 90),
                             initialOffsetX = { it / 2 }))
                             .togetherWith(
