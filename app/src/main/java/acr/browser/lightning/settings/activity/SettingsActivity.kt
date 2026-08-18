@@ -154,6 +154,7 @@ class SettingsActivity : ThemableActivity() {
                         ) {
                             navigationState = SettingsNavigation.ROOT
                         }
+                        // TODO: Add licenses screen
                     }
                 }
             }
