@@ -110,7 +110,6 @@ class DefaultFileDownloader @Inject constructor(
             return@withContext pendingDownload
         }
 
-        // TODO: handle downloading data: URLs
         val response = okHttpClient.await().newCall(
             Request.Builder()
                 .url(pendingDownload.url)

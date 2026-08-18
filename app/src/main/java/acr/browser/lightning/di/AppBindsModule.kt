@@ -14,7 +14,7 @@ import acr.browser.lightning.database.downloads.DownloadsDatabase
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.database.history.HistoryDatabase
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning.download.DefaultFileDownloader
+import acr.browser.lightning.download.DelegatingFileDownloader
 import acr.browser.lightning.download.FileDownloader
 import acr.browser.lightning.resources.DefaultNumberFormatter
 import acr.browser.lightning.resources.DefaultResourceProvider
@@ -74,7 +74,7 @@ interface AppBindsModule {
     fun bindsThemeProvider(themeProvider: DefaultThemeProvider): ThemeProvider
 
     @Binds
-    fun bindsFileDownloader(defaultFileDownloader: DefaultFileDownloader): FileDownloader
+    fun bindsFileDownloader(delegatingFileDownloader: DelegatingFileDownloader): FileDownloader
 
     @Binds
     fun bindsUserAgentProvider(defaultUserAgentProvider: DefaultUserAgentProvider): UserAgentProvider
