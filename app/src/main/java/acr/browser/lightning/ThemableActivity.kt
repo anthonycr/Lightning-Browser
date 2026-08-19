@@ -10,6 +10,7 @@ import androidx.appcompat.R
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -61,6 +62,7 @@ abstract class ThemableActivity : AppCompatActivity() {
                             colorScheme.scrim.toArgb(),
                         ) { isDarkColorScheme },
                     )
+                    window.setBackgroundDrawable(colorScheme.background.toArgb().toDrawable())
                 }
         }
     }
