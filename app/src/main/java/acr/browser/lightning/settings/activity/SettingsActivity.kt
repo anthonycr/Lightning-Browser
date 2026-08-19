@@ -5,6 +5,7 @@ package acr.browser.lightning.settings.activity
 
 import acr.browser.lightning.ThemableActivity
 import acr.browser.lightning.compose.BrowserTheme
+import acr.browser.lightning.compose.slideInFrom
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.settings.SettingsNavigation
@@ -16,11 +17,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,29 +45,9 @@ class SettingsActivity : ThemableActivity() {
                 var navigationState by remember { mutableStateOf(SettingsNavigation.ROOT) }
                 AnimatedContent(navigationState, transitionSpec = {
                     if (targetState == SettingsNavigation.ROOT) {
-                        (fadeIn(
-                            animationSpec = tween(
-                                220,
-                                delayMillis = 90
-                            )
-                        ) + slideInHorizontally(
-                            animationSpec = tween(220, delayMillis = 90),
-                            initialOffsetX = { -it / 2 }))
-                            .togetherWith(
-                                (fadeOut(animationSpec = tween(220, delayMillis = 90)))
-                            )
+                        slideInFrom { -it / 2 }
                     } else {
-                        (fadeIn(
-                            animationSpec = tween(
-                                220,
-                                delayMillis = 90
-                            )
-                        ) + slideInHorizontally(
-                            animationSpec = tween(220, delayMillis = 90),
-                            initialOffsetX = { it / 2 }))
-                            .togetherWith(
-                                (fadeOut(animationSpec = tween(220, delayMillis = 90)))
-                            )
+                        slideInFrom { it / 2 }
                     }
                 }) { state ->
                     when (state) {
