@@ -8,12 +8,7 @@ import acr.browser.lightning.settings.SettingsDialogConfirmationState
 import acr.browser.lightning.settings.SettingsSnackBarState
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
-import acr.browser.lightning.settings.framework.SettingsFrameworkPresenter
-import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
-import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class BookmarkSettingsScreen @Inject constructor(
@@ -21,8 +16,6 @@ class BookmarkSettingsScreen @Inject constructor(
     private val bookmarkExporter: BookmarkExporter,
     private val bookmarkRepository: BookmarkRepository,
 ) {
-    val key = "bookmark"
-
     fun createSettingsFrameworkState(): SettingsFrameworkState = SettingsFrameworkState(
         title = resourceProvider.stringResource(R.string.bookmark_settings),
         content = listOf(
@@ -103,25 +96,5 @@ class BookmarkSettingsScreen @Inject constructor(
                 )
             )
         )
-    )
-}
-
-@Composable
-fun BookmarkSettingsScreen(
-    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
-    bookmarkSettingsScreen: BookmarkSettingsScreen,
-    onUp: () -> Unit
-) {
-    SettingsFrameworkScreen(
-        useBlackStatusBarStateFlow,
-        viewModel(
-            key = bookmarkSettingsScreen.key,
-            factory = SettingsFrameworkPresenter.Factory(
-                settingsFrameworkState = {
-                    bookmarkSettingsScreen.createSettingsFrameworkState()
-                }
-            )
-        ),
-        onUp
     )
 }

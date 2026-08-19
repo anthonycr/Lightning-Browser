@@ -14,13 +14,8 @@ import acr.browser.lightning.settings.SettingsSnackBarState
 import acr.browser.lightning.settings.adblock.HostsFileUpdater
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
-import acr.browser.lightning.settings.framework.SettingsFrameworkPresenter
-import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
-import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.StateFlow
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import javax.inject.Inject
 
@@ -30,8 +25,6 @@ class AdBlockSettingsScreen @Inject constructor(
     private val hostsFileUpdater: HostsFileUpdater,
     private val bloomFilterAdBlocker: BloomFilterAdBlocker,
 ) {
-    val key = "ad_block"
-
     fun createSettingsFrameworkState(): SettingsFrameworkState = SettingsFrameworkState(
         resourceProvider.stringResource(R.string.settings_adblock), content = listOf(
             ToggleState(
@@ -142,24 +135,6 @@ class AdBlockSettingsScreen @Inject constructor(
                 }
             )
         )
-    )
-}
-
-@Composable
-fun AdBlockSettingsScreen(
-    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
-    adBlockSettingsScreen: AdBlockSettingsScreen,
-    onUp: () -> Unit
-) {
-    SettingsFrameworkScreen(
-        useBlackStatusBarStateFlow,
-        viewModel(
-            key = adBlockSettingsScreen.key,
-            factory = SettingsFrameworkPresenter.Factory(
-                settingsFrameworkState = { adBlockSettingsScreen.createSettingsFrameworkState() }
-            )
-        ),
-        onUp
     )
 }
 

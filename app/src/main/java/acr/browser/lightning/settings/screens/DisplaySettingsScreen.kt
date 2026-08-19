@@ -9,22 +9,15 @@ import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.SettingsBottomSheetChooserState
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
-import acr.browser.lightning.settings.framework.SettingsFrameworkPresenter
-import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
-import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.webkit.WebViewFeature
-import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class DisplaySettingsScreen @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val userPreferencesDataStore: UserPreferencesDataStore
 ) {
-    val key = "display"
-
     fun createSettingsFrameworkState(): SettingsFrameworkState = SettingsFrameworkState(
         title = resourceProvider.stringResource(R.string.settings_display),
         content = listOf(
@@ -159,26 +152,6 @@ class DisplaySettingsScreen @Inject constructor(
                 )
             )
         )
-    )
-}
-
-@Composable
-fun DisplaySettingsScreen(
-    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
-    displaySettingsScreen: DisplaySettingsScreen,
-    onUp: () -> Unit
-) {
-    SettingsFrameworkScreen(
-        useBlackStatusBarStateFlow,
-        viewModel(
-            key = displaySettingsScreen.key,
-            factory = SettingsFrameworkPresenter.Factory(
-                settingsFrameworkState = {
-                    displaySettingsScreen.createSettingsFrameworkState()
-                }
-            )
-        ),
-        onUp
     )
 }
 

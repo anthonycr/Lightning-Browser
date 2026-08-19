@@ -9,21 +9,14 @@ import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.SettingsBottomSheetChooserState
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
-import acr.browser.lightning.settings.framework.SettingsFrameworkPresenter
-import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
-import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class AdvancedSettingsScreen @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val userPreferencesDataStore: UserPreferencesDataStore,
 ) {
-    val key = "advanced"
-
     fun createSettingsFrameworkState(): SettingsFrameworkState = SettingsFrameworkState(
         title = resourceProvider.stringResource(R.string.settings_advanced),
         content = listOf(
@@ -123,26 +116,6 @@ class AdvancedSettingsScreen @Inject constructor(
                 )
             )
         )
-    )
-}
-
-@Composable
-fun AdvancedSettingsScreen(
-    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
-    advancedSettingsScreen: AdvancedSettingsScreen,
-    onUp: () -> Unit
-) {
-    SettingsFrameworkScreen(
-        useBlackStatusBarStateFlow,
-        viewModel(
-            key = advancedSettingsScreen.key,
-            factory = SettingsFrameworkPresenter.Factory(
-                settingsFrameworkState = {
-                    advancedSettingsScreen.createSettingsFrameworkState()
-                }
-            )
-        ),
-        onUp
     )
 }
 

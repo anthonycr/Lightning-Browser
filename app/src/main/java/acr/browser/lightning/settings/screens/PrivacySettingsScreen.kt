@@ -8,14 +8,9 @@ import acr.browser.lightning.settings.SettingsDialogConfirmationState
 import acr.browser.lightning.settings.SettingsSnackBarState
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
-import acr.browser.lightning.settings.framework.SettingsFrameworkPresenter
-import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
 import acr.browser.lightning.utils.WebUtils
-import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class PrivacySettingsScreen @Inject constructor(
@@ -23,8 +18,6 @@ class PrivacySettingsScreen @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val webUtils: WebUtils,
 ) {
-    val key = "privacy"
-
     fun createSettingsFrameworkState(): SettingsFrameworkState = SettingsFrameworkState(
         title = resourceProvider.stringResource(R.string.settings_privacy),
         content = listOf(
@@ -162,25 +155,5 @@ class PrivacySettingsScreen @Inject constructor(
                 }
             )
         )
-    )
-}
-
-@Composable
-fun PrivacySettingsScreen(
-    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
-    privacySettingsScreen: PrivacySettingsScreen,
-    onUp: () -> Unit
-) {
-    SettingsFrameworkScreen(
-        useBlackStatusBarStateFlow,
-        viewModel(
-            key = privacySettingsScreen.key,
-            factory = SettingsFrameworkPresenter.Factory(
-                settingsFrameworkState = {
-                    privacySettingsScreen.createSettingsFrameworkState()
-                }
-            )
-        ),
-        onUp
     )
 }

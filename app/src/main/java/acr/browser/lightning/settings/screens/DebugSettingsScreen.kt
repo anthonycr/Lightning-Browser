@@ -4,21 +4,14 @@ import acr.browser.lightning.R
 import acr.browser.lightning.preference.DeveloperPreferenceStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.SettingsSnackBarState
-import acr.browser.lightning.settings.framework.SettingsFrameworkPresenter
-import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
-import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class DebugSettingsScreen @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val developerPreferenceStore: DeveloperPreferenceStore
 ) {
-    val key = "debug"
-
     fun createSettingsFrameworkState(): SettingsFrameworkState = SettingsFrameworkState(
         title = resourceProvider.stringResource(R.string.debug_title),
         content = listOf(
@@ -33,25 +26,5 @@ class DebugSettingsScreen @Inject constructor(
                 }
             )
         )
-    )
-}
-
-@Composable
-fun DebugSettingsScreen(
-    useBlackStatusBarStateFlow: StateFlow<Boolean?>,
-    debugSettingsScreen: DebugSettingsScreen,
-    onUp: () -> Unit
-) {
-    SettingsFrameworkScreen(
-        useBlackStatusBarStateFlow,
-        viewModel(
-            key = debugSettingsScreen.key,
-            factory = SettingsFrameworkPresenter.Factory(
-                settingsFrameworkState = {
-                    debugSettingsScreen.createSettingsFrameworkState()
-                }
-            )
-        ),
-        onUp
     )
 }
