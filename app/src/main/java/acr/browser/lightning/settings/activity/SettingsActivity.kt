@@ -9,14 +9,9 @@ import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.settings.SettingsNavigation
 import acr.browser.lightning.settings.SettingsScreen
-import acr.browser.lightning.settings.screens.AboutSettingsScreen
-import acr.browser.lightning.settings.screens.AdBlockSettingsScreen
-import acr.browser.lightning.settings.screens.AdvancedSettingsScreen
-import acr.browser.lightning.settings.screens.BookmarkSettingsScreen
-import acr.browser.lightning.settings.screens.DebugSettingsScreen
-import acr.browser.lightning.settings.screens.DisplaySettingsScreen
-import acr.browser.lightning.settings.screens.GeneralSettingsScreen
-import acr.browser.lightning.settings.screens.PrivacySettingsScreen
+import acr.browser.lightning.settings.SettingsScreenStateProvider
+import acr.browser.lightning.settings.framework.SettingsFrameworkPresenter
+import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -33,21 +28,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
+import androidx.lifecycle.viewmodel.compose.viewModel
 import javax.inject.Inject
 
 class SettingsActivity : ThemableActivity() {
 
-
     @Inject internal lateinit var buildInfo: BuildInfo
-
-    @Inject internal lateinit var aboutSettingsScreen: AboutSettingsScreen
-    @Inject internal lateinit var adBlockSettingsScreen: AdBlockSettingsScreen
-    @Inject internal lateinit var advancedSettingsScreen: AdvancedSettingsScreen
-    @Inject internal lateinit var bookmarkSettingsScreen: BookmarkSettingsScreen
-    @Inject internal lateinit var debugSettingsScreen: DebugSettingsScreen
-    @Inject internal lateinit var displaySettingsScreen: DisplaySettingsScreen
-    @Inject internal lateinit var generalSettingsScreen: GeneralSettingsScreen
-    @Inject internal lateinit var privacySettingsScreen: PrivacySettingsScreen
+    @Inject internal lateinit var settingsScreenStateProvider: SettingsScreenStateProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.settingsComponentBuilder()
@@ -95,47 +82,6 @@ class SettingsActivity : ThemableActivity() {
                             navigationState = it
                         }
 
-                        SettingsNavigation.ADBLOCK -> AdBlockSettingsScreen(
-                            useBlackStatusBarStateFlow,
-                            adBlockSettingsScreen
-                        ) { navigationState = SettingsNavigation.ROOT }
-
-                        SettingsNavigation.GENERAL -> GeneralSettingsScreen(
-                            useBlackStatusBarStateFlow,
-                            generalSettingsScreen
-                        ) { navigationState = SettingsNavigation.ROOT }
-
-                        SettingsNavigation.BOOKMARK -> BookmarkSettingsScreen(
-                            useBlackStatusBarStateFlow,
-                            bookmarkSettingsScreen
-                        ) { navigationState = SettingsNavigation.ROOT }
-
-                        SettingsNavigation.DISPLAY -> DisplaySettingsScreen(
-                            useBlackStatusBarStateFlow,
-                            displaySettingsScreen
-                        ) { navigationState = SettingsNavigation.ROOT }
-
-                        SettingsNavigation.PRIVACY -> PrivacySettingsScreen(
-                            useBlackStatusBarStateFlow,
-                            privacySettingsScreen
-                        ) {
-                            navigationState = SettingsNavigation.ROOT
-                        }
-
-                        SettingsNavigation.ADVANCED -> AdvancedSettingsScreen(
-                            useBlackStatusBarStateFlow,
-                            advancedSettingsScreen
-                        ) {
-                            navigationState = SettingsNavigation.ROOT
-                        }
-
-                        SettingsNavigation.ABOUT -> AboutSettingsScreen(
-                            useBlackStatusBarStateFlow,
-                            aboutSettingsScreen
-                        ) {
-                            navigationState = SettingsNavigation.ROOT
-                        }
-
                         SettingsNavigation.FAQ -> {
                             val current = LocalContext.current
                             LaunchedEffect("faq") {
@@ -148,11 +94,19 @@ class SettingsActivity : ThemableActivity() {
                             }
                         }
 
-                        SettingsNavigation.DEBUG -> DebugSettingsScreen(
-                            useBlackStatusBarStateFlow,
-                            debugSettingsScreen
-                        ) {
-                            navigationState = SettingsNavigation.ROOT
+                        else -> {
+                            val frameworkState = settingsScreenStateProvider.provideState(state)
+                            SettingsFrameworkScreen(
+                                useBlackStatusBarStateFlow,
+                                viewModel(
+                                    key = state.name,
+                                    factory = SettingsFrameworkPresenter.Factory(
+                                        settingsFrameworkState = { frameworkState }
+                                    )
+                                )
+                            ) {
+                                navigationState = SettingsNavigation.ROOT
+                            }
                         }
                         // TODO: Add licenses screen
                     }
