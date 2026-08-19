@@ -6,9 +6,9 @@ import acr.browser.lightning.browser.tab.settings.RenderingMode
 import acr.browser.lightning.constant.TEXT_ENCODINGS
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
-import acr.browser.lightning.settings.SettingsBottomSheetChooserState
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
+import acr.browser.lightning.settings.framework.SettingsBottomSheetChooserState
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
 import javax.inject.Inject

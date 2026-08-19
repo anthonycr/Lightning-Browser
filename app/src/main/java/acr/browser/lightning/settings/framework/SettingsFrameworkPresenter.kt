@@ -1,13 +1,5 @@
 package acr.browser.lightning.settings.framework
 
-import acr.browser.lightning.settings.SettingsBottomSheetChooserState
-import acr.browser.lightning.settings.SettingsBottomSheetInputState
-import acr.browser.lightning.settings.SettingsClickableState
-import acr.browser.lightning.settings.SettingsDialogConfirmationState
-import acr.browser.lightning.settings.SettingsSnackBarState
-import acr.browser.lightning.settings.SettingsTextSizeChooserState
-import acr.browser.lightning.settings.SettingsToggleState
-import acr.browser.lightning.settings.SettingsUiState
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

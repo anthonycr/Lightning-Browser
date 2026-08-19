@@ -1,4 +1,4 @@
-package acr.browser.lightning.settings
+package acr.browser.lightning.settings.framework
 
 sealed interface SettingsOption
 

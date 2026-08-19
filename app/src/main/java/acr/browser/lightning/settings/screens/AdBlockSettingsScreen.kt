@@ -8,13 +8,13 @@ import acr.browser.lightning.adblock.source.HostsSourceType
 import acr.browser.lightning.adblock.source.selectedHostsSource
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
-import acr.browser.lightning.settings.SettingsBottomSheetChooserState
-import acr.browser.lightning.settings.SettingsBottomSheetInputState
-import acr.browser.lightning.settings.SettingsSnackBarState
 import acr.browser.lightning.settings.adblock.HostsFileUpdater
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
+import acr.browser.lightning.settings.framework.SettingsBottomSheetChooserState
+import acr.browser.lightning.settings.framework.SettingsBottomSheetInputState
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
+import acr.browser.lightning.settings.framework.SettingsSnackBarState
 import acr.browser.lightning.settings.framework.ToggleState
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import javax.inject.Inject

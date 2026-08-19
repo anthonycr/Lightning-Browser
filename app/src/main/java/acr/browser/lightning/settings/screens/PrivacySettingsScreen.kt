@@ -4,11 +4,11 @@ import acr.browser.lightning.R
 import acr.browser.lightning.browser.tab.WebViewFactory
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
-import acr.browser.lightning.settings.SettingsDialogConfirmationState
-import acr.browser.lightning.settings.SettingsSnackBarState
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
+import acr.browser.lightning.settings.framework.SettingsDialogConfirmationState
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
+import acr.browser.lightning.settings.framework.SettingsSnackBarState
 import acr.browser.lightning.settings.framework.ToggleState
 import acr.browser.lightning.utils.WebUtils
 import javax.inject.Inject

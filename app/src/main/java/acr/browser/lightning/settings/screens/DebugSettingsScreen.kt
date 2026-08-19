@@ -3,8 +3,8 @@ package acr.browser.lightning.settings.screens
 import acr.browser.lightning.R
 import acr.browser.lightning.preference.DeveloperPreferenceStore
 import acr.browser.lightning.resources.ResourceProvider
-import acr.browser.lightning.settings.SettingsSnackBarState
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
+import acr.browser.lightning.settings.framework.SettingsSnackBarState
 import acr.browser.lightning.settings.framework.ToggleState
 import javax.inject.Inject
 

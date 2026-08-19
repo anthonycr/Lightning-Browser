@@ -11,10 +11,10 @@ import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.Suggestions
 import acr.browser.lightning.search.engine.BaseSearchEngine
 import acr.browser.lightning.search.engine.CustomSearch
-import acr.browser.lightning.settings.SettingsBottomSheetChooserState
-import acr.browser.lightning.settings.SettingsBottomSheetInputState
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
+import acr.browser.lightning.settings.framework.SettingsBottomSheetChooserState
+import acr.browser.lightning.settings.framework.SettingsBottomSheetInputState
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
 import acr.browser.lightning.useragent.UserAgentChoice

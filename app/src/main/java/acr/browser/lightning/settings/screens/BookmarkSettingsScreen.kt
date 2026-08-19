@@ -4,11 +4,11 @@ import acr.browser.lightning.R
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.resources.ResourceProvider
-import acr.browser.lightning.settings.SettingsDialogConfirmationState
-import acr.browser.lightning.settings.SettingsSnackBarState
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
+import acr.browser.lightning.settings.framework.SettingsDialogConfirmationState
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
+import acr.browser.lightning.settings.framework.SettingsSnackBarState
 import javax.inject.Inject
 
 class BookmarkSettingsScreen @Inject constructor(

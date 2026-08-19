@@ -1,15 +1,12 @@
 package acr.browser.lightning.settings.framework
 
 import acr.browser.lightning.compose.StatusBar
-import acr.browser.lightning.settings.SettingsBottomSheetChooser
-import acr.browser.lightning.settings.SettingsBottomSheetInput
-import acr.browser.lightning.settings.SettingsBottomSheetTextSizeChooser
-import acr.browser.lightning.settings.SettingsClickable
-import acr.browser.lightning.settings.SettingsClickableState
-import acr.browser.lightning.settings.SettingsLoader
-import acr.browser.lightning.settings.SettingsToggle
-import acr.browser.lightning.settings.SettingsToggleState
-import acr.browser.lightning.settings.SettingsUiState
+import acr.browser.lightning.settings.framework.compose.SettingsBottomSheetChooser
+import acr.browser.lightning.settings.framework.compose.SettingsBottomSheetInput
+import acr.browser.lightning.settings.framework.compose.SettingsBottomSheetTextSizeChooser
+import acr.browser.lightning.settings.framework.compose.SettingsClickable
+import acr.browser.lightning.settings.framework.compose.SettingsLoader
+import acr.browser.lightning.settings.framework.compose.SettingsToggle
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
