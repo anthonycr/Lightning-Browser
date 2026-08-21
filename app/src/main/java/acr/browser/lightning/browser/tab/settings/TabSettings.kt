@@ -6,6 +6,7 @@ import acr.browser.lightning.useragent.UserAgentProvider
 /**
  * Represents the settings used by a tab.
  *
+ * @param openAvailableAppsEnabled see [UserPreferencesDataStore.openAvailableAppsEnabled].
  * @param algorithmicDarkeningEnabled see [UserPreferencesDataStore.algorithmicDarkeningEnabled].
  * @param doNotTrackEnabled see [UserPreferencesDataStore.doNotTrackEnabled].
  * @param saveDataEnabled see [UserPreferencesDataStore.saveDataEnabled].
@@ -24,6 +25,7 @@ import acr.browser.lightning.useragent.UserAgentProvider
  * @param blockThirdPartyCookiesEnabled see [UserPreferencesDataStore.blockThirdPartyCookiesEnabled].
  */
 data class TabSettings(
+    val openAvailableAppsEnabled: Boolean,
     val algorithmicDarkeningEnabled: Boolean,
     val doNotTrackEnabled: Boolean,
     val saveDataEnabled: Boolean,
@@ -50,6 +52,7 @@ data class TabSettings(
             userPreferencesDataStore: UserPreferencesDataStore,
             userAgentProvider: UserAgentProvider,
         ): TabSettings = TabSettings(
+            openAvailableAppsEnabled = userPreferencesDataStore.openAvailableAppsEnabled.get(),
             algorithmicDarkeningEnabled = userPreferencesDataStore.algorithmicDarkeningEnabled.get(),
             doNotTrackEnabled = userPreferencesDataStore.doNotTrackEnabled.get(),
             saveDataEnabled = userPreferencesDataStore.saveDataEnabled.get(),

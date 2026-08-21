@@ -298,10 +298,13 @@ class TabWebViewClient @AssistedInject constructor(
         }.resizeAndShow()
     }
 
-    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-        return urlHandler.shouldOverrideLoading(view, request.url.toString(), headers) ||
-            super.shouldOverrideUrlLoading(view, request)
-    }
+    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean =
+        urlHandler.shouldOverrideLoading(
+            tabSettings.openAvailableAppsEnabled,
+            view,
+            request.url.toString(),
+            headers
+        ) || super.shouldOverrideUrlLoading(view, request)
 
     override fun shouldInterceptRequest(
         view: WebView,
