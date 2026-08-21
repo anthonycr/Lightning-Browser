@@ -47,6 +47,15 @@ class AdvancedSettingsScreen @Inject constructor(
                     null
                 }
             ),
+            ToggleState(
+                title = resourceProvider.stringResource(R.string.open_available_apps),
+                summary = { resourceProvider.stringResource(R.string.recommended) },
+                isChecked = { userPreferencesDataStore.openAvailableAppsEnabled.get() },
+                onToggle = {
+                    userPreferencesDataStore.openAvailableAppsEnabled.set(it)
+                    null
+                }
+            ),
             ClickableState(
                 title = resourceProvider.stringResource(R.string.text_encoding),
                 summary = { userPreferencesDataStore.textEncoding.get() },

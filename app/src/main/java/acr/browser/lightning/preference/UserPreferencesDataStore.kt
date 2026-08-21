@@ -226,6 +226,16 @@ class UserPreferencesDataStore @Inject constructor(
     )
 
     /**
+     * True if the app should open links that are the default apps for those links (e.g. opening
+     * GitHub links in the GitHub app), false otherwise.
+     */
+    val openAvailableAppsEnabled: NonNullPreferenceStore<Boolean> = NonNullPreferenceStore(
+        key = booleanPreferencesKey(OPEN_AVAILABLE_APPS),
+        dataStore = dataStore,
+        defaultValue = true
+    )
+
+    /**
      * The index of the chosen search engine.
      *
      * @see SearchEngineProvider
@@ -522,3 +532,4 @@ private const val SEARCH_SUGGESTIONS = "searchSuggestionsChoice"
 private const val HOSTS_SOURCE = "hostsSource"
 private const val HOSTS_LOCAL_FILE = "hostsLocalFile"
 private const val HOSTS_REMOTE_FILE = "hostsRemoteFile"
+private const val OPEN_AVAILABLE_APPS = "openAvailableApps"

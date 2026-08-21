@@ -115,6 +115,7 @@
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Search for</string>
     <string name="header_warning">Warning! This setting can cause the browser to misbehave</string>
+    <string name="open_available_apps">Open links in available default apps</string>
 
     <!-- Ad block -->
     <string name="block_ads">Block ads</string>

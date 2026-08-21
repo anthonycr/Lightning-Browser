@@ -36,11 +36,12 @@ class UrlHandler @Inject constructor(
      * browser can let the [view] continue loading as it wants.
      */
     fun shouldOverrideLoading(
+        openAvailableAppsEnabled: Boolean,
         view: WebView,
         url: String,
         headers: Map<String, String>
     ): Boolean {
-        if (incognitoMode) {
+        if (!openAvailableAppsEnabled || incognitoMode) {
             // If we are in incognito, immediately load, we don't want the url to leave the app
             return continueLoadingUrl(view, url, headers)
         }
