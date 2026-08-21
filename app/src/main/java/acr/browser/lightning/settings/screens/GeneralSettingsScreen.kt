@@ -16,6 +16,7 @@ import acr.browser.lightning.settings.framework.ClickableState
 import acr.browser.lightning.settings.framework.SettingsBottomSheetChooserState
 import acr.browser.lightning.settings.framework.SettingsBottomSheetInputState
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
+import acr.browser.lightning.settings.framework.SettingsSnackBarState
 import acr.browser.lightning.settings.framework.ToggleState
 import acr.browser.lightning.useragent.UserAgentChoice
 import acr.browser.lightning.utils.FileUtils
@@ -43,7 +44,11 @@ class GeneralSettingsScreen @Inject constructor(
                 isChecked = { userPreferencesDataStore.saveDataEnabled.get() },
                 onToggle = {
                     userPreferencesDataStore.saveDataEnabled.set(it)
-                    null
+                    if (it) {
+                        SettingsSnackBarState(resourceProvider.stringResource(R.string.header_warning))
+                    } else {
+                        null
+                    }
                 }
             ),
             ToggleState(

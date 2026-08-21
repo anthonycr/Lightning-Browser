@@ -42,7 +42,11 @@ class PrivacySettingsScreen @Inject constructor(
                 isChecked = { userPreferencesDataStore.doNotTrackEnabled.get() },
                 onToggle = {
                     userPreferencesDataStore.doNotTrackEnabled.set(it)
-                    null
+                    if (it) {
+                        SettingsSnackBarState(resourceProvider.stringResource(R.string.header_warning))
+                    } else {
+                        null
+                    }
                 }
             ),
             ToggleState(
@@ -51,7 +55,11 @@ class PrivacySettingsScreen @Inject constructor(
                 isChecked = { userPreferencesDataStore.removeIdentifyingHeadersEnabled.get() },
                 onToggle = {
                     userPreferencesDataStore.removeIdentifyingHeadersEnabled.set(it)
-                    null
+                    if (it) {
+                        SettingsSnackBarState(resourceProvider.stringResource(R.string.header_warning))
+                    } else {
+                        null
+                    }
                 }
             ),
             ToggleState(
