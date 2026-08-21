@@ -40,6 +40,7 @@ class AdvancedSettingsScreen @Inject constructor(
             ),
             ToggleState(
                 title = resourceProvider.stringResource(R.string.restore),
+                summary = { resourceProvider.stringResource(R.string.recommended) },
                 isChecked = { userPreferencesDataStore.restoreLostTabsEnabled.get() },
                 onToggle = {
                     userPreferencesDataStore.restoreLostTabsEnabled.set(it)
