@@ -112,7 +112,7 @@ dependencies {
     val coroutines = "1.11.0"
     val leakcanary = "2.14"
     val lifecycle = "2.11.0"
-
+    val serialization = "1.11.0"
 
     implementation(platform("androidx.compose:compose-bom:2026.08.00"))
     implementation("androidx.activity:activity:1.13.0")
@@ -155,7 +155,8 @@ dependencies {
     implementation("javax.inject:javax.inject:1")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serialization")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization")
     implementation("org.jsoup:jsoup:1.23.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
