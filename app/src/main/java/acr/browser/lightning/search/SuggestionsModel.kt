@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
@@ -87,13 +88,13 @@ class SuggestionsModel @Inject constructor(
         .let { sanitizedQuery ->
             val searchEntries: Flow<List<WebPage>> = sanitizedQuery.map {
                 suggestionsRepository.await().resultsForSearch(it)
-            }
+            }.onStart { emit(emptyList()) }
             val bookmarkEntries: Flow<List<WebPage>> = sanitizedQuery.map {
                 getBookmarksForQuery(it)
-            }
+            }.onStart { emit(emptyList()) }
             val historyEntries: Flow<List<WebPage>> = sanitizedQuery.map {
                 historyRepository.findHistoryEntriesContaining(it)
-            }
+            }.onStart { emit(emptyList()) }
 
             // Entries priority and ideal count:
             // Bookmarks - 2
