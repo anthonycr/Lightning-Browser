@@ -147,7 +147,8 @@ fun BrowserSearchSuggestions(
             )
         }
     ) {
-        val suggestions = suggestionsModel.results().collectAsState(emptyList())
+        val suggestionResults = remember { suggestionsModel.results() }
+        val suggestions = suggestionResults.collectAsState(emptyList())
         suggestions.value.forEach {
             Box(
                 modifier = Modifier
