@@ -5,15 +5,19 @@ import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.di.SuggestionsClient
-import acr.browser.lightning.extensions.map
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.resources.ResourceProvider
 import kotlinx.coroutines.Deferred
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
+import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.serializer
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
-import org.json.JSONArray
-import org.json.JSONObject
 import java.util.Locale
 import javax.inject.Inject
 
@@ -37,6 +41,7 @@ class NaverSuggestionsModel @Inject constructor(
 ) {
 
     private val searchSubtitle = resourceProvider.stringResource(R.string.suggestion)
+    private val serializer = Json.serializersModule.serializer<NaverSuggestion>()
 
     // https://ac.search.naver.com/nx/ac?q=$query&q_enc=UTF-8&st=100&frm=nv&r_format=json&r_enc=UTF-8&r_unicode=0&t_koreng=1&ans=2&run=2&rev=4&con=1
     override fun createQueryUrl(query: String, language: String): HttpUrl =
@@ -58,13 +63,18 @@ class NaverSuggestionsModel @Inject constructor(
             .addQueryParameter("con", "1")
             .build()
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun parseResults(responseBody: ResponseBody): List<SearchSuggestion> {
-        return JSONObject(responseBody.string())
-            .getJSONArray("items")
-            .getJSONArray(0)
-            .map { it as JSONArray }
-            .map { it[0] as String }
-            .map { SearchSuggestion("$searchSubtitle \"$it\"", it) }
+        return Json.decodeFromStream(serializer, responseBody.byteStream()).items[0].map {
+            SearchSuggestion("$searchSubtitle \"$it\"", it[0])
+        }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
+    @JsonIgnoreUnknownKeys
+    @Serializable
+    data class NaverSuggestion(
+        @SerialName("items")
+        val items: List<List<List<String>>>
+    )
 }

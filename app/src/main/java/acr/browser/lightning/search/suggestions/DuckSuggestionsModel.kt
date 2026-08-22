@@ -5,15 +5,19 @@ import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.di.SuggestionsClient
-import acr.browser.lightning.extensions.map
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.resources.ResourceProvider
 import kotlinx.coroutines.Deferred
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
+import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.serializer
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
-import org.json.JSONArray
-import org.json.JSONObject
 import java.util.Locale
 import javax.inject.Inject
 
@@ -37,6 +41,7 @@ class DuckSuggestionsModel @Inject constructor(
 ) {
 
     private val searchSubtitle = resourceProvider.stringResource(R.string.suggestion)
+    private val serializer = Json.serializersModule.serializer<List<DuckSuggestion>>()
 
     // https://duckduckgo.com/ac/?q={query}
     override fun createQueryUrl(query: String, language: String): HttpUrl = HttpUrl.Builder()
@@ -46,12 +51,18 @@ class DuckSuggestionsModel @Inject constructor(
         .addEncodedQueryParameter("q", query)
         .build()
 
+    @OptIn(ExperimentalSerializationApi::class)
     @Throws(Exception::class)
     override fun parseResults(responseBody: ResponseBody): List<SearchSuggestion> {
-        return JSONArray(responseBody.string())
-            .map { it as JSONObject }
-            .map { it.getString("phrase") }
-            .map { SearchSuggestion("$searchSubtitle \"$it\"", it) }
+        return Json.decodeFromStream(serializer, responseBody.byteStream())
+            .map { SearchSuggestion("$searchSubtitle \"$it\"", it.phrase) }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
+    @JsonIgnoreUnknownKeys
+    @Serializable
+    data class DuckSuggestion(
+        @SerialName("phrase")
+        val phrase: String
+    )
 }
