@@ -35,7 +35,7 @@ class BaiduSuggestionsModelTest {
         )
 
         (0..100).forEach {
-            val result = "http://suggestion.baidu.com/s?wd=$it&action=opensearch"
+            val result = "http://suggestion.baidu.com/su?wd=$it&json=2&cb="
 
             assertThat(
                 suggestionsModel.createQueryUrl(
