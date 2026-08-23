@@ -56,7 +56,7 @@ class KagiSuggestionsModel @Inject constructor(
     @OptIn(ExperimentalSerializationApi::class)
     override fun parseResults(responseBody: ResponseBody): List<SearchSuggestion> {
         return Json.decodeFromStream(serializer, responseBody.byteStream())
-            .map { SearchSuggestion("$searchSubtitle \"$it\"", it.text) }
+            .map { SearchSuggestion("$searchSubtitle \"${it.text}\"", it.text) }
     }
 
     @OptIn(ExperimentalSerializationApi::class)

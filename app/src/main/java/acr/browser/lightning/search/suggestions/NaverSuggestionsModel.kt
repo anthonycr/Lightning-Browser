@@ -66,7 +66,7 @@ class NaverSuggestionsModel @Inject constructor(
     @OptIn(ExperimentalSerializationApi::class)
     override fun parseResults(responseBody: ResponseBody): List<SearchSuggestion> {
         return Json.decodeFromStream(serializer, responseBody.byteStream()).items[0].map {
-            SearchSuggestion("$searchSubtitle \"$it\"", it[0])
+            SearchSuggestion("$searchSubtitle \"${it[0]}\"", it[0])
         }
     }
 

@@ -55,7 +55,7 @@ class DuckSuggestionsModel @Inject constructor(
     @Throws(Exception::class)
     override fun parseResults(responseBody: ResponseBody): List<SearchSuggestion> {
         return Json.decodeFromStream(serializer, responseBody.byteStream())
-            .map { SearchSuggestion("$searchSubtitle \"$it\"", it.phrase) }
+            .map { SearchSuggestion("$searchSubtitle \"${it.phrase}\"", it.phrase) }
     }
 
     @OptIn(ExperimentalSerializationApi::class)
