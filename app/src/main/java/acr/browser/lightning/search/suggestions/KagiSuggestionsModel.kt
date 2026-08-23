@@ -23,9 +23,6 @@ import javax.inject.Inject
 
 /**
  * Search suggestions for Kagi. Requires being logged into Kagi.
- *
- * TODO: Provide logged in cookie from browser as request header.
- * TODO: Provide UI info that login is required.
  */
 class KagiSuggestionsModel @Inject constructor(
     @SuggestionsClient okHttpClient: Deferred<@JvmSuppressWildcards OkHttpClient>,

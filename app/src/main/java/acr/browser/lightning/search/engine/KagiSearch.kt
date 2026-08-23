@@ -4,6 +4,7 @@ import acr.browser.lightning.R
 
 /**
  * The Kagi search engine.
+ * TODO: Warn that requires login.
  *
  * See TODO: for the icon.
  */
