@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+Upcoming
+----------------------------
+- New: Modernized UI components
+- New: Bottom tabs UI option
+- New: Kagi search engine and suggestions support
+- New: Force websites to render in dark mode
+- New: Toggle to enable/disable opening links in other apps (on by default)
+- Fixed: A large number of accumulated bugs
+- Removed: Ask search engine option (RIP)
+
 Version 5.1.0 *(2019-10-01)*
 ----------------------------
 - Made copy link action available in incognito mode.
