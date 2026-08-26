@@ -1,7 +1,6 @@
 package acr.browser.lightning.settings.navigation
 
 import acr.browser.lightning.concurrency.AppCoroutineScope
-import acr.browser.lightning.settings.SettingsNavigation
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject

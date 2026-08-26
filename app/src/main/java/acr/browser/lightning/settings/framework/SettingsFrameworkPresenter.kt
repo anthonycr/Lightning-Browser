@@ -1,6 +1,6 @@
 package acr.browser.lightning.settings.framework
 
-import acr.browser.lightning.settings.SettingsNavigation
+import acr.browser.lightning.settings.navigation.SettingsNavigation
 import acr.browser.lightning.settings.navigation.SettingsNavigator
 import android.net.Uri
 import androidx.lifecycle.ViewModel

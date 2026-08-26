@@ -1,6 +1,5 @@
 package acr.browser.lightning.settings.navigation
 
-import acr.browser.lightning.settings.SettingsNavigation
 import kotlinx.coroutines.flow.Flow
 
 /**

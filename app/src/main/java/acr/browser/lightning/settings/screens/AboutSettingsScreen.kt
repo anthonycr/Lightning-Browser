@@ -3,10 +3,10 @@ package acr.browser.lightning.settings.screens
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
 import acr.browser.lightning.resources.ResourceProvider
-import acr.browser.lightning.settings.SettingsNavigation
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
+import acr.browser.lightning.settings.navigation.SettingsNavigation
 import javax.inject.Inject
 
 class AboutSettingsScreen @Inject constructor(

@@ -6,31 +6,26 @@ package acr.browser.lightning.settings.activity
 import acr.browser.lightning.ThemableActivity
 import acr.browser.lightning.compose.BrowserTheme
 import acr.browser.lightning.compose.slideInFrom
-import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.di.injector
-import acr.browser.lightning.settings.SettingsNavigation
-import acr.browser.lightning.settings.SettingsScreen
 import acr.browser.lightning.settings.SettingsScreenStateProvider
 import acr.browser.lightning.settings.framework.SettingsFrameworkPresenter
 import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
 import acr.browser.lightning.settings.licenses.LicensesScreen
 import acr.browser.lightning.settings.licenses.LicensesScreenPresenter
+import acr.browser.lightning.settings.navigation.SettingsNavigation
 import acr.browser.lightning.settings.navigation.SettingsNavigator
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import javax.inject.Inject
 
 class SettingsActivity : ThemableActivity() {
 
-    @Inject internal lateinit var buildInfo: BuildInfo
     @Inject internal lateinit var settingsScreenStateProvider: SettingsScreenStateProvider
     @Inject internal lateinit var licensesScreenPresenterFactory: LicensesScreenPresenter.Factory
     @Inject internal lateinit var settingsNavigator: SettingsNavigator
@@ -53,24 +48,6 @@ class SettingsActivity : ThemableActivity() {
                     }
                 }) { state ->
                     when (state) {
-                        SettingsNavigation.ROOT -> SettingsScreen(
-                            useBlackStatusBarStateFlow,
-                            buildInfo,
-                            settingsNavigator,
-                        )
-
-                        SettingsNavigation.FAQ -> {
-                            val current = LocalContext.current
-                            LaunchedEffect("faq") {
-                                current.startActivity(
-                                    Intent(
-                                        Intent.ACTION_VIEW,
-                                        "http://acrdevelopment.org/lightning/faq".toUri()
-                                    )
-                                )
-                            }
-                        }
-
                         SettingsNavigation.LICENSES -> LicensesScreen(
                             useBlackStatusBarStateFlow,
                             viewModel(
