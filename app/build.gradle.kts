@@ -4,7 +4,7 @@ plugins {
     id("com.android.application")
     id("com.google.devtools.ksp") version "2.3.11"
     id("com.anthonycr.plugins.mezzanine") version "2.5.0"
-    id("com.autonomousapps.dependency-analysis") version "3.18.0"
+    id("com.autonomousapps.dependency-analysis") version "3.19.1"
     id("com.squareup.sort-dependencies") version "0.21.0"
     id("org.jetbrains.kotlin.plugin.compose") version "2.4.10"
     id("com.anthonycr.plugins.mockingbird") version "3.3.0"
