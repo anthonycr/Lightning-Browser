@@ -102,6 +102,12 @@ android {
     namespace = "acr.browser.lightning"
 }
 
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.runtimeConfiguration.resolutionStrategy.activateDependencyLocking()
+    }
+}
+
 dependencies {
     val robolectric = "4.16.1"
     val mezzanineVersion = "2.5.0"
