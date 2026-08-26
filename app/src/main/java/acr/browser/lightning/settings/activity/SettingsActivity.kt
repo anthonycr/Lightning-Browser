@@ -73,7 +73,11 @@ class SettingsActivity : ThemableActivity() {
                                     )
                                 )
                             ) {
-                                settingsNavigator.navigateTo(SettingsNavigation.ROOT)
+                                if (state == SettingsNavigation.ROOT) {
+                                    finish()
+                                } else {
+                                    settingsNavigator.navigateTo(SettingsNavigation.ROOT)
+                                }
                             }
                         }
                     }
