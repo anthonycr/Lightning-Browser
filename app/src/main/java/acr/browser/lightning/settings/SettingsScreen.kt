@@ -6,6 +6,7 @@ import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
 import acr.browser.lightning.settings.framework.SettingsClickableState
 import acr.browser.lightning.settings.framework.compose.SettingsClickable
+import acr.browser.lightning.settings.navigation.SettingsNavigator
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -19,17 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.flow.StateFlow
 
-enum class SettingsNavigation {
-    ROOT,
-    ADBLOCK,
-    GENERAL,
-    BOOKMARK,
-    DISPLAY,
-    PRIVACY,
-    ADVANCED,
-    ABOUT,
-    FAQ,
-    DEBUG
+enum class SettingsNavigation(val parent: SettingsNavigation?) {
+    ROOT(null),
+    ADBLOCK(ROOT),
+    GENERAL(ROOT),
+    BOOKMARK(ROOT),
+    DISPLAY(ROOT),
+    PRIVACY(ROOT),
+    ADVANCED(ROOT),
+    ABOUT(ROOT),
+    FAQ(ROOT),
+    LICENSES(ABOUT),
+    DEBUG(ROOT)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +39,7 @@ enum class SettingsNavigation {
 fun SettingsScreen(
     useBlackStatusBarStateFlow: StateFlow<Boolean?>,
     buildInfo: BuildInfo,
-    onNavigate: (SettingsNavigation) -> Unit
+    settingsNavigator: SettingsNavigator,
 ) {
     Scaffold(
         topBar = {
@@ -58,22 +60,22 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             SettingsClickable(SettingsClickableState(title = stringResource(R.string.settings_adblock))) {
-                onNavigate(SettingsNavigation.ADBLOCK)
+                settingsNavigator.navigateTo(SettingsNavigation.ADBLOCK)
             }
             SettingsClickable(SettingsClickableState(title = stringResource(R.string.settings_general))) {
-                onNavigate(SettingsNavigation.GENERAL)
+                settingsNavigator.navigateTo(SettingsNavigation.GENERAL)
             }
             SettingsClickable(SettingsClickableState(title = stringResource(R.string.bookmark_settings))) {
-                onNavigate(SettingsNavigation.BOOKMARK)
+                settingsNavigator.navigateTo(SettingsNavigation.BOOKMARK)
             }
             SettingsClickable(SettingsClickableState(title = stringResource(R.string.settings_display))) {
-                onNavigate(SettingsNavigation.DISPLAY)
+                settingsNavigator.navigateTo(SettingsNavigation.DISPLAY)
             }
             SettingsClickable(SettingsClickableState(title = stringResource(R.string.settings_privacy))) {
-                onNavigate(SettingsNavigation.PRIVACY)
+                settingsNavigator.navigateTo(SettingsNavigation.PRIVACY)
             }
             SettingsClickable(SettingsClickableState(title = stringResource(R.string.settings_advanced))) {
-                onNavigate(SettingsNavigation.ADVANCED)
+                settingsNavigator.navigateTo(SettingsNavigation.ADVANCED)
             }
             SettingsClickable(
                 SettingsClickableState(
@@ -81,7 +83,7 @@ fun SettingsScreen(
                     summary = stringResource(R.string.settings_about_explain)
                 )
             ) {
-                onNavigate(SettingsNavigation.ABOUT)
+                settingsNavigator.navigateTo(SettingsNavigation.ABOUT)
             }
             SettingsClickable(
                 SettingsClickableState(
@@ -89,11 +91,11 @@ fun SettingsScreen(
                     summary = stringResource(R.string.faq_description)
                 )
             ) {
-                onNavigate(SettingsNavigation.FAQ)
+                settingsNavigator.navigateTo(SettingsNavigation.FAQ)
             }
             if (buildInfo.buildType == BuildType.DEBUG) {
                 SettingsClickable(SettingsClickableState(title = stringResource(R.string.debug_title))) {
-                    onNavigate(SettingsNavigation.DEBUG)
+                    settingsNavigator.navigateTo(SettingsNavigation.DEBUG)
                 }
             }
         }

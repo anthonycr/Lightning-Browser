@@ -1,9 +1,12 @@
 package acr.browser.lightning.settings.framework
 
+import acr.browser.lightning.settings.SettingsNavigation
+import acr.browser.lightning.settings.navigation.SettingsNavigator
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -33,6 +36,8 @@ class ClickableState(
 sealed interface ClickableOnClick {
 
     data object None : ClickableOnClick
+
+    class Navigate(val settingsNavigation: SettingsNavigation) : ClickableOnClick
 
     class Action(val action: suspend () -> Unit) : ClickableOnClick
 
@@ -96,17 +101,20 @@ sealed interface SettingsFrameworkUiEvent {
 }
 
 class SettingsFrameworkPresenter(
-    private val settingsFrameworkState: SettingsFrameworkState
+    private val settingsFrameworkState: SettingsFrameworkState,
+    private val settingsNavigator: SettingsNavigator,
 ) : ViewModel() {
 
     class Factory(
-        private val settingsFrameworkState: () -> SettingsFrameworkState
+        private val settingsFrameworkState: () -> SettingsFrameworkState,
+        private val settingsNavigator: SettingsNavigator,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             require(modelClass == SettingsFrameworkPresenter::class.java)
             return SettingsFrameworkPresenter(
-                settingsFrameworkState()
+                settingsFrameworkState(),
+                settingsNavigator,
             ) as T
         }
     }
@@ -120,9 +128,7 @@ class SettingsFrameworkPresenter(
 
     private val pendingActionState = MutableStateFlow<ClickableOnClick>(ClickableOnClick.None)
 
-    private val eventFlow = MutableStateFlow<SettingsFrameworkUiEvent>(
-        SettingsFrameworkUiEvent.Initialize
-    )
+    private val eventFlow = MutableSharedFlow<SettingsFrameworkUiEvent>(replay = 1)
 
     private suspend fun SettingsFrameworkState.asUiState(
         bottomSheetChooser: SettingsBottomSheetChooserState? = null,
@@ -210,11 +216,18 @@ class SettingsFrameworkPresenter(
                     )
                 )
             }
+
+            is ClickableOnClick.Navigate -> {
+                settingsNavigator.navigateTo(this.settingsNavigation)
+                pendingActionState.emit(ClickableOnClick.None)
+                settingsFrameworkState.asUiState()
+            }
         }
     }
 
     init {
         viewModelScope.launch {
+            eventFlow.emit(SettingsFrameworkUiEvent.Initialize)
             eventFlow.collectLatest { event ->
                 val transformedState = when (event) {
                     is SettingsFrameworkUiEvent.BottomSheetChoiceResult -> {

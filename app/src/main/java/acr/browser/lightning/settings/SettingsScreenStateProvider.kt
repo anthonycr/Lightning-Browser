@@ -34,6 +34,7 @@ class SettingsScreenStateProvider @Inject constructor(
         SettingsNavigation.ADVANCED -> advancedSettingsScreen.createSettingsFrameworkState()
         SettingsNavigation.ABOUT -> aboutSettingsScreen.createSettingsFrameworkState()
         SettingsNavigation.FAQ -> error("Unsupported")
+        SettingsNavigation.LICENSES -> error("Unsupported")
         SettingsNavigation.DEBUG -> debugSettingsScreen.createSettingsFrameworkState()
     }
 }

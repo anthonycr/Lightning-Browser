@@ -3,6 +3,7 @@ package acr.browser.lightning.settings.screens
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
 import acr.browser.lightning.resources.ResourceProvider
+import acr.browser.lightning.settings.SettingsNavigation
 import acr.browser.lightning.settings.framework.ClickableOnClick
 import acr.browser.lightning.settings.framework.ClickableState
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
@@ -25,6 +26,10 @@ class AboutSettingsScreen @Inject constructor(
                 onClick = ClickableOnClick.Action {}
             ),
             ClickableState(
+                title = resourceProvider.stringResource(R.string.licenses),
+                onClick = ClickableOnClick.Navigate(SettingsNavigation.LICENSES)
+            ),
+            ClickableState(
                 title = resourceProvider.stringResource(R.string.app_name),
                 summary = { resourceProvider.stringResource(R.string.mpl_license) },
                 onClick = ClickableOnClick.WebLink("http://www.mozilla.org/MPL/2.0/")
@@ -38,11 +43,6 @@ class AboutSettingsScreen @Inject constructor(
                 title = resourceProvider.stringResource(R.string.hphosts_ad_server_list),
                 summary = { resourceProvider.stringResource(R.string.freeware) },
                 onClick = ClickableOnClick.WebLink("http://hosts-file.net/")
-            ),
-            ClickableState(
-                title = resourceProvider.stringResource(R.string.jsoup),
-                summary = { resourceProvider.stringResource(R.string.mit_license) },
-                onClick = ClickableOnClick.WebLink("http://jsoup.org/license")
             ),
         )
     )

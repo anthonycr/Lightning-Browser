@@ -13,15 +13,16 @@ import acr.browser.lightning.settings.SettingsScreen
 import acr.browser.lightning.settings.SettingsScreenStateProvider
 import acr.browser.lightning.settings.framework.SettingsFrameworkPresenter
 import acr.browser.lightning.settings.framework.SettingsFrameworkScreen
+import acr.browser.lightning.settings.licenses.LicensesScreen
+import acr.browser.lightning.settings.licenses.LicensesScreenPresenter
+import acr.browser.lightning.settings.navigation.SettingsNavigator
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,6 +32,8 @@ class SettingsActivity : ThemableActivity() {
 
     @Inject internal lateinit var buildInfo: BuildInfo
     @Inject internal lateinit var settingsScreenStateProvider: SettingsScreenStateProvider
+    @Inject internal lateinit var licensesScreenPresenterFactory: LicensesScreenPresenter.Factory
+    @Inject internal lateinit var settingsNavigator: SettingsNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.settingsComponentBuilder()
@@ -42,21 +45,19 @@ class SettingsActivity : ThemableActivity() {
 
         setContent {
             BrowserTheme(appThemeStateFlow) {
-                var navigationState by remember { mutableStateOf(SettingsNavigation.ROOT) }
+                val navigationState by settingsNavigator.events.collectAsState(SettingsNavigation.ROOT)
                 AnimatedContent(navigationState, transitionSpec = {
-                    if (targetState == SettingsNavigation.ROOT) {
-                        slideInFrom { -it / 2 }
-                    } else {
-                        slideInFrom { it / 2 }
+                    when {
+                        targetState == initialState.parent -> slideInFrom { -it / 2 }
+                        else -> slideInFrom { it / 2 }
                     }
                 }) { state ->
                     when (state) {
                         SettingsNavigation.ROOT -> SettingsScreen(
                             useBlackStatusBarStateFlow,
-                            buildInfo
-                        ) {
-                            navigationState = it
-                        }
+                            buildInfo,
+                            settingsNavigator,
+                        )
 
                         SettingsNavigation.FAQ -> {
                             val current = LocalContext.current
@@ -70,6 +71,19 @@ class SettingsActivity : ThemableActivity() {
                             }
                         }
 
+                        SettingsNavigation.LICENSES -> LicensesScreen(
+                            useBlackStatusBarStateFlow,
+                            viewModel(
+                                key = "licenses",
+                                factory = licensesScreenPresenterFactory
+                            ),
+                            onClickUrl = {
+                                startActivity(Intent(Intent.ACTION_VIEW, it.toUri()))
+                            }
+                        ) {
+                            settingsNavigator.navigateTo(SettingsNavigation.ABOUT)
+                        }
+
                         else -> {
                             val frameworkState = settingsScreenStateProvider.provideState(state)
                             SettingsFrameworkScreen(
@@ -77,14 +91,14 @@ class SettingsActivity : ThemableActivity() {
                                 viewModel(
                                     key = state.name,
                                     factory = SettingsFrameworkPresenter.Factory(
-                                        settingsFrameworkState = { frameworkState }
+                                        settingsFrameworkState = { frameworkState },
+                                        settingsNavigator = settingsNavigator,
                                     )
                                 )
                             ) {
-                                navigationState = SettingsNavigation.ROOT
+                                settingsNavigator.navigateTo(SettingsNavigation.ROOT)
                             }
                         }
-                        // TODO: Add licenses screen
                     }
                 }
             }
