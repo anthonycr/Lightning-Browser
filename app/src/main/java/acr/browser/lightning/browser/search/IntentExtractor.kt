@@ -19,7 +19,7 @@ class IntentExtractor @Inject constructor() {
             Intent.ACTION_WEB_SEARCH -> extractSearchFromIntent(intent)
 
             Intent.ACTION_VIEW -> intent.dataString?.let(BrowserContract.Action::LoadUrl)
-            else -> null
+            else -> intent?.dataString?.let(BrowserContract.Action::LoadUrl)
         }
     }
 
