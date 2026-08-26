@@ -10,8 +10,6 @@ import androidx.core.net.toUri
  */
 class IncognitoBrowserActivity : BrowserActivity() {
 
-    override fun isIncognito(): Boolean = true
-
     companion object {
         /**
          * Creates an intent to launch the browser with an optional [url] to load.

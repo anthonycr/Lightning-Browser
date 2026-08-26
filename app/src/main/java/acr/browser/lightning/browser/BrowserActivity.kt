@@ -59,11 +59,6 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
     @Inject
     internal lateinit var suggestionsModel: SuggestionsModel
 
-    /**
-     * True if the activity is operating in incognito mode, false otherwise.
-     */
-    abstract fun isIncognito(): Boolean
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         val browserFrame = FrameLayout(this)
