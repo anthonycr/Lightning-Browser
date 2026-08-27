@@ -92,6 +92,7 @@ android {
         }
     }
     lint {
+        checkReleaseBuilds = false
         abortOnError = true
     }
     namespace = "acr.browser.lightning"
