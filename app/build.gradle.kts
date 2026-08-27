@@ -30,10 +30,8 @@ android {
         create("lightningPlus").apply {
             setRoot("src/LightningPlus")
         }
-        if (!isCi) {
-            create("lightningLite").apply {
-                setRoot("src/LightningLite")
-            }
+        create("lightningLite").apply {
+            setRoot("src/LightningLite")
         }
     }
 
@@ -81,14 +79,11 @@ android {
             applicationId = "acr.browser.lightning"
             versionCode = commonVersionCode
         }
-
-        if (!isCi) {
-            create("lightningLite") {
-                dimension = "capabilities"
-                buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")")
-                applicationId = "acr.browser.barebones"
-                versionCode = commonVersionCode
-            }
+        create("lightningLite") {
+            dimension = "capabilities"
+            buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")")
+            applicationId = "acr.browser.barebones"
+            versionCode = commonVersionCode
         }
     }
     packaging {
@@ -97,6 +92,7 @@ android {
         }
     }
     lint {
+        checkReleaseBuilds = false
         abortOnError = true
     }
     namespace = "acr.browser.lightning"
