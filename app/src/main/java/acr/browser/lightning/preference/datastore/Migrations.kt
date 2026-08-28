@@ -40,18 +40,6 @@ fun Pair<MutablePreferences, SharedPreferencesView>.migrateNullableString(
 }
 
 /**
- * Migrate an int shared preference to preferences.
- */
-fun Pair<MutablePreferences, SharedPreferencesView>.migrateInt(
-    preferenceStore: NonNullPreferenceStore<Int>
-) {
-    val (mutablePreference, sharedPreferences) = this
-    val key = preferenceStore.key
-    val defaultValue = preferenceStore.defaultValue
-    mutablePreference[key] = sharedPreferences.getInt(key.name, defaultValue)
-}
-
-/**
  * Migrate an enum shared preference to preferences.
  */
 fun <T> Pair<MutablePreferences, SharedPreferencesView>.migrateEnum(
