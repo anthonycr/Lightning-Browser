@@ -135,7 +135,7 @@ fun AppTheme.asColorScheme(systemDarkTheme: Boolean): ColorScheme = when (this) 
     }
 }
 
-fun AppTheme.isDark(systemDarkTheme: Boolean): Boolean = when(this) {
+fun AppTheme.isDark(systemDarkTheme: Boolean): Boolean = when (this) {
     AppTheme.LIGHT -> false
     AppTheme.DARK -> true
     AppTheme.BLACK -> true
