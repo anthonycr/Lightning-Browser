@@ -49,19 +49,4 @@ object FileUtils {
     fun megabytesToBytes(megaBytes: Long): Long {
         return megaBytes * 1024 * 1024
     }
-
-    @JvmStatic
-    fun addNecessarySlashes(originalPath: String?): String {
-        var originalPath = originalPath
-        if (originalPath.isNullOrEmpty()) {
-            return "/"
-        }
-        if (originalPath[originalPath.length - 1] != '/') {
-            originalPath = "$originalPath/"
-        }
-        if (originalPath[0] != '/') {
-            originalPath = "/$originalPath"
-        }
-        return originalPath
-    }
 }
