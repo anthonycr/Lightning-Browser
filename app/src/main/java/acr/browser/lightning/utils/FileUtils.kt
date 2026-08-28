@@ -23,8 +23,7 @@ object FileUtils {
      * @param throwable the Throwable to log to external storage
      */
     fun writeCrashToStorage(throwable: Throwable) {
-        val fileName =
-            throwable.javaClass.simpleName + '_' + System.currentTimeMillis() + ".txt"
+        val fileName = "${throwable.javaClass.simpleName}_${System.currentTimeMillis()}.txt"
         val outputFile = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
             fileName
