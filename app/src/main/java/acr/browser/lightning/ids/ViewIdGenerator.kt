@@ -18,6 +18,7 @@ class ViewIdGenerator @Inject constructor() {
      * Claim the [id] as taken so that it cannot be generated.
      */
     fun claimViewId(id: Int) {
+        require(!usedViewIds.contains(id)) { "Id [$id] already claimed!" }
         usedViewIds.add(id)
     }
 

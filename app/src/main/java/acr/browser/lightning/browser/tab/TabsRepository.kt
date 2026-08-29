@@ -5,6 +5,7 @@ import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.browser.tab.settings.TabSettings
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.di.InitialAction
+import acr.browser.lightning.ids.ViewIdGenerator
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.search
@@ -34,6 +35,7 @@ class TabsRepository @Inject constructor(
     private val permissionInitializerFactory: PermissionInitializer.Factory,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val searchEngineProvider: SearchEngineProvider,
+    private val viewIdGenerator: ViewIdGenerator,
 ) : BrowserContract.Model {
 
     private val isInitialized = CompletableDeferred<Unit>()
@@ -73,6 +75,15 @@ class TabsRepository @Inject constructor(
         createTabUnsafe(tabInitializer, tabType)
     }
 
+    private fun TabInitializer.tabId(): Int = if (this is FreezableInitializer) {
+        val frozenId = this.id.takeIf { it != -1 }?.also {
+            viewIdGenerator.claimViewId(it)
+        } ?: viewIdGenerator.generateViewId()
+        frozenId
+    } else {
+        viewIdGenerator.generateViewId()
+    }
+
     /**
      * Creates a tab without waiting for the browser to be initialized.
      */
@@ -81,9 +92,16 @@ class TabsRepository @Inject constructor(
         tabType: TabModel.Type,
         emitUpdate: Boolean = true,
     ): TabModel = withContext(coroutineDispatchers.main) {
+        val id = tabInitializer.tabId()
         val tabSettings = TabSettings.create(userPreferencesDataStore, userAgentProvider)
         val webViewLazy = webViewFactory.createWebView(tabSettings)
-        val tabModel = tabFactory.constructTab(tabInitializer, webViewLazy, tabType, tabSettings)
+        val tabModel = tabFactory.constructTab(
+            id = id,
+            tabInitializer = tabInitializer,
+            webView = webViewLazy,
+            tabType = tabType,
+            tabSettings = tabSettings
+        )
         tabPager.addTab(tabModel.id, webViewLazy)
         tabsList = tabsList + tabModel
 

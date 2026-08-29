@@ -29,6 +29,7 @@ class TabFactory @Inject constructor(
      * Constructs a tab from the [webView] with the provided [tabInitializer].
      */
     suspend fun constructTab(
+        id: Int,
         tabInitializer: TabInitializer,
         webView: Lazy<WebView>,
         tabType: TabModel.Type,
@@ -39,6 +40,7 @@ class TabFactory @Inject constructor(
             CoroutineScope(coroutineDispatchers.main + SupervisorJob())
         )
         tabAdapterFactory.create(
+            id = id,
             tabInitializer = tabInitializer,
             webView = webView,
             requestHeaders = headers,

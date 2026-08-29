@@ -55,6 +55,7 @@ import kotlin.time.Duration.Companion.milliseconds
  */
 @SuppressLint("ClickableViewAccessibility")
 class TabAdapter @AssistedInject constructor(
+    @Assisted override val id: Int,
     @Assisted private val tabInitializer: TabInitializer,
     @Assisted private val webViewLazy: Lazy<WebView>,
     @Assisted private val requestHeaders: Map<String, String>,
@@ -73,6 +74,7 @@ class TabAdapter @AssistedInject constructor(
     interface Factory {
 
         fun create(
+            id: Int,
             tabInitializer: TabInitializer,
             webView: Lazy<WebView>,
             requestHeaders: Map<String, String>,
@@ -82,22 +84,13 @@ class TabAdapter @AssistedInject constructor(
         ): TabAdapter
     }
 
-    private var latentInitializer: FreezableInitializer? = null
+    private var latentInitializer: FreezableInitializer? = tabInitializer as? FreezableInitializer
 
     private var findInPageQuery: String? = null
     private var toggleDesktop: Boolean = false
     private val downloadsShareFlow = MutableSharedFlow<PendingDownload>()
     private val focusSharedFlow = MutableSharedFlow<Unit>()
     private val showHideFlow = MutableSharedFlow<Boolean>()
-
-    override val id: Int = if (tabInitializer is FreezableInitializer) {
-        latentInitializer = tabInitializer
-        val frozenId = tabInitializer.id.takeIf { it != -1 } ?: viewIdGenerator.generateViewId()
-        viewIdGenerator.claimViewId(frozenId)
-        frozenId
-    } else {
-        viewIdGenerator.generateViewId()
-    }
 
     private val tabWebChromeClient by lazy { tabWebChromeClientFactory.create(tabCoroutineScope) }
 
