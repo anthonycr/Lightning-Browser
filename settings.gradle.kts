@@ -9,6 +9,7 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
+        maven { setUrl("https://repo1.maven.org/maven2") }
         gradlePluginPortal()
     }
 }
