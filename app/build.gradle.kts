@@ -110,7 +110,7 @@ dependencies {
     val daggerVersion = "2.60.1"
     val kotlin = "2.4.10"
     val datastore = "1.2.1"
-    val coil = "3.6.0"
+    val coil = "3.6.1"
     val coroutines = "1.11.0"
     val leakcanary = "2.14"
     val lifecycle = "2.11.0"
