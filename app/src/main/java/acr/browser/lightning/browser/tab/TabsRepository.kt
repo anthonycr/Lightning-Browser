@@ -131,7 +131,7 @@ class TabsRepository @Inject constructor(
 
     override suspend fun initializeTabs(): List<TabModel> =
         withContext(coroutineDispatchers.default) {
-            val oldTabs = bundleStore.retrieve().map {
+            val oldTabsDeferred = bundleStore.retrieve().map {
                 async {
                     createTabUnsafe(
                         tabInitializer = it,
@@ -156,6 +156,8 @@ class TabsRepository @Inject constructor(
                 null
             }
 
+            // Wait until old tabs are loaded before creating new tab
+            val oldTabs = oldTabsDeferred.awaitAll()
             val newTab = newTabInitializer?.let {
                 createTabUnsafe(
                     tabInitializer = it,
@@ -165,9 +167,9 @@ class TabsRepository @Inject constructor(
             }
 
             tabsList = if (newTab != null) {
-                oldTabs.awaitAll() + newTab
+                oldTabs + newTab
             } else {
-                oldTabs.awaitAll()
+                oldTabs
             }
             isInitialized.complete(Unit)
 
