@@ -372,6 +372,7 @@ class TabAdapter @AssistedInject constructor(
                 latentInitializer = null
             } else {
                 webView.onPause()
+                webView.settings.offscreenPreRaster = false
             }
         }
 

@@ -107,6 +107,7 @@ class WebViewFactory @Inject constructor(
             settings.displayZoomControls = false
             settings.allowContentAccess = true
             settings.allowFileAccess = true
+            settings.offscreenPreRaster = true
 
             val modifiesHeaders = tabSettings.doNotTrackEnabled
                 || tabSettings.saveDataEnabled
