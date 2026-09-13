@@ -64,109 +64,107 @@ class WebViewFactory @Inject constructor(
      * Construct a [WebView] based on the user's preferences.
      */
     @SuppressLint("SetJavaScriptEnabled")
-    fun createWebView(tabSettings: TabSettings): Lazy<WebView> = lazy {
-        WebView(activity).apply {
-            tag = CompositeTouchListener().also(::setOnTouchListener)
-            isFocusableInTouchMode = true
-            isFocusable = true
-            setBackgroundColor(Color.WHITE)
+    fun createWebView(tabSettings: TabSettings): WebView = WebView(activity).apply {
+        tag = CompositeTouchListener().also(::setOnTouchListener)
+        isFocusableInTouchMode = true
+        isFocusable = true
+        setBackgroundColor(Color.WHITE)
 
-            importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
+        importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
 
-            isScrollbarFadingEnabled = true
-            isSaveEnabled = true
-            overScrollMode = View.OVER_SCROLL_NEVER
-            setNetworkAvailable(true)
+        isScrollbarFadingEnabled = true
+        isSaveEnabled = true
+        overScrollMode = View.OVER_SCROLL_NEVER
+        setNetworkAvailable(true)
 
-            if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
-                WebSettingsCompat.setAlgorithmicDarkeningAllowed(
-                    settings,
-                    tabSettings.algorithmicDarkeningEnabled
-                )
-            } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-                // Remove when minSdk >= 33
-                @Suppress("DEPRECATION")
-                WebSettingsCompat.setForceDark(settings, WebSettingsCompat.FORCE_DARK_ON)
-            }
-            settings.mediaPlaybackRequiresUserGesture = true
-
-            settings.mixedContentMode = if (!incognitoMode) {
-                WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
-            } else {
-                WebSettings.MIXED_CONTENT_NEVER_ALLOW
-            }
-
-            settings.domStorageEnabled = true
-            // Remove when minSdk >= 35
-            @Suppress("DEPRECATION")
-            settings.databaseEnabled = true
-            settings.cacheMode = WebSettings.LOAD_DEFAULT
-
-            settings.setSupportZoom(true)
-            settings.builtInZoomControls = true
-            settings.displayZoomControls = false
-            settings.allowContentAccess = true
-            settings.allowFileAccess = true
-            settings.offscreenPreRaster = true
-
-            val modifiesHeaders = tabSettings.doNotTrackEnabled
-                || tabSettings.saveDataEnabled
-                || tabSettings.removeIdentifyingHeadersEnabled
-
-            settings.defaultTextEncodingName = tabSettings.textEncoding
-            setColorMode(Paint(), tabSettings.renderingMode)
-
-            if (!incognitoMode) {
-                settings.setGeolocationEnabled(tabSettings.locationEnabled)
-            } else {
-                settings.setGeolocationEnabled(false)
-            }
-
-            settings.userAgentString = tabSettings.userAgent
-
-            if (tabSettings.javaScriptEnabled) {
-                settings.javaScriptEnabled = true
-                settings.javaScriptCanOpenWindowsAutomatically = true
-            } else {
-                settings.javaScriptEnabled = false
-                settings.javaScriptCanOpenWindowsAutomatically = false
-            }
-
-            if (tabSettings.textReflowEnabled) {
-                settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
-                try {
-                    settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
-                } catch (e: Exception) {
-                    // This shouldn't be necessary, but there are a number
-                    // of KitKat devices that crash trying to set this
-                    logger.log(TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING")
-                }
-            } else {
-                settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
-            }
-
-            settings.blockNetworkImage = tabSettings.blockImagesEnabled
-            // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
-            settings.setSupportMultipleWindows(tabSettings.popupsEnabled && !modifiesHeaders)
-
-            settings.useWideViewPort = tabSettings.useWideViewPortEnabled
-            settings.loadWithOverviewMode = tabSettings.overviewModeEnabled
-            settings.textZoom = when (tabSettings.textSize) {
-                TextSize.XX_LARGE -> 200
-                TextSize.X_LARGE -> 150
-                TextSize.LARGE -> 125
-                TextSize.MEDIUM -> 100
-                TextSize.SMALL -> 75
-                TextSize.X_SMALL -> 50
-            }
-
-            CookieManager.getInstance().setAcceptCookie(tabSettings.cookiesEnabled)
-
-            CookieManager.getInstance().setAcceptThirdPartyCookies(
-                this,
-                !tabSettings.blockThirdPartyCookiesEnabled
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
+            WebSettingsCompat.setAlgorithmicDarkeningAllowed(
+                settings,
+                tabSettings.algorithmicDarkeningEnabled
             )
+        } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+            // Remove when minSdk >= 33
+            @Suppress("DEPRECATION")
+            WebSettingsCompat.setForceDark(settings, WebSettingsCompat.FORCE_DARK_ON)
         }
+        settings.mediaPlaybackRequiresUserGesture = true
+
+        settings.mixedContentMode = if (!incognitoMode) {
+            WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+        } else {
+            WebSettings.MIXED_CONTENT_NEVER_ALLOW
+        }
+
+        settings.domStorageEnabled = true
+        // Remove when minSdk >= 35
+        @Suppress("DEPRECATION")
+        settings.databaseEnabled = true
+        settings.cacheMode = WebSettings.LOAD_DEFAULT
+
+        settings.setSupportZoom(true)
+        settings.builtInZoomControls = true
+        settings.displayZoomControls = false
+        settings.allowContentAccess = true
+        settings.allowFileAccess = true
+        settings.offscreenPreRaster = true
+
+        val modifiesHeaders = tabSettings.doNotTrackEnabled
+            || tabSettings.saveDataEnabled
+            || tabSettings.removeIdentifyingHeadersEnabled
+
+        settings.defaultTextEncodingName = tabSettings.textEncoding
+        setColorMode(Paint(), tabSettings.renderingMode)
+
+        if (!incognitoMode) {
+            settings.setGeolocationEnabled(tabSettings.locationEnabled)
+        } else {
+            settings.setGeolocationEnabled(false)
+        }
+
+        settings.userAgentString = tabSettings.userAgent
+
+        if (tabSettings.javaScriptEnabled) {
+            settings.javaScriptEnabled = true
+            settings.javaScriptCanOpenWindowsAutomatically = true
+        } else {
+            settings.javaScriptEnabled = false
+            settings.javaScriptCanOpenWindowsAutomatically = false
+        }
+
+        if (tabSettings.textReflowEnabled) {
+            settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
+            try {
+                settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
+            } catch (e: Exception) {
+                // This shouldn't be necessary, but there are a number
+                // of KitKat devices that crash trying to set this
+                logger.log(TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING")
+            }
+        } else {
+            settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
+        }
+
+        settings.blockNetworkImage = tabSettings.blockImagesEnabled
+        // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
+        settings.setSupportMultipleWindows(tabSettings.popupsEnabled && !modifiesHeaders)
+
+        settings.useWideViewPort = tabSettings.useWideViewPortEnabled
+        settings.loadWithOverviewMode = tabSettings.overviewModeEnabled
+        settings.textZoom = when (tabSettings.textSize) {
+            TextSize.XX_LARGE -> 200
+            TextSize.X_LARGE -> 150
+            TextSize.LARGE -> 125
+            TextSize.MEDIUM -> 100
+            TextSize.SMALL -> 75
+            TextSize.X_SMALL -> 50
+        }
+
+        CookieManager.getInstance().setAcceptCookie(tabSettings.cookiesEnabled)
+
+        CookieManager.getInstance().setAcceptThirdPartyCookies(
+            this,
+            !tabSettings.blockThirdPartyCookiesEnabled
+        )
     }
 
     private fun WebView.setColorMode(paint: Paint, mode: RenderingMode) {

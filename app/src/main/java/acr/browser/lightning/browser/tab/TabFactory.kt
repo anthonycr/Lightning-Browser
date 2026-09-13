@@ -5,6 +5,7 @@ import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.concurrency.TabCoroutineScope
 import acr.browser.lightning.di.FaviconCacheDir
 import acr.browser.lightning.di.GeneratedHtmlDir
+import acr.browser.lightning.pool.ObjectPool
 import android.webkit.WebView
 import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +32,7 @@ class TabFactory @Inject constructor(
     suspend fun constructTab(
         id: Int,
         tabInitializer: TabInitializer,
-        webView: Lazy<WebView>,
+        webViewPool: ObjectPool<WebView>,
         tabType: TabModel.Type,
         tabSettings: TabSettings,
     ): TabModel = withContext(coroutineDispatchers.main) {
@@ -42,7 +43,7 @@ class TabFactory @Inject constructor(
         tabAdapterFactory.create(
             id = id,
             tabInitializer = tabInitializer,
-            webView = webView,
+            webViewPool = webViewPool,
             requestHeaders = headers,
             tabWebViewClient = tabWebViewClientFactory.create(
                 headers = headers,

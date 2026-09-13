@@ -20,7 +20,7 @@ class TabPager @Inject constructor(
     private val webViewLongPressHandler: WebViewLongPressHandler
 ) {
 
-    private val webViews: MutableMap<Int, Lazy<WebView>> = mutableMapOf()
+    private val webViews: MutableMap<Int, WebView> = mutableMapOf()
 
     var longPressListener: ((id: Int, longPress: LongPress) -> Unit)? = null
 
@@ -29,7 +29,7 @@ class TabPager @Inject constructor(
      */
     fun selectTab(id: Int) {
         container.removeWebViews(excludeId = id)
-        val webView = webViews[id]!!.value
+        val webView = webViews[id]!!
         if (webView.parent != container) {
             container.addView(
                 webView,
@@ -59,17 +59,9 @@ class TabPager @Inject constructor(
     }
 
     /**
-     * Clear the container of the [WebView] currently shown and remove all webviews.
-     */
-    fun clearAllTabs() {
-        webViews.clear()
-        container.removeWebViews()
-    }
-
-    /**
      * Add a [WebView] to the list of views shown by this pager.
      */
-    fun addTab(id: Int, webView: Lazy<WebView>) {
+    fun addTab(id: Int, webView: WebView) {
         webViews[id] = webView
     }
 
