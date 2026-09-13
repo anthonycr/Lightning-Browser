@@ -6,10 +6,10 @@ plugins {
     id("com.anthonycr.plugins.mezzanine") version "2.5.0"
     id("com.autonomousapps.dependency-analysis") version "3.19.1"
     id("com.squareup.sort-dependencies") version "0.21.0"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.4.10"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.20"
     id("com.anthonycr.plugins.mockingbird") version "3.3.0"
     id("app.cash.licensee") version "1.14.1"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.4.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.4.20"
 }
 
 android {
@@ -108,7 +108,7 @@ dependencies {
     val robolectric = "4.16.1"
     val mezzanineVersion = "2.5.0"
     val daggerVersion = "2.60.1"
-    val kotlin = "2.4.10"
+    val kotlin = "2.4.20"
     val datastore = "1.2.1"
     val coil = "3.6.2"
     val coroutines = "1.11.0"
