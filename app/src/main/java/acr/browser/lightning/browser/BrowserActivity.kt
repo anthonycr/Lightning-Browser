@@ -137,6 +137,11 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
         presenter.onViewDetached()
     }
 
+    override fun onResume() {
+        super.onResume()
+        presenter.onViewShown()
+    }
+
     override fun onPause() {
         super.onPause()
         presenter.onViewHidden()

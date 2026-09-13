@@ -50,7 +50,7 @@ class TabsRepository @Inject constructor(
             tabPager.removeTab(id)
         }
         val tab = tabsList.forId(id)
-        recentTabModel.addClosedTab(tab.freeze())
+        recentTabModel.addClosedTab(tab.save())
         tab.destroy()
         tabsList = tabsList - tab
 
@@ -181,10 +181,11 @@ class TabsRepository @Inject constructor(
         tabsList.forEach { it.tabType = TabModel.Type.NORMAL }
     }
 
-    override suspend fun freeze() {
+    override suspend fun pause() {
         if (userPreferencesDataStore.restoreLostTabsEnabled.get()) {
             bundleStore.save(tabsList)
         }
+        tabsList.forEach { it.background(backgroundAll = true) }
     }
 
     override suspend fun clean() {

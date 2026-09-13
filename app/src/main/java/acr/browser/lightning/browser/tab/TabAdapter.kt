@@ -148,6 +148,14 @@ class TabAdapter @AssistedInject constructor(
         webViewLazyWithInitialization
     }
 
+    private suspend fun webViewIfInitialized(): WebView? = withContext(coroutineDispatchers.main) {
+        if (webViewLazy.isInitialized()) {
+            webViewLazyWithInitialization
+        } else {
+            null
+        }
+    }
+
     private val titleStateFlow = MutableStateFlow(
         latentInitializer?.initialTitle
     )
@@ -377,25 +385,33 @@ class TabAdapter @AssistedInject constructor(
     override fun showHideToolbar(): Flow<Boolean> = showHideFlow
 
     override suspend fun foreground() {
-        webView().onResume()
+        webView().resumeTimers()
         webView().settings.offscreenPreRaster = true
+        webView().onResume()
         latentInitializer?.let(::loadFromInitializer)
         latentInitializer = null
     }
 
-    override suspend fun background() {
-        webView().onPause()
-        webView().settings.offscreenPreRaster = false
+    override suspend fun background(backgroundAll: Boolean) {
+        webViewIfInitialized()?.apply {
+            onPause()
+            settings.offscreenPreRaster = false
+            if (backgroundAll) {
+                pauseTimers()
+            }
+        }
     }
 
     override suspend fun destroy() {
         viewIdGenerator.releaseViewId(id)
         previewModel.prune()
-        webView().stopLoading()
-        webView().onPause()
-        webView().clearHistory()
-        webView().removeAllViews()
-        webView().destroy()
+        webViewIfInitialized()?.apply {
+            stopLoading()
+            onPause()
+            clearHistory()
+            removeAllViews()
+            destroy()
+        }
         tabCoroutineScope.cancel()
     }
 
@@ -403,7 +419,7 @@ class TabAdapter @AssistedInject constructor(
         webView().restoreState(bundle)
     }
 
-    override suspend fun freeze(): Bundle = latentInitializer?.bundle
+    override suspend fun save(): Bundle = latentInitializer?.bundle
         ?: Bundle(ClassLoader.getSystemClassLoader()).also(webView()::saveState)
 
     private fun createToolbarAwareTouchListener(context: Context): View.OnTouchListener {

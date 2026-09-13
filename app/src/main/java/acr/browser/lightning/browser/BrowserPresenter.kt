@@ -203,12 +203,21 @@ class BrowserPresenter @Inject constructor(
     }
 
     /**
+     * Call when the view is shown (i.e. the browser is moved to the foreground).
+     */
+    fun onViewShown() {
+        browserCoroutineScope.launch {
+            currentTab?.foreground()
+        }
+    }
+
+    /**
      * Call when the view is hidden (i.e. the browser is sent to the background).
      */
     fun onViewHidden() {
         model.markAllNonEphemeral()
         browserCoroutineScope.launch {
-            model.freeze()
+            model.pause()
         }
     }
 
@@ -362,7 +371,7 @@ class BrowserPresenter @Inject constructor(
             state.updateSelf { copy(openTabs = false) }
             return
         }
-        currentTab?.background()
+        currentTab?.background(backgroundAll = false)
         currentTab = tabModel
         currentTab?.foreground()
 

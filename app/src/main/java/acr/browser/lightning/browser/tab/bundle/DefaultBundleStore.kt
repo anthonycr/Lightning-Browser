@@ -37,7 +37,7 @@ class DefaultBundleStore @Inject constructor(
 
         tabs.withIndex().forEach { (index, tab) ->
             if (!tab.url.isSpecialUrl()) {
-                outState.putBundle(BUNDLE_KEY + index, tab.freeze())
+                outState.putBundle(BUNDLE_KEY + index, tab.save())
             } else {
                 outState.putBundle(BUNDLE_KEY + index, Bundle().apply {
                     putString(URL_KEY, tab.url)

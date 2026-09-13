@@ -270,8 +270,11 @@ interface TabModel {
     /**
      * Move the tab to the background. Used to prevent background tabs from consuming
      * disproportionate amounts of resources when they are unused.
+     *
+     * @param backgroundAll True if all tabs should enter background, false if only this tab should
+     * enter background.
      */
-    suspend fun background()
+    suspend fun background(backgroundAll: Boolean)
 
     /**
      * Teardown the current tab and release held resources.
@@ -279,14 +282,14 @@ interface TabModel {
     suspend fun destroy()
 
     /**
-     * Restore the tab state from a bundle created by [freeze].
+     * Restore the tab state from a bundle created by [save].
      */
     suspend fun restore(bundle: Bundle)
 
     /**
-     * Freeze the current state of the tab and return it as a [Bundle].
+     * Save the current state of the tab and return it as a [Bundle].
      */
-    suspend fun freeze(): Bundle
+    suspend fun save(): Bundle
 
     /**
      * Potential favicon states.

@@ -74,9 +74,10 @@ interface BrowserContract {
         fun markAllNonEphemeral()
 
         /**
-         * Notifies the model that all tabs need to be frozen before the browser shuts down.
+         * Notifies the model that all tabs need to be paused and frozen before the browser shuts
+         * down.
          */
-        suspend fun freeze()
+        suspend fun pause()
 
         /**
          * Clean all permanent stored content.
