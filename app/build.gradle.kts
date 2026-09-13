@@ -116,7 +116,7 @@ dependencies {
     val lifecycle = "2.11.0"
     val serialization = "1.11.0"
 
-    implementation(platform("androidx.compose:compose-bom:2026.08.00"))
+    implementation(platform("androidx.compose:compose-bom:2026.09.00"))
     implementation("androidx.activity:activity:1.13.0")
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.annotation:annotation:1.10.0")
