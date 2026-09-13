@@ -75,7 +75,7 @@ class TabsRepository @Inject constructor(
         createTabUnsafe(tabInitializer, tabType)
     }
 
-    private fun TabInitializer.tabId(): Int = if (this is FreezableInitializer) {
+    private suspend fun TabInitializer.tabId(): Int = if (this is FreezableInitializer) {
         this.id.takeIf { it != -1 } ?: viewIdGenerator.generateViewId()
     } else {
         viewIdGenerator.generateViewId()

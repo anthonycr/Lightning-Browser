@@ -1,6 +1,8 @@
 package acr.browser.lightning.ids
 
 import android.view.View
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -10,6 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class ViewIdGenerator @Inject constructor() {
 
+    private val mutex = Mutex()
     private val usedViewIds = mutableSetOf<Int>()
 
     val takenIds: Set<Int> = usedViewIds
@@ -17,21 +20,23 @@ class ViewIdGenerator @Inject constructor() {
     /**
      * Claim the [ids] as taken so that they cannot be generated.
      */
-    fun claimViewIds(ids: List<Int>) {
+    suspend fun claimViewIds(ids: List<Int>) = mutex.withLock {
         ids.forEach { id ->
             require(!usedViewIds.contains(id)) { "Id [$id] already claimed!" }
             usedViewIds.add(id)
         }
     }
 
-    fun releaseViewId(id: Int) {
+    suspend fun releaseViewId(id: Int) = mutex.withLock {
         usedViewIds.remove(id)
     }
 
     /**
      * Generate a unique view id.
      */
-    fun generateViewId(): Int = generateSequence { View.generateViewId() }
-        .first { !usedViewIds.contains(it) }
-        .also(usedViewIds::add)
+    suspend fun generateViewId(): Int = mutex.withLock {
+        generateSequence { View.generateViewId() }
+            .first { !usedViewIds.contains(it) }
+            .also(usedViewIds::add)
+    }
 }
