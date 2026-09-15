@@ -1,15 +1,15 @@
 package acr.browser.lightning.ids
 
+import acr.browser.lightning.di.BrowserScope
 import android.view.View
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Used to generate view IDs.
  */
-@Singleton
+@BrowserScope
 class ViewIdGenerator @Inject constructor() {
 
     private val mutex = Mutex()
