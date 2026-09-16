@@ -188,7 +188,7 @@ fun BrowserSearchSuggestions(
                             maxLines = 1
                         )
                         Text(
-                            text = it.url,
+                            text = it.displayUrl,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1
                         )
