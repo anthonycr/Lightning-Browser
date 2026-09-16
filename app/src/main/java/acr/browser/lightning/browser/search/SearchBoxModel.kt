@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.search
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.HTTPS
+import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.utils.isSpecialUrl
 import android.app.Application
@@ -76,11 +76,11 @@ class SearchBoxModel @Inject constructor(
         return if (domain.isNullOrEmpty()) {
             sanitizedUrl
         } else if (ssl) {
-            HTTPS + domain
-        } else if (domain.startsWith("www.")) {
-            domain.substring(4)
-        } else {
             domain
+        } else if (domain.startsWith("www.")) {
+            HTTP + domain.substring(4)
+        } else {
+            HTTP + domain
         }
     }
 }
