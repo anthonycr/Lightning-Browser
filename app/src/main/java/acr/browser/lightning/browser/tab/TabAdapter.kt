@@ -65,6 +65,7 @@ class TabAdapter @AssistedInject constructor(
     @Assisted private val tabWebViewClient: TabWebViewClient,
     @Assisted override var tabType: TabModel.Type,
     @Assisted private val tabCoroutineScope: TabCoroutineScope,
+    @Assisted private var priority: Priority,
     private val tabPager: TabPager,
     private val tabWebChromeClientFactory: TabWebChromeClient.Factory,
     private val userAgentProvider: UserAgentProvider,
@@ -85,7 +86,13 @@ class TabAdapter @AssistedInject constructor(
             tabWebViewClient: TabWebViewClient,
             tabType: TabModel.Type,
             tabCoroutineScope: TabCoroutineScope,
+            priority: Priority,
         ): TabAdapter
+    }
+
+    enum class Priority {
+        LOW,
+        HIGH,
     }
 
     private var latentInitializer: FreezableInitializer? = tabInitializer as? FreezableInitializer
@@ -153,7 +160,9 @@ class TabAdapter @AssistedInject constructor(
     private suspend fun webView(): WebView {
         return withContext(coroutineDispatchers.main) {
             webViewMutex.withLock {
-                _acquiredWebView?.actual ?: webViewPool.acquire().also {
+                _acquiredWebView?.actual ?: webViewPool.acquire(
+                    highPriority = priority == Priority.HIGH
+                ).also {
                     _acquiredWebView = it
                     it.actual.setup()
                     tabPager.addTab(id, it.actual)
@@ -190,8 +199,6 @@ class TabAdapter @AssistedInject constructor(
     private val progressStateFlow = MutableStateFlow(100)
 
     private val previewStateFlow = MutableStateFlow<TabModel.Preview>(TabModel.Preview.None)
-
-    private var foreground = true
 
     init {
         if (tabInitializer !is FreezableInitializer) {
@@ -408,7 +415,7 @@ class TabAdapter @AssistedInject constructor(
     override fun showHideToolbar(): Flow<Boolean> = showHideFlow
 
     override suspend fun foreground() {
-        foreground = true
+        priority = Priority.HIGH
         webView().resumeTimers()
         webView().settings.offscreenPreRaster = true
         webView().onResume()
@@ -418,7 +425,7 @@ class TabAdapter @AssistedInject constructor(
     }
 
     override suspend fun background(backgroundAll: Boolean) {
-        foreground = false
+        priority = Priority.LOW
         webViewIfInitialized()?.apply {
             onPause()
             settings.offscreenPreRaster = false
@@ -436,7 +443,7 @@ class TabAdapter @AssistedInject constructor(
             removeAllViews()
             destroy()
         }
-        if (foreground) {
+        if (priority == Priority.HIGH) {
             tabPager.clearTab(id)
         } else {
             tabPager.removeTab(id)

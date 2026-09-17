@@ -668,7 +668,7 @@ class BrowserPresenter @Inject constructor(
         shouldSelect: Boolean,
         tabType: TabModel.Type = TabModel.Type.NORMAL
     ) {
-        val tab = model.createTab(tabInitializer, tabType = tabType)
+        val tab = model.createTab(tabInitializer, tabType = tabType, foreground = shouldSelect)
         state.updateSelf { updateTabViewState() }
         if (shouldSelect) {
             selectTab(model.selectTab(tab.id))

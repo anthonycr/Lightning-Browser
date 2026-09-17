@@ -69,10 +69,11 @@ class TabsRepository @Inject constructor(
 
     override suspend fun createTab(
         tabInitializer: TabInitializer,
-        tabType: TabModel.Type
+        tabType: TabModel.Type,
+        foreground: Boolean
     ): TabModel = withContext(coroutineDispatchers.main) {
         isInitialized.await()
-        createTabUnsafe(tabInitializer, tabType)
+        createTabUnsafe(tabInitializer, tabType, foreground)
     }
 
     private suspend fun TabInitializer.tabId(): Int = if (this is FreezableInitializer) {
@@ -87,6 +88,7 @@ class TabsRepository @Inject constructor(
     private suspend fun createTabUnsafe(
         tabInitializer: TabInitializer,
         tabType: TabModel.Type,
+        foreground: Boolean,
         emitUpdate: Boolean = true,
     ): TabModel = withContext(coroutineDispatchers.main) {
         val id = tabInitializer.tabId()
@@ -96,7 +98,8 @@ class TabsRepository @Inject constructor(
             tabInitializer = tabInitializer,
             webViewPool = webViewPool,
             tabType = tabType,
-            tabSettings = tabSettings
+            tabSettings = tabSettings,
+            foreground = foreground,
         )
         tabsList = tabsList + tabModel
 
@@ -132,6 +135,7 @@ class TabsRepository @Inject constructor(
                         createTabUnsafe(
                             tabInitializer = it,
                             tabType = TabModel.Type.NORMAL,
+                            foreground = false,
                             emitUpdate = false
                         )
                     }
@@ -158,6 +162,7 @@ class TabsRepository @Inject constructor(
                 createTabUnsafe(
                     tabInitializer = it,
                     tabType = TabModel.Type.EPHEMERAL,
+                    foreground = true,
                     emitUpdate = false
                 )
             }

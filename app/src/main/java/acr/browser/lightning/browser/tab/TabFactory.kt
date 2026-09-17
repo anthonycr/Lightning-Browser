@@ -27,7 +27,7 @@ class TabFactory @Inject constructor(
 ) {
 
     /**
-     * Constructs a tab from the [webView] with the provided [tabInitializer].
+     * Constructs a tab from the [webViewFactory] with the provided [tabInitializer].
      */
     suspend fun constructTab(
         id: Int,
@@ -35,6 +35,7 @@ class TabFactory @Inject constructor(
         webViewPool: ObjectPool<WebView>,
         tabType: TabModel.Type,
         tabSettings: TabSettings,
+        foreground: Boolean,
     ): TabModel = withContext(coroutineDispatchers.main) {
         val headers = webViewFactory.createRequestHeaders()
         val tabCoroutineScope = TabCoroutineScope(
@@ -53,7 +54,12 @@ class TabFactory @Inject constructor(
                 tabSettings = tabSettings,
             ),
             tabType = tabType,
-            tabCoroutineScope = tabCoroutineScope
+            tabCoroutineScope = tabCoroutineScope,
+            priority = if (foreground) {
+                TabAdapter.Priority.HIGH
+            } else {
+                TabAdapter.Priority.LOW
+            }
         )
     }
 }

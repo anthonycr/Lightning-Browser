@@ -18,15 +18,24 @@ class ObjectPool<T>(
 
     /**
      * Acquire a new object.
+     *
+     * @param highPriority True if the acquired object should displace the current head of the queue
+     * or if it should be added behind the head.
      */
-    suspend fun acquire(): AcquiredObject<T> = poolMutex.withLock {
+    suspend fun acquire(highPriority: Boolean): AcquiredObject<T> = poolMutex.withLock {
         if (pool.size == POOL_SIZE) {
             pool.removeLast().release()
         }
 
         MutableAcquiredObject(
             actual = factory(),
-        ).also { pool.addFirst(it) }
+        ).also { created ->
+            if (!highPriority && pool.isNotEmpty()) {
+                pool.add(1, created)
+            } else {
+                pool.addFirst(created)
+            }
+        }
     }
 
     /**
