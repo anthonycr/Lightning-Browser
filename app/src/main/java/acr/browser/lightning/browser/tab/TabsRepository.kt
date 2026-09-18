@@ -6,14 +6,20 @@ import acr.browser.lightning.browser.tab.settings.TabSettings
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.di.InitialAction
+import acr.browser.lightning.extensions.totalMemory
 import acr.browser.lightning.ids.ViewIdGenerator
+import acr.browser.lightning.pool.LimitedObjectPool
 import acr.browser.lightning.pool.ObjectPool
+import acr.browser.lightning.pool.UnlimitedObjectPool
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.search
 import acr.browser.lightning.useragent.UserAgentProvider
 import acr.browser.lightning.utils.isFileUrl
+import android.app.ActivityManager
+import android.webkit.WebView
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
@@ -37,21 +43,33 @@ class TabsRepository @Inject constructor(
     private val coroutineDispatchers: CoroutineDispatchers,
     private val searchEngineProvider: SearchEngineProvider,
     private val viewIdGenerator: ViewIdGenerator,
+    private val activityManager: ActivityManager,
     appCoroutineScope: AppCoroutineScope,
 ) : BrowserContract.Model {
 
     private val isInitialized = CompletableDeferred<Unit>()
     private val tabsListStateFlow = MutableStateFlow<List<TabModel>>(emptyList())
-    private val webViewPool = appCoroutineScope.async {
-        ObjectPool(
-            factory = {
-                val tabSettings = TabSettings.create(userPreferencesDataStore, userAgentProvider)
-                webViewFactory.createWebView(tabSettings)
-            },
-            poolSize = userPreferencesDataStore.activeTabPoolCount.get()
-        )
+    private val webViewPool: Deferred<ObjectPool<WebView>> = appCoroutineScope.async {
+        if (userPreferencesDataStore.limitActiveTabs.get()) {
+            // Defaults to one tab per GB of total RAM, with a floor of at least 4 active tabs.
+            LimitedObjectPool(
+                factory = {
+                    val tabSettings =
+                        TabSettings.create(userPreferencesDataStore, userAgentProvider)
+                    webViewFactory.createWebView(tabSettings)
+                },
+                poolSize = activityManager.totalMemory().coerceAtLeast(4).toInt()
+            )
+        } else {
+            UnlimitedObjectPool(
+                factory = {
+                    val tabSettings =
+                        TabSettings.create(userPreferencesDataStore, userAgentProvider)
+                    webViewFactory.createWebView(tabSettings)
+                }
+            )
+        }
     }
-
 
     override var selectedTab: TabModel? = null
 

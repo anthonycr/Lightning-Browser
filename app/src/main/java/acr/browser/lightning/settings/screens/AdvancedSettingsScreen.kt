@@ -56,6 +56,15 @@ class AdvancedSettingsScreen @Inject constructor(
                     null
                 }
             ),
+            ToggleState(
+                title = resourceProvider.stringResource(R.string.limit_active_tabs),
+                summary = { resourceProvider.stringResource(R.string.limit_active_tabs_summary) },
+                isChecked = { userPreferencesDataStore.limitActiveTabs.get() },
+                onToggle = {
+                    userPreferencesDataStore.limitActiveTabs.set(it)
+                    null
+                }
+            ),
             ClickableState(
                 title = resourceProvider.stringResource(R.string.text_encoding),
                 summary = { userPreferencesDataStore.textEncoding.get() },

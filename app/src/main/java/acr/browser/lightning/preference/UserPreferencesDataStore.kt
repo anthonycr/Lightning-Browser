@@ -10,7 +10,6 @@ import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.device.ScreenSize
-import acr.browser.lightning.extensions.totalMemory
 import acr.browser.lightning.preference.datastore.EnumPreferenceStore
 import acr.browser.lightning.preference.datastore.NonNullPreferenceStore
 import acr.browser.lightning.preference.datastore.NullablePreferenceStore
@@ -23,7 +22,6 @@ import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.Suggestions
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.useragent.UserAgentChoice
-import android.app.ActivityManager
 import android.app.Application
 import androidx.datastore.migrations.SharedPreferencesMigration
 import androidx.datastore.migrations.SharedPreferencesView
@@ -39,7 +37,6 @@ import javax.inject.Singleton
 @Singleton
 class UserPreferencesDataStore @Inject constructor(
     private val application: Application,
-    activityManager: ActivityManager,
     screenSize: ScreenSize,
 ) {
     private val dataStore = PreferenceDataStoreFactory.create(
@@ -489,13 +486,13 @@ class UserPreferencesDataStore @Inject constructor(
     )
 
     /**
-     * The number of tabs that can be active before the browser starts reclaiming resources from old
-     * tabs. Defaults to one tab per GB of total RAM, with a floor of at least 4 active tabs.
+     * Limit the number of tabs that can be active before the browser starts reclaiming resources
+     * from old tabs. Defaults to true.
      */
-    val activeTabPoolCount: NonNullPreferenceStore<Int> = NonNullPreferenceStore(
-        key = intPreferencesKey(ACTIVE_TAB_POOL_COUNT),
+    val limitActiveTabs: NonNullPreferenceStore<Boolean> = NonNullPreferenceStore(
+        key = booleanPreferencesKey(LIMIT_ACTIVE_TABS),
         dataStore = dataStore,
-        defaultValue = activityManager.totalMemory().coerceAtLeast(4).toInt()
+        defaultValue = true
     )
 
     companion object {
@@ -546,4 +543,4 @@ private const val HOSTS_SOURCE = "hostsSource"
 private const val HOSTS_LOCAL_FILE = "hostsLocalFile"
 private const val HOSTS_REMOTE_FILE = "hostsRemoteFile"
 private const val OPEN_AVAILABLE_APPS = "openAvailableApps"
-private const val ACTIVE_TAB_POOL_COUNT = "activeTabPoolCount"
+private const val LIMIT_ACTIVE_TABS = "limitActiveTabs"
