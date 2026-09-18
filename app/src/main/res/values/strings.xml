@@ -117,7 +117,7 @@
     <string name="header_warning">Warning! This setting can cause the browser to misbehave</string>
     <string name="open_available_apps">Open links in available default apps</string>
     <string name="limit_active_tabs">Limit active tabs</string>
-    <string name="limit_active_tabs_summary">Limits the number of tabs active in the background based on the device\'s memory</string>
+    <string name="limit_active_tabs_summary">Limits the number of tabs active in the background, based on the device\'s memory.\nActive tab limit: %1$d</string>
 
     <!-- Ad block -->
     <string name="block_ads">Block ads</string>

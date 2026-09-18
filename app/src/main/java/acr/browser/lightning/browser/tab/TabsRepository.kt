@@ -6,7 +6,7 @@ import acr.browser.lightning.browser.tab.settings.TabSettings
 import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.di.InitialAction
-import acr.browser.lightning.extensions.totalMemory
+import acr.browser.lightning.extensions.activeTabLimit
 import acr.browser.lightning.ids.ViewIdGenerator
 import acr.browser.lightning.pool.LimitedObjectPool
 import acr.browser.lightning.pool.ObjectPool
@@ -51,14 +51,13 @@ class TabsRepository @Inject constructor(
     private val tabsListStateFlow = MutableStateFlow<List<TabModel>>(emptyList())
     private val webViewPool: Deferred<ObjectPool<WebView>> = appCoroutineScope.async {
         if (userPreferencesDataStore.limitActiveTabs.get()) {
-            // Defaults to one tab per GB of total RAM, with a floor of at least 4 active tabs.
             LimitedObjectPool(
                 factory = {
                     val tabSettings =
                         TabSettings.create(userPreferencesDataStore, userAgentProvider)
                     webViewFactory.createWebView(tabSettings)
                 },
-                poolSize = activityManager.totalMemory().coerceAtLeast(4).toInt()
+                poolSize = activityManager.activeTabLimit()
             )
         } else {
             UnlimitedObjectPool(
