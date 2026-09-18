@@ -8,12 +8,14 @@ import kotlinx.coroutines.sync.withLock
  * allocated objects releasing old ones and creating new ones as needed.
  *
  * @param factory Produce a new instance of the object.
+ * @param poolSize The size maximum of the object pool.
  */
 class ObjectPool<T>(
-    private val factory: suspend () -> T
+    private val factory: suspend () -> T,
+    private val poolSize: Int,
 ) {
 
-    private val pool = ArrayDeque<MutableAcquiredObject<T>>(POOL_SIZE)
+    private val pool = ArrayDeque<MutableAcquiredObject<T>>(poolSize)
     private val poolMutex = Mutex()
 
     /**
@@ -23,7 +25,7 @@ class ObjectPool<T>(
      * or if it should be added behind the head.
      */
     suspend fun acquire(highPriority: Boolean): AcquiredObject<T> = poolMutex.withLock {
-        if (pool.size == POOL_SIZE) {
+        if (pool.size == poolSize) {
             pool.removeLast().release()
         }
 
@@ -43,10 +45,6 @@ class ObjectPool<T>(
      */
     suspend fun release(acquiredObject: AcquiredObject<T>) = poolMutex.withLock {
         pool.remove(acquiredObject)
-    }
-
-    companion object {
-        private const val POOL_SIZE = 5
     }
 
     interface AcquiredObject<T> {

@@ -3,6 +3,7 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.browser.BrowserContract
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.browser.tab.settings.TabSettings
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.di.InitialAction
 import acr.browser.lightning.ids.ViewIdGenerator
@@ -36,16 +37,21 @@ class TabsRepository @Inject constructor(
     private val coroutineDispatchers: CoroutineDispatchers,
     private val searchEngineProvider: SearchEngineProvider,
     private val viewIdGenerator: ViewIdGenerator,
+    appCoroutineScope: AppCoroutineScope,
 ) : BrowserContract.Model {
 
     private val isInitialized = CompletableDeferred<Unit>()
     private val tabsListStateFlow = MutableStateFlow<List<TabModel>>(emptyList())
-    private val webViewPool = ObjectPool(
-        factory = {
-            val tabSettings = TabSettings.create(userPreferencesDataStore, userAgentProvider)
-            webViewFactory.createWebView(tabSettings)
-        }
-    )
+    private val webViewPool = appCoroutineScope.async {
+        ObjectPool(
+            factory = {
+                val tabSettings = TabSettings.create(userPreferencesDataStore, userAgentProvider)
+                webViewFactory.createWebView(tabSettings)
+            },
+            poolSize = userPreferencesDataStore.activeTabPoolCount.get()
+        )
+    }
+
 
     override var selectedTab: TabModel? = null
 
@@ -96,7 +102,7 @@ class TabsRepository @Inject constructor(
         val tabModel = tabFactory.constructTab(
             id = id,
             tabInitializer = tabInitializer,
-            webViewPool = webViewPool,
+            webViewPool = webViewPool.await(),
             tabType = tabType,
             tabSettings = tabSettings,
             foreground = foreground,
