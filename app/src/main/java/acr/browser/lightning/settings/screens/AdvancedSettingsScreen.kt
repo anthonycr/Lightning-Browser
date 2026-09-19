@@ -4,6 +4,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.browser.search.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.tab.settings.RenderingMode
 import acr.browser.lightning.constant.TEXT_ENCODINGS
+import acr.browser.lightning.extensions.activeTabLimit
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.framework.ClickableOnClick
@@ -11,11 +12,13 @@ import acr.browser.lightning.settings.framework.ClickableState
 import acr.browser.lightning.settings.framework.SettingsBottomSheetChooserState
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
+import android.app.ActivityManager
 import javax.inject.Inject
 
 class AdvancedSettingsScreen @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val userPreferencesDataStore: UserPreferencesDataStore,
+    private val activityManager: ActivityManager,
 ) {
     fun createSettingsFrameworkState(): SettingsFrameworkState = SettingsFrameworkState(
         title = resourceProvider.stringResource(R.string.settings_advanced),
@@ -53,6 +56,20 @@ class AdvancedSettingsScreen @Inject constructor(
                 isChecked = { userPreferencesDataStore.openAvailableAppsEnabled.get() },
                 onToggle = {
                     userPreferencesDataStore.openAvailableAppsEnabled.set(it)
+                    null
+                }
+            ),
+            ToggleState(
+                title = resourceProvider.stringResource(R.string.limit_active_tabs),
+                summary = {
+                    resourceProvider.stringResource(
+                        R.string.limit_active_tabs_summary,
+                        activityManager.activeTabLimit()
+                    )
+                },
+                isChecked = { userPreferencesDataStore.limitActiveTabs.get() },
+                onToggle = {
+                    userPreferencesDataStore.limitActiveTabs.set(it)
                     null
                 }
             ),

@@ -11,6 +11,7 @@ import acr.browser.lightning.connectivity.ConnectivityProvider
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
 import acr.browser.lightning.download.PendingDownload
 import acr.browser.lightning.ids.ViewIdGenerator
+import acr.browser.lightning.pool.ObjectPool
 import acr.browser.lightning.preview.PreviewModel
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
@@ -47,6 +48,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -57,11 +60,13 @@ import kotlin.time.Duration.Companion.milliseconds
 class TabAdapter @AssistedInject constructor(
     @Assisted override val id: Int,
     @Assisted private val tabInitializer: TabInitializer,
-    @Assisted private val webViewLazy: Lazy<WebView>,
+    @Assisted private val webViewPool: ObjectPool<WebView>,
     @Assisted private val requestHeaders: Map<String, String>,
     @Assisted private val tabWebViewClient: TabWebViewClient,
     @Assisted override var tabType: TabModel.Type,
     @Assisted private val tabCoroutineScope: TabCoroutineScope,
+    @Assisted private var priority: Priority,
+    private val tabPager: TabPager,
     private val tabWebChromeClientFactory: TabWebChromeClient.Factory,
     private val userAgentProvider: UserAgentProvider,
     private val viewIdGenerator: ViewIdGenerator,
@@ -76,12 +81,18 @@ class TabAdapter @AssistedInject constructor(
         fun create(
             id: Int,
             tabInitializer: TabInitializer,
-            webView: Lazy<WebView>,
+            webViewPool: ObjectPool<WebView>,
             requestHeaders: Map<String, String>,
             tabWebViewClient: TabWebViewClient,
             tabType: TabModel.Type,
             tabCoroutineScope: TabCoroutineScope,
+            priority: Priority,
         ): TabAdapter
+    }
+
+    enum class Priority {
+        LOW,
+        HIGH,
     }
 
     private var latentInitializer: FreezableInitializer? = tabInitializer as? FreezableInitializer
@@ -94,48 +105,46 @@ class TabAdapter @AssistedInject constructor(
 
     private val tabWebChromeClient by lazy { tabWebChromeClientFactory.create(tabCoroutineScope) }
 
-    private val webViewLazyWithInitialization: WebView by lazy {
-        webViewLazy.value.apply {
-            webViewClient = tabWebViewClient
-            webChromeClient = tabWebChromeClient
-            setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
-                tabCoroutineScope.launch {
-                    downloadsShareFlow.emit(
-                        PendingDownload(
-                            url = url,
-                            userAgent = userAgent,
-                            contentDisposition = contentDisposition,
-                            mimeType = mimetype,
-                            contentLength = contentLength
-                        )
-                    )
-                }
-            }
-            id = this@TabAdapter.id
-
-            setCompositeOnFocusChangeListener("focus_change") { _, hasFocus ->
-                tabCoroutineScope.launch {
-                    if (hasFocus) {
-                        focusSharedFlow.emit(Unit)
-                    }
-                }
-            }
-
-            setCompositeTouchListener("toggle", createToolbarAwareTouchListener(context))
-
-            setCompositeTouchListener("focus") { _, event ->
-                if (event.action == MotionEvent.ACTION_DOWN) {
-                    tabCoroutineScope.launch {
-                        focusSharedFlow.emit(Unit)
-                    }
-                }
-                false
-            }
-
+    private fun WebView.setup() {
+        webViewClient = tabWebViewClient
+        webChromeClient = tabWebChromeClient
+        setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
             tabCoroutineScope.launch {
-                connectivityProvider.hasInternetAccess.collectLatest {
-                    setNetworkAvailable(it)
+                downloadsShareFlow.emit(
+                    PendingDownload(
+                        url = url,
+                        userAgent = userAgent,
+                        contentDisposition = contentDisposition,
+                        mimeType = mimetype,
+                        contentLength = contentLength
+                    )
+                )
+            }
+        }
+        id = this@TabAdapter.id
+
+        setCompositeOnFocusChangeListener("focus_change") { _, hasFocus ->
+            tabCoroutineScope.launch {
+                if (hasFocus) {
+                    focusSharedFlow.emit(Unit)
                 }
+            }
+        }
+
+        setCompositeTouchListener("toggle", createToolbarAwareTouchListener(context))
+
+        setCompositeTouchListener("focus") { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                tabCoroutineScope.launch {
+                    focusSharedFlow.emit(Unit)
+                }
+            }
+            false
+        }
+
+        tabCoroutineScope.launch {
+            connectivityProvider.hasInternetAccess.collectLatest {
+                setNetworkAvailable(it)
             }
         }
     }
@@ -144,17 +153,38 @@ class TabAdapter @AssistedInject constructor(
         previewModel.previewForId(id)
     }
 
-    private suspend fun webView(): WebView = withContext(coroutineDispatchers.main) {
-        webViewLazyWithInitialization
-    }
+    private var _acquiredWebView: ObjectPool.AcquiredObject<WebView>? = null
 
-    private suspend fun webViewIfInitialized(): WebView? = withContext(coroutineDispatchers.main) {
-        if (webViewLazy.isInitialized()) {
-            webViewLazyWithInitialization
-        } else {
-            null
+    private val webViewMutex = Mutex()
+
+    private suspend fun webView(): WebView {
+        return withContext(coroutineDispatchers.main) {
+            webViewMutex.withLock {
+                _acquiredWebView?.actual ?: webViewPool.acquire(
+                    highPriority = priority == Priority.HIGH
+                ).also {
+                    _acquiredWebView = it
+                    it.actual.setup()
+                    tabPager.addTab(id, it.actual)
+                    tabCoroutineScope.launch {
+                        it.awaitRelease {
+                            val bundle = save()
+                            freeze()
+                            latentInitializer = FreezableInitializer(
+                                bundle = bundle,
+                                delegate = BundleInitializer(bundle),
+                                initialTitle = title.orEmpty(),
+                                id = id
+                            )
+                            _acquiredWebView = null
+                        }
+                    }
+                }.actual
+            }
         }
     }
+
+    private fun webViewIfInitialized(): WebView? = _acquiredWebView?.actual
 
     private val titleStateFlow = MutableStateFlow(
         latentInitializer?.initialTitle
@@ -385,14 +415,17 @@ class TabAdapter @AssistedInject constructor(
     override fun showHideToolbar(): Flow<Boolean> = showHideFlow
 
     override suspend fun foreground() {
+        priority = Priority.HIGH
         webView().resumeTimers()
         webView().settings.offscreenPreRaster = true
         webView().onResume()
         latentInitializer?.let(::loadFromInitializer)
         latentInitializer = null
+        tabPager.selectTab(id)
     }
 
     override suspend fun background(backgroundAll: Boolean) {
+        priority = Priority.LOW
         webViewIfInitialized()?.apply {
             onPause()
             settings.offscreenPreRaster = false
@@ -402,9 +435,7 @@ class TabAdapter @AssistedInject constructor(
         }
     }
 
-    override suspend fun destroy() {
-        viewIdGenerator.releaseViewId(id)
-        previewModel.prune()
+    override suspend fun freeze() {
         webViewIfInitialized()?.apply {
             stopLoading()
             onPause()
@@ -412,7 +443,19 @@ class TabAdapter @AssistedInject constructor(
             removeAllViews()
             destroy()
         }
+        if (priority == Priority.HIGH) {
+            tabPager.clearTab(id)
+        } else {
+            tabPager.removeTab(id)
+        }
+    }
+
+    override suspend fun destroy() {
+        viewIdGenerator.releaseViewId(id)
+        previewModel.prune()
+        freeze()
         tabCoroutineScope.cancel()
+        _acquiredWebView?.let { webViewPool.release(it) }
     }
 
     override suspend fun restore(bundle: Bundle) {

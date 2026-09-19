@@ -3,15 +3,23 @@ package acr.browser.lightning.browser.tab
 import acr.browser.lightning.browser.BrowserContract
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.browser.tab.settings.TabSettings
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.concurrency.CoroutineDispatchers
 import acr.browser.lightning.di.InitialAction
+import acr.browser.lightning.extensions.activeTabLimit
 import acr.browser.lightning.ids.ViewIdGenerator
+import acr.browser.lightning.pool.LimitedObjectPool
+import acr.browser.lightning.pool.ObjectPool
+import acr.browser.lightning.pool.UnlimitedObjectPool
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.search
 import acr.browser.lightning.useragent.UserAgentProvider
 import acr.browser.lightning.utils.isFileUrl
+import android.app.ActivityManager
+import android.webkit.WebView
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +33,6 @@ import javax.inject.Inject
  */
 class TabsRepository @Inject constructor(
     private val webViewFactory: WebViewFactory,
-    private val tabPager: TabPager,
     private val bundleStore: BundleStore,
     private val recentTabModel: RecentTabModel,
     private val tabFactory: TabFactory,
@@ -36,19 +43,36 @@ class TabsRepository @Inject constructor(
     private val coroutineDispatchers: CoroutineDispatchers,
     private val searchEngineProvider: SearchEngineProvider,
     private val viewIdGenerator: ViewIdGenerator,
+    private val activityManager: ActivityManager,
+    appCoroutineScope: AppCoroutineScope,
 ) : BrowserContract.Model {
 
     private val isInitialized = CompletableDeferred<Unit>()
     private val tabsListStateFlow = MutableStateFlow<List<TabModel>>(emptyList())
+    private val webViewPool: Deferred<ObjectPool<WebView>> = appCoroutineScope.async {
+        if (userPreferencesDataStore.limitActiveTabs.get()) {
+            LimitedObjectPool(
+                factory = {
+                    val tabSettings =
+                        TabSettings.create(userPreferencesDataStore, userAgentProvider)
+                    webViewFactory.createWebView(tabSettings)
+                },
+                poolSize = activityManager.activeTabLimit()
+            )
+        } else {
+            UnlimitedObjectPool(
+                factory = {
+                    val tabSettings =
+                        TabSettings.create(userPreferencesDataStore, userAgentProvider)
+                    webViewFactory.createWebView(tabSettings)
+                }
+            )
+        }
+    }
 
     override var selectedTab: TabModel? = null
 
     override suspend fun deleteTab(id: Int): Unit = withContext(coroutineDispatchers.main) {
-        if (selectedTab?.id == id) {
-            tabPager.clearTab(id)
-        } else {
-            tabPager.removeTab(id)
-        }
         val tab = tabsList.forId(id)
         recentTabModel.addClosedTab(tab.save())
         tab.destroy()
@@ -59,7 +83,6 @@ class TabsRepository @Inject constructor(
 
     override suspend fun deleteAllTabs(): Unit = withContext(coroutineDispatchers.main) {
         isInitialized.await()
-        tabPager.clearAllTabs()
 
         tabsList.forEach { it.destroy() }
         tabsList = emptyList()
@@ -69,10 +92,11 @@ class TabsRepository @Inject constructor(
 
     override suspend fun createTab(
         tabInitializer: TabInitializer,
-        tabType: TabModel.Type
+        tabType: TabModel.Type,
+        foreground: Boolean
     ): TabModel = withContext(coroutineDispatchers.main) {
         isInitialized.await()
-        createTabUnsafe(tabInitializer, tabType)
+        createTabUnsafe(tabInitializer, tabType, foreground)
     }
 
     private suspend fun TabInitializer.tabId(): Int = if (this is FreezableInitializer) {
@@ -87,19 +111,19 @@ class TabsRepository @Inject constructor(
     private suspend fun createTabUnsafe(
         tabInitializer: TabInitializer,
         tabType: TabModel.Type,
+        foreground: Boolean,
         emitUpdate: Boolean = true,
     ): TabModel = withContext(coroutineDispatchers.main) {
         val id = tabInitializer.tabId()
         val tabSettings = TabSettings.create(userPreferencesDataStore, userAgentProvider)
-        val webViewLazy = webViewFactory.createWebView(tabSettings)
         val tabModel = tabFactory.constructTab(
             id = id,
             tabInitializer = tabInitializer,
-            webView = webViewLazy,
+            webViewPool = webViewPool.await(),
             tabType = tabType,
-            tabSettings = tabSettings
+            tabSettings = tabSettings,
+            foreground = foreground,
         )
-        tabPager.addTab(tabModel.id, webViewLazy)
         tabsList = tabsList + tabModel
 
         if (emitUpdate) {
@@ -116,7 +140,6 @@ class TabsRepository @Inject constructor(
     override fun selectTab(id: Int): TabModel {
         val selected = tabsList.forId(id)
         selectedTab = selected
-        tabPager.selectTab(id)
 
         return selected
     }
@@ -135,6 +158,7 @@ class TabsRepository @Inject constructor(
                         createTabUnsafe(
                             tabInitializer = it,
                             tabType = TabModel.Type.NORMAL,
+                            foreground = false,
                             emitUpdate = false
                         )
                     }
@@ -161,6 +185,7 @@ class TabsRepository @Inject constructor(
                 createTabUnsafe(
                     tabInitializer = it,
                     tabType = TabModel.Type.EPHEMERAL,
+                    foreground = true,
                     emitUpdate = false
                 )
             }

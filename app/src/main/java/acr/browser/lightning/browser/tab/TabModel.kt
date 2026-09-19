@@ -277,6 +277,11 @@ interface TabModel {
     suspend fun background(backgroundAll: Boolean)
 
     /**
+     * Release resources held by the current tab without destroying it.
+     */
+    suspend fun freeze()
+
+    /**
      * Teardown the current tab and release held resources.
      */
     suspend fun destroy()

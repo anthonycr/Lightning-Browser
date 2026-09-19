@@ -485,6 +485,16 @@ class UserPreferencesDataStore @Inject constructor(
         dataStore = dataStore
     )
 
+    /**
+     * Limit the number of tabs that can be active before the browser starts reclaiming resources
+     * from old tabs. Defaults to true.
+     */
+    val limitActiveTabs: NonNullPreferenceStore<Boolean> = NonNullPreferenceStore(
+        key = booleanPreferencesKey(LIMIT_ACTIVE_TABS),
+        dataStore = dataStore,
+        defaultValue = true
+    )
+
     companion object {
         private const val FILE_NAME = "settings"
     }
@@ -533,3 +543,4 @@ private const val HOSTS_SOURCE = "hostsSource"
 private const val HOSTS_LOCAL_FILE = "hostsLocalFile"
 private const val HOSTS_REMOTE_FILE = "hostsRemoteFile"
 private const val OPEN_AVAILABLE_APPS = "openAvailableApps"
+private const val LIMIT_ACTIVE_TABS = "limitActiveTabs"

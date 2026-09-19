@@ -40,10 +40,16 @@ interface BrowserContract {
 
         /**
          * Create a tab that will be initialized with the [tabInitializer].
+         *
+         * @param tabType The type of tab being opened, which governs the browser behavior when it
+         * closes.
+         * @param foreground True if the tab will become the browser's focused tab, false if it will
+         * remain in the background.
          */
         suspend fun createTab(
             tabInitializer: TabInitializer,
-            tabType: TabModel.Type = TabModel.Type.NORMAL
+            tabType: TabModel.Type = TabModel.Type.NORMAL,
+            foreground: Boolean = true
         ): TabModel
 
         /**
