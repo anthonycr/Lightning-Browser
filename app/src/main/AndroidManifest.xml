@@ -34,9 +34,9 @@
         android:name=".BrowserApp"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_orange"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_orange"
         android:taskAffinity="com.anthonycr.browser.AffinityDefault"
         android:usesCleartextTraffic="true">
         <meta-data
