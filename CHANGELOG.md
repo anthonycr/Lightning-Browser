@@ -10,6 +10,7 @@ Upcoming
 - New: Toggle to enable/disable opening links in other apps (on by default)
 - New: Proper OSS attribution screen
 - New: Different app icons for Lite and Plus
+- New: Setting for changing app icon
 - New: Dynamically limit active tabs for improved memory management
 - Fixed: A large number of accumulated bugs
 - Removed: Ask search engine option (RIP)
