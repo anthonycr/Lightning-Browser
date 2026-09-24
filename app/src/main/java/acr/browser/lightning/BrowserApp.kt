@@ -124,7 +124,8 @@ class BrowserApp : Application() {
             BuildConfig.DEBUG -> BuildType.DEBUG
             else -> BuildType.RELEASE
         },
-        versionCode = BuildConfig.VERSION_CODE
+        versionCode = BuildConfig.VERSION_CODE,
+        isPlus = BuildConfig.FULL_VERSION,
     )
 
     companion object {
