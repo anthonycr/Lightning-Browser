@@ -44,7 +44,9 @@ class AdBlockSettingsScreen @Inject constructor(
                             SettingsBottomSheetChooserState(
                                 title = resourceProvider.stringResource(R.string.block_ad_source),
                                 values = HostsSourcePreference.entries.map {
-                                    it.displayText(resourceProvider)
+                                    SettingsBottomSheetChooserState.ChooserEntry(
+                                        it.displayText(resourceProvider)
+                                    )
                                 },
                                 selected = HostsSourcePreference.entries.indexOf(
                                     userPreferencesDataStore.hostsSource.get()

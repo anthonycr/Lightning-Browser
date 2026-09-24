@@ -9,7 +9,10 @@ import acr.browser.lightning.browser.tab.settings.TextSize
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
+import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.ScreenSize
+import acr.browser.lightning.icon.BrowserIcon
+import acr.browser.lightning.icon.defaultIcon
 import acr.browser.lightning.preference.datastore.EnumPreferenceStore
 import acr.browser.lightning.preference.datastore.NonNullPreferenceStore
 import acr.browser.lightning.preference.datastore.NullablePreferenceStore
@@ -38,6 +41,7 @@ import javax.inject.Singleton
 class UserPreferencesDataStore @Inject constructor(
     private val application: Application,
     screenSize: ScreenSize,
+    buildInfo: BuildInfo,
 ) {
     private val dataStore = PreferenceDataStoreFactory.create(
         migrations = listOf(
@@ -495,6 +499,15 @@ class UserPreferencesDataStore @Inject constructor(
         defaultValue = true
     )
 
+    /**
+     * The current selected browser icon.
+     */
+    val browserIcon: EnumPreferenceStore<BrowserIcon> = EnumPreferenceStore<BrowserIcon>(
+        key = intPreferencesKey(BROWSER_ICON),
+        dataStore = dataStore,
+        defaultValue = buildInfo.defaultIcon()
+    )
+
     companion object {
         private const val FILE_NAME = "settings"
     }
@@ -544,3 +557,4 @@ private const val HOSTS_LOCAL_FILE = "hostsLocalFile"
 private const val HOSTS_REMOTE_FILE = "hostsRemoteFile"
 private const val OPEN_AVAILABLE_APPS = "openAvailableApps"
 private const val LIMIT_ACTIVE_TABS = "limitActiveTabs"
+private const val BROWSER_ICON = "browserIcon"

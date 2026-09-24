@@ -80,7 +80,9 @@ class AdvancedSettingsScreen @Inject constructor(
                     produceState = {
                         SettingsBottomSheetChooserState(
                             title = resourceProvider.stringResource(R.string.text_encoding),
-                            values = TEXT_ENCODINGS.toList(),
+                            values = TEXT_ENCODINGS.toList().map {
+                                SettingsBottomSheetChooserState.ChooserEntry(it)
+                            },
                             selected = TEXT_ENCODINGS.indexOf(userPreferencesDataStore.textEncoding.get())
                         )
                     },
@@ -101,7 +103,9 @@ class AdvancedSettingsScreen @Inject constructor(
                         SettingsBottomSheetChooserState(
                             title = resourceProvider.stringResource(R.string.rendering_mode),
                             values = RenderingMode.entries.map {
-                                it.toDisplayString(resourceProvider)
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    it.toDisplayString(resourceProvider)
+                                )
                             },
                             selected = RenderingMode.entries.indexOf(
                                 userPreferencesDataStore.renderingMode.get()
@@ -126,7 +130,9 @@ class AdvancedSettingsScreen @Inject constructor(
                         SettingsBottomSheetChooserState(
                             title = resourceProvider.stringResource(R.string.url_contents),
                             values = SearchBoxDisplayChoice.entries.map {
-                                it.toDisplayString(resourceProvider)
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    it.toDisplayString(resourceProvider)
+                                )
                             },
                             selected = SearchBoxDisplayChoice.entries.indexOf(
                                 userPreferencesDataStore.urlBoxContentChoice.get()

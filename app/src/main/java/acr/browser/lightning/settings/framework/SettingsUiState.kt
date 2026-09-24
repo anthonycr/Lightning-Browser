@@ -1,5 +1,7 @@
 package acr.browser.lightning.settings.framework
 
+import android.graphics.Bitmap
+
 sealed interface SettingsOption
 
 data class SettingsClickableState(
@@ -21,9 +23,11 @@ data class SettingsSnackBarState(
 
 data class SettingsBottomSheetChooserState(
     val title: String,
-    val values: List<String>,
+    val values: List<ChooserEntry>,
     val selected: Int
-)
+) {
+    data class ChooserEntry(val text: String, val icon: Bitmap? = null)
+}
 
 data class SettingsTextSizeChooserState(
     val textSize: Int,

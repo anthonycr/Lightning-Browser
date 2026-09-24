@@ -7,6 +7,39 @@
     <application
         android:icon="@mipmap/ic_launcher_orange"
         android:roundIcon="@mipmap/ic_launcher_orange"
-        tools:replace="icon,roundIcon" />
+        tools:replace="icon,roundIcon">
+
+        <activity-alias
+            android:name="acr.browser.lightning.DefaultBrowserActivityOrange"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_orange"
+            android:targetActivity="acr.browser.lightning.DefaultBrowserActivity">
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.APP_BROWSER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="acr.browser.lightning.DefaultBrowserActivityBlue"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_blue"
+            android:targetActivity="acr.browser.lightning.DefaultBrowserActivity">
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.APP_BROWSER" />
+            </intent-filter>
+        </activity-alias>
+    </application>
 
 </manifest>

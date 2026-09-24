@@ -4,6 +4,10 @@ import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.tab.settings.TextSize
 import acr.browser.lightning.browser.ui.TabConfiguration
+import acr.browser.lightning.device.BuildInfo
+import acr.browser.lightning.icon.BrowserIcon
+import acr.browser.lightning.icon.BrowserIconSelector
+import acr.browser.lightning.icon.defaultIcon
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.resources.ResourceProvider
 import acr.browser.lightning.settings.framework.ClickableOnClick
@@ -11,12 +15,15 @@ import acr.browser.lightning.settings.framework.ClickableState
 import acr.browser.lightning.settings.framework.SettingsBottomSheetChooserState
 import acr.browser.lightning.settings.framework.SettingsFrameworkState
 import acr.browser.lightning.settings.framework.ToggleState
+import androidx.core.graphics.drawable.toBitmap
 import androidx.webkit.WebViewFeature
 import javax.inject.Inject
 
 class DisplaySettingsScreen @Inject constructor(
+    private val buildInfo: BuildInfo,
     private val resourceProvider: ResourceProvider,
-    private val userPreferencesDataStore: UserPreferencesDataStore
+    private val userPreferencesDataStore: UserPreferencesDataStore,
+    private val browserIconSelector: BrowserIconSelector,
 ) {
     fun createSettingsFrameworkState(): SettingsFrameworkState = SettingsFrameworkState(
         title = resourceProvider.stringResource(R.string.settings_display),
@@ -94,13 +101,57 @@ class DisplaySettingsScreen @Inject constructor(
                     produceState = {
                         SettingsBottomSheetChooserState(
                             title = resourceProvider.stringResource(R.string.theme),
-                            values = AppTheme.entries.map { it.toDisplayString(resourceProvider) },
+                            values = AppTheme.entries.map {
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    it.toDisplayString(resourceProvider)
+                                )
+                            },
                             selected = AppTheme.entries.indexOf(userPreferencesDataStore.useTheme.get()),
                         )
                     },
                     onSelected = {
                         ClickableOnClick.Action {
                             userPreferencesDataStore.useTheme.set(AppTheme.entries[it])
+                        }
+                    }
+                )
+            ),
+            ClickableState(
+                title = resourceProvider.stringResource(R.string.app_icon),
+                summary = {
+                    if (buildInfo.defaultIcon() == userPreferencesDataStore.browserIcon.get()) {
+                        resourceProvider.stringResource(R.string.icon_default)
+                    } else {
+                        resourceProvider.stringResource(R.string.icon_alternate)
+                    }
+                },
+                onClick = ClickableOnClick.ItemSelector(
+                    produceState = {
+                        SettingsBottomSheetChooserState(
+                            title = resourceProvider.stringResource(R.string.app_icon),
+                            values = BrowserIcon.entries.map {
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    text = if (buildInfo.defaultIcon() == it) {
+                                        resourceProvider.stringResource(R.string.icon_default)
+                                    } else {
+                                        resourceProvider.stringResource(R.string.icon_alternate)
+                                    },
+                                    icon = resourceProvider.drawableResource(
+                                        when (it) {
+                                            BrowserIcon.ORANGE -> R.mipmap.ic_launcher_orange
+                                            BrowserIcon.BLUE -> R.mipmap.ic_launcher_blue
+                                        }
+                                    )!!.toBitmap()
+                                )
+                            },
+                            selected = BrowserIcon.entries.indexOf(userPreferencesDataStore.browserIcon.get())
+                        )
+                    },
+                    onSelected = {
+                        ClickableOnClick.Action {
+                            val newIcon = BrowserIcon.entries[it]
+                            userPreferencesDataStore.browserIcon.set(newIcon)
+                            browserIconSelector.selectIcon(newIcon)
                         }
                     }
                 )
@@ -116,7 +167,9 @@ class DisplaySettingsScreen @Inject constructor(
                         SettingsBottomSheetChooserState(
                             title = resourceProvider.stringResource(R.string.tab_style_title),
                             values = TabConfiguration.entries.map {
-                                it.toDisplayString(resourceProvider)
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    it.toDisplayString(resourceProvider)
+                                )
                             },
                             selected = TabConfiguration.entries.indexOf(
                                 userPreferencesDataStore.tabConfiguration.get()
@@ -150,7 +203,7 @@ class DisplaySettingsScreen @Inject constructor(
                         }
                     }
                 )
-            )
+            ),
         )
     )
 }

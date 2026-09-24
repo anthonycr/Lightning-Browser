@@ -118,6 +118,8 @@
     <string name="open_available_apps">Open links in available default apps</string>
     <string name="limit_active_tabs">Limit active tabs</string>
     <string name="limit_active_tabs_summary">Limits the number of tabs active in the background, based on the device\'s memory.\nActive tab limit: %1$d</string>
+    <string name="icon_default">Default</string>
+    <string name="icon_alternate">Alternate</string>
 
     <!-- Ad block -->
     <string name="block_ads">Block ads</string>
@@ -277,6 +279,7 @@
     <string name="action_delete_all_bookmarks">Delete all bookmarks</string>
     <string name="upsell_plus_version">Upgrade to Lightning Plus to block ads</string>
     <string name="message_open_download_fail">This file doesn\'t exist anymore</string>
+    <string name="app_icon">App icon</string>
 
     <string name="tab_style_title">Tab Style</string>
     <string name="tab_style_desktop">Desktop</string>
@@ -346,7 +349,7 @@
     <string name="ssl_info_issued_to">Issued to</string>
     <string name="ssl_info_issued_on">Issued on</string>
     <string name="ssl_info_expires_on">Expires on</string>
-    
+
     <!-- Search in page -->
     <string name="search_in_page_query">\'%1$s\'</string>
 

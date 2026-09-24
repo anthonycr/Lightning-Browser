@@ -77,7 +77,11 @@ class GeneralSettingsScreen @Inject constructor(
                     produceState = {
                         SettingsBottomSheetChooserState(
                             title = resourceProvider.stringResource(R.string.title_user_agent),
-                            values = UserAgentChoice.entries.map { it.asSummary(resourceProvider) },
+                            values = UserAgentChoice.entries.map {
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    it.asSummary(resourceProvider)
+                                )
+                            },
                             selected = UserAgentChoice.entries.indexOf(
                                 userPreferencesDataStore.userAgentChoice.get()
                             )
@@ -118,8 +122,12 @@ class GeneralSettingsScreen @Inject constructor(
                         SettingsBottomSheetChooserState(
                             title = resourceProvider.stringResource(R.string.download),
                             values = listOf(
-                                resourceProvider.stringResource(R.string.folder_default),
-                                resourceProvider.stringResource(R.string.folder_custom)
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    resourceProvider.stringResource(R.string.folder_default)
+                                ),
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    resourceProvider.stringResource(R.string.folder_custom)
+                                )
                             ),
                             selected = if (userPreferencesDataStore.downloadDirectory.get()
                                     .isEmpty()
@@ -165,10 +173,18 @@ class GeneralSettingsScreen @Inject constructor(
                         SettingsBottomSheetChooserState(
                             title = resourceProvider.stringResource(R.string.home),
                             values = listOf(
-                                resourceProvider.stringResource(R.string.action_homepage),
-                                resourceProvider.stringResource(R.string.action_blank),
-                                resourceProvider.stringResource(R.string.action_bookmarks),
-                                resourceProvider.stringResource(R.string.action_webpage),
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    resourceProvider.stringResource(R.string.action_homepage)
+                                ),
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    resourceProvider.stringResource(R.string.action_blank)
+                                ),
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    resourceProvider.stringResource(R.string.action_bookmarks)
+                                ),
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    resourceProvider.stringResource(R.string.action_webpage)
+                                ),
                             ),
                             selected = when (userPreferencesDataStore.homepage.get()) {
                                 SCHEME_HOMEPAGE -> 0
@@ -227,7 +243,11 @@ class GeneralSettingsScreen @Inject constructor(
                         SettingsBottomSheetChooserState(
                             title = resourceProvider.stringResource(R.string.title_search_engine),
                             values = searchEngineProvider.provideAllSearchEngines()
-                                .map { resourceProvider.stringResource(it.titleRes) },
+                                .map {
+                                    SettingsBottomSheetChooserState.ChooserEntry(
+                                        resourceProvider.stringResource(it.titleRes)
+                                    )
+                                },
                             selected = SearchEngineChoice.entries.indexOf(
                                 userPreferencesDataStore.searchChoice.get()
                             )
@@ -269,7 +289,9 @@ class GeneralSettingsScreen @Inject constructor(
                         SettingsBottomSheetChooserState(
                             title = resourceProvider.stringResource(R.string.search_suggestions),
                             values = Suggestions.entries.map {
-                                it.searchSuggestionChoiceToTitle(resourceProvider)
+                                SettingsBottomSheetChooserState.ChooserEntry(
+                                    it.searchSuggestionChoiceToTitle(resourceProvider)
+                                )
                             },
                             selected = Suggestions.entries.indexOf(
                                 userPreferencesDataStore.searchSuggestionChoice.get()
