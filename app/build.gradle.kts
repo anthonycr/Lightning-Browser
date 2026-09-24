@@ -149,7 +149,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-text")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui-unit")
-    implementation("androidx.core:core:1.19.0")
+    implementation("androidx.core:core:1.19.1")
     implementation("androidx.core:core-ktx:1.19.0")
     implementation("androidx.datastore:datastore:$datastore")
     implementation("androidx.datastore:datastore-core:$datastore")
