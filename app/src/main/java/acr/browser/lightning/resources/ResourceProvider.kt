@@ -1,6 +1,8 @@
 package acr.browser.lightning.resources
 
 import android.app.Application
+import android.graphics.drawable.Drawable
+import androidx.appcompat.content.res.AppCompatResources
 import javax.inject.Inject
 
 /**
@@ -21,6 +23,11 @@ interface ResourceProvider {
      * A string array.
      */
     fun stringArrayResource(id: Int): Array<String>
+
+    /**
+     * A drawable resource.
+     */
+    fun drawableResource(id: Int): Drawable?
 }
 
 /**
@@ -36,4 +43,7 @@ class DefaultResourceProvider @Inject constructor(
 
     override fun stringArrayResource(id: Int): Array<String> =
         application.resources.getStringArray(id)
+
+    override fun drawableResource(id: Int): Drawable? =
+        AppCompatResources.getDrawable(application, id)
 }
