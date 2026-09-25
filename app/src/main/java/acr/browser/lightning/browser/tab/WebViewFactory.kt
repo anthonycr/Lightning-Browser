@@ -13,6 +13,7 @@ import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
+import android.os.Build
 import android.view.View
 import android.webkit.CookieManager
 import android.webkit.WebSettings
@@ -70,7 +71,9 @@ class WebViewFactory @Inject constructor(
         isFocusable = true
         setBackgroundColor(Color.WHITE)
 
-        importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
+        }
 
         isScrollbarFadingEnabled = true
         isSaveEnabled = true
