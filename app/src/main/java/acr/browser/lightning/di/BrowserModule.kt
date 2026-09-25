@@ -11,9 +11,14 @@ import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.browser.tab.bundle.DefaultBundleStore
 import acr.browser.lightning.browser.tab.bundle.IncognitoBundleStore
+import acr.browser.lightning.shortcuts.DefaultShortcutGenerator
+import acr.browser.lightning.shortcuts.LegacyShortcutGenerator
+import acr.browser.lightning.shortcuts.ShortcutGenerator
 import android.content.Intent
+import android.os.Build
 import dagger.Module
 import dagger.Provides
+import javax.inject.Provider
 
 /**
  * Constructs dependencies for the browser scope.
@@ -46,6 +51,16 @@ class BrowserModule {
         incognitoTabCountNotifier
     } else {
         DefaultTabCountNotifier
+    }
+
+    @Provides
+    fun providesShortcutGenerator(
+        legacyShortcutGenerator: Provider<LegacyShortcutGenerator>,
+        defaultShortcutGenerator: Provider<DefaultShortcutGenerator>,
+    ): ShortcutGenerator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        defaultShortcutGenerator.get()
+    } else {
+        legacyShortcutGenerator.get()
     }
 
     @Provides
