@@ -32,6 +32,7 @@ class SettingsActivity : ThemableActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.settingsComponentBuilder()
+            .incognitoMode(false)
             .activity(this)
             .build()
             .inject(this)

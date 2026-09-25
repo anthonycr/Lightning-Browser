@@ -12,6 +12,7 @@ import acr.browser.lightning.migration.Cleanup
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.LeakCanaryUtils
 import android.app.Application
+import android.os.Build
 import android.os.StrictMode
 import android.webkit.WebView
 import kotlinx.coroutines.cancel
@@ -62,9 +63,13 @@ class BrowserApp : Application() {
             )
         }
 
-        val isIncognito = getProcessName() == "$packageName:incognito"
+        val isIncognito = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            getProcessName() == "$packageName:incognito"
+        } else {
+            false
+        }
 
-        if (isIncognito) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isIncognito) {
             File(dataDir, "app_webview_incognito").deleteRecursively()
             WebView.setDataDirectorySuffix("incognito")
         }

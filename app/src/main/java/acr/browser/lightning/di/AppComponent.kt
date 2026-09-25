@@ -22,7 +22,7 @@ interface AppComponent {
         fun buildInfo(buildInfo: BuildInfo): Builder
 
         @BindsInstance
-        fun incognitoMode(@IncognitoMode incognitoMode: Boolean): Builder
+        fun incognitoMode(@FullIncognitoMode incognitoMode: Boolean): Builder
 
         fun build(): AppComponent
     }

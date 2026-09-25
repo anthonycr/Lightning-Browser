@@ -28,8 +28,6 @@ import acr.browser.lightning.settings.navigation.DefaultSettingsNavigator
 import acr.browser.lightning.settings.navigation.SettingsNavigator
 import acr.browser.lightning.ssl.SessionSslWarningPreferences
 import acr.browser.lightning.ssl.SslWarningPreferences
-import acr.browser.lightning.theme.DefaultThemeProvider
-import acr.browser.lightning.theme.ThemeProvider
 import acr.browser.lightning.useragent.DefaultUserAgentProvider
 import acr.browser.lightning.useragent.UserAgentProvider
 import dagger.Binds
@@ -73,9 +71,6 @@ interface AppBindsModule {
 
     @Binds
     fun bindsNumberFormatter(defaultNumberFormatter: DefaultNumberFormatter): NumberFormatter
-
-    @Binds
-    fun bindsThemeProvider(themeProvider: DefaultThemeProvider): ThemeProvider
 
     @Binds
     fun bindsFileDownloader(delegatingFileDownloader: DelegatingFileDownloader): FileDownloader

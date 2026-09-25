@@ -1,5 +1,6 @@
 package acr.browser.lightning.di
 
+import acr.browser.lightning.AppTheme
 import acr.browser.lightning.browser.BrowserContract
 import acr.browser.lightning.browser.history.DefaultHistoryRecord
 import acr.browser.lightning.browser.history.HistoryRecord
@@ -11,13 +12,19 @@ import acr.browser.lightning.browser.search.IntentExtractor
 import acr.browser.lightning.browser.tab.bundle.BundleStore
 import acr.browser.lightning.browser.tab.bundle.DefaultBundleStore
 import acr.browser.lightning.browser.tab.bundle.IncognitoBundleStore
+import acr.browser.lightning.concurrency.AppCoroutineScope
 import acr.browser.lightning.shortcuts.DefaultShortcutGenerator
 import acr.browser.lightning.shortcuts.LegacyShortcutGenerator
 import acr.browser.lightning.shortcuts.ShortcutGenerator
+import acr.browser.lightning.theme.ThemeProvider
 import android.content.Intent
 import android.os.Build
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import javax.inject.Named
 import javax.inject.Provider
 
 /**
@@ -72,4 +79,13 @@ class BrowserModule {
     } else {
         defaultBundleStore
     }
+
+    @Named("theme")
+    @BrowserScope
+    @Provides
+    fun providesAppThemeStateFlow(
+        themeProvider: ThemeProvider,
+        appCoroutineScope: AppCoroutineScope,
+    ): StateFlow<AppTheme?> = themeProvider.appThemeValues()
+        .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
 }

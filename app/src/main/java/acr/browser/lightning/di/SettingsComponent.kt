@@ -6,11 +6,14 @@ import dagger.BindsInstance
 import dagger.Subcomponent
 
 @SettingsScope
-@Subcomponent
+@Subcomponent(modules = [SettingsModule::class, SettingsBindsModule::class])
 interface SettingsComponent {
 
     @Subcomponent.Builder
     interface Builder {
+
+        @BindsInstance
+        fun incognitoMode(@IncognitoMode incognitoMode: Boolean): Builder
 
         @BindsInstance
         fun activity(activity: Activity): Builder

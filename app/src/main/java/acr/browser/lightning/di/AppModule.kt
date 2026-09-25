@@ -1,6 +1,5 @@
 package acr.browser.lightning.di
 
-import acr.browser.lightning.AppTheme
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
@@ -28,7 +27,6 @@ import acr.browser.lightning.log.NoOpLogger
 import acr.browser.lightning.migration.Cleanup
 import acr.browser.lightning.preference.UserPreferencesDataStore
 import acr.browser.lightning.search.suggestions.RequestFactory
-import acr.browser.lightning.theme.ThemeProvider
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.ThreadSafeFileProvider
 import android.app.ActivityManager
@@ -272,7 +270,7 @@ class AppModule {
     fun providesFaviconCacheDir(
         application: Application,
         threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory,
-        @IncognitoMode isIncognitoMode: Boolean,
+        @FullIncognitoMode isIncognitoMode: Boolean,
     ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
         val suffix = if (isIncognitoMode) {
             "-incognito"
@@ -290,7 +288,7 @@ class AppModule {
     fun providesPreviewCacheDir(
         application: Application,
         threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory,
-        @IncognitoMode isIncognitoMode: Boolean,
+        @FullIncognitoMode isIncognitoMode: Boolean,
     ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
         val suffix = if (isIncognitoMode) {
             "-incognito"
@@ -308,7 +306,7 @@ class AppModule {
     fun providesGeneratedHtmlDir(
         application: Application,
         threadSafeFileProviderFactory: ThreadSafeFileProvider.Factory,
-        @IncognitoMode isIncognitoMode: Boolean,
+        @FullIncognitoMode isIncognitoMode: Boolean,
     ): ThreadSafeFileProvider = threadSafeFileProviderFactory.create {
         val suffix = if (isIncognitoMode) {
             "-incognito"
@@ -363,15 +361,6 @@ class AppModule {
         io = Dispatchers.IO,
         default = Dispatchers.Default
     )
-
-    @Named("theme")
-    @Singleton
-    @Provides
-    fun providesAppThemeStateFlow(
-        themeProvider: ThemeProvider,
-        appCoroutineScope: AppCoroutineScope,
-    ): StateFlow<AppTheme?> = themeProvider.appThemeValues()
-        .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
 
     @Named("tab")
     @Singleton

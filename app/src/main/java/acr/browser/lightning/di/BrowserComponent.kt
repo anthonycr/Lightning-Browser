@@ -22,6 +22,9 @@ interface BrowserComponent {
         fun activity(activity: FragmentActivity): Builder
 
         @BindsInstance
+        fun incognitoMode(@IncognitoMode incognitoMode: Boolean): Builder
+
+        @BindsInstance
         fun browserFrame(@BrowserFrame frameLayout: FrameLayout): Builder
 
         @BindsInstance
@@ -52,3 +55,6 @@ annotation class InitialAction
 
 @Qualifier
 annotation class IncognitoMode
+
+@Qualifier
+annotation class FullIncognitoMode
