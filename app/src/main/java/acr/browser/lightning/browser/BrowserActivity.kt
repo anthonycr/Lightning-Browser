@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.BrowserUiEvent
+import acr.browser.lightning.IncognitoBrowserActivity
 import acr.browser.lightning.ThemableActivity
 import acr.browser.lightning.browser.keys.KeyEventAdapter
 import acr.browser.lightning.browser.search.IntentExtractor
@@ -65,6 +66,7 @@ abstract class BrowserActivity : ThemableActivity(), BrowserContract.View {
         val customFrame = FrameLayout(this)
         injector.browserComponentBuilder()
             .activity(this)
+            .incognitoMode(this is IncognitoBrowserActivity)
             .browserFrame(browserFrame)
             .customFrame(customFrame)
             .initialIntent(intent.takeIf { savedInstanceState == null })
