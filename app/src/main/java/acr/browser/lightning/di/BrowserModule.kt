@@ -46,9 +46,9 @@ class BrowserModule {
     @Provides
     fun providesTabCountNotifier(
         @IncognitoMode incognitoMode: Boolean,
-        incognitoTabCountNotifier: IncognitoTabCountNotifier
-    ): TabCountNotifier = if (incognitoMode) {
-        incognitoTabCountNotifier
+        incognitoTabCountNotifier: Provider<IncognitoTabCountNotifier>
+    ): TabCountNotifier = if (incognitoMode && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        incognitoTabCountNotifier.get()
     } else {
         DefaultTabCountNotifier
     }

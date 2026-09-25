@@ -9,6 +9,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.fragment.app.FragmentActivity
 import com.permissionx.guolindev.PermissionX
@@ -19,6 +20,7 @@ import javax.inject.Inject
  * A notification helper that displays the current number of tabs open in a notification as a
  * warning. When the notification is pressed, the incognito browser will open.
  */
+@RequiresApi(Build.VERSION_CODES.O)
 class IncognitoNotification @Inject constructor(
     private val activity: FragmentActivity,
     private val notificationManager: NotificationManager
