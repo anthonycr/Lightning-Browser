@@ -9,7 +9,6 @@
     <attr name="listBackground" format="reference|color" />
     <attr name="progressBackgroundColor" format="color" />
     <attr name="searchBackground" format="reference|color" />
-    <attr name="toolbarSettingsBackground" format="reference|color" />
     <attr name="drawerBackground" format="reference|color" />
     <attr name="dividerColor" format="reference|color" />
     <attr name="selectedBackground" format="reference|color" />

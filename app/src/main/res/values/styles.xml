@@ -4,12 +4,10 @@
     <!-- Settings themes -->
     <style name="Theme.SettingsTheme" parent="Theme.LightTheme">
         <item name="android:windowBackground">@null</item>
-        <item name="toolbarSettingsBackground">@drawable/toolbar_elevate</item>
     </style>
 
     <style name="Theme.SettingsTheme.Dark" parent="Theme.DarkTheme">
         <item name="android:windowBackground">@null</item>
-        <item name="toolbarSettingsBackground">@drawable/toolbar_elevate_dark</item>
 
         <!-- Dark settings has a special primary dark -->
         <item name="colorPrimaryDark">@color/secondary_color_settings_dark</item>
@@ -17,7 +15,6 @@
 
     <style name="Theme.SettingsTheme.Black" parent="Theme.BlackTheme">
         <item name="android:windowBackground">@null</item>
-        <item name="toolbarSettingsBackground">@drawable/toolbar_elevate_black</item>
     </style>
 
     <!-- Regular themes -->
