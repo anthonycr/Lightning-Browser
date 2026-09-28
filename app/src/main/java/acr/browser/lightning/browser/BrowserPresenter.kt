@@ -454,7 +454,6 @@ class BrowserPresenter @Inject constructor(
         }
 
         tabJobs += browserCoroutineScope.launch {
-            // TODO: Fix the title being wrong at times
             combine(
                 tab.titleChanges(),
                 tab.urlChanges()

@@ -206,7 +206,6 @@ class TabAdapter @AssistedInject constructor(
         }
         tabCoroutineScope.launch {
             merge(
-                tabWebViewClient.startedSharedFlow.map { null },
                 tabWebViewClient.finishedSharedFlow.map { webView().title },
                 tabWebChromeClient.titleShareFlow
             ).collectLatest { titleStateFlow.emit(it) }
