@@ -23,9 +23,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -62,6 +62,7 @@ fun DesktopTabs(
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
     snackbarHostState: SnackbarHostState,
+    lazyListState: LazyListState,
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -87,7 +88,8 @@ fun DesktopTabs(
                     offset = remember { mutableIntStateOf(0) },
                     browserViewState = browserViewState,
                     presenter = presenter,
-                    suggestionsModel = suggestionsModel
+                    suggestionsModel = suggestionsModel,
+                    lazyListState = lazyListState,
                 )
                 BrowserFindInPage(browserViewState, presenter)
                 AndroidView(
@@ -113,11 +115,12 @@ fun DesktopTabs(
                     )
                     Column {
                         TopTabDesktopNavigationBar(
-                            heightDp,
-                            currentOffset,
-                            browserViewState,
-                            presenter,
-                            suggestionsModel
+                            height = heightDp,
+                            offset = currentOffset,
+                            browserViewState = browserViewState,
+                            presenter = presenter,
+                            suggestionsModel = suggestionsModel,
+                            lazyListState = lazyListState,
                         )
                         BrowserFindInPage(browserViewState, presenter)
                     }
@@ -137,8 +140,8 @@ fun TopTabDesktopNavigationBar(
     browserViewState: BrowserComposeState,
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
+    lazyListState: LazyListState,
 ) {
-    val lazyListState = rememberLazyListState()
     if (browserViewState.scrollToTab != -1) {
         LaunchedEffect(browserViewState.scrollToTab) {
             lazyListState.scrollToItem(browserViewState.scrollToTab)

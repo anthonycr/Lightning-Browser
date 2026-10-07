@@ -8,6 +8,7 @@ import acr.browser.lightning.browser.compose.DrawerTabs
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.search.SuggestionsModel
 import android.widget.FrameLayout
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -40,6 +41,7 @@ fun BrowserScreen(
             }
         }
     }
+    val lazyListState = rememberLazyListState()
     if (browserViewState.showCustomView) {
         CustomView(
             useBlackStatusBarStateFlow,
@@ -56,7 +58,8 @@ fun BrowserScreen(
                 browserViewState,
                 presenter,
                 suggestionsModel,
-                snackbarHostState
+                snackbarHostState,
+                lazyListState,
             )
 
             TabConfiguration.DRAWER_SIDE -> DrawerTabs(
@@ -65,7 +68,8 @@ fun BrowserScreen(
                 browserViewState,
                 presenter,
                 suggestionsModel,
-                snackbarHostState
+                snackbarHostState,
+                lazyListState,
             )
 
             TabConfiguration.DRAWER_BOTTOM -> BottomTabs(
@@ -74,7 +78,8 @@ fun BrowserScreen(
                 browserViewState,
                 presenter,
                 suggestionsModel,
-                snackbarHostState
+                snackbarHostState,
+                lazyListState,
             )
 
             null -> Unit

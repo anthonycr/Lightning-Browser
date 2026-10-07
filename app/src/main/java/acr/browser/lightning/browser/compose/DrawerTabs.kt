@@ -25,8 +25,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -66,8 +66,8 @@ fun DrawerTabs(
     presenter: BrowserPresenter,
     suggestionsModel: SuggestionsModel,
     snackbarHostState: SnackbarHostState,
+    lazyListState: LazyListState,
 ) {
-    val lazyListState = rememberLazyListState()
     if (browserViewState.scrollToTab != -1) {
         LaunchedEffect(browserViewState.scrollToTab) {
             lazyListState.scrollToItem(browserViewState.scrollToTab)
