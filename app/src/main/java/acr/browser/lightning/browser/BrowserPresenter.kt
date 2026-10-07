@@ -1179,6 +1179,7 @@ class BrowserPresenter @Inject constructor(
         bookmark: Bookmark.Entry,
         option: BrowserContract.BookmarkOptionEvent
     ) {
+        onDialogDismissed()
         when (option) {
             BrowserContract.BookmarkOptionEvent.NEW_TAB ->
                 createNewTabAndSelect(UrlInitializer(bookmark.url), shouldSelect = true)
@@ -1220,7 +1221,6 @@ class BrowserPresenter @Inject constructor(
                 }
             }
         }
-        onDialogDismissed()
     }
 
     private suspend fun onFolderOptionClick(
@@ -1251,6 +1251,7 @@ class BrowserPresenter @Inject constructor(
         download: DownloadEntry,
         option: BrowserContract.DownloadOptionEvent
     ) {
+        onDialogDismissed()
         when (option) {
             BrowserContract.DownloadOptionEvent.DELETE -> {
                 downloadsRepository.deleteDownload(download.location)
@@ -1266,13 +1267,13 @@ class BrowserPresenter @Inject constructor(
                 }
             }
         }
-        onDialogDismissed()
     }
 
     private suspend fun onHistoryOptionClick(
         historyEntry: HistoryEntry,
         option: BrowserContract.HistoryOptionEvent
     ) {
+        onDialogDismissed()
         when (option) {
             BrowserContract.HistoryOptionEvent.NEW_TAB ->
                 createNewTabAndSelect(UrlInitializer(historyEntry.url), shouldSelect = true)
@@ -1298,7 +1299,6 @@ class BrowserPresenter @Inject constructor(
                 }
             }
         }
-        onDialogDismissed()
     }
 
     private suspend fun onTabCountViewClick() {
@@ -1385,6 +1385,7 @@ class BrowserPresenter @Inject constructor(
     }
 
     private suspend fun onCloseBrowserEvent(id: Int, closeTabEvent: BrowserContract.CloseTabEvent) {
+        onDialogDismissed()
         when (closeTabEvent) {
             BrowserContract.CloseTabEvent.CLOSE_CURRENT ->
                 onTabClose(state.value.tabs.tabIndexForId(id))
@@ -1406,13 +1407,13 @@ class BrowserPresenter @Inject constructor(
                 navigator.closeBrowser()
             }
         }
-        onDialogDismissed()
     }
 
     private suspend fun onLinkLongPressEvent(
         longPress: LongPress,
         linkLongPressEvent: BrowserContract.LinkLongPressEvent
     ) {
+        onDialogDismissed()
         when (linkLongPressEvent) {
             BrowserContract.LinkLongPressEvent.NEW_TAB ->
                 longPress.targetUrl?.let {
@@ -1439,13 +1440,13 @@ class BrowserPresenter @Inject constructor(
                 showSnackbar(resourceProvider.stringResource(R.string.message_link_copied))
             }
         }
-        onDialogDismissed()
     }
 
     private suspend fun onImageLongPressEvent(
         longPress: LongPress,
         imageLongPressEvent: BrowserContract.ImageLongPressEvent
     ) {
+        onDialogDismissed()
         when (imageLongPressEvent) {
             BrowserContract.ImageLongPressEvent.NEW_TAB ->
                 longPress.targetUrl?.let {
@@ -1485,7 +1486,6 @@ class BrowserPresenter @Inject constructor(
                 showSnackbar(resourceProvider.stringResource(R.string.download_pending))
             }
         }
-        onDialogDismissed()
     }
 
     private fun onFileChooserResult(activityResult: ActivityResult) {
