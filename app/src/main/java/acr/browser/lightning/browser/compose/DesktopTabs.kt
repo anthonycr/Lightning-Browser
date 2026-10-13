@@ -7,6 +7,7 @@ import acr.browser.lightning.browser.BrowserPresenter
 import acr.browser.lightning.browser.BrowserViewState
 import acr.browser.lightning.browser.compose.sheets.BookmarksBottomSheet
 import acr.browser.lightning.browser.tab.TabModel
+import acr.browser.lightning.compose.imeInsetsPadding
 import acr.browser.lightning.search.SuggestionsModel
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
@@ -95,6 +96,7 @@ fun DesktopTabs(
                 AndroidView(
                     factory = { frameLayout },
                     modifier = Modifier
+                        .imeInsetsPadding(innerPadding = innerPadding)
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceDim)
                         .weight(1f, false),
@@ -112,6 +114,7 @@ fun DesktopTabs(
                         frameLayout = frameLayout,
                         fixedOffset = height,
                         mutableOffset = currentOffset,
+                        innerPadding = innerPadding,
                     )
                     Column {
                         TopTabDesktopNavigationBar(

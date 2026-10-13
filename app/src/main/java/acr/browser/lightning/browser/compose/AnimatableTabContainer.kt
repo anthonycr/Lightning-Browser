@@ -1,10 +1,12 @@
 package acr.browser.lightning.browser.compose
 
+import acr.browser.lightning.compose.imeInsetsPadding
 import android.widget.FrameLayout
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -21,10 +23,12 @@ fun AnimatableTabContainer(
     offsetDp: Dp,
     fixedOffset: Int,
     mutableOffset: MutableIntState,
+    innerPadding: PaddingValues,
 ) {
     AndroidView(
         factory = { frameLayout },
         modifier = Modifier
+            .imeInsetsPadding(innerPadding = innerPadding)
             .padding(top = offsetDp * (fixedOffset + mutableOffset.intValue) / fixedOffset.toFloat())
             // TODO: Offset is smoother, but incorrectly includes window insets
             // .offset {

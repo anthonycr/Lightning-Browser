@@ -6,6 +6,7 @@ import acr.browser.lightning.browser.BrowserComposeState
 import acr.browser.lightning.browser.BrowserPresenter
 import acr.browser.lightning.browser.compose.sheets.BookmarksBottomSheet
 import acr.browser.lightning.browser.tab.TabModel
+import acr.browser.lightning.compose.imeInsetsPadding
 import acr.browser.lightning.preview.TopCropTransformation
 import acr.browser.lightning.search.SuggestionsModel
 import android.widget.FrameLayout
@@ -92,6 +93,10 @@ fun BottomTabs(
             AndroidView(
                 factory = { frameLayout },
                 modifier = Modifier
+                    .imeInsetsPadding(
+                        extraOffset = (-56).dp,
+                        innerPadding = innerPadding,
+                    )
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surfaceDim)
                     .weight(1f, false),
