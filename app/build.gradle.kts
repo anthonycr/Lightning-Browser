@@ -125,7 +125,7 @@ dependencies {
     val mezzanineVersion = "2.5.0"
     val daggerVersion = "2.60.1"
     val kotlin = "2.4.21"
-    val datastore = "1.2.1"
+    val datastore = "1.3.0"
     val coil = "3.6.3"
     val coroutines = "1.11.0"
     val leakcanary = "2.14"
