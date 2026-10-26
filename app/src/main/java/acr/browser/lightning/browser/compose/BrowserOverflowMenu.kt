@@ -47,7 +47,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
             onDismissRequest = { dropDownExpanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text(stringResource(R.string.action_new_tab)) },
+                text = { DropdownText(stringResource(R.string.action_new_tab)) },
                 onClick = {
                     presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.NEW_TAB))
                     dropDownExpanded = false
@@ -55,7 +55,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
             )
             if (!browserViewState.isIncognito) {
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_incognito)) },
+                    text = { DropdownText(stringResource(R.string.action_incognito)) },
                     onClick = {
                         presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.NEW_INCOGNITO_TAB))
                         dropDownExpanded = false
@@ -64,7 +64,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
             }
             if (browserViewState.enableFullMenu) {
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_share)) },
+                    text = { DropdownText(stringResource(R.string.action_share)) },
                     onClick = {
                         presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.SHARE))
                         dropDownExpanded = false
@@ -73,14 +73,14 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
             }
             if (!browserViewState.isIncognito) {
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_history)) },
+                    text = { DropdownText(stringResource(R.string.action_history)) },
                     onClick = {
                         presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.HISTORY))
                         dropDownExpanded = false
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_downloads)) },
+                    text = { DropdownText(stringResource(R.string.action_downloads)) },
                     onClick = {
                         presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.DOWNLOADS))
                         dropDownExpanded = false
@@ -88,7 +88,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
                 )
             }
             DropdownMenuItem(
-                text = { Text(stringResource(R.string.action_find)) },
+                text = { DropdownText(stringResource(R.string.action_find)) },
                 onClick = {
                     presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.FIND))
                     dropDownExpanded = false
@@ -96,7 +96,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
             )
             if (browserViewState.enableFullMenu) {
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_copy)) },
+                    text = { DropdownText(stringResource(R.string.action_copy)) },
                     onClick = {
                         presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.COPY_LINK))
                         dropDownExpanded = false
@@ -104,7 +104,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
                 )
                 if (!browserViewState.isIncognito) {
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.action_add_to_homescreen)) },
+                        text = { DropdownText(stringResource(R.string.action_add_to_homescreen)) },
                         onClick = {
                             presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.ADD_TO_HOME))
                             dropDownExpanded = false
@@ -113,7 +113,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
                 }
             }
             DropdownMenuItem(
-                text = { Text(stringResource(R.string.action_bookmarks)) },
+                text = { DropdownText(stringResource(R.string.action_bookmarks)) },
                 onClick = {
                     presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.BOOKMARKS))
                     dropDownExpanded = false
@@ -121,7 +121,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
             )
             if (browserViewState.enableFullMenu && !browserViewState.isIncognito) {
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_add_bookmark)) },
+                    text = { DropdownText(stringResource(R.string.action_add_bookmark)) },
                     onClick = {
                         presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.ADD_BOOKMARK))
                         dropDownExpanded = false
@@ -130,7 +130,7 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
             }
             if (!browserViewState.isIncognito) {
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.settings)) },
+                    text = { DropdownText(stringResource(R.string.settings)) },
                     onClick = {
                         presenter.onEvent(BrowserUiEvent.MenuClick(MenuSelection.SETTINGS))
                         dropDownExpanded = false
@@ -140,3 +140,9 @@ fun BrowserOverflowMenu(presenter: BrowserPresenter, browserViewState: BrowserCo
         }
     }
 }
+
+@Composable
+private fun DropdownText(text: String) = Text(
+    text = text,
+    style = MaterialTheme.typography.bodyMedium
+)
