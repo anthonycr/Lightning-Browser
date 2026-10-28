@@ -158,7 +158,7 @@ dependencies {
     implementation("androidx.fragment:fragment:1.9.1")
     implementation("androidx.lifecycle:lifecycle-common:$lifecycle")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle")
-    implementation("androidx.palette:palette:1.0.0")
+    implementation("androidx.palette:palette:1.1.0")
     implementation("androidx.webkit:webkit:1.18.0")
     implementation("com.anthonycr.mezzanine:core:$mezzanineVersion")
     implementation("com.google.android.material:material:1.14.0")
