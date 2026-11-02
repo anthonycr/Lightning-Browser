@@ -61,7 +61,6 @@ import coil3.request.transformations
 import coil3.transform.RoundedCornersTransformation
 import kotlinx.coroutines.flow.StateFlow
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomTabs(
     useBlackStatusBarStateFlow: StateFlow<Boolean?>,
@@ -109,7 +108,6 @@ fun BottomTabs(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomTabNavigationBar(
     browserViewState: BrowserComposeState,
