@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import app.cash.turbine.turbineScope
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -12,7 +13,11 @@ import java.io.File
 
 class NonNullPreferenceStoreTest {
 
-    private val dataStore: DataStore<Preferences> = PreferenceDataStoreFactory.create {
+    private fun createDataStore(
+        testScope: TestScope,
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        scope = testScope
+    ) {
         File.createTempFile("test", ".preferences_pb")
     }
 
@@ -20,7 +25,7 @@ class NonNullPreferenceStoreTest {
     fun `no stored value returns default`() = runTest {
         val nonNullPreferenceStore = NonNullPreferenceStore(
             key = intPreferencesKey("test"),
-            dataStore = dataStore,
+            dataStore = createDataStore(this),
             defaultValue = 1
         )
 
@@ -29,6 +34,7 @@ class NonNullPreferenceStoreTest {
 
     @Test
     fun `stored value returns value`() = runTest {
+        val dataStore = createDataStore(this)
         dataStore.updateData { preferences ->
             preferences.toMutablePreferences().apply {
                 set(intPreferencesKey("test"), 2)
@@ -47,7 +53,7 @@ class NonNullPreferenceStoreTest {
     fun `set stores value`() = runTest {
         val nonNullPreferenceStore = NonNullPreferenceStore(
             key = intPreferencesKey("test"),
-            dataStore = dataStore,
+            dataStore = createDataStore(this),
             defaultValue = 1
         )
 
@@ -60,7 +66,7 @@ class NonNullPreferenceStoreTest {
     fun `consecutive sets emit to values`() = runTest {
         val nonNullPreferenceStore = NonNullPreferenceStore(
             key = intPreferencesKey("test"),
-            dataStore = dataStore,
+            dataStore = createDataStore(this),
             defaultValue = 1
         )
 
@@ -84,7 +90,7 @@ class NonNullPreferenceStoreTest {
     fun `duplicate sets emit only once to values`() = runTest {
         val nonNullPreferenceStore = NonNullPreferenceStore(
             key = intPreferencesKey("test"),
-            dataStore = dataStore,
+            dataStore = createDataStore(this),
             defaultValue = 1
         )
 

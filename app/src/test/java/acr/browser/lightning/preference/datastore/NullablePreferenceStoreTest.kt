@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import app.cash.turbine.turbineScope
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -12,7 +13,11 @@ import java.io.File
 
 class NullablePreferenceStoreTest {
 
-    private val dataStore: DataStore<Preferences> = PreferenceDataStoreFactory.create {
+    private fun createDataStore(
+        testScope: TestScope,
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        scope = testScope
+    ) {
         File.createTempFile("test", ".preferences_pb")
     }
 
@@ -20,7 +25,7 @@ class NullablePreferenceStoreTest {
     fun `no stored value returns null`() = runTest {
         val nullablePreferenceStore = NullablePreferenceStore(
             key = stringPreferencesKey("test"),
-            dataStore = dataStore
+            dataStore = createDataStore(this)
         )
 
         assertThat(nullablePreferenceStore.get()).isNull()
@@ -28,6 +33,7 @@ class NullablePreferenceStoreTest {
 
     @Test
     fun `stored value returns value`() = runTest {
+        val dataStore = createDataStore(this)
         dataStore.updateData { preferences ->
             preferences.toMutablePreferences().apply {
                 set(stringPreferencesKey("test"), "one")
@@ -45,7 +51,7 @@ class NullablePreferenceStoreTest {
     fun `set stores value`() = runTest {
         val nullablePreferenceStore = NullablePreferenceStore(
             key = stringPreferencesKey("test"),
-            dataStore = dataStore
+            dataStore = createDataStore(this)
         )
 
         nullablePreferenceStore.set("two")
@@ -57,7 +63,7 @@ class NullablePreferenceStoreTest {
     fun `consecutive sets emit to values`() = runTest {
         val nullablePreferenceStore = NullablePreferenceStore(
             key = stringPreferencesKey("test"),
-            dataStore = dataStore,
+            dataStore = createDataStore(this),
         )
 
         turbineScope {
@@ -81,7 +87,7 @@ class NullablePreferenceStoreTest {
     fun `duplicate sets emit only once to values`() = runTest {
         val nullablePreferenceStore = NullablePreferenceStore(
             key = stringPreferencesKey("test"),
-            dataStore = dataStore
+            dataStore = createDataStore(this)
         )
 
         turbineScope {

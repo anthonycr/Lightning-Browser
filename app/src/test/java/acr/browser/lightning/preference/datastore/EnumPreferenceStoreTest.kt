@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import app.cash.turbine.turbineScope
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -20,7 +21,11 @@ class EnumPreferenceStoreTest {
         FOUR(4),
     }
 
-    private val dataStore: DataStore<Preferences> = PreferenceDataStoreFactory.create {
+    private fun createDataStore(
+        testScope: TestScope,
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        scope = testScope
+    ) {
         File.createTempFile("test", ".preferences_pb")
     }
 
@@ -28,7 +33,7 @@ class EnumPreferenceStoreTest {
     fun `no stored value returns default`() = runTest {
         val enumPreferenceStore = EnumPreferenceStore(
             key = intPreferencesKey("test"),
-            dataStore = dataStore,
+            dataStore = createDataStore(this),
             defaultValue = TestEnum.ONE
         )
 
@@ -37,6 +42,7 @@ class EnumPreferenceStoreTest {
 
     @Test
     fun `stored value returns value`() = runTest {
+        val dataStore = createDataStore(this)
         dataStore.updateData { preferences ->
             preferences.toMutablePreferences().apply {
                 set(intPreferencesKey("test"), 2)
@@ -55,7 +61,7 @@ class EnumPreferenceStoreTest {
     fun `set stores value`() = runTest {
         val enumPreferenceStore = EnumPreferenceStore(
             key = intPreferencesKey("test"),
-            dataStore = dataStore,
+            dataStore = createDataStore(this),
             defaultValue = TestEnum.ONE
         )
 
@@ -68,7 +74,7 @@ class EnumPreferenceStoreTest {
     fun `consecutive sets emit to values`() = runTest {
         val enumPreferenceStore = EnumPreferenceStore(
             key = intPreferencesKey("test"),
-            dataStore = dataStore,
+            dataStore = createDataStore(this),
             defaultValue = TestEnum.ONE
         )
 
@@ -92,7 +98,7 @@ class EnumPreferenceStoreTest {
     fun `duplicate sets emit only once to values`() = runTest {
         val enumPreferenceStore = EnumPreferenceStore(
             key = intPreferencesKey("test"),
-            dataStore = dataStore,
+            dataStore = createDataStore(this),
             defaultValue = TestEnum.ONE
         )
 
