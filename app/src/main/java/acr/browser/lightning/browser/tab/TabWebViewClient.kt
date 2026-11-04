@@ -142,8 +142,7 @@ class TabWebViewClient @AssistedInject constructor(
         !allowListModel.isUrlAllowedAds(pageUrl) &&
             runBlocking { adBlocker.await().isAd(requestUri) }
 
-    override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
-        super.onPageStarted(view, url, favicon)
+    private fun updateUrl(url: String) {
         searchQuery = if (!url.isSpecialUrl()) {
             url
         } else {
@@ -151,6 +150,21 @@ class TabWebViewClient @AssistedInject constructor(
         }
         searchQuerySelection = Pair(0, searchQuery.length)
         currentUrl = url
+    }
+
+    override fun doUpdateVisitedHistory(view: WebView, url: String, isReload: Boolean) {
+        super.doUpdateVisitedHistory(view, url, isReload)
+        updateUrl(url)
+        tabCoroutineScope.launch {
+            urlSharedFlow.emit(url)
+            goBackSharedFlow.emit(view.canGoBack())
+            goForwardSharedFlow.emit(view.canGoForward())
+        }
+    }
+
+    override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
+        super.onPageStarted(view, url, favicon)
+        updateUrl(url)
         tabCoroutineScope.launch {
             startedSharedFlow.emit(Unit)
             urlSharedFlow.emit(url)
