@@ -177,7 +177,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serialization")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization")
-    implementation("org.jsoup:jsoup:1.23.2")
+    implementation("org.jsoup:jsoup:1.24.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("com.squareup.leakcanary:leakcanary-android-core:$leakcanary")
