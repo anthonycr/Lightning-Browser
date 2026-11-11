@@ -7,7 +7,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis") version "3.20.2"
     id("com.squareup.sort-dependencies") version "0.21.0"
     id("org.jetbrains.kotlin.plugin.compose") version "2.4.21"
-    id("com.anthonycr.plugins.mockingbird") version "3.4.0"
+    id("com.anthonycr.plugins.mockingbird") version "3.5.0"
     id("app.cash.licensee") version "1.14.1"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.4.21"
 }
