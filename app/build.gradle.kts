@@ -43,7 +43,6 @@ android {
 
     buildTypes {
         named("debug") {
-            multiDexEnabled = true
             isMinifyEnabled = false
             isShrinkResources = false
             setProguardFiles(listOf("proguard-project.txt"))
@@ -52,7 +51,6 @@ android {
         }
 
         named("release") {
-            multiDexEnabled = false
             isMinifyEnabled = !isCi
             isShrinkResources = !isCi
             setProguardFiles(listOf("proguard-project.txt"))
