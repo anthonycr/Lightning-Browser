@@ -128,7 +128,7 @@ dependencies {
     val coroutines = "1.11.0"
     val leakcanary = "2.14"
     val lifecycle = "2.11.0"
-    val serialization = "1.12.0"
+    val serialization = "1.13.0"
     val appcompat = "1.8.0"
 
     implementation(platform("androidx.compose:compose-bom:2026.09.00"))
