@@ -734,11 +734,13 @@ class BrowserPresenter @Inject constructor(
     }
 
     private suspend fun onTabClick(index: Int) {
-        selectTab(model.selectTab(state.value.tabs[index].id))
+        val selectedId = state.value.tabs.getOrNull(index)?.id ?: return
+        selectTab(model.selectTab(selectedId))
     }
 
     private suspend fun onTabLongClick(index: Int) {
-        state.updateSelf { copy(dialog = BrowserViewState.Dialogs.CloseBrowser(tabs[index].id)) }
+        val selectedId = state.value.tabs.getOrNull(index)?.id ?: return
+        state.updateSelf { copy(dialog = BrowserViewState.Dialogs.CloseBrowser(selectedId)) }
     }
 
     private fun <T> List<T>.nextSelected(removedIndex: Int): T? {
@@ -763,9 +765,10 @@ class BrowserPresenter @Inject constructor(
         val nextTab = state.value.tabs.nextSelected(index)
 
         val currentTabId = currentTab?.id
-        val needToSelectNextTab = state.value.tabs[index].id == currentTabId
+        val selectedId = state.value.tabs.getOrNull(index)?.id ?: return
+        val needToSelectNextTab = selectedId == currentTabId
 
-        model.deleteTab(state.value.tabs[index].id)
+        model.deleteTab(selectedId)
         state.updateSelf { updateTabViewState() }
         if (needToSelectNextTab) {
             nextTab?.id?.let {
