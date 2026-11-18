@@ -119,7 +119,7 @@ androidComponents {
 }
 
 dependencies {
-    val robolectric = "4.18"
+    val robolectric = "4.18.1"
     val mezzanineVersion = "2.5.0"
     val daggerVersion = "2.60.1"
     val kotlin = "2.4.21"
