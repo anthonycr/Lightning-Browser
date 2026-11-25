@@ -127,7 +127,7 @@ dependencies {
     val coil = "3.6.3"
     val coroutines = "1.11.0"
     val leakcanary = "2.14"
-    val lifecycle = "2.11.0"
+    val lifecycle = "2.11.1"
     val serialization = "1.13.0"
     val appcompat = "1.8.0"
 
